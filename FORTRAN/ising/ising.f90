@@ -1,6 +1,7 @@
 program main_ising 
     
   use isingmods 
+  use globals
 
   implicit none
     
@@ -12,7 +13,7 @@ program main_ising
  
   ! Calcula la energía y magnetización
   call calcula_EM(Eng,Mag,RED)
-
+  
   print *, 'Valores iniciales'
   print *, 'Energía = ',  Eng, 'Magnetización = ',  Mag 
 
