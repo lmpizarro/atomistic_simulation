@@ -106,8 +106,10 @@ contains
   
     integer   :: i, j
     
-    E = 0
-    M = 0
+    ! Inicializo las constantes. No conviene hacerlo al declararlas.
+    E = 0.
+    M = 0.
+
     do j = 1, M_R
       do i = 1, N_R
         ! Calcula la energía
@@ -117,7 +119,7 @@ contains
       end do
     end do 
     ! Corrijo para obtener la magnetización
-    M = mu*M    
+    M = mu*M            ! Revisar por las dudas 
 
   end subroutine calcula_EM
 
@@ -127,11 +129,15 @@ contains
 
   subroutine metropolis()
     ! Magnitudes temporales par los estados temporarios en el paso k-ésimo
-    real                                 :: E_k=0.   ! Energía 
-    real                                 :: M_k=0.   ! Magnetización
-    integer,  dimension(0:N_R+1,0:M_R+1) :: RED_k    ! Matriz de spines  
+    real                                 :: E_k    ! Energía 
+    real                                 :: M_k    ! Magnetización
+    integer,  dimension(0:N_R+1,0:M_R+1) :: RED_k  ! Matriz de spines  
 
     integer   :: k, i, j
+
+    ! Inicializo las constantes. No conviene hacerlo al declararlas.
+    E_k = 0.
+    M_k = 0.
 
     do k = 1, K_tot
       ! Copia el nuevo estado temporal
