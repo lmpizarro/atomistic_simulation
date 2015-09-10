@@ -130,12 +130,17 @@ contains
     real                                 :: M_k    ! Magnetización
     integer,  dimension(0:N_R+1,0:M_R+1) :: RED_k  ! Matriz de spines  
 
-    integer   :: i
+    integer   :: k, i, j
     
-    do i = 1, K_tot
+    do k = 1, K_tot
       ! Copia el nuevo estado temporal
       RED_k = RED     
+      ! Se genera el nuevo estado invirtiendo un spin al azar
+      i = rand_int(N_R)
+      j = rand_int(M_R)
+    print *, i, j
     end do 
+
 
   end subroutine metropolis 
 

@@ -16,4 +16,7 @@ program main_ising
   print *, 'Valores iniciales'
   print *, 'Energía = ',  Eng, 'Magnetización = ',  Mag 
 
+  ! Ejecuta el algoritmo de metrópolis
+  call metropolis()
+
 end program main_ising

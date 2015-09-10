@@ -75,6 +75,20 @@ contains
 
   end function uni_2st
 
+!==============================================================================
+! Probabilidad uniforme tipo Bernoulli: enteros -1 o 1  
+!==============================================================================
+
+  function rand_int(N) result(i_sel)
+    ! Función que selecciona a un número al azar entre 1, ..., N posibilidades
+    ! Asume que todos son equiprobables
+      integer, intent(in)    :: N     ! Cantidad total 
+      integer                :: i_sel ! Entero seleccionado
+
+      i_sel = floor(uni()*N + 1)
+  
+  end function rand_int
+
 
 end module usozig
 
