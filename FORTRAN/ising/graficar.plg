@@ -7,7 +7,7 @@ set multiplot layout 2, 1 title "Graficos " font ",13"
 set tmargin 2
 set title "Energía"
 unset key
-plot 'salida.dat' u 1:2:3 with lines
+plot 'salida.dat' u 1:2 with lines
 #
 set title "Magnetización"
 unset key
