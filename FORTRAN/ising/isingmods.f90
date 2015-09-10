@@ -6,6 +6,7 @@ module isingmods
   implicit none
 
   private
+
 !===============================================================================
 ! VARIABLES Y CONSTANTES  
 !===============================================================================
@@ -138,6 +139,8 @@ contains
     ! Inicializo las constantes. No conviene hacerlo al declararlas.
     E_k = 0.
     M_k = 0.
+    ! Abro archivo para escribir los datos
+    open(unit=20,file='salida.dat',status='unknown')
 
     do k = 1, K_tot
       ! Copia el nuevo estado temporal
@@ -169,9 +172,12 @@ contains
         end if
       end if
       ! Guardo los datos de k, Eng y Mag
-      print *, k, Eng, Mag
+      ! print *, k, Eng, Mag
+      write(20,100) k , Eng , M_k
+  100 format(I9,1X,2F15.5)
     end do 
-
+    ! Cierro archivo de salida
+    close(20)   
 
   end subroutine metropolis 
 
