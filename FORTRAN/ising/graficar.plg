@@ -1,0 +1,21 @@
+#!/usr/bin/gnuplot
+#
+# GNU plot version 5.0 demo of multiplot auto-layout capability
+#
+#
+set multiplot layout 2, 1 title "Graficos " font ",13"
+set tmargin 2
+set title "Energía"
+unset key
+plot 'salida.dat' u 1:2:3 with lines
+#
+set title "Magnetización"
+unset key
+plot 'salida.dat' using 1:3 with lines
+#
+#
+unset multiplot
+pause -1
+#
+#
+#
