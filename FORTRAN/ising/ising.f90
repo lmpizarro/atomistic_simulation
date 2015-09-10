@@ -19,5 +19,8 @@ program main_ising
 
   ! Ejecuta el algoritmo de metrópolis
   call metropolis()
+  
+  ! Finaliza programa
+  call finalizacion()
 
 end program main_ising

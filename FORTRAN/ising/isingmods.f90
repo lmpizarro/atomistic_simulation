@@ -10,7 +10,6 @@ module isingmods
 ! VARIABLES Y CONSTANTES  
 !===============================================================================
   ! Variables
-!  integer, dimension(:,:), allocatable :: RED      ! Matriz de spines
   integer                              :: N_R      ! Columnas de RED
   integer                              :: M_R      ! Filas de RED
   real                                 :: Tem      ! Temperatura
@@ -21,7 +20,7 @@ module isingmods
   real, parameter           :: k_b = 1.            ! Constante de Boltzman   
   real, parameter           :: mu = 1.             ! Momento magnético
 
-  public :: read_parameters, inicializacion, calcula_EM, metropolis
+  public :: read_parameters, inicializacion, calcula_EM, metropolis, finalizacion
 
 contains
 
@@ -67,8 +66,8 @@ contains
 
     do j = 1, M_R               ! Recordar que es column-major order
       do i = 1, N_R
-       ! RED(i,j) = uni_2st()    ! Spines aleatorios
-        RED(i,j) = 1            ! Todos los spines para arriba
+        RED(i,j) = uni_2st()    ! Spines aleatorios
+       ! RED(i,j) = 1            ! Todos los spines para arriba
       end do
     end do
 
