@@ -111,10 +111,12 @@ contains
       do i = 1, N_R
         ! Calcula la energía
         E = E - 0.5*Jac*A(i,j)*( A(i+1,j) + A(i-1,j) + A(i,j+1) + A(i,j-1) )
-        ! Calcula la magnetización
+        ! Calcula la magnetización (sin el mu)
         M = M + A(i,j)               
       end do
     end do 
+    ! Corrijo para obtener la magnetización
+    M = mu*M    
 
   end subroutine calcula_EM
 
@@ -131,7 +133,8 @@ contains
     integer   :: i
     
     do i = 1, K_tot
-    
+      ! Copia el nuevo estado temporal
+      RED_k = RED     
     end do 
 
   end subroutine metropolis 
