@@ -22,9 +22,7 @@ contains
       open(unit=10,file='ultimo_estado.dat',status='old')
       read(10,*) A
       close(10)
-      print *, 'Se lee estado inicial desde el archivo <ultimo_estado.dat>'
-    else
-      A = 0
+      print *, '* Se lee estado inicial desde el archivo <ultimo_estado.dat>'
     end if
   
   end subroutine lee_estado
@@ -44,7 +42,7 @@ contains
       open(unit=10,file='ultimo_estado.dat',status='new')
       write(10,*) A
       close(10)
-      print *, 'Se escribe el último estado en el archivo <ultimo_estado.dat>'
+      print *, '* Se escribe el último estado en el archivo <ultimo_estado.dat>'
     end if
 
   end subroutine escribe_estado

@@ -204,43 +204,6 @@ contains
 
   end subroutine metropolis 
 
-!================================================================================
-! LEE EL ESTADO DE SPINES EN UN ARCHIVO 
-!================================================================================ 
-!  
-!  subroutine lee_estado(es)
-!
-!    logical, intent(out)  :: es
-!     
-!    inquire(file='ultimo_estado.dat',exist=es)
-!    if (es) then
-!      open(unit=10,file='ultimo_estado.dat',status='old')
-!      read(10,*) RED 
-!      close(10)
-!      print *, 'Se lee estado inicial desde el archivo <ultimo_estado.dat>'
-!    end if
-!  
-!  end subroutine lee_estado
-
-
-!================================================================================
-! ESCRIBE EL ESTADO DE SPINES EN UN ARCHIVO 
-!================================================================================ 
-  
-!  subroutine escribe_estado()
-!
-!    logical    :: es
-!     
-!    inquire(file='ultimo_estado.dat',exist=es)
-!    if ( .not. es) then
-!      open(unit=10,file='ultimo_estado.dat',status='new')
-!      write(10,*) RED 
-!      close(10)
-!      print *, 'Se escribe el último estado en el archivo <ultimo_estado.dat>'
-!    end if
-!
-!  end subroutine escribe_estado
-
 !===============================================================================
 ! FINALIZA PARAMETROS
 !===============================================================================
