@@ -87,7 +87,6 @@ contains
     ! Inicializa beta
     beta = 1/(k_b*Tem)
 
-
   end subroutine inicializacion 
 
 !===============================================================================
@@ -146,7 +145,6 @@ contains
     integer   :: k, i, j
     logical   :: acept  ! Flag para saber cuándo se acepta un estado
 
-    acept = .FALSE.
     
     ! Abro archivo para escribir los datos
     open(unit=20,file='salida.dat',status='unknown')
@@ -163,25 +161,24 @@ contains
       ! ----------------- ACEPTACION-RECHAZO -----------------------------------
       ! Calculo la energía y la magnetización del nuevo estado
       ! Condiciones de aceptación-rechazo
+      acept = .FALSE.                      
+
       if (E_k < Eng) then                  ! Si el nuevo estado es menos energético
         ! Acepto el nuevo estado, actualizo variables
-        RED(i,j) = -RED(i,j)
-        Eng = E_k
-        Mag = Mag + 2.0*mu*RED(i,j) 
         acept = .TRUE.
       else                                 ! Si el nuevo estado es más energético
         ! Acepto el estado con probabilidad e^{-\beta \Delta E}
         if ( uni() < exp(-beta*(E_k-Eng)) )  then
-          RED(i,j) = -RED(i,j)             ! Acepto el estado
-          Eng = E_k
-          Mag = Mag + 2.0*mu*RED(i,j) 
-          acept = .TRUE.
+            acept = .TRUE.
         end if
       end if
       !------------------------------------------------------------------------
 
       ! Aplico la condición de contorno 
-      if (acept .eqv. .TRUE.) then                        ! Si es aceptado
+      if ( acept .eqv. .TRUE.) then      ! Si es aceptado
+        RED(i,j) = -RED(i,j)             
+        Eng = E_k
+        Mag = Mag + 2.0*mu*RED(i,j) 
         if ( i==1 .or. i==N_R .or. j==1 .or. j==M_R) then ! Si es spin periférico
           call cond_contorno(RED)
         end if
