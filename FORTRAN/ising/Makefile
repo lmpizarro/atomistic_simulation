@@ -24,7 +24,7 @@ FLAGS = -O3
 # dependencias. Ver https://github.com/ZedThree/fort_depend.py
 # para hacerlo de forma automatica. O aprender a usar cmake:
 # http://brunoabinader.com/?p=29
-OBJS_F = ziggurat.o usozig.o globals.o isingmods.o $(EXE).o
+OBJS_F = ziggurat.o usozig.o isingmods.o $(EXE).o
 # Camino completo en donde estaran los objetos
 OBJS = $(patsubst %.o, $(OBJ_DIR)/%.o, $(OBJS_F))
 # Compruebo que existan los subdirectorios y compila
@@ -36,7 +36,7 @@ $(OBJ_DIR)/%.o: %.f90
 $(EXE): $(OBJS) Makefile 
 	$(FC) $(FLAGS) -I$(MOD_DIR) -o $@ $(OBJS) 
 
-$(EXE).o: $(EXE).f90 ziggurat.o usozig.o isingmods.o globals.o
+$(EXE).o: $(EXE).f90 ziggurat.o usozig.o isingmods.o 
 
 checkdirs : $(BUILD_DIR)
 

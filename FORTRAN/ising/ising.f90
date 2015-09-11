@@ -1,7 +1,6 @@
 program main_ising 
     
   use isingmods 
-  use globals
 
   implicit none
     
@@ -12,10 +11,7 @@ program main_ising
   call inicializacion()
  
   ! Calcula la energía y magnetización
-  call calcula_EM(Eng,Mag,RED)
-  
-  print *, 'Valores iniciales'
-  print *, 'Energía = ',  Eng, 'Magnetización = ',  Mag 
+  call calcula_EM()
 
   ! Ejecuta el algoritmo de metrópolis
   call metropolis()

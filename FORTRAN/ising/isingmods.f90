@@ -1,7 +1,6 @@
 module isingmods 
 
   use usozig
-  use globals
 
   implicit none
 
@@ -10,7 +9,11 @@ module isingmods
 !===============================================================================
 ! VARIABLES Y CONSTANTES  
 !===============================================================================
+
   ! Variables
+  integer, dimension(:,:), allocatable :: RED      ! Matriz de spines
+  real                                 :: Eng      ! Energía del sistema
+  real                                 :: Mag      ! Magnetización
   integer                              :: N_R      ! Columnas de RED
   integer                              :: M_R      ! Filas de RED
   real                                 :: Tem      ! Temperatura
@@ -67,8 +70,8 @@ contains
 
     do j = 1, M_R               ! Recordar que es column-major order
       do i = 1, N_R
-        RED(i,j) = uni_2st()    ! Spines aleatorios
-       ! RED(i,j) = 1            ! Todos los spines para arriba
+       ! RED(i,j) = uni_2st()    ! Spines aleatorios
+        RED(i,j) = 1            ! Todos los spines para arriba
       end do
     end do
 
@@ -77,6 +80,7 @@ contains
 
     ! Inicializa beta
     beta = 1/(k_b*Tem)
+
 
   end subroutine inicializacion 
 
@@ -88,10 +92,10 @@ contains
 
     integer, intent(inout), dimension(0:N_R+1,0:M_R+1) :: A  ! Matriz de spines 
 
-    A(0,0:M_R+1)     = A(N_R,0:M_R+1)   ! Columna 0 igual a columna M_R
-    A(N_R+1,0:M_R+1) = A(1,0:M_R+1)     ! Columna N_R+1 igual a columna 1 
-    A(0:N_R+1,0)     = A(0:N_R+1,M_R)   ! Fila 0 igual a fila M_R
-    A(0:N_R+1,M_R+1) = A(0:N_R+1,1)     ! Fila M_R+1 igual a fila 1
+    A(0,0:M_R+1)     = A(N_R,0:M_R+1)   ! Fila 0 igual a fija M_R
+    A(N_R+1,0:M_R+1) = A(1,0:M_R+1)     ! Fila N_R+1 igual a fila 1 
+    A(0:N_R+1,0)     = A(0:N_R+1,M_R)   ! Columna 0 igual a columna M_R
+    A(0:N_R+1,M_R+1) = A(0:N_R+1,1)     ! Columna M_R+1 igual a columna 1
 
   end subroutine cond_contorno 
 
@@ -99,13 +103,11 @@ contains
 ! CALCULA LA ENERGIA Y LA MAGNETIZACION
 !===============================================================================
 
-  subroutine calcula_EM(E,M,A)
+  subroutine calcula_EM() 
 
-    real, intent(out)                               :: E    ! Energía 
-    real, intent(out)                               :: M    ! Magnetización
-    integer, intent(in), dimension(0:N_R+1,0:M_R+1) :: A    ! Matriz de spines  
-  
-    integer   :: i, j
+    real             :: E       ! Energía 
+    real             :: M       ! Magnetización
+    integer          :: i, j
     
     ! Inicializo las constantes. No conviene hacerlo al declararlas.
     E = 0.
@@ -114,14 +116,18 @@ contains
     do j = 1, M_R
       do i = 1, N_R
         ! Calcula la energía
-        E = E - 0.5*Jac*A(i,j)*( A(i+1,j) + A(i-1,j) + A(i,j+1) + A(i,j-1) )
+        E = E - 0.5*Jac*RED(i,j)*( RED(i+1,j) + RED(i-1,j) + RED(i,j+1) + RED(i,j-1) )
         ! Calcula la magnetización (sin el mu)
-        M = M + A(i,j)               
+        M = M + RED(i,j)               
       end do
     end do 
+    ! Escribo la energía total
+    Eng = E
     ! Corrijo para obtener la magnetización
-    M = mu*M            ! Revisar por las dudas 
-
+    Mag = mu*M             
+  
+    print *, 'Valores Iniciales: E = ', Eng, 'M = ', Mag
+ 
   end subroutine calcula_EM
 
 !===============================================================================
@@ -129,53 +135,57 @@ contains
 !===============================================================================
 
   subroutine metropolis()
-    ! Magnitudes temporales par los estados temporarios en el paso k-ésimo
-    real                                 :: E_k    ! Energía 
-    real                                 :: M_k    ! Magnetización
-    integer,  dimension(0:N_R+1,0:M_R+1) :: RED_k  ! Matriz de spines  
 
+    real      :: E_k    ! Energía del nuevo estado
     integer   :: k, i, j
+    logical   :: acept  ! Flag para saber cuándo se acepta un estado
 
-    ! Inicializo las constantes. No conviene hacerlo al declararlas.
-    E_k = 0.
-    M_k = 0.
+    acept = .FALSE.
+    
     ! Abro archivo para escribir los datos
     open(unit=20,file='salida.dat',status='unknown')
 
     do k = 1, K_tot
-      ! Copia el nuevo estado temporal
-      RED_k = RED     
+
       ! Se genera el nuevo estado invirtiendo un spin al azar
-      i = rand_int(N_R)     ! Genera al azar un entero para la columna
-      j = rand_int(M_R)     ! Genera al azar un entero para la fila
-      ! Se da vuelta al spin seleccionado
-      RED_k(i,j) = -RED(i,j)
-      ! Aplico la condición de contorno sólo si cambio un spin periférico
-      if ( i==1 .or. i==N_R .or. j==1 .or. j==M_R) then
-        call cond_contorno(RED_k)
-      end if  
+      i = rand_int(N_R)     ! Genera al azar un entero para la fila
+      j = rand_int(M_R)     ! Genera al azar un entero para la columna
+     
+      ! Calculo la energía del nuevov estado 
+      E_k = Eng + 2.0*Jac*RED(i,j)* ( RED(i-1,j) + RED(i+1,j) + RED(i,j-1) + RED(i,j+1) )
+      
       ! ----------------- ACEPTACION-RECHAZO -----------------------------------
       ! Calculo la energía y la magnetización del nuevo estado
-      call calcula_EM(E_k,M_k,RED_k)
       ! Condiciones de aceptación-rechazo
-      if (E_k < Eng) then       ! Si el nuevo estado es menos energético
+      if (E_k < Eng) then                  ! Si el nuevo estado es menos energético
         ! Acepto el nuevo estado, actualizo variables
-        RED = RED_k
+        RED(i,j) = -RED(i,j)
         Eng = E_k
-        Mag = M_k 
-      else                      ! Si el nuevo estado es más energético
+        Mag = Mag + 2.0*RED(i,j) 
+        acept = .TRUE.
+      else                                 ! Si el nuevo estado es más energético
         ! Acepto el estado con probabilidad e^{-\beta \Delta E}
         if ( uni() < exp(-beta*(E_k-Eng)) )  then
-          RED = RED_k           ! Acepto el estado
+          RED(i,j) = -RED(i,j)             ! Acepto el estado
           Eng = E_k
-          Mag = M_k
+          Mag = Mag + 2.0*RED(i,j) 
+          acept = .TRUE.
         end if
       end if
+
+      ! Aplico la condición de contorno 
+      if (acept .eqv. .TRUE.) then                        ! Si es aceptado
+        if ( i==1 .or. i==N_R .or. j==1 .or. j==M_R) then ! Si es spin periférico
+          call cond_contorno(RED)
+        end if
+      end if
+
       ! Guardo los datos de k, Eng y Mag
-      ! print *, k, Eng, Mag
-      write(20,100) k , Eng , M_k
+      write(20,100) k , Eng , Mag
   100 format(I9,1X,2F15.5)
+
     end do 
+
     ! Cierro archivo de salida
     close(20)   
 
