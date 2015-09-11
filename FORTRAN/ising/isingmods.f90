@@ -1,6 +1,7 @@
 module isingmods 
 
   use usozig
+  use io_parametros
 
   implicit none
 
@@ -60,6 +61,7 @@ contains
   subroutine inicializacion()
   
     integer  :: i,j
+    logical  :: es
 
     ! Inicializa al generador de números aleatorios
     call inic_zig()
@@ -67,17 +69,21 @@ contains
     ! Inicializa la matriz de spines 
     ! Define los indices pensando en las condiciones periodicas de contorno
     allocate( RED(0:N_R+1,0:M_R+1) )
-
-    do j = 1, M_R               ! Recordar que es column-major order
-      do i = 1, N_R
-       ! RED(i,j) = uni_2st()    ! Spines aleatorios
-        RED(i,j) = 1            ! Todos los spines para arriba
+    ! Trata de leer el estado inicial
+    call lee_estado(es,RED,N_R,M_R)
+    ! Si no leyó el estado, lo crea
+    if (.not. es) then 
+      do j = 1, M_R              ! Recordar que es column-major order
+        do i = 1, N_R
+         ! RED(i,j) = uni_2st()  ! Spines aleatorios
+          RED(i,j) = 1           ! Todos los spines para arriba
+        end do
       end do
-    end do
+    end if
 
     ! Aplica condiciones periódicas de contorno
     call cond_contorno(RED)  
-
+    
     ! Inicializa beta
     beta = 1/(k_b*Tem)
 
@@ -126,7 +132,7 @@ contains
     ! Corrijo para obtener la magnetización
     Mag = mu*M             
   
-    print *, 'Valores Iniciales: E = ', Eng, 'M = ', Mag
+    print *, '* Valores Iniciales: E = ', Eng, 'M = ', Mag
  
   end subroutine calcula_EM
 
@@ -161,17 +167,18 @@ contains
         ! Acepto el nuevo estado, actualizo variables
         RED(i,j) = -RED(i,j)
         Eng = E_k
-        Mag = Mag + 2.0*RED(i,j) 
+        Mag = Mag + 2.0*mu*RED(i,j) 
         acept = .TRUE.
       else                                 ! Si el nuevo estado es más energético
         ! Acepto el estado con probabilidad e^{-\beta \Delta E}
         if ( uni() < exp(-beta*(E_k-Eng)) )  then
           RED(i,j) = -RED(i,j)             ! Acepto el estado
           Eng = E_k
-          Mag = Mag + 2.0*RED(i,j) 
+          Mag = Mag + 2.0*mu*RED(i,j) 
           acept = .TRUE.
         end if
       end if
+      !------------------------------------------------------------------------
 
       ! Aplico la condición de contorno 
       if (acept .eqv. .TRUE.) then                        ! Si es aceptado
@@ -189,31 +196,50 @@ contains
     ! Cierro archivo de salida
     close(20)   
 
+    ! Trata de escribir el último estado a un archivo
+    call escribe_estado(RED)
+
+    ! Informa el estado final
+    print *, '* Valores Finales: E = ', Eng, 'M = ', Mag
+
   end subroutine metropolis 
 
 !================================================================================
-! ESCRIBE LOS RESULTADOS A UN ARVHIVO
+! LEE EL ESTADO DE SPINES EN UN ARCHIVO 
+!================================================================================ 
+!  
+!  subroutine lee_estado(es)
+!
+!    logical, intent(out)  :: es
+!     
+!    inquire(file='ultimo_estado.dat',exist=es)
+!    if (es) then
+!      open(unit=10,file='ultimo_estado.dat',status='old')
+!      read(10,*) RED 
+!      close(10)
+!      print *, 'Se lee estado inicial desde el archivo <ultimo_estado.dat>'
+!    end if
+!  
+!  end subroutine lee_estado
+
+
+!================================================================================
+! ESCRIBE EL ESTADO DE SPINES EN UN ARCHIVO 
 !================================================================================ 
   
-  subroutine escribe_datos(nombre,x,y)
-
-    character (len=*), intent(in) :: nombre
-    real, intent(in), dimension(:) :: x
-    real, intent(in), optional, dimension(:) :: y
-    integer :: j, N
-    
-    N = size(x)
-    if (present(y))  then
-      open(unit=40,file=nombre,status='unknown')
-      write(40,'(2F15.5)') ([x(j), y(j)] ,j=1,N)
-      close(40)
-    else
-      open(unit=40,file='x_'//nombre,status='unknown')
-      write(40,'(F15.5)') (x(j) ,j=1,N)
-      close(40) 
-    end if
-
-  end subroutine escribe_datos
+!  subroutine escribe_estado()
+!
+!    logical    :: es
+!     
+!    inquire(file='ultimo_estado.dat',exist=es)
+!    if ( .not. es) then
+!      open(unit=10,file='ultimo_estado.dat',status='new')
+!      write(10,*) RED 
+!      close(10)
+!      print *, 'Se escribe el último estado en el archivo <ultimo_estado.dat>'
+!    end if
+!
+!  end subroutine escribe_estado
 
 !===============================================================================
 ! FINALIZA PARAMETROS
