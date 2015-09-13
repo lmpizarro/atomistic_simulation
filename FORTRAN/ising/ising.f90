@@ -24,10 +24,10 @@ program main_ising
   ! Finaliza programa
   call finalizacion()
 
-  call running_mean_var(x,y,'energia.dat')
-  print *, x,sqrt(y), w, sqrt(z)
+ ! call running_mean_var(x,y,'energia.dat')
+ !print *, x,sqrt(y), w, sqrt(z)
   call vector_mean_var(x,y,'energia.dat')
-  !call running_mean_var(w,z,'magneti.dat')
+  call vector_mean_var(w,z,'magneti.dat')
   print *, x,sqrt(y), w, sqrt(z)
 
 end program main_ising

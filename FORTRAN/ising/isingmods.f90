@@ -99,10 +99,10 @@ contains
 
     integer, intent(inout), dimension(0:N_R+1,0:M_R+1) :: A  ! Matriz de spines 
 
-    A(0,0:M_R+1)     = A(N_R,0:M_R+1)   ! Fila 0 igual a fija M_R
-    A(N_R+1,0:M_R+1) = A(1,0:M_R+1)     ! Fila N_R+1 igual a fila 1 
-    A(0:N_R+1,0)     = A(0:N_R+1,M_R)   ! Columna 0 igual a columna M_R
-    A(0:N_R+1,M_R+1) = A(0:N_R+1,1)     ! Columna M_R+1 igual a columna 1
+    A(0,:)     = A(N_R,:)   ! Fila 0 igual a fila M_R
+    A(N_R+1,:) = A(1,:)     ! Fila N_R+1 igual a fila 1 
+    A(:,0)     = A(:,M_R)   ! Columna 0 igual a columna M_R
+    A(:,M_R+1) = A(:,1)     ! Columna M_R+1 igual a columna 1
 
   end subroutine cond_contorno 
 
