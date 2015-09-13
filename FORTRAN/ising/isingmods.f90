@@ -1,7 +1,9 @@
 module isingmods 
 
-  use usozig
-  use io_parametros
+  use globales,            only: dp
+  use ziggurat,            only: uni
+  use usozig,              only: inic_zig, uni_2st, rand_int, fin_zig   
+  use io_parametros,       only: escribe_estado, lee_estado
 
   implicit none
 
@@ -12,18 +14,18 @@ module isingmods
 !===============================================================================
 
   ! Variables
-  integer, dimension(:,:), allocatable :: RED      ! Matriz de spines
-  real                                 :: Eng      ! Energía del sistema
-  real                                 :: Mag      ! Magnetización
-  integer                              :: N_R      ! Columnas de RED
-  integer                              :: M_R      ! Filas de RED
-  real                                 :: Tem      ! Temperatura
-  real                                 :: beta     ! beta = 1/kT
-  real                                 :: Jac      ! Constante de acoplamiento
-  integer                              :: K_tot    ! Cantidad de ciclos
+  integer, dimension(:,:), allocatable  :: RED      ! Matriz de spines
+  real(dp)                              :: Eng      ! Energía del sistema
+  real(dp)                              :: Mag      ! Magnetización
+  integer                               :: N_R      ! Columnas de RED
+  integer                               :: M_R      ! Filas de RED
+  real(dp)                              :: Tem      ! Temperatura
+  real(dp)                              :: beta     ! beta = 1/kT
+  real(dp)                              :: Jac      ! Constante de acoplamiento
+  integer                               :: K_tot    ! Cantidad de ciclos
   ! Constantes
-  real, parameter           :: k_b = 1.            ! Constante de Boltzman   
-  real, parameter           :: mu = 1.             ! Momento magnético
+  real(dp), parameter                   :: k_b= 1_dp ! Constante de Boltzman   
+  real(dp), parameter                   :: mu = 1_dp ! Momento magnético
 
   public :: read_parameters, inicializacion, calcula_EM, metropolis, finalizacion
 
@@ -45,8 +47,8 @@ contains
       else
         N_R = 10
         M_R = 10
-        Tem = 1.0
-        Jac = 1
+        Tem = 1.0_dp
+        Jac = 1_dp
         K_tot = 100
      end if
 
@@ -85,7 +87,7 @@ contains
     call cond_contorno(RED)  
     
     ! Inicializa beta
-    beta = 1/(k_b*Tem)
+    beta = 1.0_dp/(k_b*Tem)
 
   end subroutine inicializacion 
 
@@ -110,18 +112,18 @@ contains
 
   subroutine calcula_EM() 
 
-    real             :: E       ! Energía 
-    real             :: M       ! Magnetización
-    integer          :: i, j
+    real(dp)           :: E       ! Energía 
+    real(dp)           :: M       ! Magnetización
+    integer            :: i, j
     
     ! Inicializo las constantes. No conviene hacerlo al declararlas.
-    E = 0.
-    M = 0.
+    E = 0.0_dp
+    M = 0.0_dp
 
     do j = 1, M_R
       do i = 1, N_R
         ! Calcula la energía
-        E = E - 0.5*Jac*RED(i,j)*( RED(i+1,j) + RED(i-1,j) + RED(i,j+1) + RED(i,j-1) )
+        E = E - 0.5_dp*Jac*RED(i,j)*( RED(i+1,j) + RED(i-1,j) + RED(i,j+1) + RED(i,j-1) )
         ! Calcula la magnetización (sin el mu)
         M = M + RED(i,j)               
       end do
@@ -141,13 +143,14 @@ contains
 
   subroutine metropolis()
 
-    real      :: E_k    ! Energía del nuevo estado
-    integer   :: k, i, j
-    logical   :: acept  ! Flag para saber cuándo se acepta un estado
+    real(dp)     :: E_k    ! Energía del nuevo estado
+    integer      :: k, i, j
+    logical      :: acept  ! Flag para saber cuándo se acepta un estado
 
     
     ! Abro archivo para escribir los datos
-    open(unit=20,file='salida.dat',status='unknown')
+    open(unit=20,file='energia.dat',status='unknown')
+    open(unit=30,file='magneti.dat',status='unknown')
 
     do k = 1, K_tot
 
@@ -156,7 +159,7 @@ contains
       j = rand_int(M_R)     ! Genera al azar un entero para la columna
      
       ! Calculo la energía del nuevov estado 
-      E_k = Eng + 2.0*Jac*RED(i,j)* ( RED(i-1,j) + RED(i+1,j) + RED(i,j-1) + RED(i,j+1) )
+      E_k = Eng + 2.0_dp*Jac*RED(i,j)* ( RED(i-1,j) + RED(i+1,j) + RED(i,j-1) + RED(i,j+1) )
       
       ! ----------------- ACEPTACION-RECHAZO -----------------------------------
       ! Calculo la energía y la magnetización del nuevo estado
@@ -185,13 +188,15 @@ contains
       end if
 
       ! Guardo los datos de k, Eng y Mag
-      write(20,100) k , Eng , Mag
-  100 format(I9,1X,2F15.5)
+      write(20,100)  Eng
+      write(30,100)  Mag
+  100 format(F8.1)
 
     end do 
 
     ! Cierro archivo de salida
     close(20)   
+    close(30)   
 
     ! Trata de escribir el último estado a un archivo
     call escribe_estado(RED)

@@ -1,9 +1,14 @@
 program main_ising 
     
-  use isingmods 
+  use globales,            only: dp
+  use isingmods,           only: read_parameters, inicializacion, calcula_EM,   &
+                                 metropolis, finalizacion 
+  use estadistica,         only: running_mean_var, vector_mean_var
 
   implicit none
-    
+
+  real(dp) :: x,y,w,z
+  
   ! Lee los datos necesario
   call read_parameters()
 
@@ -18,5 +23,11 @@ program main_ising
   
   ! Finaliza programa
   call finalizacion()
+
+  call running_mean_var(x,y,'energia.dat')
+  print *, x,sqrt(y), w, sqrt(z)
+  call vector_mean_var(x,y,'energia.dat')
+  !call running_mean_var(w,z,'magneti.dat')
+  print *, x,sqrt(y), w, sqrt(z)
 
 end program main_ising
