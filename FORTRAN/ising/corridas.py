@@ -1,14 +1,18 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import os
 import shutil
 from subprocess import call
+import errno
 
-curr_dir= os.getcwd()
+# Directorio raíz donde está el ejecutable y este script
+curr_dir = os.getcwd()
 
 tempe = [0.5, 0.6]
 tempe = [str(i) for i in tempe]
 
+# Loop para crear todos los directorios y correr el ejecutable en ellos
 for T in tempe:
     with open('parametros.dat','r') as f1:
         for line in f1:
@@ -21,13 +25,15 @@ for T in tempe:
     carpeta = T + '_tmpfolder'
 
     path_carpeta = os.path.join(curr_dir,carpeta)
-    
+
     try: 
         os.makedirs(path_carpeta)
-    except OSError:
-#        print('Ya existe el directorio. Se omite corrida con T=' + T)
-        if not os.path.isdir(path_carpeta):
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
             raise
+        else:
+            print('Ya existe el directorio. Se omite corrida con T=' + T)
+            continue
         
     shutil.copy('parametros.dat',path_carpeta) 
     os.chdir(path_carpeta)       
