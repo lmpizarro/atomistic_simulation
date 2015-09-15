@@ -2,7 +2,7 @@ program main_ising
     
   use globales,            only: dp
   use isingmods,           only: read_parameters, inicializacion, calcula_EM,   &
-                                 metropolis, finalizacion 
+                                 metropolis, finalizacion, hace_estadistica 
   use estadistica,         only: running_mean_var, vector_mean_var
 
   implicit none
@@ -24,10 +24,7 @@ program main_ising
   ! Finaliza programa
   call finalizacion()
 
- ! call running_mean_var(x,y,'energia.dat')
- !print *, x,sqrt(y), w, sqrt(z)
-  call vector_mean_var(x,y,'energia.dat')
-  call vector_mean_var(w,z,'magneti.dat')
-  print *, x,sqrt(y), w, sqrt(z)
+  ! Calcula varlor medio y varianza de los resultados
+  call hace_estadistica()
 
 end program main_ising

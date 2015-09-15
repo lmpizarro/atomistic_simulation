@@ -4,6 +4,7 @@ module isingmods
   use ziggurat,            only: uni
   use usozig,              only: inic_zig, uni_2st, rand_int, fin_zig   
   use io_parametros,       only: escribe_estado, lee_estado
+  use estadistica,         only: vector_mean_var
 
   implicit none
 
@@ -27,7 +28,8 @@ module isingmods
   real(dp), parameter                   :: k_b= 1_dp ! Constante de Boltzman   
   real(dp), parameter                   :: mu = 1_dp ! Momento magnético
 
-  public :: read_parameters, inicializacion, calcula_EM, metropolis, finalizacion
+  public :: read_parameters, inicializacion, calcula_EM, metropolis, &
+            finalizacion, hace_estadistica
 
 contains
 
@@ -190,7 +192,7 @@ contains
       ! Guardo los datos de k, Eng y Mag
       write(20,100)  Eng
       write(30,100)  Mag
-  100 format(F8.1)
+      100 format(F8.1)
 
     end do 
 
@@ -205,6 +207,32 @@ contains
     print *, '* Valores Finales: E = ', Eng, 'M = ', Mag
 
   end subroutine metropolis 
+
+!===============================================================================
+! CALCULA VALOR MEDIO Y VARIANZA DE LOS ARCHIVOS DE SALIDA 
+!===============================================================================
+
+  subroutine hace_estadistica()
+
+  real(dp)     :: E_media, M_media  ! Valor medio de la energía y la magnetización
+  real(dp)     :: E_var , M_var     ! Varianza de la energía y la magnetización
+  
+  ! Calcula los valores medios y varianzas de la corrida
+  ! Para la energía
+  print *, '* Se abre archivo <energia.dat> para hacer estadistica'
+  call vector_mean_var(E_media,E_var,'energia.dat')
+  ! Para la magnetización
+  print *, '* Se abre archivo <magneti.dat> para hacer estadistica'
+  call vector_mean_var(M_media,M_var,'magneti.dat')
+
+  ! Guarda los resultados en un archivo
+  print *, '* Se guardan valores medios y varianza en <val_medios.dat>'
+  open(unit=40,file='val_medios.dat',status='unknown')
+  write(40,120) Tem, E_media, E_var , M_media, M_var
+  120 format(F5.2, 4E15.7)
+  close(40)
+
+  end subroutine hace_estadistica
 
 !===============================================================================
 ! FINALIZA PARAMETROS
