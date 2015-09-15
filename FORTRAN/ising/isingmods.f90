@@ -73,6 +73,7 @@ contains
     ! Inicializa la matriz de spines 
     ! Define los indices pensando en las condiciones periodicas de contorno
     allocate( RED(0:N_R+1,0:M_R+1) )
+    RED = 1
     ! Trata de leer el estado inicial
     call lee_estado(es,RED,N_R,M_R)
     ! Si no leyó el estado, lo crea
@@ -239,7 +240,10 @@ contains
 !===============================================================================
 
   subroutine finalizacion()
-  
+      open(unit=10,file='estado.dat',status='unknown')
+      write(10,*) RED
+      close(10)
+ 
     ! Libera memoria
     deallocate(RED)
 
