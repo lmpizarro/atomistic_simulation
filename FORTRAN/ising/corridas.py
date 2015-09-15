@@ -3,7 +3,9 @@
 
 import os
 import shutil
-from subprocess import call
+import shlex
+#from subprocess import call
+from subprocess import Popen, PIPE
 import errno
 
 # Defino la función para escribir el archivo de datos
@@ -50,7 +52,12 @@ for T in tempe:
     # Cambia el archivo de entrada adentro de la carpeta
     escribe_entrada('T',T)
     # Corre el programa
-    call(curr_dir+'/ising')
+    #call(curr_dir+'/ising')
+    run = Popen(shlex.split(curr_dir+'/ising'),stdout=PIPE)
+    # Escribo un archivo log con la info de la corrida
+    f=open("log.txt",'w')
+    f.write(str(run.communicate()))
+    f.close()    
     # Sale de la carpeta
     os.chdir(curr_dir)
 
