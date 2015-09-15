@@ -7,6 +7,7 @@ import shlex
 #from subprocess import call
 from subprocess import Popen, PIPE
 import errno
+import random
 
 # Defino la función para escribir el archivo de datos
 def escribe_entrada(nombre,valor):
@@ -22,6 +23,13 @@ def escribe_entrada(nombre,valor):
                 exit
     with open('parametros.dat','w') as fileout:
         fileout.write(new)
+
+def escribe_semilla():
+    random.seed()
+    # Obtengo un número aleatorio entero de 4 bytes
+    entero_aleatorio = random.randint(-2147483648,2147483647)
+    with open('seed.dat','w') as fileout:
+        fileout.write(str(entero_aleatorio))
 
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
@@ -51,6 +59,8 @@ for T in tempe:
     os.chdir(path_carpeta)       
     # Cambia el archivo de entrada adentro de la carpeta
     escribe_entrada('T',T)
+    # Escribe la semmilla en la carpeta
+    escribe_semilla()
     # Corre el programa
     #call(curr_dir+'/ising')
     run = Popen(shlex.split(curr_dir+'/ising'),stdout=PIPE)
