@@ -66,7 +66,7 @@ nT_local = len(tempe)/size      # Debe ser entero
 
 tempe_local=tempe[rank*nT_local:(rank+1)*nT_local]
 
-print('El core',rank, 'hace las corrida de las temperaturas', tempe_local)
+print('El core {} hace las corrida de las temperaturas {}'.format(rank,tempe_local))
 
 # Loop para crear todos los directorios y correr el ejecutable en ellos
 for T in tempe_local:
@@ -95,7 +95,7 @@ for T in tempe_local:
     escribe_semilla()
 
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','200000') 
+    escribe_entrada('N','30000') 
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
@@ -109,27 +109,32 @@ for T in tempe_local:
 aviso = np.ones(1)
 listos_buffer = np.zeros(1)
 
+status = MPI.Status()   # get MPI status object
 
 # root node receives results from all processes and sums them
 if rank == 0:
-    listos = listos_buffer[0]
+    listos = aviso
+    print('El core {} terminó su primera corrida'.format(rank))
     for i in range(1, size):
-        comm.Recv(listos_buffer, ANY_SOURCE)
+        comm.Recv(listos_buffer, ANY_SOURCE,status=status)
+        source=status.Get_source()
+        print('El core {} terminó su primera corrida'.format(source))
         listos += listos_buffer[0]
 else:
         # all other process send their result
-        comm.Send(aviso)
+        comm.Send(aviso,dest=0)
         
 if comm.rank == 0:
-        print(listos)
+        listos=int(listos)
+        print('Hubieron {} cores que finalizaron su primer corrida'.format(listos))
         
  # Mando la segunda corrida a cada directorio       
 for T in tempe_local:
+    print('El core {} está calculando a la temperatura {}'.format(rank,T))
     # Nombre de la carpeta uqe se va a crear
     carpeta = T + '_tmpfolder'
     # Camino completo de la carpeta que se va a crear
     path_carpeta = os.path.join(curr_dir,carpeta)
-
     # Se mete en la carpeta
     os.chdir(path_carpeta)       
     # Cambia el archivo de entrada adentro de la carpeta
@@ -150,3 +155,19 @@ for T in tempe_local:
     copia_val_medios()
     # Sale de la carpeta
     os.chdir(curr_dir)
+    
+if rank == 0:
+    listos = np.ones(1)
+    print('El core {} terminó su segunda corrida'.format(rank))
+    for i in range(1, size):
+        comm.Recv(listos_buffer, ANY_SOURCE,status=status)
+        source=status.Get_source()
+        print('El core {} terminó su segunda corrida'.format(source))
+        listos += listos_buffer[0]
+else:
+        # all other process send their result
+        comm.Send(aviso,dest=0)
+        
+if comm.rank == 0:
+        listos=int(listos)
+        print('Hubieron {} cores que finalizaron su segunda corrida'.format(listos))
