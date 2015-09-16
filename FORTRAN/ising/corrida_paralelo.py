@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Lo corro con:  mpirun.mpich -n 4 python corrida_paralelo.py
+
 import os
 import shutil
 import subprocess
@@ -93,14 +95,48 @@ for T in tempe_local:
     escribe_semilla()
 
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','2000000') 
+    escribe_entrada('N','200000') 
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
     f=open("log1.txt",'w')
     f.write(salida)
     f.close() 
-    '''
+
+
+#############################
+#initializing variables. mpi4py requires that we pass numpy objects.
+aviso = np.ones(1)
+listos_buffer = np.zeros(1)
+
+
+# root node receives results from all processes and sums them
+if rank == 0:
+    listos = listos_buffer[0]
+    for i in range(1, size):
+        comm.Recv(listos_buffer, ANY_SOURCE)
+        listos += listos_buffer[0]
+else:
+        # all other process send their result
+        comm.Send(aviso)
+        
+if comm.rank == 0:
+        print(listos)
+        
+ # Mando la segunda corrida a cada directorio       
+for T in tempe_local:
+    # Nombre de la carpeta uqe se va a crear
+    carpeta = T + '_tmpfolder'
+    # Camino completo de la carpeta que se va a crear
+    path_carpeta = os.path.join(curr_dir,carpeta)
+
+    # Se mete en la carpeta
+    os.chdir(path_carpeta)       
+    # Cambia el archivo de entrada adentro de la carpeta
+    escribe_entrada('T',T)
+    # Escribe la semmilla en la carpeta
+    escribe_semilla()
+
     # Corre por segunda vez tomando el estado anterior. Aumento el N
     escribe_entrada('N','5000000')
     salida = subprocess.check_output(curr_dir+'/ising')
@@ -109,11 +145,8 @@ for T in tempe_local:
     f=open("log2.txt",'w')
     f.write(salida)
     f.close()    
-    '''
+
     # Copia los valores medios
     copia_val_medios()
     # Sale de la carpeta
     os.chdir(curr_dir)
-
-#############################
-
