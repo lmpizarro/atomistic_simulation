@@ -53,10 +53,10 @@ size = comm.Get_size()
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
 T_min = 0.5
-T_max = 1.2
+T_max = 5.0
 dT    = 0.1
 tempe = np.arange(T_min,T_max+dT,dT)
-#tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+tempe = tempe.tolist() + [2.15, 2.25, 2.26, 2.27, 2.28, 2.29, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
 tempe.sort()
 # lo convierto a string
 tempe = [str(i) for i in tempe]
@@ -95,7 +95,7 @@ for T in tempe_local:
     escribe_semilla()
 
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','30000') 
+    escribe_entrada('N','50000') 
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
@@ -108,7 +108,6 @@ for T in tempe_local:
 #initializing variables. mpi4py requires that we pass numpy objects.
 aviso = np.ones(1)
 listos_buffer = np.zeros(1)
-
 status = MPI.Status()   # get MPI status object
 
 # root node receives results from all processes and sums them

@@ -2,9 +2,12 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
-archivo = 'tablas_temperatura.dat'
-
+if len(sys.argv) < 2:
+    archivo = 'tablas_temperatura.dat'
+else:
+    archivo = sys.argv[1]
 
 data = np.loadtxt(archivo)
 
