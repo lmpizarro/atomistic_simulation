@@ -3,10 +3,10 @@
 
 import os
 import shutil
-import shlex
 import subprocess
 import errno
 import random
+import numpy as np
 
 # Defino la función para escribir el archivo de datos
 def escribe_entrada(nombre,valor):
@@ -42,11 +42,13 @@ def copia_val_medios():
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
-tempe = [x*0.1 for x in range(5,50)]
-tempe = tempe + [2.15, 2.25, 2.35, 2.45, 2.55]
-
+T_min = 0.5
+T_max = 5.0
+dT    = 0.1
+tempe = np.arange(T_min,T_max+dT,dT)
+tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
 tempe.sort()
-
+# lo convierto a string
 tempe = [str(i) for i in tempe]
 
 # Loop para crear todos los directorios y correr el ejecutable en ellos
@@ -76,7 +78,7 @@ for T in tempe:
     escribe_semilla()
 
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','100000') 
+    escribe_entrada('N','20000') 
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
@@ -85,7 +87,7 @@ for T in tempe:
     f.close() 
     
     # Corre por segunda veztomando el estado anterior. Aumento el N
-    escribe_entrada('N','3000000')
+    escribe_entrada('N','5000000')
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
