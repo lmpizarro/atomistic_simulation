@@ -2,9 +2,15 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
-arch_eng = 'energia.dat'
-arch_mag = 'magneti.dat'
+if len(sys.argv) < 2:
+    arch_eng = 'energia.dat'
+    arch_mag = 'magneti.dat'
+else:
+    arch_eng = sys.argv[1]
+    arch_mag = sys.argv[1]
+
 
 E = np.loadtxt(arch_eng)
 M = np.loadtxt(arch_mag)

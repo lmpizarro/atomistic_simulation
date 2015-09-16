@@ -95,15 +95,17 @@ for T in tempe_local:
     escribe_semilla()
 
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','50000') 
+    escribe_entrada('N','40000') 
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
     f=open("log1.txt",'w')
     f.write(salida)
     f.close() 
-
-
+    # Guardo las salidas por si hacen falta
+    os.rename('energia.dat','energia_terma.dat')
+    os.rename('magneti.dat','magneti_terma.dat')   
+    
 #############################
 #initializing variables. mpi4py requires that we pass numpy objects.
 aviso = np.ones(1)
@@ -142,7 +144,7 @@ for T in tempe_local:
     escribe_semilla()
 
     # Corre por segunda vez tomando el estado anterior. Aumento el N
-    escribe_entrada('N','5000000')
+    escribe_entrada('N','500000')
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo

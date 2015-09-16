@@ -85,6 +85,9 @@ for T in tempe:
     f=open("log1.txt",'w')
     f.write(salida)
     f.close() 
+    # Guardo las salidas por si hacen falta
+    os.rename('energia.dat','energia_terma.dat')
+    os.rename('magneti.dat','magneti_terma.dat')    
     
     # Corre por segunda vez tomando el estado anterior. Aumento el N
     escribe_entrada('N','5000000')
