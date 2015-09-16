@@ -7,6 +7,10 @@ import subprocess
 import errno
 import random
 import numpy as np
+# Paralelización
+import sys
+from mpi4py import MPI
+from mpi4py.MPI import ANY_SOURCE
 
 # Defino la función para escribir el archivo de datos
 def escribe_entrada(nombre,valor):
@@ -37,22 +41,33 @@ def copia_val_medios():
     arch_comun = os.path.join(curr_dir,'tablas_temperatura.dat')
     with open(arch_comun,'a') as comun:
         comun.write(valor)        
-            
+
+# Información de dónde está            
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
 T_min = 0.5
-T_max = 5.0
+T_max = 1.2
 dT    = 0.1
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+#tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
 tempe.sort()
 # lo convierto a string
 tempe = [str(i) for i in tempe]
 
+# Pralelización - Separo lista en la cantidad de cores que quiero correr
+nT_local = len(tempe)/size      # Debe ser entero
+
+tempe_local=tempe[rank*nT_local:(rank+1)*nT_local]
+
+print('El core',rank, 'hace las corrida de las temperaturas', tempe_local)
+
 # Loop para crear todos los directorios y correr el ejecutable en ellos
-for T in tempe:
+for T in tempe_local:
     # Nombre de la carpeta uqe se va a crear
     carpeta = T + '_tmpfolder'
     # Camino completo de la carpeta que se va a crear
@@ -78,14 +93,14 @@ for T in tempe:
     escribe_semilla()
 
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','20000') 
+    escribe_entrada('N','2000000') 
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
     f=open("log1.txt",'w')
     f.write(salida)
     f.close() 
-    
+    '''
     # Corre por segunda vez tomando el estado anterior. Aumento el N
     escribe_entrada('N','5000000')
     salida = subprocess.check_output(curr_dir+'/ising')
@@ -94,7 +109,7 @@ for T in tempe:
     f=open("log2.txt",'w')
     f.write(salida)
     f.close()    
-
+    '''
     # Copia los valores medios
     copia_val_medios()
     # Sale de la carpeta
