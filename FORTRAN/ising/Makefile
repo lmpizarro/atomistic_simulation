@@ -45,7 +45,7 @@ $(BUILD_DIR):
 
 install: $(EXE) ./bin
 	@ln $(EXE) ./bin
-	@cp input.dat histograma.plg graficar.sh ./bin
+	@cp parametros.dat graficar.plg *.py  ./bin
 
 ./bin:
 	@mkdir ./bin
