@@ -3,7 +3,8 @@ module isingmods
   use globales,            only: dp
   use ziggurat,            only: uni
   use usozig,              only: inic_zig, uni_2st, rand_int, fin_zig   
-  use io_parametros,       only: escribe_estado, lee_estado
+  use io_parametros,       only: escribe_estado, lee_estado, read_command_line
+  use strings,             only: str_to_int, str_to_real 
   use estadistica,         only: vector_mean_var
 
   implicit none
@@ -40,6 +41,7 @@ contains
   subroutine read_parameters()
   
     logical :: es
+    character(100) :: K_tot_lin_com, Tem_lin_com
      
     inquire(file='parametros.dat',exist=es)
       if(es) then
@@ -53,8 +55,19 @@ contains
         Jac = 1_dp
         K_tot = 100
      end if
-
-    print *,"* Parámetros utilizados: ", N_R, M_R, Tem, Jac, K_tot
+    
+    ! Se fija si se ingresaron parametros por la linea de commandos
+    ! El numero total de ciclos
+    call read_command_line(K_tot_lin_com,'-k')
+    if (K_tot_lin_com /='') K_tot = str_to_int(trim(K_tot_lin_com))
+    ! La temperatura
+    call read_command_line(Tem_lin_com,'-t')
+    if (Tem_lin_com /='')  Tem   = str_to_real(trim(Tem_lin_com))
+   
+    write(*, '(A,23X,I2,A,I2)') ' ---- Red de spines:' , N_R, ' x ', M_R
+    write(*,'(A,25X,F6.3)')  ' ---- Temperatura: ', Tem
+    write( *,'(A,10X,F5.3)') ' ---- Constante de acomplamiento J:', Jac
+    write( *,'(A,1X,I10)')  ' ---- Número de pasos para Metrópolis::', K_tot
 
   end subroutine read_parameters
 

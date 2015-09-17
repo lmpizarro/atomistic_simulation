@@ -1,5 +1,7 @@
-
 module io_parametros
+
+  use globales,     only: dp
+  use strings,      only: starts_with
 
   implicit none
 
@@ -46,5 +48,46 @@ contains
     end if
 
   end subroutine escribe_estado
+
+!===============================================================================
+! READ_COMMAND_LINE reads all parameters from the command line
+!===============================================================================
+
+  subroutine read_command_line(salida,tipo)
+
+    character(*), intent(out) :: salida   ! Valor del argumento buscado
+    character(*), intent(in)  :: tipo     ! Identificación del argumento buscado
+    integer :: i         ! loop index
+    integer :: argc      ! number of command line arguments
+    character(150), allocatable :: argv(:) ! command line arguments
+
+    ! Check number of command line arguments and allocate argv
+    argc = COMMAND_ARGUMENT_COUNT()
+
+    ! Allocate and retrieve command arguments
+    allocate(argv(argc))
+    do i = 1, argc
+      call GET_COMMAND_ARGUMENT(i, argv(i))
+    end do
+
+    ! Process command arguments
+    salida = ''
+    i = 1
+    do while (i <= argc)
+      ! Check for flags
+      if (starts_with(argv(i), "-")) then
+        if (tipo==argv(i)) then
+          i = i + 1
+          salida = argv(i)
+        end if
+      end if
+      ! Increment counter
+      i = i + 1
+    end do
+
+    ! Free memory from argv
+    deallocate(argv)
+
+  end subroutine read_command_line
 
 end module io_parametros
