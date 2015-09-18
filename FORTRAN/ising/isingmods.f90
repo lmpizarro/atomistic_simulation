@@ -95,8 +95,8 @@ contains
     if (.not. es) then 
       do j = 1, M_R              ! Recordar que es column-major order
         do i = 1, N_R
-         ! RED(i,j) = uni_2st()  ! Spines aleatorios
-          RED(i,j) = 1           ! Todos los spines para arriba
+          RED(i,j) = uni_2st()  ! Spines aleatorios
+         ! RED(i,j) = 1           ! Todos los spines para arriba
         end do
       end do
     end if
@@ -221,6 +221,7 @@ contains
 
     ! Trata de escribir el último estado a un archivo
     call escribe_estado(RED)
+    ! Escribe la informacion sobre la cantdiad de estados aceptados
     call escribe_aceptaciones(Tem,num_acept,K_tot)
 
     ! Informa el estado final
@@ -259,9 +260,16 @@ contains
 !===============================================================================
 
   subroutine finalizacion()
-      open(unit=10,file='estado.dat',status='unknown')
-      write(10,*) RED
-      close(10)
+      
+    integer  :: i, j     ! contadores
+
+    ! Escribe el ultimo estado en donde quedo el sistema
+    ! En forma matricial
+    open(unit=10,file='estado.dat',status='unknown')
+    do i= 1, N_R+1
+       write(10,'(900I3)') (RED(i,j), j = 0, M_R+1)
+    end do
+    close(10)
  
     ! Libera memoria
     deallocate(RED)
