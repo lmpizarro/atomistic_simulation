@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # Lo corro con:  mpirun.mpich -n 4 python corrida_paralelo.py
+# Hace una rampa de temperaturas, creando una carpeta para cada T. Una primer 
+# corrida para termalizar. La segunda para medir.
 
 import os
 import shutil
@@ -55,16 +57,23 @@ curr_dir = os.getcwd()
 T_min = 0.5
 T_max = 5.0
 dT    = 0.1
-tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() + [2.15, 2.25, 2.26, 2.27, 2.28, 2.29, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+nT    = int(round((T_max - T_min)/dT) + 1) # Qué molesto es python para hacer esto!
+tempe = np.linspace(T_min,T_max,nT,dtype=float) 
+#tempe = tempe.tolist() + [2.15, 2.25, 2.26, 2.27, 2.28, 2.29, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
 tempe.sort()
 # lo convierto a string
 tempe = [str(i) for i in tempe]
 
 # Pralelización - Separo lista en la cantidad de cores que quiero correr
-nT_local = len(tempe)/size      # Debe ser entero
+nT_local = nT//size      # Debe ser entero
+nt_resto = nT%size       # Lo que me queda
 
-tempe_local=tempe[rank*nT_local:(rank+1)*nT_local]
+# Reparo lo que me sobró a cada procesador
+aux_res = [0 for i in range(0,size+1)] 
+aux_res[1:nt_resto+1] = np.ones(nt_resto)
+aux_res=np.cumsum(aux_res,dtype=int)
+
+tempe_local = tempe[rank*nT_local+aux_res[rank]:(rank+1)*nT_local+aux_res[rank+1]]
 
 print('El core {} hace las corrida de las temperaturas {}'.format(rank,tempe_local))
 
@@ -95,7 +104,7 @@ for T in tempe_local:
     escribe_semilla()
 
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','40000') 
+    escribe_entrada('N','4000') 
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
@@ -144,7 +153,7 @@ for T in tempe_local:
     escribe_semilla()
 
     # Corre por segunda vez tomando el estado anterior. Aumento el N
-    escribe_entrada('N','500000')
+    escribe_entrada('N','50000')
     salida = subprocess.check_output(curr_dir+'/ising')
     
     # Guardo la salida para ver ue hizo
