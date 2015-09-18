@@ -49,6 +49,22 @@ contains
 
   end subroutine escribe_estado
 
+!================================================================================
+! ESCRIBE EL ESTADO DE SPINES EN UN ARCHIVO 
+!================================================================================ 
+  
+  subroutine escribe_aceptaciones(T,N,N_tot)
+
+    real(dp), intent(in)      :: T         ! Temperatura
+    integer, intent(in)       :: N, N_tot  ! Número de aceptaciones y totales
+     
+      open(unit=10,file='aceptaciones.dat',status='unknown')
+      write(10,'(F6.2,4X,I10,4X,I10)') T, N, N_tot
+      close(10)
+      print *, '* Se escribe el número de aceptaciones en el archivo <aceptaciones.dat>'
+
+  end subroutine escribe_aceptaciones
+
 !===============================================================================
 ! READ_COMMAND_LINE reads all parameters from the command line
 !===============================================================================

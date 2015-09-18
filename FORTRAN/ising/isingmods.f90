@@ -3,7 +3,8 @@ module isingmods
   use globales,            only: dp
   use ziggurat,            only: uni
   use usozig,              only: inic_zig, uni_2st, rand_int, fin_zig   
-  use io_parametros,       only: escribe_estado, lee_estado, read_command_line
+  use io_parametros,       only: escribe_estado, lee_estado, read_command_line, &
+                                 escribe_aceptaciones
   use strings,             only: str_to_int, str_to_real 
   use estadistica,         only: vector_mean_var
 
@@ -150,8 +151,8 @@ contains
     ! Corrijo para obtener la magnetización
     Mag = mu*M             
   
-    print *, '* Valores Iniciales: E = ', Eng, 'M = ', Mag
- 
+    write(*,'(A,F9.2,4X,A,F9.2)') ' * Valores Iniciales:  E =', Eng, 'M =', Mag
+
   end subroutine calcula_EM
 
 !===============================================================================
@@ -163,8 +164,10 @@ contains
     real(dp)     :: E_k    ! Energía del nuevo estado
     integer      :: k, i, j
     logical      :: acept  ! Flag para saber cuándo se acepta un estado
-
+    integer      :: num_acept  ! Cantidad de puntos aceptados
     
+    ! Inicializo el contador
+    num_acept = 0
     ! Abro archivo para escribir los datos
     open(unit=20,file='energia.dat',status='unknown')
     open(unit=30,file='magneti.dat',status='unknown')
@@ -202,6 +205,7 @@ contains
         if ( i==1 .or. i==N_R .or. j==1 .or. j==M_R) then ! Si es spin periférico
           call cond_contorno(RED)
         end if
+        num_acept = num_acept + 1
       end if
 
       ! Guardo los datos de k, Eng y Mag
@@ -217,9 +221,10 @@ contains
 
     ! Trata de escribir el último estado a un archivo
     call escribe_estado(RED)
+    call escribe_aceptaciones(Tem,num_acept,K_tot)
 
     ! Informa el estado final
-    print *, '* Valores Finales: E = ', Eng, 'M = ', Mag
+    write(*,'(A,F9.2,4X,A,F9.2)') ' * Valores Finales:    E =', Eng, 'M =', Mag
 
   end subroutine metropolis 
 
