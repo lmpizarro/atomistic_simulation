@@ -13,11 +13,11 @@ contains
   
   subroutine lee_estado(es,A,N,M)
 
-  integer, intent(out), dimension(:,:), allocatable ::  A  ! Matriz de spines
-  logical, intent(out)  :: es
-  integer, intent(in)   :: N,M
+    integer, intent(out), dimension(:,:), allocatable ::  A  ! Matriz de spines
+    logical, intent(out)  :: es
+    integer, intent(in)   :: N,M
 
-  allocate(A(0:N+1,0:M+1)) 
+    allocate(A(0:N+1,0:M+1)) 
    
     inquire(file='ultimo_estado.dat',exist=es)
     if (es) then
@@ -58,10 +58,10 @@ contains
     real(dp), intent(in)      :: T         ! Temperatura
     integer, intent(in)       :: N, N_tot  ! Número de aceptaciones y totales
      
-      open(unit=10,file='aceptaciones.dat',status='unknown')
-      write(10,'(F6.2,4X,I10,4X,I10)') T, N, N_tot
-      close(10)
-      print *, '* Se escribe el número de aceptaciones en el archivo <aceptaciones.dat>'
+    open(unit=10,file='aceptaciones.dat',status='unknown')
+    write(10,'(F6.2,4X,I10,4X,I10)') T, N, N_tot
+    close(10)
+    print *, '* Se escribe el número de aceptaciones en el archivo <aceptaciones.dat>'
 
   end subroutine escribe_aceptaciones
 
