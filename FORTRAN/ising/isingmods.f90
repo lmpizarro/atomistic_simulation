@@ -95,8 +95,8 @@ contains
     if (.not. es) then 
       do j = 1, M_R              ! Recordar que es column-major order
         do i = 1, N_R
-          RED(i,j) = uni_2st()  ! Spines aleatorios
-         ! RED(i,j) = 1           ! Todos los spines para arriba
+         ! RED(i,j) = uni_2st()  ! Spines aleatorios
+          RED(i,j) = 1           ! Todos los spines para arriba
         end do
       end do
     end if
@@ -197,12 +197,13 @@ contains
       end if
       !------------------------------------------------------------------------
 
-      ! Aplico la condición de contorno 
-      if ( acept .eqv. .TRUE.) then      ! Si es aceptado
+      ! En caso de ser aceptado, actualizo valores 
+      if ( acept .eqv. .TRUE.) then    
         RED(i,j) = -RED(i,j)             
         Eng = E_k
         Mag = Mag + 2.0*mu*RED(i,j) 
-        if ( i==1 .or. i==N_R .or. j==1 .or. j==M_R) then ! Si es spin periférico
+        ! Aplico la condición de contorno sólo si cambió un spin periférico
+        if ( i==1 .or. i==N_R .or. j==1 .or. j==M_R) then
           call cond_contorno(RED)
         end if
         num_acept = num_acept + 1
@@ -235,23 +236,24 @@ contains
 
   subroutine hace_estadistica()
 
-  real(dp)     :: E_media, M_media  ! Valor medio de la energía y la magnetización
-  real(dp)     :: E_var , M_var     ! Varianza de la energía y la magnetización
+    real(dp)     :: E_media, M_media  ! Valor medio de la energía y la magnetización
+    real(dp)     :: E_var , M_var     ! Varianza de la energía y la magnetización
   
-  ! Calcula los valores medios y varianzas de la corrida
-  ! Para la energía
-  print *, '* Se abre archivo <energia.dat> para hacer estadistica'
-  call vector_mean_var(E_media,E_var,'energia.dat')
-  ! Para la magnetización
-  print *, '* Se abre archivo <magneti.dat> para hacer estadistica'
-  call vector_mean_var(M_media,M_var,'magneti.dat')
+    ! Calcula los valores medios y varianzas de la corrida
+    ! Para la energía
+    print *, '* Se abre archivo <energia.dat> para hacer estadistica'
+    call vector_mean_var(E_media,E_var,'energia.dat')
+  
+    ! Para la magnetización
+    print *, '* Se abre archivo <magneti.dat> para hacer estadistica'
+    call vector_mean_var(M_media,M_var,'magneti.dat')
 
-  ! Guarda los resultados en un archivo
-  print *, '* Se guardan valores medios y varianza en <val_medios.dat>'
-  open(unit=40,file='val_medios.dat',status='unknown')
-  write(40,120) Tem, E_media, E_var , M_media, M_var
-  120 format(F5.2, 4E15.7)
-  close(40)
+    ! Guarda los resultados en un archivo
+    print *, '* Se guardan valores medios y varianza en <val_medios.dat>'
+    open(unit=40,file='val_medios.dat',status='unknown')
+    write(40,120) Tem, E_media, E_var , M_media, M_var
+    120 format(F5.2, 4E15.7)
+    close(40)
 
   end subroutine hace_estadistica
 
@@ -266,7 +268,7 @@ contains
     ! Escribe el ultimo estado en donde quedo el sistema
     ! En forma matricial
     open(unit=10,file='estado.dat',status='unknown')
-    do i= 1, N_R+1
+    do i= 0, N_R+1
        write(10,'(900I3)') (RED(i,j), j = 0, M_R+1)
     end do
     close(10)
