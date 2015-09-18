@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Crea una carpeta para cada temperatura. En cada una de esas carpetas, a su
+# vez, crea Nruns carpetas para hacer estadística y obtener los valores con
+# sus respectivos errores.
+
 import os
 import shutil
 import subprocess
