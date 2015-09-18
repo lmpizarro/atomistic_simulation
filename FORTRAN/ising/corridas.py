@@ -30,13 +30,23 @@ def escribe_semilla():
     with open('seed.dat','w') as fileout:
         fileout.write(str(entero_aleatorio))
         
-def copia_val_medios():
+def copia_val_medios(T,N):
+    E=[];M=[];c=[];s=[]
     # Copio los archivos de la carpeta local y los escribo en un archivo común
-    with open('val_medios.dat','r') as vmed:
-        valor=vmed.readline()
+    with open('runs_estadistica.dat','r') as valruns:
+        for line in valruns:
+            col = [float(x) for x in line.split()]
+            E.append(col[2])
+            c.append(col[3])            
+            M.append(col[4])
+            s.append(col[5])      
     arch_comun = os.path.join(curr_dir,'tablas_temperatura.dat')
+    fa = 1/np.sqrt(N)
+    valor = [T, np.mean(E), np.std(E)*fa, np.mean(M), np.std(M)*fa,
+                np.mean(c), np.std(c)*fa, np.mean(s), np.std(s)*fa]
+    # Abro el archivo donde se volcarán las resultados de cada temperatura   
     with open(arch_comun,'a') as comun:
-        comun.write(valor)        
+        comun.write('  '.join(str(j) for j in valor)+'\n')        
             
 def copia_val_medios_runs(i):
     # Copio los archivos de la carpeta local y los escribo en un archivo común
@@ -50,13 +60,15 @@ def copia_val_medios_runs(i):
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
 T_min = 0.5
-T_max = 5.0
+T_max = 3.0
 dT    = 0.1
 tempe = np.arange(T_min,T_max+dT,dT)
 #tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
 tempe.sort()
 # lo convierto a string
 tempe = [str(i) for i in tempe]
+# Número de corridas para cada temperatura
+Nrun  = 3
 
 # Loop para crear todos los directorios y correr el ejecutable en ellos
 for T in tempe:
@@ -82,10 +94,10 @@ for T in tempe:
     # Cambia el archivo de entrada adentro de la carpeta
     escribe_entrada('T',T)
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','200') 
+    escribe_entrada('N','40000') 
 
    # Loop para correr N veces con los mismos parámetros para calcular el error
-    for i in range(0,10):
+    for i in range(0,Nrun):
     # Nombre de las carpetas con las corridas
         carpeta_runs = 'RUN' + str(i)
         # Camino de las carpetas con las corridas
@@ -108,7 +120,8 @@ for T in tempe:
         os.rename('magneti.dat','magneti_terma.dat')    
     
         # Corre por segunda vez tomando el estado anterior. Aumento el N
-        escribe_entrada('N','500')
+        escribe_entrada('N','1000000')
+        print('Corriendo {} a la temperatura {}'.format(carpeta_runs,T))
         salida = subprocess.check_output(curr_dir+'/ising')
     
         # Guardo la salida para ver ue hizo
@@ -118,7 +131,9 @@ for T in tempe:
         # Copia los valores medios
         copia_val_medios_runs(i)
         # Sale de la carpeta de corridas        
-        os.chdir(path_carpeta)  
+        os.chdir(path_carpeta)
+    # Hace estadística de todas las corridas y lo copia en un archivo
+    copia_val_medios(T,Nrun)
     # Sale de la carpeta
     os.chdir(curr_dir)
 

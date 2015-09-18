@@ -251,7 +251,7 @@ contains
     ! Guarda los resultados en un archivo
     print *, '* Se guardan valores medios y varianza en <val_medios.dat>'
     open(unit=40,file='val_medios.dat',status='unknown')
-    write(40,120) Tem, E_media, E_var , M_media, M_var
+    write(40,120) Tem, E_media, (E_var)*beta/Tem , M_media, (M_var)*beta
     120 format(F5.2, 4E15.7)
     close(40)
 
