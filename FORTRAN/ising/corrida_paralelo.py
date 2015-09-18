@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # Lo corro con:  mpirun.mpich -n 4 python corrida_paralelo.py

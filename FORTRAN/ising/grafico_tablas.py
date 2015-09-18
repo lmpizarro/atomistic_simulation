@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import numpy as np
@@ -13,34 +14,40 @@ data = np.loadtxt(archivo)
 
 T = data[:,0]
 E_avg = data[:,1]
-E_var = data[:,2]
-M_avg = abs(data[:,3])
-M_var = data[:,4]
+E_std = data[:,2]
+M_avg = data[:,3]
+M_std = data[:,4]
+c_avg = data[:,5]
+c_std = data[:,6]
+s_avg = data[:,7]
+s_std = data[:,8]
 
 plt.figure(1)
 
 plt.subplot(2, 1, 1)
-plt.plot(T, E_avg/400, 'b.')
+plt.errorbar(T, E_avg/400, yerr=E_std/400, fmt='k.')
 plt.title('Valores medios')
 plt.xlabel('Temperatura')
-plt.ylabel('Energia media')
+plt.ylabel('Energia')
+plt.ylim([-2.1 , -0.5])
 
 plt.subplot(2, 1, 2)
-plt.plot(T, M_avg/400, 'b.')
+plt.errorbar(T, M_avg/400,yerr=M_std/400, fmt= 'k.')
 plt.xlabel('Temperatura')
-plt.ylabel('Magnetizacion media')
+plt.ylabel('Magnetizacion')
+plt.ylim([-0.1 , 1.1])
 
 plt.figure(2)
 
 plt.subplot(2, 1, 1)
-plt.plot(T, E_var, 'b.')
+plt.errorbar(T, c_avg/400, yerr=c_std/400, fmt='k.')
 plt.title('Varianzas')
 plt.xlabel('Temperatura')
-plt.ylabel('Varianza de la energia')
+plt.ylabel('Calor especifico')
 
 plt.subplot(2, 1, 2)
-plt.plot(T, M_var, 'b.')
+plt.errorbar(T, s_avg/400, yerr=s_std/400, fmt='k.')
 plt.xlabel('Temperatura')
-plt.ylabel('Varianza de la magnetizacion')
+plt.ylabel('Suceptibilidad magnetica')
 
 plt.show()
