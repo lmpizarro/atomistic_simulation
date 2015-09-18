@@ -38,6 +38,13 @@ def copia_val_medios():
     with open(arch_comun,'a') as comun:
         comun.write(valor)        
             
+def copia_val_medios_runs(i):
+    # Copio los archivos de la carpeta local y los escribo en un archivo común
+    with open('val_medios.dat','r') as vmed:
+        valor=vmed.readline()
+    arch_comun = os.path.join(path_carpeta,'runs_estadistica.dat')
+    with open(arch_comun,'a') as comun:
+        comun.write(str(i)+' ' + valor)   
 
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
@@ -46,7 +53,7 @@ T_min = 0.5
 T_max = 5.0
 dT    = 0.1
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+#tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
 tempe.sort()
 # lo convierto a string
 tempe = [str(i) for i in tempe]
@@ -74,32 +81,44 @@ for T in tempe:
     os.chdir(path_carpeta)       
     # Cambia el archivo de entrada adentro de la carpeta
     escribe_entrada('T',T)
-    # Escribe la semmilla en la carpeta
-    escribe_semilla()
-
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','20000') 
-    salida = subprocess.check_output(curr_dir+'/ising')
-    
-    # Guardo la salida para ver ue hizo
-    f=open("log1.txt",'w')
-    f.write(salida)
-    f.close() 
-    # Guardo las salidas por si hacen falta
-    os.rename('energia.dat','energia_terma.dat')
-    os.rename('magneti.dat','magneti_terma.dat')    
-    
-    # Corre por segunda vez tomando el estado anterior. Aumento el N
-    escribe_entrada('N','5000000')
-    salida = subprocess.check_output(curr_dir+'/ising')
-    
-    # Guardo la salida para ver ue hizo
-    f=open("log2.txt",'w')
-    f.write(salida)
-    f.close()    
+    escribe_entrada('N','200') 
 
-    # Copia los valores medios
-    copia_val_medios()
+   # Loop para correr N veces con los mismos parámetros para calcular el error
+    for i in range(0,10):
+    # Nombre de las carpetas con las corridas
+        carpeta_runs = 'RUN' + str(i)
+        # Camino de las carpetas con las corridas
+        path_runs = os.path.join(path_carpeta,carpeta_runs)
+        # Crea las carpetas con las corridas
+        os.makedirs(path_runs)
+        # Copia archivos a cada carpeta
+        shutil.copy('parametros.dat',path_runs)
+        os.chdir(path_runs)
+          # Escribe la semmilla en la carpeta
+        escribe_semilla()
+        salida = subprocess.check_output(curr_dir+'/ising')
+    
+        # Guardo la salida para ver ue hizo
+        f=open("log1.txt",'w')
+        f.write(salida)
+        f.close() 
+        # Guardo las salidas por si hacen falta
+        os.rename('energia.dat','energia_terma.dat')
+        os.rename('magneti.dat','magneti_terma.dat')    
+    
+        # Corre por segunda vez tomando el estado anterior. Aumento el N
+        escribe_entrada('N','500')
+        salida = subprocess.check_output(curr_dir+'/ising')
+    
+        # Guardo la salida para ver ue hizo
+        f=open("log2.txt",'w')
+        f.write(salida)
+        f.close()    
+        # Copia los valores medios
+        copia_val_medios_runs(i)
+        # Sale de la carpeta de corridas        
+        os.chdir(path_carpeta)  
     # Sale de la carpeta
     os.chdir(curr_dir)
 
