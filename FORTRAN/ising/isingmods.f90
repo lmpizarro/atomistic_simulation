@@ -266,13 +266,18 @@ contains
     integer  :: i, j     ! contadores
 
     ! Escribe el ultimo estado en donde quedo el sistema
-    ! En forma matricial
-    open(unit=10,file='estado.dat',status='unknown')
+    ! En forma matricial (para verlo y graficarlo facilmente)
+    open(unit=10,file='estado_mat.dat',status='unknown')
     do i= 0, N_R+1
        write(10,'(900I3)') (RED(i,j), j = 0, M_R+1)
     end do
     close(10)
- 
+   
+    ! Escribe el ultimo estado  para que sea leido como estado inicial
+    open(unit=20,file='estado.dat',status='unknown')
+       write(20,*) RED
+    close(20)
+
     ! Libera memoria
     deallocate(RED)
 
