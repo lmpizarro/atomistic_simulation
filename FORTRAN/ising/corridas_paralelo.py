@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+ 
+# Correr con:  mpirun.mpich -n 4  python corridas_paralelo.py 
 # Crea una carpeta para cada temperatura. En cada una de esas carpetas, a su
 # vez, crea Nruns carpetas para hacer estadística y obtener los valores con
 # sus respectivos errores.
@@ -85,18 +86,18 @@ T_min = 0.5
 T_max = 5.0
 dT    = 0.1
 tempe = np.arange(T_min,T_max+dT,dT)
-#tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
-tempe.sort()
+tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
 # Número de corridas para cada temperatura
-Nrun  = 12
+Nrun  = 16
 # Cantidad de corridas por core
 Nrun_local = Nrun//size
 # Llista de las corridas para cada core
 run_local = range(rank*Nrun_local,(rank+1)*Nrun_local)
 aviso = np.ones(1)
-print(run_local)
+
 # Loop para crear todos los directorios y correr el ejecutable en ellos
 for T in tempe:
     # Nombre de la carpeta uqe se va a crear
@@ -123,7 +124,7 @@ for T in tempe:
         # Cambia el archivo de entrada adentro de la carpeta
         escribe_entrada('T',T)
         # Corre el programa para ver la convergencia
-        escribe_entrada('N','4000')
+        escribe_entrada('N','40000')
         # Sólo para bloquear al resto de los procesos hasta que el root haya
         # hecho la carpeta. No sé cómo hacerlo más directo.
         for m in range(1,size):
@@ -157,7 +158,7 @@ for T in tempe:
         os.rename('magneti.dat','magneti_terma.dat')    
     
         # Corre por segunda vez tomando el estado anterior. Aumento el N
-        escribe_entrada('N','10000')
+        escribe_entrada('N','1000000')
         print('Core {} corriendo {} a la temperatura {}'.format(rank,carpeta_runs,T))
         salida = subprocess.check_output(curr_dir+'/ising')
     
@@ -175,6 +176,12 @@ for T in tempe:
         copia_val_medios(T,Nrun)
         # Sale de la carpeta
         os.chdir(curr_dir)
+        # Para sincronizar todos los procesos
+        for n in range(1,size):
+            comm.Send(aviso,dest=n)
+    else:
+        # Espera la señal que manda root
+        comm.Recv(aviso,source=0)
 
 #############################
 
