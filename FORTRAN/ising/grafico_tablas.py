@@ -46,13 +46,13 @@ plt.errorbar(T, c_avg/400, yerr=c_std/400, fmt='k.')
 plt.title('Fluctuaciones')
 plt.xlabel('Temperatura')
 plt.ylabel('Calor especifico')
-plt.ylim([-0.1 , 1.7])
+plt.ylim([-0.1 , 1.9])
 
 plt.subplot(2, 1, 2)
 plt.errorbar(T, s_avg/400, yerr=s_std/400, fmt='k.')
 plt.xlabel('Temperatura')
 plt.ylabel('Suceptibilidad magnetica')
-plt.ylim([-4 , 50])
+plt.ylim([-4 , 55])
 
 plt.figure(3)
 

@@ -96,7 +96,7 @@ Nrun_local = Nrun//size
 # Llista de las corridas para cada core
 run_local = range(rank*Nrun_local,(rank+1)*Nrun_local)
 aviso = np.ones(1)
-
+print(run_local)
 # Loop para crear todos los directorios y correr el ejecutable en ellos
 for T in tempe:
     # Nombre de la carpeta uqe se va a crear
@@ -123,14 +123,15 @@ for T in tempe:
         # Cambia el archivo de entrada adentro de la carpeta
         escribe_entrada('T',T)
         # Corre el programa para ver la convergencia
-        escribe_entrada('N','40000')
+        escribe_entrada('N','4000')
         # Sólo para bloquear al resto de los procesos hasta que el root haya
         # hecho la carpeta. No sé cómo hacerlo más directo.
-        for i in range(1,size):
-            comm.Send(aviso,i)
+        for m in range(1,size):
+            comm.Send(aviso,dest=m)
         print('Core {} ya armó el directorio para T={}'.format(rank,T))
     else:
         comm.Recv(aviso,source=0) # Bloquea al resto hasta recibir mensaje
+        os.chdir(path_carpeta) # Se meten en la carpeta ya creada por root
         
    # Loop para correr N veces con los mismos parámetros para calcular el error
     for i in run_local:
@@ -156,7 +157,7 @@ for T in tempe:
         os.rename('magneti.dat','magneti_terma.dat')    
     
         # Corre por segunda vez tomando el estado anterior. Aumento el N
-        escribe_entrada('N','1000000')
+        escribe_entrada('N','10000')
         print('Core {} corriendo {} a la temperatura {}'.format(rank,carpeta_runs,T))
         salida = subprocess.check_output(curr_dir+'/ising')
     
