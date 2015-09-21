@@ -11,6 +11,15 @@ import subprocess
 import errno
 import random
 import numpy as np
+# Paralelización
+import sys
+from mpi4py import MPI
+from mpi4py.MPI import ANY_SOURCE
+
+# Información de dónde está            
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 
 # Defino la función para escribir el archivo de datos
 def escribe_entrada(nombre,valor):
@@ -81,7 +90,12 @@ tempe.sort()
 # lo convierto a string
 tempe = [str(i) for i in tempe]
 # Número de corridas para cada temperatura
-Nrun  = 10
+Nrun  = 12
+# Cantidad de corridas por core
+Nrun_local = Nrun//size
+# Llista de las corridas para cada core
+run_local = range(rank*Nrun_local,(rank+1)*Nrun_local)
+aviso = np.ones(1)
 
 # Loop para crear todos los directorios y correr el ejecutable en ellos
 for T in tempe:
@@ -89,28 +103,37 @@ for T in tempe:
     carpeta = T + '_tmpfolder'
     # Camino completo de la carpeta que se va a crear
     path_carpeta = os.path.join(curr_dir,carpeta)
-    # Se crea la carpeta sólo si ésta no existe. De lo contrario se saltea la 
-    # temperatura correspondiente
-    try: 
-        os.makedirs(path_carpeta)
-    except OSError as exception:
-        if exception.errno != errno.EEXIST:
-            raise
-        else:
-            print('Ya existe el directorio. Se omite corrida con T=' + T)
-            continue
-    # Copia el archivo de entrada a la carpeta 
-    shutil.copy('parametros.dat',path_carpeta)
-    #shutil.copy('ising',path_carpeta) 
-    # Se mete en la carpeta
-    os.chdir(path_carpeta)       
-    # Cambia el archivo de entrada adentro de la carpeta
-    escribe_entrada('T',T)
-    # Corre el programa para ver la convergencia
-    escribe_entrada('N','40000') 
-
+    # Sólo un core se encarga de armar el directorio de temperatura
+    if rank==0:
+        # Se crea la carpeta sólo si ésta no existe. De lo contrario se saltea la 
+        # temperatura correspondiente
+        try: 
+            os.makedirs(path_carpeta)
+        except OSError as exception:
+            if exception.errno != errno.EEXIST:
+                raise
+            else:
+                print('Ya existe el directorio. Se omite corrida con T=' + T)
+                continue
+        # Copia el archivo de entrada a la carpeta 
+        shutil.copy('parametros.dat',path_carpeta)
+        #shutil.copy('ising',path_carpeta) 
+        # Se mete en la carpeta
+        os.chdir(path_carpeta)       
+        # Cambia el archivo de entrada adentro de la carpeta
+        escribe_entrada('T',T)
+        # Corre el programa para ver la convergencia
+        escribe_entrada('N','40000')
+        # Sólo para bloquear al resto de los procesos hasta que el root haya
+        # hecho la carpeta. No sé cómo hacerlo más directo.
+        for i in range(1,size):
+            comm.Send(aviso,i)
+        print('Core {} ya armó el directorio para T={}'.format(rank,T))
+    else:
+        comm.Recv(aviso,source=0) # Bloquea al resto hasta recibir mensaje
+        
    # Loop para correr N veces con los mismos parámetros para calcular el error
-    for i in range(0,Nrun):
+    for i in run_local:
     # Nombre de las carpetas con las corridas
         carpeta_runs = 'RUN' + str(i)
         # Camino de las carpetas con las corridas
@@ -134,7 +157,7 @@ for T in tempe:
     
         # Corre por segunda vez tomando el estado anterior. Aumento el N
         escribe_entrada('N','1000000')
-        print('Corriendo {} a la temperatura {}'.format(carpeta_runs,T))
+        print('Core {} corriendo {} a la temperatura {}'.format(rank,carpeta_runs,T))
         salida = subprocess.check_output(curr_dir+'/ising')
     
         # Guardo la salida para ver ue hizo
@@ -145,10 +168,12 @@ for T in tempe:
         copia_val_medios_runs(i)
         # Sale de la carpeta de corridas        
         os.chdir(path_carpeta)
-    # Hace estadística de todas las corridas y lo copia en un archivo
-    copia_val_medios(T,Nrun)
-    # Sale de la carpeta
-    os.chdir(curr_dir)
+    # Sólo el root hace el trabajo estadístico
+    if rank==0:
+        # Hace estadística de todas las corridas y lo copia en un archivo
+        copia_val_medios(T,Nrun)
+        # Sale de la carpeta
+        os.chdir(curr_dir)
 
 #############################
 
