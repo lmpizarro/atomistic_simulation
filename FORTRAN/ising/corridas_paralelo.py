@@ -62,8 +62,9 @@ def copia_val_medios(T,N):
                 np.mean(c), np.std(c)*fa, np.mean(s), np.std(s)*fa,
                 np.mean(a), np.std(a)*fa]
     # Abro el archivo donde se volcarán las resultados de cada temperatura   
-    with open(arch_comun,'a') as comun:  
-        valor_str = '  '.join( ('{:.5E}').format(j) for j in valor) 
+    with open(arch_comun,'a') as comun:
+        #valor_str = '  '.join( ('{:.5E}').format(j) for j in valor) 
+        valor_str = '  '.join( format(j,'.5E') for j in valor) 
         comun.write( valor_str +'\n')   
             
 def copia_val_medios_runs(i):
