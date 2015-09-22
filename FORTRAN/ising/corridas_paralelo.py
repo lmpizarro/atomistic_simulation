@@ -101,10 +101,14 @@ T_min = np.float(1.5)
 T_max = np.float(1.6)
 dT    = np.float(0.1)
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() #+ [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
 tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
+# Número de pasos para la primer corrida (termalización)
+N_term = '40000'
+# Número de pasos para la segunda corrida (medición)
+N_medi = '1000000'
 # Número de corridas para cada temperatura
 Nrun  = 12
 # Cantidad de corridas por core
@@ -140,7 +144,7 @@ for T in tempe:
         # Cambia el archivo de entrada adentro de la carpeta
         escribe_entrada('T',T)
         # Corre el programa para ver la convergencia
-        escribe_entrada('N','4000')
+        escribe_entrada('N',N_term)
         # Sólo para bloquear al resto de los procesos hasta que el root haya
         # hecho la carpeta. No sé cómo hacerlo más directo.
         for m in range(1,size):
@@ -188,7 +192,7 @@ for T in tempe:
         os.rename('estado.dat','ultimo_estado.dat')
         ####################################
         # Corre por segunda vez tomando el estado anterior. Aumento el N
-        escribe_entrada('N','10000')
+        escribe_entrada('N',N_medi)
         print('Core {0} corriendo {1} a la temperatura {2}'.format(rank,carpeta_runs,T))
         # Esto funciona para python >= 2.7           
         # salida = subprocess.check_output(curr_dir+'/ising')

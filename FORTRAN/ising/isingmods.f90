@@ -95,8 +95,8 @@ contains
     if (.not. es) then 
       do j = 1, M_R              ! Recordar que es column-major order
         do i = 1, N_R
-         ! RED(i,j) = uni_2st()  ! Spines aleatorios
-          RED(i,j) = 1           ! Todos los spines para arriba
+          RED(i,j) = uni_2st()  ! Spines aleatorios
+         ! RED(i,j) = 1           ! Todos los spines para arriba
         end do
       end do
     end if

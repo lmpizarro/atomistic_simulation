@@ -93,6 +93,10 @@ tempe = tempe.tolist() #+ [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
 tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
+# Número de pasos para la primer corrida (termalización)
+N_term = '4000'
+# Número de pasos para la segunda corrida (medición)
+N_medi = '10000'
 # Número de corridas para cada temperatura
 Nrun  = 10
 T_anterior = []
@@ -120,7 +124,7 @@ for T in tempe:
     # Cambia el archivo de entrada adentro de la carpeta
     escribe_entrada('T',T)
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','4000') 
+    escribe_entrada('N',N_term) 
 
    # Loop para correr N veces con los mismos parámetros para calcular el error
     for i in range(0,Nrun):
@@ -158,7 +162,7 @@ for T in tempe:
         os.rename('estado.dat','ultimo_estado.dat')
         ####################################
         # Corre por segunda vez tomando el estado anterior. Aumento el N
-        escribe_entrada('N','10000')
+        escribe_entrada('N',N_medi)
         print('Corriendo {0} a la temperatura {1}'.format(carpeta_runs,T))
         # Esto funciona para python >= 2.7            
         # salida = subprocess.check_output(curr_dir+'/ising')
