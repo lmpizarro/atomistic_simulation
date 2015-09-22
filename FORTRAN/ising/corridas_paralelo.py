@@ -12,9 +12,7 @@ import subprocess
 import errno
 import random
 import numpy as np
-import decimal
 
-D = decimal.Decimal
 # Paralelización
 import sys
 from mpi4py import MPI
@@ -146,7 +144,7 @@ for T in tempe:
         # hecho la carpeta. No sé cómo hacerlo más directo.
         for m in range(1,size):
             comm.Send(aviso,dest=m)
-        print('Core {} ya armó el directorio para T={}'.format(rank,T))
+        print('Core {0} ya armó el directorio para T={1}'.format(rank,T))
     else:
         comm.Recv(aviso,source=0) # Bloquea al resto hasta recibir mensaje
         os.chdir(path_carpeta) # Se meten en la carpeta ya creada por root
@@ -165,12 +163,18 @@ for T in tempe:
         # Escribe la semmilla en la carpeta
         escribe_semilla()
         ####################################
+        ### Para utilizar el estado de temperatura anterior
         # Copio el último estado calculado al a temperatura anterior
         copia_estado_temp_anterior(path_runs,T_anterior,T)
         ####################################
-        # Ejecuta el programa
-        salida = subprocess.check_output(curr_dir+'/ising')
-          # Guardo la salida para ver ue hizo
+        ####### Ejecuta el programa
+        # Esto funciona para python >= 2.7         
+        #salida = subprocess.check_output(curr_dir+'/ising')
+        # Alternativa para python 2.6        
+        proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
+        salida = proc.communicate()[0]
+        #print(salida)        
+        # Guardo la salida para ver ue hizo
         f=open("log1.txt",'w')
         f.write(salida)
         f.close() 
@@ -178,13 +182,18 @@ for T in tempe:
         os.rename('energia.dat','energia_terma.dat')
         os.rename('magneti.dat','magneti_terma.dat')    
         ####################################
+        ### Para utilizar el estado de temperatura anterior
         # Acá tengo que reescribir el 'ultimo_estado' con lo que obtengo (estado)
         os.rename('estado.dat','ultimo_estado.dat')
         ####################################
         # Corre por segunda vez tomando el estado anterior. Aumento el N
         escribe_entrada('N','10000')
-        print('Core {} corriendo {} a la temperatura {}'.format(rank,carpeta_runs,T))
-        salida = subprocess.check_output(curr_dir+'/ising')
+        print('Core {0} corriendo {1} a la temperatura {2}'.format(rank,carpeta_runs,T))
+        # Esto funciona para python >= 2.7           
+        # salida = subprocess.check_output(curr_dir+'/ising')
+        # Alternativa para python 2.6        
+        proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
+        salida = proc.communicate()[0]
     
         # Guardo la salida para ver ue hizo
         f=open("log2.txt",'w')

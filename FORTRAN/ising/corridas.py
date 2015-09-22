@@ -67,22 +67,34 @@ def copia_val_medios_runs(i):
         por_acep = 100.0*colu[1]/colu[2]
     arch_comun = os.path.join(path_carpeta,'runs_estadistica.dat')
     with open(arch_comun,'a') as comun:
-        comun.write(str(i)+' ' + valor.rstrip() + ' ' + str(por_acep) + '\n')   
+        comun.write(str(i)+' ' + valor.rstrip() + ' ' + str(por_acep) + '\n') 
+        
+def copia_estado_temp_anterior(path_act,T_ant,T_act):
+    # Copia y reescribe el último estado calculado a una temperatura anterior
+    if T_ant != []:
+        # Reemplazo sólo la parte de la temperatura en toda la ruta
+        path_ant = path_act.replace(T_act,T_ant)
+        # Ruta completa del archivo a copiar
+        arch_ant = os.path.join(path_ant,'estado.dat')
+        # Copia el archivo
+        shutil.copy(arch_ant,path_act)
+        # reescribe el archivo
+        os.rename('estado.dat','ultimo_estado.dat')
 
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
-T_min = 0.5
-T_max = 5.0
+T_min = 1.5
+T_max = 1.7
 dT    = 0.1
 tempe = np.arange(T_min,T_max+dT,dT)
-#tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
-tempe.sort()
+tempe = tempe.tolist() #+ [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
 # Número de corridas para cada temperatura
 Nrun  = 10
-
+T_anterior = []
 # Loop para crear todos los directorios y correr el ejecutable en ellos
 for T in tempe:
     # Nombre de la carpeta uqe se va a crear
@@ -107,7 +119,7 @@ for T in tempe:
     # Cambia el archivo de entrada adentro de la carpeta
     escribe_entrada('T',T)
     # Corre el programa para ver la convergencia
-    escribe_entrada('N','40000') 
+    escribe_entrada('N','4000') 
 
    # Loop para correr N veces con los mismos parámetros para calcular el error
     for i in range(0,Nrun):
@@ -122,8 +134,16 @@ for T in tempe:
         os.chdir(path_runs)
           # Escribe la semmilla en la carpeta
         escribe_semilla()
-        salida = subprocess.check_output(curr_dir+'/ising')
-    
+        ####################################
+        ### Para utilizar el estado de temperatura anterior
+        # Copio el último estado calculado al a temperatura anterior
+        copia_estado_temp_anterior(path_runs,T_anterior,T)
+        ####################################
+        # Esto funciona para python >= 2.7    
+        # salida = subprocess.check_output(curr_dir+'/ising')
+        # Alternativa para python 2.6        
+        proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
+        salida = proc.communicate()[0]
         # Guardo la salida para ver ue hizo
         f=open("log1.txt",'w')
         f.write(salida)
@@ -131,12 +151,19 @@ for T in tempe:
         # Guardo las salidas por si hacen falta
         os.rename('energia.dat','energia_terma.dat')
         os.rename('magneti.dat','magneti_terma.dat')    
-    
+        ####################################
+        ### Para utilizar el estado de temperatura anterior
+        # Acá tengo que reescribir el 'ultimo_estado' con lo que obtengo (estado)
+        os.rename('estado.dat','ultimo_estado.dat')
+        ####################################
         # Corre por segunda vez tomando el estado anterior. Aumento el N
-        escribe_entrada('N','1000000')
-        print('Corriendo {} a la temperatura {}'.format(carpeta_runs,T))
-        salida = subprocess.check_output(curr_dir+'/ising')
-    
+        escribe_entrada('N','10000')
+        print('Corriendo {0} a la temperatura {1}'.format(carpeta_runs,T))
+        # Esto funciona para python >= 2.7            
+        # salida = subprocess.check_output(curr_dir+'/ising')
+        # Alternativa para python 2.6        
+        proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
+        salida = proc.communicate()[0]
         # Guardo la salida para ver ue hizo
         f=open("log2.txt",'w')
         f.write(salida)
@@ -149,6 +176,6 @@ for T in tempe:
     copia_val_medios(T,Nrun)
     # Sale de la carpeta
     os.chdir(curr_dir)
-
+    T_anterior = T
 #############################
 
