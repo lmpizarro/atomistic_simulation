@@ -58,6 +58,7 @@ def copia_val_medios(T,N):
             a.append(col[6])
     arch_comun = os.path.join(curr_dir,'tablas_temperatura.dat')
     fa = 1/np.sqrt(N)
+    print('Se promediaron {0} de {1} valores para T = {2}'.format(len(E),N,T))
     valor = [float(T), np.mean(E), np.std(E)*fa, np.mean(M), np.std(M)*fa,
                 np.mean(c), np.std(c)*fa, np.mean(s), np.std(s)*fa,
                 np.mean(a), np.std(a)*fa]
@@ -99,18 +100,18 @@ def copia_estado_temp_anterior(path_act,T_ant,T_act):
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
-T_min = np.float(0.5)
-T_max = np.float(4.0)
+T_min = np.float(1.5)
+T_max = np.float(3.0)
 dT    = np.float(0.1)
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() + [2.15, 2.25, 2.26, 2.28, 2.35, 2.45] # Mäs detalle en la Tc
+tempe = tempe.tolist()# + [2.15,2.22, 2.25, 2.26, 2.28, 2.35, 2.45] # Mäs detalle en la Tc
 tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
 # Número de pasos para la primer corrida (termalización)
 N_term = '40000'
 # Número de pasos para la segunda corrida (medición)
-N_medi = '1000000'
+N_medi = '100000'
 # Número de corridas para cada temperatura
 Nrun  = 8
 # Cantidad de corridas por core
@@ -145,7 +146,6 @@ for T in tempe:
         os.chdir(path_carpeta)       
         # Cambia el archivo de entrada adentro de la carpeta
         escribe_entrada('T',T)
-        # Corre el programa para ver la convergencia
         escribe_entrada('N',N_term)
         # Sólo para bloquear al resto de los procesos hasta que el root haya
         # hecho la carpeta. No sé cómo hacerlo más directo.
@@ -210,18 +210,13 @@ for T in tempe:
         copia_val_medios_runs(i)
         # Sale de la carpeta de corridas        
         os.chdir(path_carpeta)
-    # Sólo el root hace el trabajo estadístico
+    # Espera a que todos los cores teminen sus procesos
+    comm.Barrier()
     if rank==0:
         # Hace estadística de todas las corridas y lo copia en un archivo
         copia_val_medios(T,Nrun)
         # Sale de la carpeta
-        os.chdir(curr_dir)
-        # Para sincronizar todos los procesos
-        for n in range(1,size):
-            comm.Send(aviso,dest=n)
-    else:
-        # Espera la señal que manda root
-        comm.Recv(aviso,source=0)
+        os.chdir(curr_dir)        
     # Guardo la temperatura para copiar archivos luego
     T_anterior = T
 #############################

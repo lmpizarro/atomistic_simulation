@@ -56,7 +56,7 @@ plt.subplot(2, 1, 2)
 plt.errorbar(T, s_avg/400, yerr=s_std/400, fmt='k.')
 plt.xlabel('Temperatura')
 plt.ylabel('Suceptibilidad magnetica')
-plt.ylim([-4 , 80])
+plt.ylim([-4 , 60])
 
 plt.figure(3)
 

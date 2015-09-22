@@ -91,7 +91,7 @@ T_min = np.float(1.5)
 T_max = np.float(1.7)
 dT    = np.float(0.1)
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() #+ [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+tempe = tempe.tolist() #+ [2.15, 2.25, 2.26, 2.28, 2.35, 2.45]# Mäs detalle en la Tc
 tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
