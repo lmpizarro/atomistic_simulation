@@ -100,20 +100,20 @@ def copia_estado_temp_anterior(path_act,T_ant,T_act):
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
-T_min = np.float(1.5)
-T_max = np.float(3.0)
+T_min = np.float(0.5)
+T_max = np.float(4.0)
 dT    = np.float(0.1)
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist()# + [2.15,2.22, 2.25, 2.26, 2.28, 2.35, 2.45] # Mäs detalle en la Tc
+tempe = tempe.tolist() + [2.15,2.22, 2.25, 2.26, 2.28, 2.35, 2.45] # Mäs detalle en la Tc
 tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
 # Número de pasos para la primer corrida (termalización)
 N_term = '40000'
 # Número de pasos para la segunda corrida (medición)
-N_medi = '100000'
+N_medi = '1000000'
 # Número de corridas para cada temperatura
-Nrun  = 8
+Nrun  = 12
 # Cantidad de corridas por core
 Nrun_local = Nrun//size
 # Llista de las corridas para cada core
