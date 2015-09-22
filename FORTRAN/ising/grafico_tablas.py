@@ -15,7 +15,7 @@ data = np.loadtxt(archivo)
 T = data[:,0]
 E_avg = data[:,1]
 E_std = data[:,2]
-M_avg = data[:,3]
+M_avg = np.abs(data[:,3])
 M_std = data[:,4]
 c_avg = data[:,5]
 c_std = data[:,6]
@@ -41,6 +41,7 @@ plt.plot(T,M_teo,'r-')
 plt.xlabel('Temperatura')
 plt.ylabel('Magnetizacion')
 plt.ylim([-0.1 , 1.1])
+#plt.ylim([-1.1 , 0.1])
 
 plt.figure(2)
 
@@ -55,7 +56,7 @@ plt.subplot(2, 1, 2)
 plt.errorbar(T, s_avg/400, yerr=s_std/400, fmt='k.')
 plt.xlabel('Temperatura')
 plt.ylabel('Suceptibilidad magnetica')
-plt.ylim([-4 , 55])
+plt.ylim([-4 , 80])
 
 plt.figure(3)
 

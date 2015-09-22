@@ -87,7 +87,9 @@ def copia_estado_temp_anterior(path_act,T_ant,T_act):
         # Reemplazo sólo la parte de la temperatura en toda la ruta
         path_ant = path_act.replace(T_act,T_ant)
         # Ruta completa del archivo a copiar
-        arch_ant = os.path.join(path_ant,'estado.dat')
+        # arch_ant = os.path.join(path_ant,'estado.dat')
+        # Para todas las corridas utiliza el ultimo estado de RUN0
+        arch_ant = os.path.join(os.path.dirname(path_ant),'RUN0','estado.dat')        
         # Copia el archivo
         shutil.copy(arch_ant,path_act)
         # reescribe el archivo
@@ -97,11 +99,11 @@ def copia_estado_temp_anterior(path_act,T_ant,T_act):
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
-T_min = np.float(1.5)
-T_max = np.float(1.6)
+T_min = np.float(0.5)
+T_max = np.float(4.0)
 dT    = np.float(0.1)
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() + [2.15, 2.25, 2.35, 2.45, 2.55] # Mäs detalle en la Tc
+tempe = tempe.tolist() + [2.15, 2.25, 2.26, 2.28, 2.35, 2.45] # Mäs detalle en la Tc
 tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
@@ -110,7 +112,7 @@ N_term = '40000'
 # Número de pasos para la segunda corrida (medición)
 N_medi = '1000000'
 # Número de corridas para cada temperatura
-Nrun  = 12
+Nrun  = 8
 # Cantidad de corridas por core
 Nrun_local = Nrun//size
 # Llista de las corridas para cada core
