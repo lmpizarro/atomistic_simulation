@@ -96,7 +96,8 @@ def copia_estado_temp_anterior(path_act,T_ant,T_act):
         # reescribe el archivo
         os.rename('estado.dat','ultimo_estado.dat')
 
-        
+##############################################################################
+##############################################################################       
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
 # Lista con las temperaturas que se desean calcular
@@ -104,7 +105,7 @@ T_min = np.float(0.5)
 T_max = np.float(4.0)
 dT    = np.float(0.1)
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() + [2.15,2.22, 2.25, 2.26, 2.28, 2.35, 2.45] # Mäs detalle en la Tc
+tempe = tempe.tolist() + [2.15,2.17,2.23, 2.25, 2.27, 2.32, 2.35, 2.45] # Mäs detalle en la Tc
 tempe.sort(reverse=True)
 # lo convierto a string
 tempe = [str(i) for i in tempe]
@@ -172,7 +173,9 @@ for T in tempe:
         ####################################
         ### Para utilizar el estado de temperatura anterior
         # Copio el último estado calculado al a temperatura anterior
+        
         copia_estado_temp_anterior(path_runs,T_anterior,T)
+        
         ####################################
         ####### Ejecuta el programa
         # Esto funciona para python >= 2.7         
@@ -191,7 +194,9 @@ for T in tempe:
         ####################################
         ### Para utilizar el estado de temperatura anterior
         # Acá tengo que reescribir el 'ultimo_estado' con lo que obtengo (estado)
+        
         os.rename('estado.dat','ultimo_estado.dat')
+
         ####################################
         # Corre por segunda vez tomando el estado anterior. Aumento el N
         escribe_entrada('N',N_medi)
