@@ -122,7 +122,9 @@ run_local = range(rank*Nrun_local,(rank+1)*Nrun_local)
 aviso = np.ones(1)
 
 T_anterior = []
-# Loop para crear todos los directorios y correr el ejecutable en ellos
+##############################################################################
+# LOOP QUE CORRE SOBRE TODAS LAS TEMPERATURAS
+###############################################################################
 for T in tempe:
     # Nombre de la carpeta uqe se va a crear
     carpeta = T + '_tmpfolder'
@@ -157,7 +159,10 @@ for T in tempe:
         comm.Recv(aviso,source=0) # Bloquea al resto hasta recibir mensaje
         os.chdir(path_carpeta) # Se meten en la carpeta ya creada por root
         
-   # Loop para correr N veces con los mismos parámetros para calcular el error
+    ##########################################################################
+    # DISTINTAS CORRIDAS A LA MISMA T PARA OBTENER ERROR ESTADISTICO
+    #      - LOOP PARALELIZADO
+    ##########################################################################
     for i in run_local:
     # Nombre de las carpetas con las corridas
         carpeta_runs = 'RUN' + str(i)
@@ -185,9 +190,7 @@ for T in tempe:
         salida = proc.communicate()[0]
         #print(salida)        
         # Guardo la salida para ver ue hizo
-        f=open("log1.txt",'w')
-        f.write(salida)
-        f.close() 
+        with open('log1.txt','w') as arch: arch.write(salida)
         # Guardo las salidas por si hacen falta
         os.rename('energia.dat','energia_terma.dat')
         os.rename('magneti.dat','magneti_terma.dat')    
@@ -205,18 +208,18 @@ for T in tempe:
         # salida = subprocess.check_output(curr_dir+'/ising')
         # Alternativa para python 2.6        
         proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
-        salida = proc.communicate()[0]
-    
+        salida = proc.communicate()[0]  
         # Guardo la salida para ver ue hizo
-        f=open("log2.txt",'w')
-        f.write(salida)
-        f.close()    
+        with open('log2.txt','w') as arch: arch.write(salida) 
         # Copia los valores medios
         copia_val_medios_runs(i)
         # Sale de la carpeta de corridas        
         os.chdir(path_carpeta)
     # Espera a que todos los cores teminen sus procesos
     comm.Barrier()
+    ##########################################################################
+    # FIN DEL LOOP PARALELIZADO
+    ##########################################################################
     if rank==0:
         # Hace estadística de todas las corridas y lo copia en un archivo
         copia_val_medios(T,Nrun)
@@ -224,5 +227,5 @@ for T in tempe:
         os.chdir(curr_dir)        
     # Guardo la temperatura para copiar archivos luego
     T_anterior = T
-#############################
+
 

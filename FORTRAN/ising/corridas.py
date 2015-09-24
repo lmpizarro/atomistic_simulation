@@ -102,7 +102,10 @@ N_medi = '10000'
 # Número de corridas para cada temperatura
 Nrun  = 10
 T_anterior = []
-# Loop para crear todos los directorios y correr el ejecutable en ellos
+
+##############################################################################
+# LOOP QUE CORRE SOBRE TODAS LAS TEMPERATURAS
+###############################################################################
 for T in tempe:
     # Nombre de la carpeta uqe se va a crear
     carpeta = T + '_tmpfolder'
@@ -128,7 +131,9 @@ for T in tempe:
     # Corre el programa para ver la convergencia
     escribe_entrada('N',N_term) 
 
-   # Loop para correr N veces con los mismos parámetros para calcular el error
+    ##########################################################################
+    # DISTINTAS CORRIDAS A LA MISMA T PARA OBTENER ERROR ESTADISTICO
+    ##########################################################################
     for i in range(0,Nrun):
     # Nombre de las carpetas con las corridas
         carpeta_runs = 'RUN' + str(i)
@@ -152,9 +157,7 @@ for T in tempe:
         proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]
         # Guardo la salida para ver ue hizo
-        f=open("log1.txt",'w')
-        f.write(salida)
-        f.close() 
+        with open('log1.txt','w') as arch: arch.write(salida)
         # Guardo las salidas por si hacen falta
         os.rename('energia.dat','energia_terma.dat')
         os.rename('magneti.dat','magneti_terma.dat')    
@@ -172,9 +175,7 @@ for T in tempe:
         proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]
         # Guardo la salida para ver ue hizo
-        f=open("log2.txt",'w')
-        f.write(salida)
-        f.close()    
+        with open('log2.txt','w') as arch: arch.write(salida)
         # Copia los valores medios
         copia_val_medios_runs(i)
         # Sale de la carpeta de corridas        
