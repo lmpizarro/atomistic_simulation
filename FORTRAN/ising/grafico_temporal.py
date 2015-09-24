@@ -23,12 +23,12 @@ plt.subplot(2, 1, 1)
 plt.plot(E/400, 'b.')
 plt.title('Datos temporales')
 plt.xlabel('Tiempo [u.a.]')
-plt.ylabel('Energia')
+plt.ylabel(u'Energía')
 
 plt.subplot(2, 1, 2)
 plt.plot(M/400, 'b.')
 plt.xlabel('Tiempo [u.a.]')
-plt.ylabel('Magnetizacion')
+plt.ylabel(u'Magnetización')
 
 
 plt.show()
