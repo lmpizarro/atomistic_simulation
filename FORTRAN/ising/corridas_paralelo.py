@@ -36,7 +36,6 @@ import numpy as np
 import ising_fun as isf
 
 # Paralelización
-import sys
 from mpi4py import MPI
 #from mpi4py.MPI import ANY_SOURCE
 
@@ -58,11 +57,11 @@ dT = np.float(0.1)
 # Agrego el detalle cerca de la temperatura crítica
 detalle = [2.15,2.17,2.23, 2.25, 2.27, 2.32, 2.35, 2.45] 
 # Número de pasos para la primer corrida (termalización)
-N_term = '30000'
+N_term = '50000'
 # Número de pasos para la segunda corrida (medición)
-N_medi = '5000000'
+N_medi = '1000000'
 # Número de corridas para cada temperatura (múltiplo del # de cores)
-Nrun = 8
+Nrun = 40
 #
 # FIN PARAMETROS DE ENTRADA
 ###############################################################################
