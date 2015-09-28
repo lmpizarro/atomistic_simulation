@@ -47,7 +47,7 @@ def copia_val_medios(T,N,dire):
             col = [float(x) for x in line.split()]
             E.append(col[2])
             c.append(col[3])            
-            M.append(col[4])
+            M.append(abs(col[4]))
             s.append(col[5])
             a.append(col[6])
     arch_comun = os.path.join(dire,'tablas_temperatura.dat')

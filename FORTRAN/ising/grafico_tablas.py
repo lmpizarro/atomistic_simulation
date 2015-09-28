@@ -10,6 +10,10 @@ if len(sys.argv) < 2:
 else:
     archivo = sys.argv[1]
 
+N = 20
+M = 20
+Nsp = N*M
+
 data = np.loadtxt(archivo)
 
 T = data[:,0]
@@ -27,14 +31,14 @@ a_std = data[:,10]
 plt.figure(1)
 
 plt.subplot(2, 1, 1)
-plt.errorbar(T, E_avg/400, yerr=E_std/400, fmt='k.')
+plt.errorbar(T, E_avg/Nsp, yerr=E_std/Nsp, fmt='k.')
 plt.title('Valores medios')
 plt.xlabel('Temperatura')
 plt.ylabel(u'Energía')
 plt.ylim([-2.1 , -0.2])
 
 plt.subplot(2, 1, 2)
-plt.errorbar(T, M_avg/400,yerr=M_std/400, fmt= 'k.')
+plt.errorbar(T, M_avg/Nsp,yerr=M_std/Nsp, fmt= 'k.')
 #M_teo = ( 1 - (np.sinh(2/T))**(-4) )**(1/8)
 M_teo = ( 1 - (np.sinh(2/T))**(-4) )**(float(1)/8)
 plt.plot(T,M_teo,'r-')
@@ -46,14 +50,14 @@ plt.ylim([-0.1 , 1.1])
 plt.figure(2)
 
 plt.subplot(2, 1, 1)
-plt.errorbar(T, c_avg/400, yerr=c_std/400, fmt='k.')
+plt.errorbar(T, c_avg/Nsp, yerr=c_std/Nsp, fmt='k.')
 plt.title('Fluctuaciones')
 plt.xlabel('Temperatura')
 plt.ylabel(u'Calor específico')
-plt.ylim([-0.1 , 1.9])
+plt.ylim([-0.1 , 2.2])
 
 plt.subplot(2, 1, 2)
-plt.errorbar(T, s_avg/400, yerr=s_std/400, fmt='k.')
+plt.errorbar(T, s_avg/Nsp, yerr=s_std/Nsp, fmt='k.')
 plt.xlabel('Temperatura')
 plt.ylabel(u'Suceptibilidad magnética')
 plt.ylim([-4 , 60])
