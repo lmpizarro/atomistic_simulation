@@ -27,7 +27,6 @@ if ('grabar' in sys.argv):
 else:
     graba = False
 
-
 ###############################################################################
 # Leo estados producidos por el script anima01_corridas.py
 ###############################################################################
@@ -45,63 +44,73 @@ eng = [float(num) for num in lineas[N_tot+1:]]
 # Archivos con los estados
 archivos = [direc+'/estado%05i'%j for j in range(1,N_tot+1)]
 
-###############################################################################
-# Comienza la graficación y animación
-###############################################################################
-files=[]    # Nombres de los archivos png (para borrarlos al final)
-step = 0    # Contador
-gs = gridspec.GridSpec(4, 2,
-                       width_ratios=[1,1],
-                       height_ratios=[20,1,5,5]
-                       )
-majorFormatter = FormatStrFormatter('%5.f')
-for nom in archivos:
+# Función para leer los datos y pasarlo al formato adecuado para graficarlo
+def carga_dat(nom):
     data = []
     # Abre el archivo con los estados que se quieren graficar
     with open(nom) as ins:
         data = [[int(n) for n in line.split()] for line in ins]
     data = np.asarray(data)    # Lo convierte a array de numpy para usar slices
     data = data[1:-1,1:-1]     # Saco los bordes (que se puesieron pro las CC)
-    # Mapeo de los -1 y 1 a colores    
-    cmap = mpl.colors.ListedColormap(['red','black']) 
-    if step == 0:
-        # Sólo en el primer paso para hacerlo más rápido
-        f1 = pyplot.figure(0,figsize=(7,8))
-        # Matriz de spines
-        ax0=f1.add_subplot(gs[0:-3,:])
-        p1 = pyplot.imshow(data,interpolation='none',cmap=cmap,aspect='equal')
-        # Energía        
-        ax1 = f1.add_subplot(gs[-2,:])        
-        ax1.grid(True)
-        ax1.set_title(u'Energía',color='b')
-        p2a, = ax1.plot(step,eng[step],'b.-')
-        ax1.xaxis.set_ticklabels([])
-        # Magnetización        
-        ax2 = f1.add_subplot(gs[-1,:]) 
-        ax2.set_xlabel('Paso')
-        ax2.grid(True)
-        ax2.set_title(u'Magnetización',color='g')
-        p2b, = ax2.plot(step,mag[step],'g.-')
-    else:
-        # Actualizo la figura
-        p1.set_data(data)
-        # Actualiza energía
-        p2a.set_data(range(step),eng[0:step])
-        ax1.relim()
-        ax1.autoscale_view(True,True,True)
-        ax1.yaxis.set_major_formatter(majorFormatter)
-        # Actualiza magnetización        
-        p2b.set_data(range(step),mag[0:step])
-        ax2.relim()
-        ax2.autoscale_view(True,True,True)    
-        ax2.yaxis.set_major_formatter(majorFormatter)
-        # Dibuja (en el caso de graficar todo junto)        
-        pyplot.draw()
+    return data
+    
+###############################################################################
+# Comienza la graficación y animación
+###############################################################################
+files=[]    # Nombres de los archivos png (para borrarlos al final)
+step = 0    # Contador
+# Se crea un grid de axes para poner los gráficos
+gs = gridspec.GridSpec(4, 2,
+                       width_ratios=[1,1],
+                       height_ratios=[20,1,5,5]
+                       )
+majorFormatter = FormatStrFormatter('%5.f') # Para que ytick tnga mismo ancho
+
+# Se crea la figura que se va a animar
+f1 = pyplot.figure(0,figsize=(7,8))
+
+# Matriz de spines
+ax0=f1.add_subplot(gs[0:-3,:])
+# Mapeo de los -1 y 1 a colores    
+cmap = mpl.colors.ListedColormap(['red','black']) 
+p1 = pyplot.imshow(carga_dat(archivos[0]),interpolation='none',cmap=cmap,aspect='equal')
+
+# Energía        
+ax1 = f1.add_subplot(gs[-2,:])        
+ax1.grid(True)
+ax1.set_title(u'Energía',color='b')
+p2a, = ax1.plot([],[],'b.-')
+ax1.xaxis.set_ticklabels([])
+
+# Magnetización        
+ax2 = f1.add_subplot(gs[-1,:]) 
+ax2.set_xlabel('Paso')
+ax2.grid(True)
+ax2.set_title(u'Magnetización',color='g')
+p2b, = ax2.plot([],[],'g.-')
+
+for nom in archivos:
+    # Lee los datos de los archivos
+    data = carga_dat(nom)
+    # Actualizo la figura
+    p1.set_data(data)
+    # Actualiza energía
+    p2a.set_data(range(step),eng[0:step])
+    ax1.relim()
+    ax1.autoscale_view(True,True,True)
+    ax1.yaxis.set_major_formatter(majorFormatter)
+    # Actualiza magnetización        
+    p2b.set_data(range(step),mag[0:step])
+    ax2.relim()
+    ax2.autoscale_view(True,True,True)    
+    ax2.yaxis.set_major_formatter(majorFormatter)
+    # Dibuja (en el caso de graficar todo junto)        
+    pyplot.draw()
 
     # Título con información relevante
     titulo = 'Paso:%05i'%step + '   ' + \
-             'Mag:%6.1f'%mag[step] + '   '+ \
-             'Eng:%6.1f'%eng[step]
+             u'Magnetización:%6.1f'%mag[step] + '   '+ \
+             u'Engergía:%6.1f'%eng[step]
     ax0.set_title(titulo)
     # Nombre de los archivos png que voy a guardar para hacer un video    
     if graba:    
@@ -109,7 +118,7 @@ for nom in archivos:
         savefig(fname)
         files.append(fname)
     step += 1
-    pyplot.pause(0.00001)   
+    pyplot.pause(0.0001)   
     #pyplot.show()
 
 ###############################################################################
@@ -117,17 +126,34 @@ for nom in archivos:
 ###############################################################################
 # Opciones que se le pasan a mencoder
 if graba:
+    ## MENCODER
+#    cmdstring = ('mencoder ' +
+#                'mf://%s/_anim_*.png '%direc +
+#                '-mf ' + 'type=png:fps=40 '+
+#                '-ovc '+ 'lavc ' + '-lavcopts '+
+#                'vcodec=wmv2 '+
+#                '-oac ' + 'copy '+
+#                '-o '+filename+'.mpg')
     cmdstring = ('mencoder ' +
                 'mf://%s/_anim_*.png '%direc +
-                '-mf ' + 'type=png:fps=40 '+
-                '-ovc '+ 'lavc ' + '-lavcopts '+
-                'vcodec=wmv2 '+
+                '-mf ' + 'type=png:fps=25 '+
+                '-ovc '+ 'x264 '+
                 '-oac ' + 'copy '+
-                '-o '+filename+'.mpg')
+                '-o '+filename+'.avi')
+    ## FFMPEG
+#    cmdstring = ('ffmpeg ' + '-y ' +
+#                '-framerate ' + '1 ' +
+#                '-i ' + "%s/_anim_*.png "%direc +
+#                '-c:v ' + 'libx264 '+
+#                '-r '+ '1 ' +
+#                '-pix_fmt '+ 'yuv420p ' +
+#                filename+'.mp4')
 
     os.system(cmdstring)
+    # Borra todos los archivos png
+    for fname in files: os.remove(fname)
 
 # Una opción para comprimir el video es:
-#mencoder -oac mp3lame -ovc x264 pelicula.mpg -o pelicula.avi
-# Borra todos los archivos png
-#for fname in files: os.remove(fname)
+#mencoder -oac mp3lame -ovc x264 pelicula.avi -o pelicula_b.avi
+# Por línea de comando:
+# mencoder mf://anima/_anim_*.png -mf type=png:fps=25 -ovc x264 -oac copy -o pelicula.avi

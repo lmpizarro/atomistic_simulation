@@ -61,7 +61,7 @@ N_term = '50000'
 # Número de pasos para la segunda corrida (medición)
 N_medi = '1000000'
 # Número de corridas para cada temperatura (múltiplo del # de cores)
-Nrun = 40
+Nrun = 12
 #
 # FIN PARAMETROS DE ENTRADA
 ###############################################################################

@@ -6,11 +6,11 @@ import subprocess
 import shutil
 
 # Número total de estados distintos que quiero guardar
-N_tot = 5000
+N_tot = 10000
 # Máximo numero de estados iguales aceptables (el programa se corta)
 N_tol = 500
 # Temperatura de trabajo
-Temperatura = '0.7'
+Temperatura = '5.5'
 # Directorio donde se guardarán los archivos de los estados
 direc = 'anima'
 
