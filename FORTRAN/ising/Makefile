@@ -38,6 +38,7 @@ $(EXE): $(OBJS) Makefile
 
 $(EXE).o: $(EXE).f90 globales.o strings.o io_parametros.o estadistica.o ziggurat.o usozig.o isingmods.o 
 
+# Un ejecutable independiente que crea los datos para poder graficar histogramas
 crea_histograma: crea_histograma.f90 globales.o estadistica.o strings.o io_parametros.o
 	$(FC) $(FLAGS) -I$(MOD_DIR) -o crea_histograma $(OBJS)
 
@@ -49,7 +50,7 @@ $(BUILD_DIR):
 install: $(EXE) ./bin
 	@ln $(EXE) ./bin
 	@cp parametros.dat graficar.plg *.py  ./bin
-
+	@ln crea_histograma ./bin
 ./bin:
 	@mkdir ./bin
 
