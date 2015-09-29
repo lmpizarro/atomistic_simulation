@@ -54,7 +54,7 @@ plt.errorbar(T, c_avg/Nsp, yerr=c_std/Nsp, fmt='k.')
 plt.title('Fluctuaciones')
 plt.xlabel('Temperatura')
 plt.ylabel(u'Calor específico')
-plt.ylim([-0.1 , 2.2])
+plt.ylim([-0.1 , 2.0])
 
 plt.subplot(2, 1, 2)
 plt.errorbar(T, s_avg/Nsp, yerr=s_std/Nsp, fmt='k.')

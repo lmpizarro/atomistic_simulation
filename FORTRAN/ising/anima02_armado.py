@@ -110,7 +110,7 @@ for nom in archivos:
     # Título con información relevante
     titulo = 'Paso:%05i'%step + '   ' + \
              u'Magnetización:%6.1f'%mag[step] + '   '+ \
-             u'Engergía:%6.1f'%eng[step]
+             u'Energía:%6.1f'%eng[step]
     ax0.set_title(titulo)
     # Nombre de los archivos png que voy a guardar para hacer un video    
     if graba:    

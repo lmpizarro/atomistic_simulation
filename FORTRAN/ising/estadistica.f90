@@ -7,10 +7,10 @@ module estadistica
 contains
 
 !===============================================================================
-! CALCULA LOS DATOS PARA GRAFICAR UN HISTOGRAMA 
+! CALCULA LOS DATOS PARA GRAFICAR UN HISTOGRAMA - DE FORMA VECTORIAL
 !===============================================================================
 
-  subroutine histograma(cuentas,bins,x,N,lim_op)
+  subroutine histograma_vec(cuentas,bins,x,N,lim_op)
 
     real(dp), dimension(1:), intent(out)     :: cuentas! Cuentas normalizadas
     real(dp), dimension(1:), intent(out)     :: bins   ! bines utilizados
@@ -49,8 +49,118 @@ contains
    ! Uso un punto centrado en el bin para graficar 
     bins = rango(1:N) + dbin/2    
     return
-  
+
+    deallocate(Ncuen)  
+
+  end subroutine histograma_vec
+
+!===============================================================================
+! CALCULA LOS DATOS PARA GRAFICAR UN HISTOGRAMA - PUNTO POR PUNTO
+!===============================================================================
+
+  subroutine histograma(cuentas,bins,nombre,N,lim_op)
+
+    real(dp), dimension(1:N), intent(out)    :: cuentas! Cuentas normalizadas
+    real(dp), dimension(1:N), intent(out)    :: bins   ! bines utilizados
+    character (len=*), intent(in)            :: nombre ! Nombre del archvo a leer
+    integer, intent(in)                      :: N      ! Cantidad de datos
+    real(dp), dimension(2),  optional        :: lim_op ! [lim_inf, lim_sup]
+
+    integer, dimension(1:N)                  :: Ncuen  ! Cuentas sin normalizar
+    real(dp), dimension(2)                   :: lim    ! Límites de los bines
+    real(dp)                                 :: dbin   ! Ancho del bin
+    real(dp), dimension(0:N)                 :: rango  ! Comienzo de cada bin
+    real(dp)                                 :: x      ! Dato leidos
+    integer                                  :: estado ! Estado del valor leido
+    integer                                  :: j,k
+
+    if (present(lim_op) .neqv. .TRUE.) then 
+      ! Si no se dan los límiter, se lee el archivo para detectar los límites
+      ! mínimos y máximos de los datos
+      call primer_leida(lim,nombre)  
+    else
+      lim = lim_op
+    end if
+    
+    ! Se define el ancho del bin
+    dbin = (lim(2)-lim(1))/N
+    ! Vector con los extremos de cada bin 
+    ! Si se tienen N bines, 'rango' tendrá N+1 elementos
+    rango = [ (lim(1)+real(j,dp)*dbin,j=0,N) ] 
+
+    ! Abre el archivo
+    open(20, file = nombre)
+    ! Inicializa el vector donde se acumularán las cuentas
+    Ncuen = 0
+    do    ! Loop sobre todos los puntos que tiene el archivo
+      read(20,*,iostat=estado) x
+      if (estado > 0) then
+        print *, 'ERROR al leer los datos'
+        exit
+      else if (estado < 0) then
+        !print*, 'Lectura del archivo completa'
+        exit
+      else
+        do k = 1, N     ! Loop sobre los valores de rango
+          if ( x<rango(k) ) then
+            ! Cuenta en el bin correspondiente y sale del loop
+            Ncuen(k) = Ncuen(k) + 1
+            exit
+          end if
+        end do
+        ! Los mayores a lim(2) van en el ultimo bin
+        if ( x>= rango(N) ) Ncuen(N) = Ncuen(N) + 1
+      end if
+    end do
+
+    close(20)
+
+    ! Normalizo las cuentas
+    cuentas = real(Ncuen(1:N),dp) / sum(Ncuen) / dbin    
+    ! Uso un punto centrado en el bin para graficar 
+    bins = rango(1:N) - dbin/2    
+    return
+
+  contains
+
+    subroutine primer_leida(limites,nombre)
+    ! En el caso de no especificar los línmites, esta subrutina lee el archivo
+    ! y busca los valores mínimos y máximo de los datos
+      real(dp), dimension(2), intent(out)     :: limites ! [lim_inf, lim_sup]
+      character (len=*), intent(in)           :: nombre  ! Nombre del archvo a leer
+
+      integer                                 :: estado  ! Estado del valor leido
+      real(dp)                                :: x, x_min , x_max 
+
+      x_min = huge(real(dp))
+      x_max = tiny(real(dp))
+
+      open(20, file = nombre)
+
+      do
+        read(20,*,iostat=estado) x
+        if (estado > 0) then
+          print *, 'ERROR al leer los datos durante la determinación de los límites'
+          exit
+        else if (estado < 0) then
+          limites = [x_min, x_max]
+          !print*, 'Se determinaron correctamente los límites del histograma por defecto'
+          exit
+        else
+          if (x < x_min) then
+            x_min = x
+          else if (x > x_max) then
+            x_max = x
+          end if
+        end if
+      end do
+
+      close(20)
+
+    end subroutine primer_leida 
+
   end subroutine histograma
+
 
 !===============================================================================
 ! PROMEDIO Y DESVIACION ESTANDAR DE FORMA ITERATIVA
