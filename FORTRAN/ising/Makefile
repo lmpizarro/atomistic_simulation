@@ -38,6 +38,9 @@ $(EXE): $(OBJS) Makefile
 
 $(EXE).o: $(EXE).f90 globales.o strings.o io_parametros.o estadistica.o ziggurat.o usozig.o isingmods.o 
 
+crea_histograma: crea_histograma.f90 globales.o estadistica.o strings.o io_parametros.o
+	$(FC) $(FLAGS) -I$(MOD_DIR) -o crea_histograma $(OBJS)
+
 checkdirs : $(BUILD_DIR)
 
 $(BUILD_DIR):

@@ -81,7 +81,7 @@ contains
     else
       lim = lim_op
     end if
-    
+
     ! Se define el ancho del bin
     dbin = (lim(2)-lim(1))/N
     ! Vector con los extremos de cada bin 
@@ -133,7 +133,7 @@ contains
       real(dp)                                :: x, x_min , x_max 
 
       x_min = huge(real(dp))
-      x_max = tiny(real(dp))
+      x_max = -huge(real(dp))
 
       open(20, file = nombre)
 

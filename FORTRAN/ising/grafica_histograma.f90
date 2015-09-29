@@ -7,10 +7,10 @@ use estadistica
 
 implicit none
 
-integer, parameter        :: N=100
+integer, parameter        :: N=10
 real(dp),dimension(N)     :: cuentas,bins
 real(dp),dimension(2)     :: lim_op
-integer, parameter        :: Npu = 1000000
+integer, parameter        :: Npu = 10
 real(dp), dimension(Npu)  :: x
 integer                   :: i
 
@@ -24,12 +24,12 @@ close(20)
 
 call histograma_vec(cuentas,bins,x,N)
 
-!write(*,'(2(E12.5))') ( bins(i), cuentas(i), i=1,N)
+write(*,'(2(E12.5))') ( bins(i), cuentas(i), i=1,N)
 
 call histograma(cuentas,bins,'energia.dat',N)
 
+print *, '--------------------------------'
 write(*,'(2(E12.5))') ( bins(i), cuentas(i), i=1,N)
-!print *, cuentas
 
 end program main 
 
