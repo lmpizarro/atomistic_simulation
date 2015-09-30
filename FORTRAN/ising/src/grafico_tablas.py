@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import sys
 
 if len(sys.argv) < 2:
-    archivo = 'tablas_temperatura.dat'
+    archivo = ['tablas_temperatura.dat']
 else:
     archivo = sys.argv[1:]
     
