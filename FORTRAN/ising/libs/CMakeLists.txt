@@ -3,9 +3,9 @@
 ### Process this file with cmake to produce Makefile
 ###
 
-set(lib_LIB_SRCS
-        ziggurat.f90
+set(libs_LIBS_SRCS
         globales.f90
+        ziggurat.f90
         estadistica.f90
 	io_parametros.f90
 	isingmods.f90
@@ -14,4 +14,4 @@ set(lib_LIB_SRCS
     )
 
 
-add_library(lib ${lib_LIB_SRCS})
+add_library(libs ${libs_LIBS_SRCS})
