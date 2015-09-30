@@ -46,7 +46,6 @@ file (COPY "${PROJECT_SOURCE_DIR}/src/corridas_paralelo.py" DESTINATION ${EXECUT
 file (COPY "${PROJECT_SOURCE_DIR}/src/corridas.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
 file (COPY "${PROJECT_SOURCE_DIR}/src/grafico_temporal.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 file (COPY "${PROJECT_SOURCE_DIR}/src/anima02_armado.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})    
-file (COPY "${PROJECT_SOURCE_DIR}/src/corridas_paralelo_sin_errores.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})  
 file (COPY "${PROJECT_SOURCE_DIR}/src/grafico_tablas.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})  
 file (COPY "${PROJECT_SOURCE_DIR}/src/ising_fun.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 
