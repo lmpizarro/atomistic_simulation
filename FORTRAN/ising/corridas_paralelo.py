@@ -59,9 +59,9 @@ detalle = [2.15,2.17,2.23, 2.25, 2.27, 2.32, 2.35, 2.45]
 # Número de pasos para la primer corrida (termalización)
 N_term = '50000'
 # Número de pasos para la segunda corrida (medición)
-N_medi = '1000000'
+N_medi = '500000'
 # Número de corridas para cada temperatura (múltiplo del # de cores)
-Nrun = 20
+Nrun = 8
 #
 # FIN PARAMETROS DE ENTRADA
 ###############################################################################
