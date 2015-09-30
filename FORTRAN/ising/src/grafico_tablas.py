@@ -1,5 +1,6 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+#!/usr/bin/python
 
 import numpy as np
 import matplotlib.pyplot as plt

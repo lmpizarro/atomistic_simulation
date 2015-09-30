@@ -1,5 +1,6 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+#!/usr/bin/python
  
 ###############################################################################       
 #  SE EJECUTA CON: mpirun.mpich -n 4  python corridas_paralelo.py

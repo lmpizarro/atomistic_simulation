@@ -1,5 +1,6 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+#!/usr/bin/python
 
 from matplotlib import pyplot
 import matplotlib.gridspec as gridspec
