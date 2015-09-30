@@ -39,7 +39,6 @@ endif (Fortran_COMPILER_NAME MATCHES "gfortran.*")
 # CCPIO ARCHIVOS SECUNDARIOS EL LUGAR DONDE VOY A EJECUTAR EL PROGRAMA
 #============================================================================
 
-file (COPY "${PROJECT_SOURCE_DIR}/src/seed.dat" DESTINATION ${EXECUTABLE_OUTPUT_PATH}) 
 file (COPY "${PROJECT_SOURCE_DIR}/src/parametros.dat" DESTINATION ${EXECUTABLE_OUTPUT_PATH}) 
 file (COPY "${PROJECT_SOURCE_DIR}/src/anima01_corridas.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})  
 file (COPY "${PROJECT_SOURCE_DIR}/src/corridas_paralelo.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})              
