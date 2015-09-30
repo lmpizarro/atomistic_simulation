@@ -10,8 +10,6 @@ if len(sys.argv) < 2:
 else:
     archivo = sys.argv[1:]
     
-print(archivo)
-
 Nsp = []
 Nsp.append(20*20)
 Nsp.append(40*40)
