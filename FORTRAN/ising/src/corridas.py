@@ -21,6 +21,7 @@
 ###############################################################################
 
 import os
+import os.path
 import shutil
 import subprocess
 import errno
@@ -32,31 +33,51 @@ import ising_fun as isf
 ###############################################################################       
 #   PARAMETROS DE ENTRADA
 ###############################################################################
-# Barrido de temperaturas
-# Temperatura mínima
-T_min = np.float(1.5)
-# Temperatura máxima
-T_max = np.float(1.7)
-# Paso de temperatura
-dT = np.float(0.1)
-# Agrego el detalle cerca de la temperatura crítica
-detalle = [2.15,2.17,2.23, 2.25, 2.27, 2.32, 2.35, 2.45] 
-# Número de pasos para la primer corrida (termalización)
-N_term = '4000'
-# Número de pasos para la segunda corrida (medición)
-N_medi = '10000'
-# Número de corridas para cada temperatura
-Nrun = 10
+if os.path.isfile("parametros.py"):
+    import parametros
+
+    T_min = np.float(parametros.T_min)
+    T_max = np.float(parametros.T_max)
+    dT = np.float(parametros.dT)
+    T_detail_min = np.float(parametros.T_detail_min)
+    T_detail_max = np.float(parametros.T_detail_max)
+    dT_detail = np.float(parametros.dT_detail)
+    N_term  = parametros.N_term
+    N_medi  = parametros.N_medi
+    Nrun = parametros.Nrun
+else:
+    # Barrido de temperaturas
+    # Temperatura mínima
+    T_min = np.float(1.5)
+    # Temperatura máxima
+    T_max = np.float(1.7)
+    # Paso de temperatura
+    dT = np.float(0.1)
+    # Agrego el detalle cerca de la temperatura crítica
+    T_detail_min = np.float(2.15)
+    T_detail_max = np.float(2.45)
+    dT_detail = np.float(0.03)
+    # Número de pasos para la primer corrida (termalización)
+    N_term = '4000'
+    # Número de pasos para la segunda corrida (medición)
+    N_medi = '10000'
+    # Número de corridas para cada temperatura
+    Nrun = 10
 #
 # FIN PARAMETROS DE ENTRADA
 ###############################################################################
 
-# Lista de temperaturas
+# Lista de temperaturas de la zona de detalle
+detalle = np.arange(T_detail_min,T_detail_max + dT_detail, dT_detail)
+
+# Lista de temperaturas de paso grueso
 tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() #+ detalle
-tempe.sort(reverse=True)
-# lo convierto a string
-tempe = [str(i) for i in tempe]
+
+tempe = np.append(tempe, detalle)
+# filtra por valores unicos de temperatura
+tempe = np.unique(tempe)
+# ordena de mayor a menor el array numpy
+tempe = np.fliplr([tempe])[0]
 
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
@@ -67,6 +88,7 @@ curr_dir = os.getcwd()
 T_anterior = []    # Buffer para copiar el estado final a T anterior
                    # al estado actual.
 for T in tempe:
+    T = str(T)
     # Nombre de la carpeta uqe se va a crear
     carpeta = T + '_tmpfolder'
     # Camino completo de la carpeta que se va a crear
