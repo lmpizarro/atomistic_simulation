@@ -79,6 +79,9 @@ tempe = np.unique(tempe)
 # ordena de mayor a menor el array numpy
 tempe = np.fliplr([tempe])[0]
 
+# Número de corridas para las T fuera de la zona crítica
+N_run_base = Nrun
+
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
 
@@ -88,9 +91,9 @@ curr_dir = os.getcwd()
 T_anterior = []    # Buffer para copiar el estado final a T anterior
                    # al estado actual.
 for T in tempe:
-    T = str(T)
+    Tnombre = str(T)
     # Nombre de la carpeta uqe se va a crear
-    carpeta = T + '_tmpfolder'
+    carpeta = Tnombre + '_tmpfolder'
     # Camino completo de la carpeta que se va a crear
     path_carpeta = os.path.join(curr_dir,carpeta)
     # Se crea la carpeta sólo si ésta no existe. De lo contrario se saltea la 
@@ -101,7 +104,7 @@ for T in tempe:
         if exception.errno != errno.EEXIST:
             raise
         else:
-            print('Ya existe el directorio. Se omite corrida con T=' + T)
+            print('Ya existe el directorio. Se omite corrida con T=' + Tnombre)
             continue
     # Copia el archivo de entrada a la carpeta 
     shutil.copy('parametros.dat',path_carpeta)
@@ -109,13 +112,23 @@ for T in tempe:
     # Se mete en la carpeta
     os.chdir(path_carpeta)       
     # Cambia el archivo de entrada adentro de la carpeta
-    isf.escribe_entrada('T',T)
+    isf.escribe_entrada('T',Tnombre)
     # Corre el programa para ver la convergencia
     isf.escribe_entrada('N',N_term) 
 
     ##########################################################################
     # DISTINTAS CORRIDAS A LA MISMA T PARA OBTENER ERROR ESTADISTICO
     ##########################################################################
+
+    # Determino si estoy en la zona crítica
+    # para aumentar la cantidad de corridas
+    if T >= T_detail_min and T <= T_detail_max:
+        Nrun = 2 * N_run_base
+        print "Zona crítica: ", Nrun
+    else:
+        Nrun = N_run_base
+        print "Zona No crítica: ", Nrun
+
     for i in range(0,Nrun):
     # Nombre de las carpetas con las corridas
         carpeta_runs = 'RUN' + '%02i'%i
