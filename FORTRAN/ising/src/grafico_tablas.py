@@ -13,15 +13,12 @@ else:
     
 Nsp = []
 Nsp.append(20*20)
-Nsp.append(40*40)
 
 forma = []
 forma.append('k.')
-forma.append('b.')
 
 leg = []
 leg.append('20 x 20')
-leg.append('40 x 40')
 
 j = 0
 for nombre in archivo:
@@ -53,13 +50,9 @@ for nombre in archivo:
     
     plt.subplot(2, 1, 2)
     plt.errorbar(T, M_avg/Nsp[j],yerr=M_std/Nsp[j], fmt= forma[j],label=leg[j])
-    #M_teo = ( 1 - (np.sinh(2/T))**(-4) )**(1/8)
-    #M_teo = ( 1 - (np.sinh(2/T))**(-4) )**(float(1)/8)
-    #plt.plot(T,M_teo,'r-')
     plt.xlabel('Temperatura')
     plt.ylabel(u'Magnetización')
     plt.ylim([-0.1 , 1.1])
-    #plt.ylim([-1.1 , 0.1])
     plt.legend(loc='upper right',numpoints=1)    
     
     plt.figure(2)
@@ -70,7 +63,7 @@ for nombre in archivo:
     plt.xlabel('Temperatura')
     plt.ylabel(u'Calor específico')
     plt.ylim([-0.1 , 2.3])
-    plt.legend(loc='upper right')  
+    plt.legend(loc='upper right',numpoints=1)  
     
     plt.subplot(2, 1, 2)
     plt.errorbar(T, s_avg/Nsp[j], yerr=s_std/Nsp[j], fmt=forma[j],label=leg[j])
