@@ -144,7 +144,7 @@ for T in tempe:
         
         #########################################################
         ######### Para utilizar el estado de temperatura anterior
-        isf.copia_estado_temp_anterior(path_runs,T_anterior,T)
+        isf.copia_estado_temp_anterior(path_runs,T_anterior,Tnombre)
         #########################################################
         
         #######################################################################
@@ -187,7 +187,7 @@ for T in tempe:
     isf.copia_val_medios(T,Nrun,curr_dir)
     # Sale de la carpeta
     os.chdir(curr_dir)
-    T_anterior = T
+    T_anterior = Tnombre
     
 ##############################################################################
 
