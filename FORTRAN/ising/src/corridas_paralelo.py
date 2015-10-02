@@ -112,7 +112,7 @@ T_anterior = []    # Buffer para copiar el estado final a T anterior
 for T in tempe:
     Tnombre = str(T)
     # Nombre de la carpeta uqe se va a crear
-    carpeta = T + '_tmpfolder'
+    carpeta = Tnombre + '_tmpfolder'
     # Camino completo de la carpeta que se va a crear
     path_carpeta = os.path.join(curr_dir,carpeta)
     # Sólo un core se encarga de armar el directorio de temperatura
