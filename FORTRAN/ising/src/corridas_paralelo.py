@@ -48,34 +48,55 @@ size = comm.Get_size()
 ###############################################################################       
 #   PARAMETROS DE ENTRADA
 ###############################################################################
-# Barrido de temperaturas
-# Temperatura mínima
-T_min = np.float(0.5)
-# Temperatura máxima
-T_max = np.float(4.0)
-# Paso de temperatura
-dT = np.float(0.1)
-# Agrego el detalle cerca de la temperatura crítica
-detalle = [2.15,2.17,2.23, 2.25, 2.27, 2.32, 2.35, 2.45] 
-# Número de pasos para la primer corrida (termalización)
-N_term = '50000'
-# Número de pasos para la segunda corrida (medición)
-N_medi = '500000'
-# Número de corridas para cada temperatura (múltiplo del # de cores)
-Nrun = 8
+if os.path.isfile("parametros.py"):
+    import parametros
+
+    T_min = np.float(parametros.T_min)
+    T_max = np.float(parametros.T_max)
+    dT = np.float(parametros.dT)
+    T_detail_min = np.float(parametros.T_detail_min)
+    T_detail_max = np.float(parametros.T_detail_max)
+    dT_detail = np.float(parametros.dT_detail)
+    N_term  = parametros.N_term
+    N_medi  = parametros.N_medi
+    Nrun = parametros.Nrun
+else:
+    # Barrido de temperaturas
+    # Temperatura mínima
+    T_min = np.float(1.5)
+    # Temperatura máxima
+    T_max = np.float(1.7)
+    # Paso de temperatura
+    dT = np.float(0.1)
+    # Agrego el detalle cerca de la temperatura crítica
+    T_detail_min = np.float(2.15)
+    T_detail_max = np.float(2.45)
+    dT_detail = np.float(0.03)
+    # Número de pasos para la primer corrida (termalización)
+    N_term = '4000'
+    # Número de pasos para la segunda corrida (medición)
+    N_medi = '10000'
+    # Número de corridas para cada temperatura
+    Nrun = 10
 #
 # FIN PARAMETROS DE ENTRADA
 ###############################################################################
 
-# Lista de temperaturas
-tempe = np.arange(T_min,T_max+dT,dT)
-tempe = tempe.tolist() + detalle
-tempe.sort(reverse=True)
-# lo convierto a string
-tempe = [str(i) for i in tempe]
+# Lista de temperaturas de la zona de detalle
+detalle = np.arange(T_detail_min,T_detail_max + dT_detail, dT_detail)
 
-# Cantidad de corridas por core
+# Lista de temperaturas de paso grueso
+tempe = np.arange(T_min,T_max+dT,dT)
+
+tempe = np.append(tempe, detalle)
+# filtra por valores unicos de temperatura
+tempe = np.unique(tempe)
+# ordena de mayor a menor el array numpy
+tempe = np.fliplr([tempe])[0]
+
+# Cantidad de corridas por core 
 Nrun_local = Nrun//size
+
 # Llista de las corridas para cada core
 run_local = range(rank*Nrun_local,(rank+1)*Nrun_local)
 aviso = np.ones(1)
@@ -89,6 +110,7 @@ curr_dir = os.getcwd()
 T_anterior = []    # Buffer para copiar el estado final a T anterior
                    # al estado actual.
 for T in tempe:
+    Tnombre = str(T)
     # Nombre de la carpeta uqe se va a crear
     carpeta = T + '_tmpfolder'
     # Camino completo de la carpeta que se va a crear
@@ -103,7 +125,7 @@ for T in tempe:
             if exception.errno != errno.EEXIST:
                 raise
             else:
-                print('Ya existe el directorio. Se omite corrida con T=' + T)
+                print('Ya existe el directorio. Se omite corrida con T=' + Tnombre)
                 continue
         # Copia el archivo de entrada a la carpeta 
         shutil.copy('parametros.dat',path_carpeta)
@@ -111,7 +133,7 @@ for T in tempe:
         # Se mete en la carpeta
         os.chdir(path_carpeta)       
         # Cambia el archivo de entrada adentro de la carpeta
-        isf.escribe_entrada('T',T)
+        isf.escribe_entrada('T',Tnombre)
         isf.escribe_entrada('N',N_term)
         # Sólo para bloquear al resto de los procesos hasta que el root haya
         # hecho la carpeta. No sé cómo hacerlo más directo.
@@ -121,7 +143,7 @@ for T in tempe:
     else:
         comm.Recv(aviso,source=0) # Bloquea al resto hasta recibir mensaje
         os.chdir(path_carpeta)    # Se meten en la carpeta ya creada por root
-        
+     
     ###########################################################################
     # DISTINTAS CORRIDAS A LA MISMA T PARA OBTENER ERROR ESTADISTICO
     #      - LOOP PARALELIZADO
@@ -141,7 +163,7 @@ for T in tempe:
 
         #########################################################
         ######### Para utilizar el estado de temperatura anterior
-        isf.copia_estado_temp_anterior(path_runs,T_anterior,T)
+        isf.copia_estado_temp_anterior(path_runs,T_anterior,Tnombre)
         #########################################################
         
         #######################################################################
@@ -192,6 +214,6 @@ for T in tempe:
         # Sale de la carpeta
         os.chdir(curr_dir)        
     # Guardo la temperatura para copiar archivos luego
-    T_anterior = T
+    T_anterior = Tnombre
 
 ###############################################################################

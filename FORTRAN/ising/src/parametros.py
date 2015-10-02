@@ -19,7 +19,7 @@ N_term = '4000'
 # Número de pasos para la segunda corrida (medición)
 N_medi = '10000'
 # Número de corridas para cada temperatura
-Nrun = 10
+Nrun = 8
 #
 # FIN PARAMETROS DE ENTRADA
 ###############################################################################
