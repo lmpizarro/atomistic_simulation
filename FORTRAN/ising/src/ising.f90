@@ -20,7 +20,4 @@ program main_ising
   ! Finaliza programa
   call finalizacion()
 
-  ! Calcula varlor medio y varianza de los resultados
-  call hace_estadistica()
-
 end program main_ising

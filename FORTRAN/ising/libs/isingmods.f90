@@ -6,7 +6,7 @@ module isingmods
   use io_parametros,       only: escribe_estado, lee_estado, read_command_line, &
                                  escribe_aceptaciones
   use strings,             only: str_to_int, str_to_real 
-  use estadistica,         only: vector_mean_var
+  use estadistica,         only: vector_mean_var, vector_mean_var_dir
 
   implicit none
 
@@ -26,6 +26,7 @@ module isingmods
   real(dp)                              :: beta     ! beta = 1/kT
   real(dp)                              :: Jac      ! Constante de acoplamiento
   integer                               :: K_tot    ! Cantidad de ciclos
+  integer                               :: K_med    ! Cada cuantos ciclos graba datos
   ! Constantes
   real(dp), parameter                   :: k_b= 1_dp ! Constante de Boltzman   
   real(dp), parameter                   :: mu = 1_dp ! Momento magnético
@@ -42,25 +43,29 @@ contains
   subroutine read_parameters()
   
     logical :: es
-    character(100) :: K_tot_lin_com, Tem_lin_com
+    character(100) :: K_med_lin_com, K_tot_lin_com, Tem_lin_com
      
     inquire(file='parametros.dat',exist=es)
       if(es) then
         open(unit=10,file='parametros.dat',status='old')
-        read(10,*) N_R, M_R, Tem, Jac, K_tot
+        read(10,*) N_R, M_R, Tem, Jac, K_tot, K_med
         close(10)
       else
         N_R = 10
         M_R = 10
         Tem = 1.0_dp
         Jac = 1_dp
-        K_tot = 100
+        K_tot = 1000
+        K_med = 1000
      end if
     
     ! Se fija si se ingresaron parametros por la linea de commandos
     ! El numero total de ciclos
     call read_command_line(K_tot_lin_com,'-k')
     if (K_tot_lin_com /='') K_tot = str_to_int(trim(K_tot_lin_com))
+    ! Ciclos para grabar
+    call read_command_line(K_med_lin_com,'-m')
+    if (K_med_lin_com /='') K_med = str_to_int(trim(K_med_lin_com)) 
     ! La temperatura
     call read_command_line(Tem_lin_com,'-t')
     if (Tem_lin_com /='')  Tem   = str_to_real(trim(Tem_lin_com))
@@ -69,6 +74,7 @@ contains
     write(*,'(A,25X,F6.3)')  ' ---- Temperatura: ', Tem
     write( *,'(A,10X,F5.3)') ' ---- Constante de acomplamiento J:', Jac
     write( *,'(A,1X,I10)')  ' ---- Número de pasos para Metrópolis::', K_tot
+    write(*, '(A,3X,I10)')  ' ---- Número de pasos para escritura:', K_med
     print *, '-------------------------------------------------' 
 
   end subroutine read_parameters
@@ -161,16 +167,33 @@ contains
 
   subroutine metropolis()
 
-    real(dp)     :: E_k    ! Energía del nuevo estado
-    integer      :: k, i, j
-    logical      :: acept  ! Flag para saber cuándo se acepta un estado
+    real(dp)     :: E_k        ! Energía del nuevo estado
+    logical      :: acept      ! Flag para saber cuándo se acepta un estado
     integer      :: num_acept  ! Cantidad de puntos aceptados
+    integer      :: k, i, j
     
+    logical                    :: graba           ! Flag para saber si graba en archivo
+    real(dp), dimension(K_tot) :: E_vec , M_vec   ! Vectores donde se guardan
+                                                  ! todos los puntos de E y M
+    ! Inicializa vactores
+    E_vec = 0
+    M_vec = 0
     ! Inicializo el contador
     num_acept = 0
-    ! Abro archivo para escribir los datos
-    open(unit=20,file='energia.dat',status='unknown')
-    open(unit=30,file='magneti.dat',status='unknown')
+    ! Comprueba si se quiere grabar un archivo con los pasos
+    if (K_med /= 0) then
+      graba = .TRUE.
+    else
+      graba = .FALSE.
+    end if
+
+    if (graba .eqv. .TRUE.) then
+      ! Abro archivo para escribir los datos
+      open(unit=20,file='energia.dat',status='unknown')
+      open(unit=30,file='magneti.dat',status='unknown')
+    else
+      print *, '* No se guarda archivo temporal con energía ni magmetización'
+    end if
 
     do k = 1, K_tot
 
@@ -208,45 +231,59 @@ contains
         end if
         num_acept = num_acept + 1
       end if
+      
+      ! Se guardan los valores de E y M en un vector para luego hacer estadistica
+      E_vec(k) = Eng
+      M_vec(k) = Mag
+      if (graba .eqv. .TRUE.)  then
+        ! Se guardan los valores en archivos
+        if ( mod(k,K_med) == 0  .or. (k==1) ) then
+          ! Guardo los datos de Eng y Mag
+          write(20,100)  Eng
+          write(30,100)  Mag
+          100 format(F8.1)
+        end if
+      end if
 
-      ! Guardo los datos de k, Eng y Mag
-      write(20,100)  Eng
-      write(30,100)  Mag
-      100 format(F8.1)
+    end do  ! Finaliza loop de Metropolis 
 
-    end do 
-
-    ! Cierro archivo de salida
-    close(20)   
-    close(30)   
-
+    if (graba .eqv. .TRUE.) then
+      ! Cierro archivo de salida
+      close(20)   
+      close(30)
+    end if   
+   
+     ! Informa el estado final
+    write(*,'(A,F9.2,4X,A,F9.2)') ' * Valores Finales:    E =', Eng, 'M =', Mag
+    
+    ! Hace estadistica y guarda los datos de valores medios y desv. std.
+    call hace_estadistica(E_vec,M_vec)
     ! Trata de escribir el último estado a un archivo
     call escribe_estado(RED)
     ! Escribe la informacion sobre la cantdiad de estados aceptados
     call escribe_aceptaciones(Tem,num_acept,K_tot)
-
-    ! Informa el estado final
-    write(*,'(A,F9.2,4X,A,F9.2)') ' * Valores Finales:    E =', Eng, 'M =', Mag
-
+    
   end subroutine metropolis 
 
 !===============================================================================
 ! CALCULA VALOR MEDIO Y VARIANZA DE LOS ARCHIVOS DE SALIDA 
 !===============================================================================
 
-  subroutine hace_estadistica()
+  subroutine hace_estadistica(E,M)
 
+    real(dp),intent(in), dimension(:)   :: E, M  ! Vectores con E y M
+    
     real(dp)     :: E_media, M_media  ! Valor medio de la energía y la magnetización
     real(dp)     :: E_var , M_var     ! Varianza de la energía y la magnetización
   
     ! Calcula los valores medios y varianzas de la corrida
     ! Para la energía
-    print *, '* Se abre archivo <energia.dat> para hacer estadistica'
-    call vector_mean_var(E_media,E_var,'energia.dat')
+    print *, '* Se hace estadistica con los valores de energia'
+    call vector_mean_var_dir(E_media,E_var,E)
   
     ! Para la magnetización
-    print *, '* Se abre archivo <magneti.dat> para hacer estadistica'
-    call vector_mean_var(M_media,M_var,'magneti.dat')
+    print *, '* Se hace estadistica con los valores de magnetizacion'
+    call vector_mean_var_dir(M_media,M_var,M)
 
     ! Guarda los resultados en un archivo
     print *, '* Se guardan valores medios y varianza en <val_medios.dat>'
