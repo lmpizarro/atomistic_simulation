@@ -254,4 +254,27 @@ contains
 
   end subroutine vector_mean_var
 
+
+!===============================================================================
+! PROMEDIO Y DESVIACION ESTANDAR VECTORIZADO DIRECTO
+!===============================================================================
+! La desventaja es que debe cargar al archivo completo en memoria. La ventaja es
+! que tiene menos errores de redondeo.
+! Es igual a vector_mean_var() solo que opera sobre el vector de entrada
+! y no sobre el archivo con los datos
+  subroutine vector_mean_var_dir(x_mean,x_var,x)
+
+    real(dp), intent(in), dimension(:)  :: x             ! Vector con datos entrada
+    real(dp), intent(out)               :: x_mean, x_var ! Valor medio y varianza
+    integer                             :: N 
+
+    ! Tamaño del vector de entrada
+    N = size(x,1)  
+
+    ! Realiza las operaciones estadisticas de forma vectorial 
+    x_mean=sum(x)/N
+    x_var= sum((x - x_mean)**2) / (N-1)
+
+  end subroutine vector_mean_var_dir
+
 end module estadistica
