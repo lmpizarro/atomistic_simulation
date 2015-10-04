@@ -94,7 +94,9 @@ tempe = np.arange(T_min,T_max+dT,dT)
 
 tempe = np.append(tempe, detalle)
 # filtra por valores unicos de temperatura
-tempe = np.unique(tempe)
+# se debe redondear (con algún criterio) para evitar falsas duplicaciones
+# por errores de redondeo de python
+tempe = np.unique(tempe.round(decimals=6))
 # ordena de mayor a menor el array numpy
 tempe = np.fliplr([tempe])[0]
 
