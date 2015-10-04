@@ -18,6 +18,12 @@ def escribe_entrada(nombre,valor):
             new=fila.replace(col[2],valor)
         elif nombre == 'N':
             new=fila.replace(col[4],valor)
+        elif nombre == 'N_grab':
+            new=fila.replace(col[5],valor)
+        elif nombre == 'N_red':
+            new=fila.replace(col[0],valor)
+        elif nombre == 'M_red':
+            new=fila.replace(col[1],valor)
         else:
             print('No se reconoce el valor a escribir')
             exit

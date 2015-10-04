@@ -33,9 +33,13 @@ import ising_fun as isf
 ###############################################################################       
 #   PARAMETROS DE ENTRADA
 ###############################################################################
-if os.path.isfile("parametros.py"):
-    import parametros
 
+if os.path.isfile("parametros.py"):
+   
+    import parametros
+    
+    N_red = parametros.N_red
+    M_red = parametros.M_red
     T_min = np.float(parametros.T_min)
     T_max = np.float(parametros.T_max)
     dT = np.float(parametros.dT)
@@ -45,7 +49,14 @@ if os.path.isfile("parametros.py"):
     N_term  = parametros.N_term
     N_medi  = parametros.N_medi
     Nrun = parametros.Nrun
+    N_grab = parametros.N_grab
 else:
+    ## Tamaño de la red de spines
+    N_red = 20
+    M_red = 20
+    # Cada cuántos puntos se quiere grabar el archivo temporal
+    N_grab = 0 
+   
     # Barrido de temperaturas
     # Temperatura mínima
     T_min = np.float(1.5)
@@ -63,6 +74,14 @@ else:
     N_medi = '10000'
     # Número de corridas para cada temperatura
     Nrun = 10
+    
+# Escribe los valores al archivo parametros.dat
+# Especifica tamaño de la red de spines
+isf.escribe_entrada('N_red',str(N_red))
+isf.escribe_entrada('M_red',str(M_red))
+# Especifica cada cuanto se graban datos temporales 
+isf.escribe_entrada('N_grab',str(N_grab))
+
 #
 # FIN PARAMETROS DE ENTRADA
 ###############################################################################
@@ -155,11 +174,13 @@ for T in tempe:
         # Alternativa para python 2.6        
         proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]
-        # Guardo la salida para ver ue hizo
+        # Guardo la salida para ver que hizo
         with open('log1.txt','w') as arch: arch.write(salida)
         # Guardo las salidas por si hacen falta
-        os.rename('energia.dat','energia_terma.dat')
-        os.rename('magneti.dat','magneti_terma.dat')    
+        if os.path.isfile('energia.dat'):
+            os.rename('energia.dat','energia_terma.dat')
+        elif os.path.isfile('magneti.dat'):
+            os.rename('magneti.dat','magneti_terma.dat') 
         
         #########################################################
         ######### Para utilizar el estado de temperatura anterior

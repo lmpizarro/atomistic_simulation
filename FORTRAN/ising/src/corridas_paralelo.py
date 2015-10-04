@@ -49,8 +49,11 @@ size = comm.Get_size()
 #   PARAMETROS DE ENTRADA
 ###############################################################################
 if os.path.isfile("parametros.py"):
+    
     import parametros
-
+  
+    N_red = parametros.N_red
+    M_red = parametros.M_red
     T_min = np.float(parametros.T_min)
     T_max = np.float(parametros.T_max)
     dT = np.float(parametros.dT)
@@ -60,7 +63,14 @@ if os.path.isfile("parametros.py"):
     N_term  = parametros.N_term
     N_medi  = parametros.N_medi
     Nrun = parametros.Nrun
+    N_grab = parametros.N_grab
 else:
+    ## Tamaño de la red de spines
+    N_red = 20
+    M_red = 20
+    # Cada cuántos puntos se quiere grabar el archivo temporal
+    N_grab = 0
+
     # Barrido de temperaturas
     # Temperatura mínima
     T_min = np.float(1.5)
@@ -78,6 +88,18 @@ else:
     N_medi = '10000'
     # Número de corridas para cada temperatura
     Nrun = 10
+
+# Escribe los valores al archivo parametros.dat
+# Lo hace el root
+if rank==0:
+    # Especifica tamaño de la red de spines
+    isf.escribe_entrada('N_red',str(N_red))
+    isf.escribe_entrada('M_red',str(M_red))
+    # Especifica cada cuanto se graban datos temporales 
+    isf.escribe_entrada('N_grab',str(N_grab))
+
+# Todos esperan a que root haya terminado
+comm.Barrier()
 #
 # FIN PARAMETROS DE ENTRADA
 ###############################################################################
@@ -126,24 +148,28 @@ for T in tempe:
                 raise
             else:
                 print('Ya existe el directorio. Se omite corrida con T=' + Tnombre)
+                T_anterior = Tnombre
+                # Si se llega al final de la lista, se finaliza el programa
+                if T==tempe[-1]:
+                    print('No hay nada por hacer, se sale del programa')
+                    comm.Abort()
                 continue
         # Copia el archivo de entrada a la carpeta 
         shutil.copy('parametros.dat',path_carpeta)
-        #shutil.copy('ising',path_carpeta) 
         # Se mete en la carpeta
         os.chdir(path_carpeta)       
         # Cambia el archivo de entrada adentro de la carpeta
         isf.escribe_entrada('T',Tnombre)
         isf.escribe_entrada('N',N_term)
-        # Sólo para bloquear al resto de los procesos hasta que el root haya
-        # hecho la carpeta. No sé cómo hacerlo más directo.
-        for m in range(1,size):
-            comm.Send(aviso,dest=m)
         print('Core {0} ya armó el directorio para T={1}'.format(rank,T))
-    else:
-        comm.Recv(aviso,source=0) # Bloquea al resto hasta recibir mensaje
-        os.chdir(path_carpeta)    # Se meten en la carpeta ya creada por root
-     
+    # Una vez que root encontró la carpeta donde debe trabajar, manda la información
+    # al resto de los procesos
+    T            = comm.bcast(T, root=0)
+    T_anterior   = comm.bcast(T_anterior, root=0)
+    Tnombre      = comm.bcast(Tnombre, root=0)
+    path_carpeta = comm.bcast(path_carpeta, root=0)
+    # Se meten en la carpeta
+    os.chdir(path_carpeta) 
     ###########################################################################
     # DISTINTAS CORRIDAS A LA MISMA T PARA OBTENER ERROR ESTADISTICO
     #      - LOOP PARALELIZADO
@@ -174,12 +200,13 @@ for T in tempe:
         # Alternativa para python 2.6        
         proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]
-        #print(salida)        
-        # Guardo la salida para ver ue hizo
+        # Guardo la salida para ver que hizo
         with open('log1.txt','w') as arch: arch.write(salida)
         # Guardo las salidas por si hacen falta
-        os.rename('energia.dat','energia_terma.dat')
-        os.rename('magneti.dat','magneti_terma.dat')    
+        if os.path.isfile('energia.dat'):
+            os.rename('energia.dat','energia_terma.dat')
+        elif os.path.isfile('magneti.dat'):
+            os.rename('magneti.dat','magneti_terma.dat')    
 
         #########################################################
         ######### Para utilizar el estado de temperatura anterior
