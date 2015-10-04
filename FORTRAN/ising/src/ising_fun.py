@@ -70,6 +70,29 @@ def copia_val_medios(T,N,dire):
         valor_str = '  '.join( format(j,'.5E') for j in valor)         
         comun.write( valor_str +'\n')   
 ###############################################################################
+
+###############################################################################
+# ESCRIBE EL ARCHIVO CON LOS RESULTADOS DE CADA CORRIDA A UNA DADA TEMPERATURA
+# LEE 'val_medios.dat' EN CADA CARPETA RUNXX
+# ESCRIBE EL ARCHIVO 'runs_estadistica.dat' EN LA CARPETA T_tmpfolder
+# ---- Es usado sólo por corridas.py 
+# ---- corridas_paralelo.py usa dos funciones separadas (por la comunicación)
+###############################################################################            
+def copia_val_medios_runs(i,path):
+    # Copio los archivos de la carpeta local y los escribo en un archivo común
+    with open('val_medios.dat','r') as vmed:
+        valor=vmed.readline()
+    # Lee el archivo con la cantidad de aceptaciones
+    with open('aceptaciones.dat','r') as archacept:
+        acep=archacept.readline()
+        colu = [float(x) for x in acep.split()]
+        # Guardará el porcentaje de aceptaciones
+        por_acep = 100.0*colu[1]/colu[2]
+    arch_comun = os.path.join(path,'runs_estadistica.dat')
+    with open(arch_comun,'a') as comun:
+        comun.write('%02i'%i + ' ' + valor.rstrip() + ' '+ str(por_acep) +'\n') 
+###############################################################################
+
         
 ###############################################################################
 # LEE 'val_medios.dat' Y 'aceptaciones.dat' EN CADA CARPETA RUNXX 
