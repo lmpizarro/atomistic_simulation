@@ -17,8 +17,8 @@ T_max = 4.0
 # Paso de temperatura
 dT = 0.1
 # Agrego el detalle cerca de la temperatura crítica
-T_detail_min = 2.15
-T_detail_max = 2.40
+T_detail_min = 2.10
+T_detail_max = 2.50
 dT_detail = 0.02
 # Número de pasos para la primer corrida (termalización)
 N_term = '4000'

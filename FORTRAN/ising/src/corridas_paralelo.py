@@ -121,7 +121,6 @@ Nrun_local = Nrun//size
 
 # Llista de las corridas para cada core
 run_local = range(rank*Nrun_local,(rank+1)*Nrun_local)
-aviso = np.ones(1)
 
 # Directorio raíz donde está el ejecutable y este script
 curr_dir = os.getcwd()
@@ -226,17 +225,27 @@ for T in tempe:
         salida = proc.communicate()[0]  
         # Guardo la salida para ver ue hizo
         with open('log2.txt','w') as arch: arch.write(salida) 
-        # Copia los valores medios
-        isf.copia_val_medios_runs(i,path_carpeta)
+        # Lee datos del archivo <val_medios.dat> y <aceptaciones.dat>
+        datos = isf.lee_datos_runs(i)
+        # Root se encarga de recibir los datos y procesarlos
+        if rank==0:
+            # Root escribe sus propios datos en <runs_esatadistica.dat>
+            isf.escribe_datos_runs(datos,path_carpeta) 
+            for j in range(1,size):
+                # root recibe los datos del resto de los procesos
+                datos_recv = comm.recv(source=MPI.ANY_SOURCE)
+                # root escribe los datos en <runs_estadistica.dat>
+                isf.escribe_datos_runs(datos_recv,path_carpeta) 
+        else:
+            # El resto de los procesos le mandan los datos a root
+            comm.send(datos,dest=0)
         # Sale de la carpeta de corridas        
         os.chdir(path_carpeta)
-    # Espera a que todos los cores teminen sus procesos
-    comm.Barrier()
     #
     # FIN DEL LOOP PARALELIZADO
     ###########################################################################
     if rank==0:
-        # Hace estadística de todas las corridas y lo copia en un archivo
+        # Hace estadística de todas las corridas y copia en <tablas_temperatura.dat> 
         isf.copia_val_medios(T,Nrun,curr_dir)
         # Sale de la carpeta
         os.chdir(curr_dir)        

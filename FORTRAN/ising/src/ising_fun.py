@@ -72,11 +72,11 @@ def copia_val_medios(T,N,dire):
 ###############################################################################
         
 ###############################################################################
-# ESCRIBE EL ARCHIVO CON LOS RESULTADOS DE CADA CORRIDA A UNA DADA TEMPERATURA
-# LEE 'val_medios.dat' EN CADA CARPETA RUNXX
-# ESCRIBE EL ARCHIVO 'runs_estadistica.dat' EN LA CARPETA T_tmpfolder
+# LEE 'val_medios.dat' Y 'aceptaciones.dat' EN CADA CARPETA RUNXX 
+# LOS ORDENA EN UN STRING Y LOS PASA COMO SALIDA
 ###############################################################################            
-def copia_val_medios_runs(i,path):
+
+def lee_datos_runs(i):
     # Copio los archivos de la carpeta local y los escribo en un archivo común
     with open('val_medios.dat','r') as vmed:
         valor=vmed.readline()
@@ -86,9 +86,19 @@ def copia_val_medios_runs(i,path):
         colu = [float(x) for x in acep.split()]
         # Guardará el porcentaje de aceptaciones
         por_acep = 100.0*colu[1]/colu[2]
+    # Ordena los valores leidos en un string y los pasa como salida
+    lin_dat = '%02i'%i + ' ' + valor.rstrip() + ' '+ str(por_acep) +'\n'
+    return lin_dat
+###############################################################################
+
+###############################################################################
+# ESCRIBE EL ARCHIVO 'runs_estadistica.dat' EN LA CARPETA T_tmpfolder
+###############################################################################            
+
+def escribe_datos_runs(datos_str,path):
     arch_comun = os.path.join(path,'runs_estadistica.dat')
     with open(arch_comun,'a') as comun:
-        comun.write('%02i'%i + ' ' + valor.rstrip() + ' '+ str(por_acep) +'\n') 
+        comun.write(datos_str)
 ###############################################################################
 
 ###############################################################################
