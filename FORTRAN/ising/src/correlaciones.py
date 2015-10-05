@@ -26,22 +26,23 @@ N_block     = N_E // n_por_block
 
 
 # Si no quiero hacer muchos promedios, tomo una cantidad de bloques fija
-N_minima = 100
+N_minima = 5
 N_block = min(N_minima,N_block)
 
 E_acum=0
 
 for j in range(N_block):
     E_block = E[j*n_por_block:(j+1)*n_por_block]
+    print(np.mean(E_block))
     E_block = E_block - np.mean(E_block)
     norm_E = np.std(E_block)**2
     print('Calculando correlación del bloque {0}'.format(j))
     corr_E_block = signal.correlate(E_block,E_block,mode='full')
     E_acum = E_acum + corr_E_block/norm_E
 
-print(np.size(E_acum))
 
-corr_E = E_acum[n_por_block:]/N_minima/n_por_block
+nor_bias = np.array([n_por_block-j for j in range(n_por_block)])
+corr_E = E_acum[n_por_block-1:]/N_block/nor_bias
 
 
 t = np.arange(np.size(corr_E))
@@ -61,7 +62,7 @@ plt.ylabel(u'Correlacion Energia')
 #plt.yscale('log')
 
 # Zona de ajuste
-n_fin = 200
+n_fin = 300
 
 p = np.polyfit(t[:n_fin],np.log(corr_E[:n_fin]),1)
 t_corr = 1/p[1]

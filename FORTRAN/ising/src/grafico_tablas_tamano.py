@@ -80,7 +80,7 @@ for nombre in archivo:
     plt.errorbar(T, s_avg/Nsp[j], yerr=s_std/Nsp[j], fmt=forma[j],label=leg[j])
     plt.xlabel('Temperatura')
     plt.ylabel(u'Suceptibilidad magnética')
-    plt.ylim([-4 , 120])
+    plt.ylim([-4 , 140])
     plt.legend(loc='upper right',numpoints=1)  
     
     plt.figure(3)
