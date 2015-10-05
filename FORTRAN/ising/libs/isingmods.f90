@@ -70,10 +70,10 @@ contains
     call read_command_line(Tem_lin_com,'-t')
     if (Tem_lin_com /='')  Tem   = str_to_real(trim(Tem_lin_com))
     print *, '------------- PARAMETROS UTILIZADOS -------------' 
-    write(*, '(A,23X,I2,A,I2)') ' ---- Red de spines:' , N_R, ' x ', M_R
+    write(*, '(A,21X,I3,A,I3)') ' ---- Red de spines:' , N_R, ' x ', M_R
     write(*,'(A,25X,F6.3)')  ' ---- Temperatura: ', Tem
     write( *,'(A,10X,F5.3)') ' ---- Constante de acomplamiento J:', Jac
-    write( *,'(A,1X,I10)')  ' ---- Número de pasos para Metrópolis::', K_tot
+    write( *,'(A,2X,I10)')  ' ---- Número de pasos para Metrópolis:', K_tot
     write(*, '(A,3X,I10)')  ' ---- Número de pasos para escritura:', K_med
     print *, '-------------------------------------------------' 
 
