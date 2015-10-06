@@ -45,7 +45,7 @@ for nombre in archivo:
     
     plt.subplot(2, 1, 1)
     plt.errorbar(T, E_avg/Nsp[j], yerr=E_std/Nsp[j], fmt=forma[j],label=leg[j])
-    plt.title(r'Valores medios')
+    #plt.title(r'Valores medios')
     plt.xlabel('$kT/J$')
     plt.ylabel('$<E/J>/N$')
     plt.ylim([-2.1 , -0.2])
@@ -65,7 +65,7 @@ for nombre in archivo:
     
     plt.subplot(2, 1, 1)
     plt.errorbar(T, c_avg/Nsp[j], yerr=c_std/Nsp[j], fmt=forma[j],label=leg[j])
-    plt.title('Fluctuaciones')
+    #plt.title('Fluctuaciones')
     plt.xlabel('$kT/J$')
     plt.ylabel('$<C>/N$')
     plt.ylim([-0.1 , 2.3])
