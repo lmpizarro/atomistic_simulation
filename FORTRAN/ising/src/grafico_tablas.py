@@ -2,6 +2,10 @@
 
 #!/usr/bin/python
 
+# Script para graficar los datos del archivo tablas_temperatura (o alguno con
+# formato similar. Se deben cambiar los labels y títulos de acuerdo a lo que
+# se quiera hacer
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sys

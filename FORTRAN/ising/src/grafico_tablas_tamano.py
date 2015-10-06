@@ -3,6 +3,8 @@
 #!/usr/bin/python
 
 # Grafica los resultados para distintos tamaños de la red de spines
+# Se le deben ingresar los arhivos <tablas_temperatura> (cuatro de ellos)
+# Los labels y títulos están fijos, se deben cambiar según lo que se quiera
 
 import numpy as np
 import matplotlib.pyplot as plt
