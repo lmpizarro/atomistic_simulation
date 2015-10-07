@@ -10,6 +10,10 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
+\usepackage{tikz}
+\usetikzlibrary{trees}
+\usepackage{xcolor}
+
 \graphicspath{{imagenes/}}
 
 \title{\textsc{Modelo de Ising en 2D} \\ \vspace{2em} \Large{Introducción a la 
@@ -30,6 +34,42 @@ Un resumen
 
 \section{Introducción}
 Empezamo
+
+\tikzstyle{every node}=[thick,anchor=west, 
+font={\scriptsize\ttfamily}, inner sep=2.5pt]
+\tikzstyle{selected}=[draw=blue,fill=blue!10]
+\tikzstyle{root}=[draw=blue, fill=blue!30]
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[%
+    scale=.7,
+    grow via three points={one child at (0.5,-0.65) and
+    two children at (0.5,-0.65) and (0.5,-1.2)},
+    edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
+  	\node [root] {bin}
+  	child { node [red] {ising}}
+  	child { node [red] {corridas\_paralelo.py}}
+  	child { node {tablas\_temperatura.dat}}
+    child { node [selected] {0.5\_tmpfolder}
+      child { node {parametros.dat}}
+      child { node {runs\_estadistica.dat}}
+      child { node [selected] {RUN00}
+	     child { node {val\_medios.dat}}
+	     child { node {estado.dat}}
+	     child { node {ultimo\_estado.dat}}
+      }
+      child { node at(0,-1.8) [selected] {RUN01}}
+      child { node at(0,-1.9) [selected] {RUN02}}
+      child { node at (0,-2.0) {\dots}}
+    }       
+    child { node at (0,-5.5) [selected]{0.6\_tmpfolder}}
+    child { node at (0,-5.8)[selected] {0.7\_tmpfolder}}
+    child { node at (0,-6.1) {\dots}};
+\end{tikzpicture}
+\end{center}
+\end{figure}]
+
 
 %\begin{eqnarray}
 %  f_r(x) &=& \frac{4}{\pi - 4}\frac{x^2}{1+x^2} \\
