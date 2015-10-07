@@ -1,4 +1,3 @@
-
 \section{Descripci\'on del sistema de c\'alculo}
 
 
@@ -10,16 +9,90 @@ en python uno  de pre y el otro de post-procesamiento.
 
 \subsubsection{Par\'ametros de entrada}
 
+El programa ising lee la configuraci\'on de una corrida del 
+archivo parametros.dat que tiene que estar en la carpeta donde se
+corre ising.
+
+El archivo parametros.dat tiene la forma: 
+
+\begin{verbatim}
+     N M T J MCS PE. 
+\end{verbatim}
+
+Donde NxM 
+son las dimensiones de la matriz, T la temperatura de la corrida,
+J el par\'ametro de c\'alculo de energ\'ia de Ising, MCS son los pasos Monte Carlo y PE
+es una cantidad que especifica cada cuantos pasos Monte Carlo se graba la energ\'ia.
+
+\begin{verbatim}
+   20 20 2.22 1 500 100
+\end{verbatim}
 
 
-\paragraph{Pre procesamiento en python}
+\paragraph{Preprocesamiento en python}
 En la carpeta src/ el archivo parametros.py contiene la parametrizaci\'on 
 de los scripts
 en python que permiten correr el sistema en serie (ver \ref{serie}), 
 o en paralelo (ver \ref{paralelo}).
+El preprocesamiento en python, permite definir una zona de c\'alculo de paso
+de temperatura fino. Es decir se puede parametrizar un paso de temperatura de
+0,1 para todo el rango de temperatura y dentro de ese rango definir una zona
+donde el paso de temperatura puede ser menor, ej. $\Delta T$ = 0.01. Para lograr una mejor resoluci\'on
+en esa zona.
 
+En particular en este c\'alculo se uso para explorar con m\'as detalle la zona
+cr\'itica.
+
+El preprocesamiento en python, crea el archivo parametros.dat, 
+ corre el programa de ising a distintas temperaturas
+  Crea una carpeta para cada temperatura. En cada una de esas carpetas, a su
+  vez, crea Nruns carpetas para hacer estadística y obtener los valores con
+  sus respectivos errores.
+ 
+  En cada temperatura, se utiliza el valor final de la temperatura anterior.
+  Arbitrariamente, se toma el valor final de RUN00 como el valor inicial de
+  todas las corridas a la siguiente temperatura (menor)
+ 
 
 \subsubsection{Salida del programa}
+
+Los resultados los guarda en el archivo tablas\_temperatura.dat.
+
+Cada fila de tablas\_temperatura.dat representa los resultados a una dada
+temperatura con sus respectivos errores. Las columnas son:
+
+\begin{verbatim}
+  T <E> std(E) <M> std(M) <c> std(c) <suc> std(suc) <acept> std(acept)
+\end{verbatim}
+
+Donde:
+
+
+
+\begin{itemize}
+  \item T: temperatura de la corrida 
+    \item <E>: Energ\'ia media calculada
+    \item  std(E): desviaci\'on standard de la energ\'ia calculada
+
+    \item <M>: Magnetizaci\'on media calculada
+    \item  std(M): desviaci\'on standard de la Magnetizaci\'on calculada
+
+
+    \item <c>: Capacidad calor\'ifica media calculada
+    \item  std(c): desviaci\'on standard de la Capacidad calor\'ifica calculada
+
+    \item <suc>: Susceptibilidad magn\'etica media calculada
+    \item  std(suc): desviaci\'on standard de la Susceptibilidad magn\'etica calculada
+
+
+    \item <acept>: Aceptaci\'on media calculada
+    \item  std(acept): desviaci\'on standard de la Aceptaci\'on calculada
+\end{itemize}
+
+
+
+  Los errores se calculan como std(RUN)/sqrt(NRUN)
+
 
 \subsubsection{Librer\'ias utilizadas}
 
@@ -34,7 +107,7 @@ Un m\'odulo que contiene las variables globales del programa.
 	
 \paragraph{io\_parametros.f90}  
 Un m\'odulo para el manejo de la entrada y las salidas de los
-datos del programa
+datos del programa.
 
 
 \paragraph{isingmods.f90} 
@@ -47,7 +120,8 @@ Un m\'odulo que contiene subrutinas de manejo de cadena de caracteres.
 
 
 \paragraph{usozig.f90} 
-En este m\'odulo se ecuentran las subrutinas que usan ziggurat. 
+En este m\'odulo se ecuentran las subrutinas que usan ziggurat y que
+son usadas en el programa principal, ising.
 					
 					
 \paragraph{ziggurat.f90}
