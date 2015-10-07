@@ -37,20 +37,33 @@ Empezamo
 
 
 \begin{equation}{\label{eq:hamiltoniano}}
-H = - J \sum_{\langle ij \rangle} s_is_j
+H = - J \sum_{\langle ij \rangle}^N s_is_j
 \end{equation}
 
 \noindent donde $\langle ij \rangle$ indica que la sumatoria se realiza con los 
 sitios primeros vecinos.
 
+La magnetización asociada a un dado estado se define como:
 
+\begin{equation}
+M = \mu \sum_{i=1}^N s_i
+\end{equation}
+
+Se puede demostrar que la temperatura crítica, expresada en unidades 
+adimensionales es:
+
+\begin{equation}
+\frac{k T_c }{J} = \frac{2}{ln(1+\sqrt{(2)})}
+\end{equation}
+
+\noindent siendo $k$ la constante de Boltzman
 
 \tikzstyle{every node}=[thick,anchor=west, 
 font={\scriptsize\ttfamily}, inner sep=2.5pt]
 \tikzstyle{selected}=[draw=blue,fill=blue!10]
 \tikzstyle{root}=[draw=blue, fill=blue!30]
 
-\begin{figure}[H]
+\begin{figure}[H]\label{fig:arbol.dir}
 \begin{center}
 \begin{tikzpicture}[%
     scale=.7,
@@ -78,6 +91,8 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
     child { node at (0,-6.1) {\dots}};
 \end{tikzpicture}
 \end{center}
+\caption{Esquema de carpetas y archivos que se obtienen al realizar una corrida 
+completa haciendo estadísticas en cada temperatura.}
 \end{figure}]
 
 
@@ -86,6 +101,36 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
 %  f_\theta(x) &=& \frac{\sin(x)}{2} \\
 %  f_\varphi(x) &=&  \frac{1}{2\pi} 
 %\end{eqnarray}
+
+\begin{figure}
+	\begin{center}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+      	\includegraphics[scale=0.4]{{terma_t0.5_ei_rand}.pdf} \\
+     	 \caption{Temperatura 0.5}\label{fig:terma.t05_rand}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+     	 \includegraphics[scale=0.4]{{terma_t5.0_ei_up}.pdf} \\
+      	\caption{Temperatura 5.0}\label{fig:terma.t50_up}
+	\end{subfigure}
+	\end{center}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+      	\includegraphics[scale=0.4]{{terma_t3.0_ei_rand}.pdf} \\
+     	 \caption{Temperatura 0.5}\label{fig:terma.t3_rand}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+     	 \includegraphics[scale=0.4]{{terma_t3.0_ei_up}.pdf} \\
+      	\caption{Temperatura 5.0}\label{fig:terma.t3_up}
+	\end{subfigure}
+	\end{center}
+\end{figure}
 
 \begin{figure}[H]
     \begin{center}
@@ -181,21 +226,21 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
 
 \section {Evolución de la matriz de estado de spines en función de la temperatura}
 
-%\begin{figure}
-%	\centering
-%
-%\begin{subfigure}{.49\textwidth}
-%	\centering
-%      \includegraphics[scale=0.3]{{frame5.0}.pdf} \\
-%      \caption{Temperatura 5.0}\label{fig:frame5.0}
-%\end{subfigure}
-%\begin{subfigure}{.49\textwidth}
-%	\centering
-%      \includegraphics[scale=0.3]{{frame3.8}.pdf} \\
-%      \caption{Temperatura 3.8}\label{fig:frame3.8}
-%\end{subfigure}
-%
-%\end{figure}
+\begin{figure}
+	\centering
+
+\begin{subfigure}{.49\textwidth}
+	\centering
+      \includegraphics[scale=0.5]{{frame5.0}.pdf} \\
+      \caption{Temperatura 5.0}\label{fig:frame5.0}
+\end{subfigure}
+\begin{subfigure}{.49\textwidth}
+	\centering
+      \includegraphics[scale=0.5]{{frame3.8}.pdf} \\
+      \caption{Temperatura 3.8}\label{fig:frame3.8}
+\end{subfigure}
+
+\end{figure}
 
 \begin{figure}[H]
     \begin{center}
