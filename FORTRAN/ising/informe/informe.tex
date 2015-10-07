@@ -1,6 +1,6 @@
 
 \documentclass[a4paper,12pt]{article}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[spanish,es-nodecimaldot]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[intlimits]{amsmath}
@@ -16,8 +16,8 @@
 
 \graphicspath{{imagenes/}}
 
-\title{\textsc{Modelo de Ising en 2D} \\ \vspace{2em} \Large{Introducción a la 
-simulación computacional}}
+\title{\textsc{Modelo de Ising en 2D} \\ \vspace{2em} \Large{IntroducciÃ³n a la 
+simulaciÃ³n computacional}}
 \author{\small{Luis Pizarro (lpizarro@cnea.gov.ar)} \\
         \small{Pablo Bellino (pbellino@gmail.com)}}
 
@@ -35,7 +35,7 @@ Un resumen
 \end{abstract}
 
 
-\section{Introducción}
+\section{IntroducciÃ³n}
 
 
 \begin{equation}{\label{eq:hamiltoniano}}
@@ -45,36 +45,36 @@ H = - J \sum_{\langle ij \rangle}^N s_is_j
 \noindent donde $\langle ij \rangle$ indica que la sumatoria se realiza con los 
 sitios primeros vecinos.
 
-La magnetización asociada a un dado estado se define como:
+La magnetizaciÃ³n asociada a un dado estado se define como:
 
 \begin{equation}
 M = \mu \sum_{i=1}^N s_i
 \end{equation}
 
-Se puede demostrar que la temperatura crítica, expresada en unidades 
+Se puede demostrar que la temperatura crÃ­tica, expresada en unidades 
 adimensionales es:
 
 \begin{equation}
 \frac{k T_c }{J} = \frac{2}{ln(1+\sqrt{(2)})}
 \end{equation}
 
-El calor específico:
+El calor especÃ­fico:
 
 \begin{equation}
-C  = \frac{1}{kT²} \left(\langle E²\rangle - \langle E \rangle²\right)
+C  = \frac{1}{kT^2} \left(\langle E^2\rangle - \langle E \rangle^2\right)
 \end{equation}
 
-La suceptibilidad magnética
+La suceptibilidad magnÃ©tica
 
 \begin{equation}
-\chi = \frac{1}{kT²} \left(\langle M²\rangle - \langle M \rangle²\right)
+\chi = \frac{1}{kT^2} \left(\langle M^2\rangle - \langle M \rangle^2\right)
 \end{equation}
 
 \noindent siendo $k$ la constante de Boltzman
 
-\subsection{Medición de observables}
+\subsection{MediciÃ³n de observables}
 
-Para una determinada corrida, se obtiene la energía y la magnetización promedio 
+Para una determinada corrida, se obtiene la energÃ­a y la magnetizaciÃ³n promedio 
 de la siguiente manera:
 
 \begin{subequations}
@@ -86,20 +86,20 @@ de la siguiente manera:
    \end{align}
 \end{subequations}
 
-Las estimaciones del calor específico y de la suceptibilidad magnética se 
+Las estimaciones del calor especÃ­fico y de la suceptibilidad magnÃ©tica se 
 realizaro de manera similar para cada corrida $r$:
 
 \begin{equation}
- C^r \equiv  \frac{1}{kT²} \frac{1}{\sqrt{K-1}} \sum_{i=1}^K \left(
- E_i^r - E^r \right)²
+ C^r \equiv  \frac{1}{kT^2} \frac{1}{\sqrt{K-1}} \sum_{i=1}^K \left(
+ E_i^r - E^r \right)^2
 \end{equation}
 
 \begin{equation}
  \chi^r \equiv  \frac{1}{kT} \frac{1}{\sqrt{K-1}} \sum_{i=1}^K \left(
- M_i^r -  M^r \right)²
+ M_i^r -  M^r \right)^2
 \end{equation}
 
-Para obtener el resultado final con su respectivo error, se hizo estadística 
+Para obtener el resultado final con su respectivo error, se hizo estadÃ­stica 
 con $N_r$ corridas para cada temperatura:
 
 \begin{subequations}
@@ -108,12 +108,12 @@ X & \equiv \langle X^r \rangle = \frac{1}{N_r}
 \sum_{r=1}^{N_r} X^r \\
 \sigma(X) & \equiv \frac{\sigma(X^r)}{\sqrt{N_r}} =  \sqrt{\frac{1}{N_r(N_r-1)} 
 \sum_{i=1}^{N_r} \left( 
- X^r -  X \right)²}
+ X^r -  X \right)^2}
 \end{align}
 \end{subequations}
 
 \noindent donde $X^r$ puede ser cualquiera de los cuatro observables estimados 
-en cada corrida $E^r$, $M^r$, $C^r$ ó $\chi^r$
+en cada corrida $E^r$, $M^r$, $C^r$ Ã³ $\chi^r$
 
 
 
@@ -152,7 +152,7 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
 \end{tikzpicture}
 \end{center}
 \caption{Esquema de carpetas y archivos que se obtienen al realizar una corrida 
-completa haciendo estadísticas en cada temperatura.}
+completa haciendo estadÃ­sticas en cada temperatura.}
 \end{figure}]
 
 \input{desc_system.tex}
@@ -190,7 +190,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.6]{val_medios.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:val_medios}
     \end{center}
@@ -200,7 +200,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.6]{fluctuaciones.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:fluctuaciones}
     \end{center}
@@ -209,7 +209,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.5]{aceptaciones.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:aceptaciones}
     \end{center}
@@ -219,7 +219,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.6]{tamano_val_medios.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:tam_val_medios}
     \end{center}
@@ -228,7 +228,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.6]{tamano_fluctuaciones.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:fluctuaciones}
     \end{center}
@@ -237,7 +237,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.5]{tamano_aceptaciones.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:aceptaciones}
     \end{center}
@@ -246,7 +246,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.5]{corre_20x20.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:corre_20x20}
     \end{center}
@@ -255,7 +255,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.5]{{corre_tamano_t2.3}.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:corre_tamano_t2}
     \end{center}
@@ -264,7 +264,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.5]{{corre_tamano_t9.0}.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:corre_tamano_t9}
     \end{center}
@@ -273,7 +273,7 @@ completa haciendo estadísticas en cada temperatura.}
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.5]{{corre_tamano_t9.0}.pdf} \\
-      \caption{Distribución poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
+      \caption{DistribuciÃ³n poissonianas $P(4)$, $P(10)$ y $P(40)$. En rojo 
       aparecen las distribucciones gaussianas para cada 
       caso.}\label{fig:corre_tamano_t9}
     \end{center}
