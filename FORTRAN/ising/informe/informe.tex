@@ -7,6 +7,8 @@
 \usepackage{graphicx}
 \usepackage{a4wide}
 \usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \graphicspath{{imagenes/}}
 
@@ -127,24 +129,24 @@ Empezamo
     \end{center}
 \end{figure}
 
-\begin{figure}[H]
-    \begin{center}
+\section {Evolución de la matriz de estado de spines en función de la temperatura}
+
+\begin{figure}
+	\centering
+
+\begin{subfigure}
+	\centering
       \includegraphics[scale=0.5]{{frame5.0}.pdf} \\
       \caption{Temperatura 5.0}\label{fig:frame5.0}
-    \end{center}
-\end{figure}
+\end{subfigure}
 
-
-
-
-\begin{figure}[H]
-    \begin{center}
+\begin{subfigure}
+	\centering
       \includegraphics[scale=0.5]{{frame3.8}.pdf} \\
       \caption{Temperatura 3.8}\label{fig:frame3.8}
-    \end{center}
+\end{subfigure}
+
 \end{figure}
-
-
 
 \begin{figure}[H]
     \begin{center}
@@ -160,9 +162,6 @@ Empezamo
     \end{center}
 \end{figure}
 
-
-
-
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.5]{{frame1.3}.pdf} \\
@@ -176,7 +175,5 @@ Empezamo
       \caption{Temperatura 0.5}\label{fig:frame0.5}
     \end{center}
 \end{figure}
-
-
 
 \end{document}
