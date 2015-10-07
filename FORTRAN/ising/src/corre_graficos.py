@@ -23,8 +23,10 @@ forma = []
 forma.append('k.')
 forma.append('b.')
 forma.append('g.')
+forma.append('m.')
 
 leg = []
+leg.append(r'$T = 0.8$')
 leg.append(r'$T = 1.0$')
 leg.append(r'$T = 2.3$')
 leg.append(r'$T = 9.0$')
