@@ -33,7 +33,6 @@ Un resumen
 
 
 \section{Introducción}
-Empezamo
 
 
 \begin{equation}{\label{eq:hamiltoniano}}
@@ -56,7 +55,64 @@ adimensionales es:
 \frac{k T_c }{J} = \frac{2}{ln(1+\sqrt{(2)})}
 \end{equation}
 
+El calor específico:
+
+\begin{equation}
+C  = \frac{1}{kT²} \left(\langle E²\rangle - \langle E \rangle²\right)
+\end{equation}
+
+La suceptibilidad magnética
+
+\begin{equation}
+\chi = \frac{1}{kT²} \left(\langle M²\rangle - \langle M \rangle²\right)
+\end{equation}
+
 \noindent siendo $k$ la constante de Boltzman
+
+\subsection{Medición de observables}
+
+Para una determinada corrida, se obtiene la energía y la magnetización promedio 
+de la siguiente manera:
+
+\begin{subequations}
+   \begin{align}
+  E^r \equiv &\frac{1}{K}\sum_{i=1}^K E^r_i 
+  \label{eq:E_prom}\\
+  M^r \equiv & \frac{1}{K}\sum_{i=1}^K M^r_i 
+  \label{eq:M_prom}
+   \end{align}
+\end{subequations}
+
+Las estimaciones del calor específico y de la suceptibilidad magnética se 
+realizaro de manera similar para cada corrida $r$:
+
+\begin{equation}
+ C^r \equiv  \frac{1}{kT²} \frac{1}{\sqrt{K-1}} \sum_{i=1}^K \left(
+ E_i^r - E^r \right)²
+\end{equation}
+
+\begin{equation}
+ \chi^r \equiv  \frac{1}{kT} \frac{1}{\sqrt{K-1}} \sum_{i=1}^K \left(
+ M_i^r -  M^r \right)²
+\end{equation}
+
+Para obtener el resultado final con su respectivo error, se hizo estadística 
+con $N_r$ corridas para cada temperatura:
+
+\begin{subequations}
+\begin{align}
+X & \equiv \langle X^r \rangle = \frac{1}{N_r} 
+\sum_{r=1}^{N_r} X^r \\
+\sigma(X) & \equiv \frac{\sigma(X^r)}{\sqrt{N_r}} =  \sqrt{\frac{1}{N_r(N_r-1)} 
+\sum_{i=1}^{N_r} \left( 
+ X^r -  X \right)²}
+\end{align}
+\end{subequations}
+
+\noindent donde $X^r$ puede ser cualquiera de los cuatro observables estimados 
+en cada corrida $E^r$, $M^r$, $C^r$ ó $\chi^r$
+
+
 
 \tikzstyle{every node}=[thick,anchor=west, 
 font={\scriptsize\ttfamily}, inner sep=2.5pt]
@@ -96,11 +152,6 @@ completa haciendo estadísticas en cada temperatura.}
 \end{figure}]
 
 
-%\begin{eqnarray}
-%  f_r(x) &=& \frac{4}{\pi - 4}\frac{x^2}{1+x^2} \\
-%  f_\theta(x) &=& \frac{\sin(x)}{2} \\
-%  f_\varphi(x) &=&  \frac{1}{2\pi} 
-%\end{eqnarray}
 
 \begin{figure}
 	\begin{center}
