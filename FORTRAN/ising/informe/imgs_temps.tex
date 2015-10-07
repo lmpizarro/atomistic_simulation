@@ -1,14 +1,19 @@
+\inputencoding{utf8}
+\section {Evoluci\'on de la matriz de estado de spines en funci\'on de la 
+temperatura}
 
-\section {Evoluci\'on de la matriz de estado de spines en funci\'on de la temperatura}
 
-
-Al final de cada ciclo de c\'alculo, en cada una de las  temperaturas, se obtiene
+Al final de cada ciclo de c\'alculo, en cada una de las  temperaturas, se 
+obtiene
 la matriz de estado de los spines del sistema.
 
-Un script en python recorre cada una de las carpetas, lee el archivo ultimo\_estado.txt,
-que graba el programa ising, lo convierte a un array 2D de numpy, para luego con la 
+Un script en python recorre cada una de las carpetas, lee el archivo 
+ultimo\_estado.txt,
+que graba el programa ising, lo convierte a un array 2D de numpy, para luego 
+con la 
 librer\'ia matplotlib convertirlo a imagen y grabarlo en disco. 
-Luego de grabado en disco con el programa ffmpeg, se obtiene un video que muestra
+Luego de grabado en disco con el programa ffmpeg, se obtiene un video que 
+muestra
 la secuencia de la evoluci\'on del sistema desde temperaturas altas a bajas.
 
 
@@ -73,5 +78,3 @@ siendo el único spin presente en la matriz.
 
 \caption{Temperaturas bajas}\label{fig:Tbaja}
 \end{figure}
-
-
