@@ -227,7 +227,7 @@ es el que indica cada cuantos pasos Monte Carlo, se quieren grabar las energías
 
 \subsection{Corridas en paralelo}\label{paralelo}
 
-El módulo python \textbf{\textit{corridas_paralelos.py}}, es el que tiene la capacidad de correr
+El módulo python \textbf{\textit{corridas\_paralelos.py}}, es el que tiene la capacidad de correr
 en una máquina con varios núcleos.
 
 El código se paraleliza usando el paquete \textbf{mpi4py}, desarrollado por Lisandro Dalcin.
@@ -238,5 +238,6 @@ Una vez que terminan los cálculos a una dada temperatura, se hacen los cálculo
 temperatura con el estado final de la temperatura anterior.
 
 Este diseño permitió hacer cálculos en sistemas de mayor tamaño, lograndose llegar a dimensiones
-de 100x100.
+de 100x100. De esa manera se obtuvieron las curvas que muestran el comportamiento del sistema en
+tamaños mayores a 20x20.
 
