@@ -10,6 +10,13 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
+
+\usepackage{hyperref}
+\hypersetup{ %
+colorlinks=false  % false:boxedlinks ; true:coloredlinks
+} %
+
+
 \usepackage{tikz}
 \usetikzlibrary{trees}
 \usepackage{xcolor}
@@ -51,7 +58,8 @@ La magnetización asociada a un dado estado se define como:
 M = \mu \sum_{i=1}^N s_i
 \end{equation}
 
-Se puede demostrar que la temperatura crítica para una red cuadrada infinita, 
+Se puede demostrar \cite{chand1987} que la temperatura crítica para una red 
+cuadrada infinita, 
 expresada en unidades adimensionales es:
 
 \begin{equation}
@@ -311,4 +319,15 @@ distintas temperaturas}
 
 
 \input{imgs_temps.tex}
+
+\begin{thebibliography}{9}
+
+\bibitem{chand1987}
+  David Chandler,
+  Introduction to modern statistical mechanics,
+  Oxford University Press, Massachusetts,
+  Vol. 1,
+  1987.
+
+\end{thebibliography}
 \end{document}
