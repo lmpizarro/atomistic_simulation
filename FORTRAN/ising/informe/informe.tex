@@ -267,7 +267,8 @@ En esta parte se describen los resultados obtenidos al repetir las simulaciones
 con distintas temperaturas de trabajo. El barrido de temperaturas se realizó de 
 forma automática con un $\Delta T = 0.1$ (en unidades adimensionales) y se 
 redujo a $\Delta T = 0.02$ en la zona cercana a la temperatura crítica, para 
-obtener mayor detalle.
+obtener mayor detalle. En todos los casos cada corrida fue de $K=1e7$ puntos y 
+se realizaon $N_r=40$ corridas por cada temperatura.
 
 En la Figura \eqref{fig:val_medios} se muestran los resultados de la energía y 
 la magnetización con sus respectivos errores para una red de spines de 20x20. 
@@ -368,7 +369,8 @@ de la última de ellas aumentan a más del doble.
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.7]{tamano_fluctuaciones.pdf} \\
-      \caption{Calor específico y suceptibilidad magnética para redes de spin 
+      \caption{Calor específico y suceptibilidad magnética por spin para redes 
+      de spin 
       de distintos tamaños}\label{fig:tam_fluctuaciones}
     \end{center}
 \end{figure}
@@ -500,6 +502,22 @@ distintas temperaturas}
 
 
 \input{imgs_temps.tex}
+
+\section{Conclusiones}
+
+Se simuló el modelo de Ising en 2D utilizando el algoritmo de Metrópolis. Se 
+escribieron los programas en lenguaje Fortran para el cálculo principal y se 
+utilizó Python para manejar la ejecución y procesamiento de los datos. Con los 
+scripts de python fue posible ejecutar barridos de temperatura tanto en forma 
+serial como paralelizada.
+
+De las simulaciones realizadas se obtuvieron las variables físicas más 
+relevantes del sistema en función de la temperatura. Se analizó el efecto de 
+borde analizando distintos tamaños de la red de spines. Se comprobó que para 
+las magnitudes estudiadas, no existía mucha diferencia entre las redes de 40x40 
+y 100x100. Se analizaron también los tiempos de correlación existentes en la 
+simulación para distintas temperaturas y distintos tamaños de las redes.
+
 
 \begin{thebibliography}{9}
 
