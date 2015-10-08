@@ -179,7 +179,7 @@ Donde:
 
 
 
-  Los errores se calculan como std(RUN)/sqrt(NRUN)
+  Los errores se calculan como $std(RUN)/sqrt(NRUN)$
 
 
 \subsubsection{Librer\'ias utilizadas}
@@ -218,7 +218,25 @@ Para la generaci\'on de n\'umeros aleatorios se utilizaron
 las capacidades provistas por la librer\'ia ziggurat. 
 
 
-
 \subsection{Corridas en serie}\label{serie}
+El módulo python \textbf{\textit{corridas.py}}, es el que tiene la capacidad de correr
+el código de cálculo en una máquina con un único núcleo. Parametrizando adecuadamente
+\textbf{\textit{parametros.py}} se logran tiempos de corrida razonables en una máquina
+con un único procesador. El parámetro que permite acelerar la velocidad de porcesamiento, 
+es el que indica cada cuantos pasos Monte Carlo, se quieren grabar las energías.
 
 \subsection{Corridas en paralelo}\label{paralelo}
+
+El módulo python \textbf{\textit{corridas_paralelos.py}}, es el que tiene la capacidad de correr
+en una máquina con varios núcleos.
+
+El código se paraleliza usando el paquete \textbf{mpi4py}, desarrollado por Lisandro Dalcin.
+De esa manera lo que se hizo, es paralelizar desde python y no desde Fortran.
+
+El criterio utilizado para paralelizar es hacer en simultaneo  las corridas a una dada temteratura. 
+Una vez que terminan los cálculos a una dada temperatura, se hacen los cálculos en la próxima
+temperatura con el estado final de la temperatura anterior.
+
+Este diseño permitió hacer cálculos en sistemas de mayor tamaño, lograndose llegar a dimensiones
+de 100x100.
+
