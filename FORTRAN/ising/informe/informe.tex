@@ -44,41 +44,61 @@ Un resumen
 
 \section{Introducción}
 
+El modelo de Ising fue formulado como una representación idealizada de un 
+material ferromagnético. Se propone una red de spines con sus posiciones fijas, 
+donde cada elemento podrá tomar sólo los valores $s_i=\pm1$. Se asume que la 
+red es cuadrada y que la interacción ocurre solamente a primeros vecino. Bajo 
+estas condiciones, se puede escribir el Hamiltoniano del sistema como:  
 
 \begin{equation}{\label{eq:hamiltoniano}}
 H = - J \sum_{\langle ij \rangle}^N s_is_j
 \end{equation}
 
 \noindent donde $\langle ij \rangle$ indica que la sumatoria se realiza con los 
-sitios primeros vecinos.
+sitios primeros vecinos, mientras que $J>0$ es la constante de acoplamiento de 
+la interacción entre spines. Se omite el término de interacción con un cámpo 
+magnético externo.
 
-La magnetización asociada a un dado estado se define como:
+La magnetización del sistema para un dado estado se define como:
 
 \begin{equation}
 M = \mu \sum_{i=1}^N s_i
 \end{equation}
 
+\noindent donde $\mu$ es la permeabilidad magnética. Se dice que hay 
+magnetización espontánea cuando $\langle M \rangle \neq 0 $ en ausencia de 
+campo magnético externo. Para redes de dimensión $d \geq 2$ esto ocurre a 
+temperaturas menores a cierta temperatura crítica $T_c$. Si $T>T_c$ el sistema 
+será paramagnético con una magnetización media nula, mientras que para $T<T_c$ 
+el sistema será ferromagnético y habrá magnetización esponánea. Este cambio de 
+comportamiento del material es consecuencia de una transición de fase de 
+segundo orden.
+
 Se puede demostrar \cite{chand1987} que la temperatura crítica para una red 
-cuadrada infinita, 
-expresada en unidades adimensionales es:
+cuadrada infinita, expresada en unidades adimensionales es:
 
 \begin{equation}
 \frac{k T_c }{J} = \frac{2}{ln(1+\sqrt{(2)})}
 \end{equation}
 
-El calor específico:
+Tanto el calor específico como la suceptibilidad magnética del sistema se 
+definen en función de derivadas respecto de la temperatura. Derivada de la 
+energía para el calor específico, y de la magnetización para la suceptibilidad. 
+Sin embargo, en el trabajo se utilizará la relación de estas magnitudes con las 
+fluctuaciones del sistema, ya que ello permite una mejor estimación de estas 
+magnitudes. Entonces, el calor específico quedará definido como:
 
 \begin{equation}
 C  = \frac{1}{kT^2} \left(\langle E^2\rangle - \langle E \rangle^2\right)
 \end{equation}
 
-La suceptibilidad magnética
+\noindent y la suceptibilidad magnética
 
 \begin{equation}
 \chi = \frac{1}{kT^2} \left(\langle M^2\rangle - \langle M \rangle^2\right)
 \end{equation}
 
-\noindent siendo $k$ la constante de Boltzman
+\noindent siendo $k$ la constante de Boltzman.
 
 \subsection{Desarrollo de la simulación}
 
