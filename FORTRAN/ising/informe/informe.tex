@@ -115,6 +115,34 @@ X & \equiv \langle X^r \rangle = \frac{1}{N_r}
 \noindent donde $X^r$ puede ser cualquiera de los cuatro observables estimados 
 en cada corrida $E^r$, $M^r$, $C^r$ ó $\chi^r$
 
+\subsection{Correlaciones temporales de la energía}
+
+\begin{equation}\label{eq:corr_teo}
+C_{EE}(\tau) = \frac{\langle \left[E(t+\tau)-\langle 
+E\rangle\right]\left[E(t)-\langle E \rangle\right] \rangle
+}{\langle E^2\rangle - \langle E \rangle ^2}
+\end{equation}
+
+El estimador utilizado para obtener la autocorrelación de la muestra discreta 
+de datos fue:
+
+\begin{equation}\label{eq:corr_est}
+C_{EE}[k] = \frac{1}{\sigma^2(N_b-k)} \sum_{i=1}^{N_b - k}\left(E[i+k] - 
+\langle E \rangle\right)\left(E[i]-\langle E\rangle\right)
+\end{equation}
+
+\noindent donde $N_b$ es la cantdiad de puntos presentes en el bloque de datos 
+seleccionado. El valor informado consistió en dividir la historia temporal de 
+$E[i]$ en $N_b$ bloques, calcular la auto-correlación con \eqref{eq:corr_est} 
+en cada uno de ellos, y posteriormente calcular el promedio y desviación 
+estandar:
+
+\begin{subequations}
+\begin{align}
+\langle C_{EE}[k]\rangle &= \frac{1}{N_b} \sum_{b=1}^{N_b} C_{EE}[k]\\
+\sigma(\langle C_{EE}[k]\rangle) &= \frac{\sigma(C_{EE}[k])}{\sqrt{N_b}}
+\end{align}
+\end{subequations}
 
 
 \tikzstyle{every node}=[thick,anchor=west, 
