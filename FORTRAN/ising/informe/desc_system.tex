@@ -2,9 +2,11 @@
 
 
 Se desarrollo un c\'odigo de c\'alculo en Fortran y dos c\'odigos
-en python uno  de pre y el otro de post-procesamiento.
+en python uno  de pre y el otro de post-procesamiento. Tanto el código de preprocesamiento, 
+como el código de postprocesamiento, comprenden varios módulos responsables de distintas
+tareas.
 
-El c\'odigo fuente del programa en Fortran se encuentra en la carpeta
+El c\'odigo fuente del programa \textbf{\textit{ising.f90}}, se encuentra en la carpeta
 \textbf{src/}, su compilación se hace con el sistema \textbf{cmake} y depende
 de un conjunto de módulos que se encuentra en la carpeta \textbf{libs}.
 
@@ -16,9 +18,11 @@ Para compilarlo hay que crear hacer:
   > cmake ..
 \end{verbatim}
 
-esas operaciones crean un directorio \textbf{bin} donde se encuentran todos
+esas operaciones crean un directorio \textbf{bin/} donde se encuentran todos
 los elementos necesarios para hacer las corridas del programa.
-Para eso hay que hacer parametrizar adecuadamente el sistema en parametros.py:
+Para eso hay que parametrizar adecuadamente el sistema en \textbf{\textit{parametros.py}}.
+
+Los comentarios del módulo explican el fin de cada una de las variables globales python.
 
 \begin{verbatim}
 # -*- coding: utf-8 -*-
@@ -71,13 +75,21 @@ o si se quiere correr la versión paralelo:
 \end{verbatim}
 
 
-Una vez que se hacen los cálculos para todas las temperaturas, se hace en 
-la carpeta \texbf{bin/}:
+Una vez que se terminan los cálculos para todas las temperaturas,  en 
+la carpeta \textbf{bin/}, se corre:
 
 \begin{verbatim}
   > python grafico_tablas.py 
 \end{verbatim}
 
+para obtener los gráficos de las medidas fundamentales del sistema.
+
+Si se quieren obtener los gráficos de las correlaciones a distintas temperaturas, 
+se debe correr:
+
+\begin{verbatim}
+  > python correlaciones.py 
+\end{verbatim}
 
 
 
@@ -89,7 +101,7 @@ El programa ising lee la configuraci\'on de una corrida del
 archivo parametros.dat que tiene que estar en la carpeta donde se
 corre ising.
 
-El archivo parametros.dat tiene la forma: 
+El archivo \textbf{parametros.dat} tiene la forma: 
 
 \begin{verbatim}
      N M T J MCS PE. 
@@ -174,33 +186,33 @@ Donde:
 
 La carpeta \textbf{libs/} contiene las librer\'ias usadas por el sistema
 
-\paragraph{\underline{estadistica.f90}}
+\paragraph{\underline{\textit{estadistica.f90}}}
 
 Un conjunto de subrutinas para c\'alculo estad\'istico. 
 
-\paragraph{\underline{globales.f90}}
+\paragraph{\underline{\textit{globales.f90}}}
 Un m\'odulo que contiene las variables globales del programa.
 	
-\paragraph{\underline{io\_parametros.f90}}  
+\paragraph{\underline{\textit{io\_parametros.f90}}}  
 Un m\'odulo para el manejo de la entrada y las salidas de los
 datos del programa.
 
 
-\paragraph{\underline{isingmods.f90}} 
+\paragraph{\underline{\textit{isingmods.f90}}} 
 En este m\'odulo  se encuentran las principales rutinas de c\'alculo del
 sistema.
 
 
-\paragraph{\underline{strings.f90}}
+\paragraph{\underline{\textit{strings.f90}}}
 Un m\'odulo que contiene subrutinas de manejo de cadena de caracteres.
 
 
-\paragraph{\underline{usozig.f90}} 
+\paragraph{\underline{\textit{usozig.f90}}} 
 En este m\'odulo se ecuentran las subrutinas que usan ziggurat y que
 son usadas en el programa principal, ising.
 					
 					
-\paragraph{\underline{ziggurat.f90}}
+\paragraph{\underline{\textit{ziggurat.f90}}}
 
 Para la generaci\'on de n\'umeros aleatorios se utilizaron
 las capacidades provistas por la librer\'ia ziggurat. 
