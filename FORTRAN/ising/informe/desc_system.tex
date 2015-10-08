@@ -6,6 +6,22 @@ en python uno  de pre y el otro de post-procesamiento. Tanto el código de prepr
 como el código de postprocesamiento, comprenden varios módulos responsables de distintas
 tareas.
 
+El proyecto se encuentra bajo control de versión en un repositorio \textbf{git} de CNEA
+y se obtiene con los permisos adecuados haciendo:
+
+\begin{verbatim}
+> git clone https://lpizarro@scmmanager.dcap.cnea.gov.ar/scm/git/SimRui
+\end{verbatim}
+
+
+Una vez cloneado el repositorio, para acceder al código, hacer:
+
+\begin{verbatim}
+  > cd FORTRAN/ising
+\end{verbatim}
+
+
+
 El c\'odigo fuente del programa \textbf{\textit{ising.f90}}, se encuentra en la carpeta
 \textbf{src/}, su compilación se hace con el sistema \textbf{cmake} y depende
 de un conjunto de módulos que se encuentra en la carpeta \textbf{libs}.
@@ -158,23 +174,23 @@ Donde:
 
 
 \begin{itemize}
-  \item T: temperatura de la corrida 
-    \item <E>: Energ\'ia media calculada
-    \item  std(E): desviaci\'on standard de la energ\'ia calculada
+  \item $T$: temperatura de la corrida 
+    \item $<E>$: Energ\'ia media calculada
+    \item  $std(E)$: desviaci\'on standard de la energ\'ia calculada
 
-    \item <M>: Magnetizaci\'on media calculada
-    \item  std(M): desviaci\'on standard de la Magnetizaci\'on calculada
-
-
-    \item <c>: Capacidad calor\'ifica media calculada
-    \item  std(c): desviaci\'on standard de la Capacidad calor\'ifica calculada
-
-    \item <suc>: Susceptibilidad magn\'etica media calculada
-    \item  std(suc): desviaci\'on standard de la Susceptibilidad magn\'etica calculada
+    \item $<M>$: Magnetizaci\'on media calculada
+    \item  $std(M)$: desviaci\'on standard de la Magnetizaci\'on calculada
 
 
-    \item <acept>: Aceptaci\'on media calculada
-    \item  std(acept): desviaci\'on standard de la Aceptaci\'on calculada
+    \item $<c>$: Capacidad calor\'ifica media calculada
+    \item  $std(c)$: desviaci\'on standard de la Capacidad calor\'ifica calculada
+
+    \item $<suc>$: Susceptibilidad magn\'etica media calculada
+    \item  $std(suc)$: desviaci\'on standard de la Susceptibilidad magn\'etica calculada
+
+
+    \item $<acept>$: Aceptaci\'on media calculada
+    \item  $std(acept)$: desviaci\'on standard de la Aceptaci\'on calculada
 \end{itemize}
 
 
@@ -227,8 +243,12 @@ es el que indica cada cuantos pasos Monte Carlo, se quieren grabar las energías
 
 \subsection{Corridas en paralelo}\label{paralelo}
 
+<<<<<<< HEAD
 El módulo python \textbf{\textit{corridas\_paralelos.py}}, es el que tiene la 
 capacidad de correr
+=======
+El módulo python \textbf{\textit{corridas\_paralelos.py}}, es el que tiene la capacidad de correr
+>>>>>>> SimRui/master
 en una máquina con varios núcleos.
 
 El código se paraleliza usando el paquete \textbf{mpi4py}, desarrollado por Lisandro Dalcin.
@@ -239,5 +259,5 @@ Una vez que terminan los cálculos a una dada temperatura, se hacen los cálculo
 temperatura con el estado final de la temperatura anterior.
 
 Este diseño permitió hacer cálculos en sistemas de mayor tamaño, lograndose llegar a dimensiones
-de 100x100.
-
+de 100x100. De esa manera se obtuvieron las curvas que muestran el comportamiento del sistema en
+tamaños mayores a 20x20.

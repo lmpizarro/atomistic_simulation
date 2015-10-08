@@ -158,7 +158,7 @@ obtenidos en cada paso del algoritmo de Metrópolis:
 \noindent donde $K$ son la cantidad total de pasos realizados.
 
 Las estimaciones del calor específico y de la suceptibilidad magnética para una 
-corrida $r$ se realizaro de manera similar, teniendo en cuenta las expresiones 
+corrida $r$ se realizaron de manera similar, teniendo en cuenta las expresiones 
 teóricas dadas de las ecuaciones \eqref{eq:cal_teo} y \eqref{eq:suce_teo} 
 respectivamente:
 
@@ -189,7 +189,77 @@ X & \equiv \langle X^r \rangle = \frac{1}{N_r}
 \end{subequations}
 
 \noindent donde $X^r$ puede ser cualquiera de los cuatro observables estimados 
-en cada corrida $E^r$, $M^r$, $C^r$ ó $\chi^r$
+en cada corrida: $E^r$, $M^r$, $C^r$ ó $\chi^r$. En esta última expresión, se 
+utiliza el hecho de que la distribución del valor medio de $Xr$ tiende a una 
+Gaussiana debido al Teoréma Central del Límite.
+
+\section{Resultados}
+
+\subsection{Termalización del sistema}
+
+Para obtener resultados a una dada temperatura, se realizaron, en verdad dos 
+corridas. La primera de ellas consistió en llevar al sistema, desde su estado 
+inicial, hasta el estado de equilibrio. A ete proceso se lo denomina 
+termalización. Luego, la segunda corrida comienza con el último estado obtenido 
+obtenido aquí para la parte de mediciones. En la Figura \ref{fig:terma_01} se 
+muestran algunos ejemplos de cómo es el proceso de termalización a distintas 
+condiciones.
+
+\begin{figure}\label{fig:terma_01}
+	\begin{center}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+      	\includegraphics[scale=0.4]{{terma_t0.5_ei_rand}.pdf} \\
+     	 \caption{$T=0.5$ Estado inicial aleatorio}\label{fig:terma.t05_rand}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+     	 \includegraphics[scale=0.4]{{terma_t5.0_ei_up}.pdf} \\
+      	\caption{$T=5.0$ Estado inicial con $s_i=1$}\label{fig:terma.t50_up}
+	\end{subfigure}
+	\end{center}
+	\caption{Proceso de termalización con distintas temperaturas y estados 
+	iniciales}
+\end{figure}
+
+El criterio para saber cuándo se llegó al estado de equilibrio es fácil de 
+obtener visalmente viendo la evolución de la energía y la magnetización en cada 
+paso el algoritmo. Sin embargo, al querer automatizar el proceso de ejecución 
+del programa, se debe fijar un criterio tamibén automático para deteminar el 
+punto de termalización.
+
+En este trabajo el criterio utilizado, fue realizar varias corridas a 
+distintas temperaturas y distintas configuraciones iniciales, y registrar 
+manualmente el número de pasos necesarios para llegar al equilibrio. Luego, 
+entre todos los valors obtenidos se definió que la cantidad de pasos para la 
+termalización $K_{term}$ sea diez veces el máximo valor obtenido. En la 
+práctica, para una red de 20x20, se tomaron $K_{term}=50000$. En las Figuras 
+\eqref{fig:terma_01} y \eqref{fig:terma_02} se muestran cuatro situaciones 
+cambiando la temperatura de trabajo y el estado inicial de dónde se parte.
+
+\begin{figure}\label{fig:terma_02}
+	\begin{center}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+      	\includegraphics[scale=0.4]{{terma_t3.0_ei_rand}.pdf} \\
+     	 \caption{$T=3.0$ Estado inicial aleatorio}\label{fig:terma.t3_rand}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+     	 \includegraphics[scale=0.4]{{terma_t3.0_ei_up}.pdf} \\
+      	\caption{$T=3.0$ Estado inicial con $s_i=1$}\label{fig:terma.t3_up}
+	\end{subfigure}
+	\end{center}
+	\caption{Termalización a la temperatura $T=3.0$ partiendo de dos 
+	configuraciones de spines distintas}
+\end{figure}
+
+Esta forma de obtener los pasos de termalización resulta mucho mayor que el 
+necesario, ya que en las corridas efectuadas siempre se tomó el estado final de 
+la corrida efectuada a una temperatura anterior (salvo la primer corrida, a 
+temperaturas altas, que se tomó un estado inicial arbitrario).
+
+\newpage
 
 \subsection{Correlaciones temporales de la energía}
 
@@ -265,45 +335,13 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
 \end{center}
 \caption{Esquema de carpetas y archivos que se obtienen al realizar una corrida 
 completa haciendo estadísticas en cada temperatura.}
-\end{figure}]
+\end{figure}
 
 \input{desc_system.tex}
 
-\subsection{Termalización del sistema}
 
-\begin{figure}
-	\begin{center}
-	\begin{subfigure}{.49\textwidth}
-		\centering
-      	\includegraphics[scale=0.4]{{terma_t0.5_ei_rand}.pdf} \\
-     	 \caption{$T=0.5$ Estado inicial aleatorio}\label{fig:terma.t05_rand}
-	\end{subfigure}
-	\begin{subfigure}{.49\textwidth}
-		\centering
-     	 \includegraphics[scale=0.4]{{terma_t5.0_ei_up}.pdf} \\
-      	\caption{$T=5.0$ Estado inicial con $s_i=1$}\label{fig:terma.t50_up}
-	\end{subfigure}
-	\end{center}
-	\caption{Proceso de termalización con distintas temperaturas y estados 
-	iniciales}
-\end{figure}
 
-\begin{figure}
-	\begin{center}
-	\begin{subfigure}{.49\textwidth}
-		\centering
-      	\includegraphics[scale=0.4]{{terma_t3.0_ei_rand}.pdf} \\
-     	 \caption{$T=3.0$ Estado inicial aleatorio}\label{fig:terma.t3_rand}
-	\end{subfigure}
-	\begin{subfigure}{.49\textwidth}
-		\centering
-     	 \includegraphics[scale=0.4]{{terma_t3.0_ei_up}.pdf} \\
-      	\caption{$T=3.0$ Estado inicial con $s_i=1$}\label{fig:terma.t3_up}
-	\end{subfigure}
-	\end{center}
-	\caption{Termalización a la temperatura $T=3.0$ partiendo de dos 
-	configuraciones de spines distintas}
-\end{figure}
+
 
 \begin{figure}[H]
     \begin{center}
