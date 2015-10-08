@@ -4,6 +4,82 @@
 Se desarrollo un c\'odigo de c\'alculo en Fortran y dos c\'odigos
 en python uno  de pre y el otro de post-procesamiento.
 
+El c\'odigo fuente del programa en Fortran se encuentra en la carpeta
+\textbf{src/}, su compilación se hace con el sistema \textbf{cmake} y depende
+de un conjunto de módulos que se encuentra en la carpeta \textbf{libs}.
+
+Para compilarlo hay que crear hacer:
+
+\begin{verbatim}
+  > mkdir build/
+  > cd build/
+  > cmake ..
+\end{verbatim}
+
+esas operaciones crean un directorio \textbf{bin} donde se encuentran todos
+los elementos necesarios para hacer las corridas del programa.
+Para eso hay que hacer parametrizar adecuadamente el sistema en parametros.py:
+
+\begin{verbatim}
+# -*- coding: utf-8 -*-
+
+###############################################################################       
+#   PARAMETROS DE ENTRADA
+###############################################################################
+# Tamaño de la red de spines
+N_red = 20
+M_red = 20
+# Cada cuántos puntos se quiere grabar el archivo temporal
+# K_grab = 0 especifica que no se grabe ningún archivo temporal
+N_grab = 0     
+# Barrido de temperaturas
+# Temperatura mínima
+T_min = 0.5
+# Temperatura máxima
+T_max = 4.0
+# Paso de temperatura
+dT = 0.1
+# Agrego el detalle cerca de la temperatura crítica
+T_detail_min = 2.10
+T_detail_max = 2.50
+dT_detail = 0.02
+# Número de pasos para la primer corrida (termalización)
+N_term = '4000'
+# Número de pasos para la segunda corrida (medición)
+N_medi = '10000'
+# Número de corridas para cada temperatura
+Nrun = 8
+#
+# FIN PARAMETROS DE ENTRADA
+###############################################################################
+
+\end{verbatim}
+
+
+y luego hacer, para correr la versión serie:
+
+\begin{verbatim}
+  > cd bin/
+  > python corridas.py
+\end{verbatim}
+
+o si se quiere correr la versión paralelo:
+
+\begin{verbatim}
+  > cd bin/
+  > python corridas_paralelos.py
+\end{verbatim}
+
+
+Una vez que se hacen los cálculos para todas las temperaturas, se hace en 
+la carpeta \texbf{bin/}:
+
+\begin{verbatim}
+  > python grafico_tablas.py 
+\end{verbatim}
+
+
+
 
 \subsection{C\'odigo ising}
 
@@ -30,7 +106,7 @@ es una cantidad que especifica cada cuantos pasos Monte Carlo se graba la energ\
 
 
 \paragraph{Preprocesamiento en python}
-En la carpeta src/ el archivo parametros.py contiene la parametrizaci\'on 
+En la carpeta \textbf{src/} el archivo parametros.py contiene la parametrizaci\'on 
 de los scripts
 en python que permiten correr el sistema en serie (ver \ref{serie}), 
 o en paralelo (ver \ref{paralelo}).
@@ -96,35 +172,35 @@ Donde:
 
 \subsubsection{Librer\'ias utilizadas}
 
-La carpeta libs/ contiene las librer\'ias usadas por el sistema
+La carpeta \textbf{libs/} contiene las librer\'ias usadas por el sistema
 
-\paragraph{estadistica.f90}
+\paragraph{\underline{estadistica.f90}}
 
 Un conjunto de subrutinas para c\'alculo estad\'istico. 
 
-\paragraph{globales.f90}
+\paragraph{\underline{globales.f90}}
 Un m\'odulo que contiene las variables globales del programa.
 	
-\paragraph{io\_parametros.f90}  
+\paragraph{\underline{io\_parametros.f90}}  
 Un m\'odulo para el manejo de la entrada y las salidas de los
 datos del programa.
 
 
-\paragraph{isingmods.f90} 
+\paragraph{\underline{isingmods.f90}} 
 En este m\'odulo  se encuentran las principales rutinas de c\'alculo del
 sistema.
 
 
-\paragraph{strings.f90}
+\paragraph{\underline{strings.f90}}
 Un m\'odulo que contiene subrutinas de manejo de cadena de caracteres.
 
 
-\paragraph{usozig.f90} 
+\paragraph{\underline{usozig.f90}} 
 En este m\'odulo se ecuentran las subrutinas que usan ziggurat y que
 son usadas en el programa principal, ising.
 					
 					
-\paragraph{ziggurat.f90}
+\paragraph{\underline{ziggurat.f90}}
 
 Para la generaci\'on de n\'umeros aleatorios se utilizaron
 las capacidades provistas por la librer\'ia ziggurat. 
