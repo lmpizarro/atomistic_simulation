@@ -7,7 +7,7 @@
 \usepackage{graphicx}
 \usepackage{a4wide}
 \usepackage{float}
-\usepackage{caption}
+\usepackage[labelfont={bf},textfont={it}]{caption}
 \usepackage{subcaption}
 
 
@@ -79,6 +79,37 @@ La suceptibilidad magnética
 \end{equation}
 
 \noindent siendo $k$ la constante de Boltzman
+
+\subsection{Desarrollo de la simulación}
+
+Se implementó el algoritmo de Metrópolis para obtener una colección 
+representativa de distintos estados del sistema del ensamble canónico. Se 
+utilizaron condiciones periódicas de contorno con el fin de suprimir los 
+efectos de borde del sistema. De esta manera se pretende simular el seno del 
+material en un sistema infinito.
+
+Se escribió el programa \texttt{ising} de acuerdo al siguiente algoritmo:
+
+\renewcommand{\theenumi}{\roman{enumi}}
+\begin{enumerate}
+	\item Se elije un estado inicial del sistema. Esto puede realizarse al 
+	azar, haciendo que cada spin tome valores $s_i=\pm1$. También se permitió 
+	que el estado inicial fuera leido de un archivo.
+	\item Se elije aleatoriamente un spin de la red.
+	\item Se calcula la energía que tendría el nuevo estado si se invirtiera el 
+	spin seleccionado. Se calcula la diferencia de energía respecto al estado 
+	previo.
+	\item Si la diferencia de energía es negativa, se acepta el estado. 
+	\item Si la deferencia de energía es positiva se acepta el nuevo estado 
+	propuesto con probabilidad $exp(-\Delta E/kT)$. Para ello se muestrea un 
+	número $r$ al azar con distribución uniforme $\mathcal{U}(0,1)$. Si $r< 
+	exp(-\Delta E/kT)$ se acepta el estado, de lo contrario es rechazado.
+    \item En caso de haber sido aceptado se invierte el spin y se 
+    calcula la magnetización. Se guardan los datos de $E$y $M$.
+    \item Se vuelve al punto (\textrm{II}) hasta haber completado $K$ ciclos 
+    del 
+    algoritmo.
+\end{enumerate}
 
 \subsection{Medición de observables}
 
