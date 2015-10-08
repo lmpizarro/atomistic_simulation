@@ -38,7 +38,13 @@ simulación computacional}}
 \maketitle
 
 \begin{abstract}
-Un resumen
+Se implementó el algoritmo de Metrópolis para la simulación del modelo de Ising 
+en 2D. Se calcularon las magnitudes del sistem (energía, magnetización, calor 
+específico y suceptibilidad magnética) en función de la temperatura, donde se 
+hizo manifiesto la $T_c$ donde se produce el cambio de fase. Se realizaron 
+análisis cambiando el tamaño de la red para analizar los efectos de borde y 
+finalmente se calcularon las funciones de auto-correlación temporal de la 
+energía.
 \end{abstract}
 
 
@@ -88,13 +94,13 @@ Sin embargo, en el trabajo se utilizará la relación de estas magnitudes con la
 fluctuaciones del sistema, ya que ello permite una mejor estimación de estas 
 magnitudes. Entonces, el calor específico quedará definido como:
 
-\begin{equation}
+\begin{equation}\label{eq:cal_teo}
 C  = \frac{1}{kT^2} \left(\langle E^2\rangle - \langle E \rangle^2\right)
 \end{equation}
 
 \noindent y la suceptibilidad magnética
 
-\begin{equation}
+\begin{equation}\label{eq:suce_teo}
 \chi = \frac{1}{kT^2} \left(\langle M^2\rangle - \langle M \rangle^2\right)
 \end{equation}
 
@@ -131,10 +137,14 @@ Se escribió el programa \texttt{ising} de acuerdo al siguiente algoritmo:
     algoritmo.
 \end{enumerate}
 
-\subsection{Medición de observables}
+\section{Medición de observables}
 
-Para una determinada corrida, se obtiene la energía y la magnetización promedio 
-de la siguiente manera:
+En esta sección se describirá la metodología utilizada para la estimación de 
+los observables una vez termalizado el sistema a la temperatura de trabajo.
+
+Para una determinada corrida $r$ del programa \texttt{ising}, se obtiene la 
+energía y la magnetización realizando un promedio sobre todos los valores 
+obtenidos en cada paso del algoritmo de Metrópolis:
 
 \begin{subequations}
    \begin{align}
@@ -145,8 +155,12 @@ de la siguiente manera:
    \end{align}
 \end{subequations}
 
-Las estimaciones del calor específico y de la suceptibilidad magnética se 
-realizaro de manera similar para cada corrida $r$:
+\noindent donde $K$ son la cantidad total de pasos realizados.
+
+Las estimaciones del calor específico y de la suceptibilidad magnética para una 
+corrida $r$ se realizaro de manera similar, teniendo en cuenta las expresiones 
+teóricas dadas de las ecuaciones \eqref{eq:cal_teo} y \eqref{eq:suce_teo} 
+respectivamente:
 
 \begin{equation}
  C^r \equiv  \frac{1}{kT^2} \frac{1}{\sqrt{K-1}} \sum_{i=1}^K \left(
@@ -158,8 +172,11 @@ realizaro de manera similar para cada corrida $r$:
  M_i^r -  M^r \right)^2
 \end{equation}
 
-Para obtener el resultado final con su respectivo error, se hizo estadística 
-con $N_r$ corridas para cada temperatura:
+Para tener un resultado estadísticamente relevante, se efectuaron varias 
+corridas con los mismos parámetros. Esto permitió obtener el resultado final de 
+las magnitudes con su respectivo error. Llamando $N_r$ a la cantidad de 
+repeticiones realizadas a una dada temperatura los valores medios y 
+desviaciones estándar se definieron como:
 
 \begin{subequations}
 \begin{align}
@@ -203,6 +220,14 @@ estandar:
 \end{align}
 \end{subequations}
 
+Finalmente, asumiendo un modelo exponencial para la función de 
+auto-correlación, se linealizaron los datos para realizar un ajuste y obtener 
+el tiempo de correlación $\tau_c$ del sistema:
+
+\begin{equation}
+C_{EE}[k]=A e^{-t[k]/\tau_c} \qquad \Rightarrow \quad ln\left(C_{EE}[k]\right) 
+= ln(A) - \frac{t[k]}{\tau_c}
+\end{equation}
 
 \tikzstyle{every node}=[thick,anchor=west, 
 font={\scriptsize\ttfamily}, inner sep=2.5pt]
