@@ -38,47 +38,73 @@ simulación computacional}}
 \maketitle
 
 \begin{abstract}
-Un resumen
+Se implementó el algoritmo de Metrópolis para la simulación del modelo de Ising 
+en 2D. Se calcularon las magnitudes del sistem (energía, magnetización, calor 
+específico y suceptibilidad magnética) en función de la temperatura, donde se 
+hizo manifiesto la $T_c$ donde se produce el cambio de fase. Se realizaron 
+análisis cambiando el tamaño de la red para analizar los efectos de borde y 
+finalmente se calcularon las funciones de auto-correlación temporal de la 
+energía.
 \end{abstract}
 
 
 \section{Introducción}
 
+El modelo de Ising fue formulado como una representación idealizada de un 
+material ferromagnético. Se propone una red de spines con sus posiciones fijas, 
+donde cada elemento podrá tomar sólo los valores $s_i=\pm1$. Se asume que la 
+red es cuadrada y que la interacción ocurre solamente a primeros vecino. Bajo 
+estas condiciones, se puede escribir el Hamiltoniano del sistema como:  
 
 \begin{equation}{\label{eq:hamiltoniano}}
 H = - J \sum_{\langle ij \rangle}^N s_is_j
 \end{equation}
 
 \noindent donde $\langle ij \rangle$ indica que la sumatoria se realiza con los 
-sitios primeros vecinos.
+sitios primeros vecinos, mientras que $J>0$ es la constante de acoplamiento de 
+la interacción entre spines. Se omite el término de interacción con un cámpo 
+magnético externo.
 
-La magnetización asociada a un dado estado se define como:
+La magnetización del sistema para un dado estado se define como:
 
 \begin{equation}
 M = \mu \sum_{i=1}^N s_i
 \end{equation}
 
+\noindent donde $\mu$ es la permeabilidad magnética. Se dice que hay 
+magnetización espontánea cuando $\langle M \rangle \neq 0 $ en ausencia de 
+campo magnético externo. Para redes de dimensión $d \geq 2$ esto ocurre a 
+temperaturas menores a cierta temperatura crítica $T_c$. Si $T>T_c$ el sistema 
+será paramagnético con una magnetización media nula, mientras que para $T<T_c$ 
+el sistema será ferromagnético y habrá magnetización esponánea. Este cambio de 
+comportamiento del material es consecuencia de una transición de fase de 
+segundo orden.
+
 Se puede demostrar \cite{chand1987} que la temperatura crítica para una red 
-cuadrada infinita, 
-expresada en unidades adimensionales es:
+cuadrada infinita, expresada en unidades adimensionales es:
 
 \begin{equation}
-\frac{k T_c }{J} = \frac{2}{ln(1+\sqrt{(2)})}
+\frac{k T_c }{J} = \frac{2}{ln(1+\sqrt{2})} \simeq 2.3
 \end{equation}
 
-El calor específico:
+Tanto el calor específico como la suceptibilidad magnética del sistema se 
+definen en función de derivadas respecto de la temperatura. Derivada de la 
+energía para el calor específico, y de la magnetización para la suceptibilidad. 
+Sin embargo, en el trabajo se utilizará la relación de estas magnitudes con las 
+fluctuaciones del sistema, ya que ello permite una mejor estimación de estas 
+magnitudes. Entonces, el calor específico quedará definido como:
 
-\begin{equation}
+\begin{equation}\label{eq:cal_teo}
 C  = \frac{1}{kT^2} \left(\langle E^2\rangle - \langle E \rangle^2\right)
 \end{equation}
 
-La suceptibilidad magnética
+\noindent y la suceptibilidad magnética
 
-\begin{equation}
+\begin{equation}\label{eq:suce_teo}
 \chi = \frac{1}{kT^2} \left(\langle M^2\rangle - \langle M \rangle^2\right)
 \end{equation}
 
-\noindent siendo $k$ la constante de Boltzman
+\noindent siendo $k$ la constante de Boltzman.
 
 \subsection{Desarrollo de la simulación}
 
@@ -111,10 +137,14 @@ Se escribió el programa \texttt{ising} de acuerdo al siguiente algoritmo:
     algoritmo.
 \end{enumerate}
 
-\subsection{Medición de observables}
+\section{Medición de observables}
 
-Para una determinada corrida, se obtiene la energía y la magnetización promedio 
-de la siguiente manera:
+En esta sección se describirá la metodología utilizada para la estimación de 
+los observables una vez termalizado el sistema a la temperatura de trabajo.
+
+Para una determinada corrida $r$ del programa \texttt{ising}, se obtiene la 
+energía y la magnetización realizando un promedio sobre todos los valores 
+obtenidos en cada paso del algoritmo de Metrópolis:
 
 \begin{subequations}
    \begin{align}
@@ -125,8 +155,12 @@ de la siguiente manera:
    \end{align}
 \end{subequations}
 
-Las estimaciones del calor específico y de la suceptibilidad magnética se 
-realizaro de manera similar para cada corrida $r$:
+\noindent donde $K$ son la cantidad total de pasos realizados.
+
+Las estimaciones del calor específico y de la suceptibilidad magnética para una 
+corrida $r$ se realizaron de manera similar, teniendo en cuenta las expresiones 
+teóricas dadas de las ecuaciones \eqref{eq:cal_teo} y \eqref{eq:suce_teo} 
+respectivamente:
 
 \begin{equation}
  C^r \equiv  \frac{1}{kT^2} \frac{1}{\sqrt{K-1}} \sum_{i=1}^K \left(
@@ -138,8 +172,11 @@ realizaro de manera similar para cada corrida $r$:
  M_i^r -  M^r \right)^2
 \end{equation}
 
-Para obtener el resultado final con su respectivo error, se hizo estadística 
-con $N_r$ corridas para cada temperatura:
+Para tener un resultado estadísticamente relevante, se efectuaron varias 
+corridas con los mismos parámetros. Esto permitió obtener el resultado final de 
+las magnitudes con su respectivo error. Llamando $N_r$ a la cantidad de 
+repeticiones realizadas a una dada temperatura los valores medios y 
+desviaciones estándar se definieron como:
 
 \begin{subequations}
 \begin{align}
@@ -152,7 +189,164 @@ X & \equiv \langle X^r \rangle = \frac{1}{N_r}
 \end{subequations}
 
 \noindent donde $X^r$ puede ser cualquiera de los cuatro observables estimados 
-en cada corrida $E^r$, $M^r$, $C^r$ ó $\chi^r$
+en cada corrida: $E^r$, $M^r$, $C^r$ ó $\chi^r$. En esta última expresión, se 
+utiliza el hecho de que la distribución del valor medio de $Xr$ tiende a una 
+Gaussiana debido al Teoréma Central del Límite.
+
+\section{Resultados}
+
+\subsection{Termalización del sistema}
+
+Para obtener resultados a una dada temperatura, se realizaron, en verdad dos 
+corridas. La primera de ellas consistió en llevar al sistema, desde su estado 
+inicial, hasta el estado de equilibrio. A ete proceso se lo denomina 
+termalización. Luego, la segunda corrida comienza con el último estado obtenido 
+obtenido aquí para la parte de mediciones. En la Figura \ref{fig:terma_01} se 
+muestran algunos ejemplos de cómo es el proceso de termalización a distintas 
+condiciones.
+
+\begin{figure}\label{fig:terma_01}
+	\begin{center}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+      	\includegraphics[scale=0.4]{{terma_t0.5_ei_rand}.pdf} \\
+     	 \caption{$T=0.5$ Estado inicial aleatorio}\label{fig:terma.t05_rand}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+     	 \includegraphics[scale=0.4]{{terma_t5.0_ei_up}.pdf} \\
+      	\caption{$T=5.0$ Estado inicial con $s_i=1$}\label{fig:terma.t50_up}
+	\end{subfigure}
+	\end{center}
+	\caption{Proceso de termalización con distintas temperaturas y estados 
+	iniciales}
+\end{figure}
+
+El criterio para saber cuándo se llegó al estado de equilibrio es fácil de 
+obtener visalmente viendo la evolución de la energía y la magnetización en cada 
+paso el algoritmo. Sin embargo, al querer automatizar el proceso de ejecución 
+del programa, se debe fijar un criterio tamibén automático para deteminar el 
+punto de termalización.
+
+En este trabajo el criterio utilizado, fue realizar varias corridas a 
+distintas temperaturas y distintas configuraciones iniciales, y registrar 
+manualmente el número de pasos necesarios para llegar al equilibrio. Luego, 
+entre todos los valors obtenidos se definió que la cantidad de pasos para la 
+termalización $K_{term}$ sea diez veces el máximo valor obtenido. En la 
+práctica, para una red de 20x20, se tomaron $K_{term}=50000$. En las Figuras 
+\eqref{fig:terma_01} y \eqref{fig:terma_02} se muestran cuatro situaciones 
+cambiando la temperatura de trabajo y el estado inicial de dónde se parte.
+
+\begin{figure}\label{fig:terma_02}
+	\begin{center}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+      	\includegraphics[scale=0.4]{{terma_t3.0_ei_rand}.pdf} \\
+     	 \caption{$T=3.0$ Estado inicial aleatorio}\label{fig:terma.t3_rand}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+     	 \includegraphics[scale=0.4]{{terma_t3.0_ei_up}.pdf} \\
+      	\caption{$T=3.0$ Estado inicial con $s_i=1$}\label{fig:terma.t3_up}
+	\end{subfigure}
+	\end{center}
+	\caption{Termalización a la temperatura $T=3.0$ partiendo de dos 
+	configuraciones de spines distintas}
+\end{figure}
+
+Esta forma de obtener los pasos de termalización resulta mucho mayor que el 
+necesario, ya que en las corridas efectuadas siempre se tomó el estado final de 
+la corrida efectuada a una temperatura anterior (salvo la primer corrida, a 
+temperaturas altas, que se tomó un estado inicial arbitrario).
+
+\newpage
+
+\subsection{Dependencia con la temperatura del sistema}
+
+En esta parte se describen los resultados obtenidos al repetir las simulaciones 
+con distintas temperaturas de trabajo. El barrido de temperaturas se realizó de 
+forma automática con un $\Delta T = 0.1$ (en unidades adimensionales) y se 
+redujo a $\Delta T = 0.02$ en la zona cercana a la temperatura crítica, para 
+obtener mayor detalle.
+
+En la Figura \eqref{fig:val_medios} se muestran los resultados de la energía y 
+la magnetización con sus respectivos errores para una red de spines de 20x20. 
+Especialmente en el gráfico de la magnetización, se hace evidente el cambio de 
+fase cercano a la temperatura crítica donde para valores menores, aparece 
+magnetización espontánea.
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[scale=0.7]{val_medios.pdf} \\
+      \caption{Valores de energía y magnetizació por spin, para 
+      las distintas temperaturas simuladas}\label{fig:val_medios}
+    \end{center}
+\end{figure}
+
+En la figura \eqref{fig:fluctuaciones} se muestran los gráficos 
+correspondientes al calor específico y a la suceptibilidad magnética. Cerca de 
+la temperatura crítica se observan un aumento de ambas magnitudes 
+(teóricamentep ara un sistema infinito hay una divergencia). En esa misma zona, 
+se observó también un aumento del error en los estimadores, producto de las 
+grandes fluctuaciones con que evolucionaba el sistema. A partir de estos 
+gráficos puede determinarse la temperatura crítica del sistema como el máximo 
+de ambas curvas.
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[scale=0.7]{fluctuaciones.pdf} \\
+      \caption{Valores de calor específico y suceptibilidad magnética por spin 
+      en función de la temperatura} \label{fig:fluctuaciones}
+    \end{center}
+\end{figure}
+
+Finalmente, se muestra en la Figura \eqref{fig:aceptaciones} el porcentaje de 
+aceptaciones a lo largo de todos los pasos del algoritmo de metrópolis, en 
+función de la temperatura de trabajo. Esta curva, como es de esperar, sigue un 
+comportamiento similar a la curva de energía (depende intrínsecamente de ella). 
+Se observa que a bajas temperaturas, la mayoría de los estados propuestos son 
+rechazados, ya que el sistema prefiere tener todos sus spines en la misma 
+direccion. Aumentando la temperatura, el porcentaje de aceptaciones comienza a 
+incrementarse haciendo que el sistema pueda recorrer mayor cantidad de estados.
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[scale=0.5]{aceptaciones.pdf} \\
+      \caption{Porcentaje de aceptaciones del algoritmo de Metrópolis en 
+      función de la temperatura de trabajo}\label{fig:aceptaciones}
+    \end{center}
+\end{figure}
+
+\subsection{Efectos de borde}
+
+En la sección anterior se realizaron las simulaciones consiedrando una matriz 
+de spines de 20x20. Si bien se utilizaron condiciones periódicas de contorno, 
+los efectos del tamaño finito de la red se hicieron evidente, principalemnte en 
+la zona de la temperatura crítica, donde se espera divergencia de $c$ y $\chi$.
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[scale=0.7]{tamano_val_medios.pdf} \\
+      \caption{Energía y magnetización por spin para redes de spin de distinto 
+      tamaños}\label{fig:tam_val_medios}
+    \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[scale=0.7]{tamano_fluctuaciones.pdf} \\
+      \caption{Calor específico y suceptibilidad magnética para redes de sping 
+      de distintos tamaños}\label{fig:tam_fluctuaciones}
+    \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[scale=0.5]{tamano_aceptaciones.pdf} \\
+      \caption{Porcentaje de aceptaciones en el algoritmo de Metrópolis para 
+      redes de spin de distintos tamaños}\label{fig:tam_aceptaciones}
+    \end{center}
+\end{figure}
 
 \subsection{Correlaciones temporales de la energía}
 
@@ -183,6 +377,14 @@ estandar:
 \end{align}
 \end{subequations}
 
+Finalmente, asumiendo un modelo exponencial para la función de 
+auto-correlación, se linealizaron los datos para realizar un ajuste y obtener 
+el tiempo de correlación $\tau_c$ del sistema:
+
+\begin{equation}
+C_{EE}[k]=A e^{-t[k]/\tau_c} \qquad \Rightarrow \quad ln\left(C_{EE}[k]\right) 
+= ln(A) - \frac{t[k]}{\tau_c}
+\end{equation}
 
 \tikzstyle{every node}=[thick,anchor=west, 
 font={\scriptsize\ttfamily}, inner sep=2.5pt]
@@ -220,95 +422,10 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
 \end{center}
 \caption{Esquema de carpetas y archivos que se obtienen al realizar una corrida 
 completa haciendo estadísticas en cada temperatura.}
-\end{figure}]
+\end{figure}
 
 \input{desc_system.tex}
 
-\subsection{Termalización del sistema}
-
-\begin{figure}
-	\begin{center}
-	\begin{subfigure}{.49\textwidth}
-		\centering
-      	\includegraphics[scale=0.4]{{terma_t0.5_ei_rand}.pdf} \\
-     	 \caption{$T=0.5$ Estado inicial aleatorio}\label{fig:terma.t05_rand}
-	\end{subfigure}
-	\begin{subfigure}{.49\textwidth}
-		\centering
-     	 \includegraphics[scale=0.4]{{terma_t5.0_ei_up}.pdf} \\
-      	\caption{$T=5.0$ Estado inicial con $s_i=1$}\label{fig:terma.t50_up}
-	\end{subfigure}
-	\end{center}
-	\caption{Proceso de termalización con distintas temperaturas y estados 
-	iniciales}
-\end{figure}
-
-\begin{figure}
-	\begin{center}
-	\begin{subfigure}{.49\textwidth}
-		\centering
-      	\includegraphics[scale=0.4]{{terma_t3.0_ei_rand}.pdf} \\
-     	 \caption{$T=3.0$ Estado inicial aleatorio}\label{fig:terma.t3_rand}
-	\end{subfigure}
-	\begin{subfigure}{.49\textwidth}
-		\centering
-     	 \includegraphics[scale=0.4]{{terma_t3.0_ei_up}.pdf} \\
-      	\caption{$T=3.0$ Estado inicial con $s_i=1$}\label{fig:terma.t3_up}
-	\end{subfigure}
-	\end{center}
-	\caption{Termalización a la temperatura $T=3.0$ partiendo de dos 
-	configuraciones de spines distintas}
-\end{figure}
-
-\begin{figure}[H]
-    \begin{center}
-      \includegraphics[scale=0.6]{val_medios.pdf} \\
-      \caption{Valores de energía y magnetizació por spin, para 
-      las distintas temperaturas simuladas}\label{fig:val_medios}
-    \end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-    \begin{center}
-      \includegraphics[scale=0.6]{fluctuaciones.pdf} \\
-      \caption{Valores de calor específico y suceptibilidad magnética por spin 
-      en función de la temperatura} \label{fig:fluctuaciones}
-    \end{center}
-\end{figure}
-
-\begin{figure}[H]
-    \begin{center}
-      \includegraphics[scale=0.5]{aceptaciones.pdf} \\
-      \caption{Porcentaje de aceptaciones del algoritmo de Metrópolis en 
-      función de la temperatura de trabajo}\label{fig:aceptaciones}
-    \end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-    \begin{center}
-      \includegraphics[scale=0.7]{tamano_val_medios.pdf} \\
-      \caption{Energía y magnetización por spin para redes de spin de distinto 
-      tamaños}\label{fig:tam_val_medios}
-    \end{center}
-\end{figure}
-
-\begin{figure}[H]
-    \begin{center}
-      \includegraphics[scale=0.7]{tamano_fluctuaciones.pdf} \\
-      \caption{Calor específico y suceptibilidad magnética para redes de sping 
-      de distintos tamaños}\label{fig:tam_fluctuaciones}
-    \end{center}
-\end{figure}
-
-\begin{figure}[H]
-    \begin{center}
-      \includegraphics[scale=0.5]{tamano_aceptaciones.pdf} \\
-      \caption{Porcentaje de aceptaciones en el algoritmo de Metrópolis para 
-      redes de spin de distintos tamaños}\label{fig:tam_aceptaciones}
-    \end{center}
-\end{figure}
 
 \begin{figure}[H]
     \begin{center}
