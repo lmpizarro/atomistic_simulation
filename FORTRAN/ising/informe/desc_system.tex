@@ -119,6 +119,9 @@ o si se quiere correr la versión paralelo:
   > python corridas_paralelos.py
 \end{verbatim}
 
+Luego de una corrida en una serie de temperaturas, queda una estructura de directorios
+como la que se muestra en \ref{fig:arbol.dir}, con la información necesaria para postprocesar
+los resultados y obtener los valores de las mediciones en función de la temperatura.
 
 Una vez que se terminan los cálculos para todas las temperaturas,  en 
 la carpeta \textbf{bin/}, se corre:
@@ -272,15 +275,10 @@ es el que indica cada cuantos pasos Monte Carlo, se quieren grabar las energías
 
 \subsection{Corridas en paralelo}\label{paralelo}
 
-<<<<<<< HEAD
-El módulo python \textbf{\textit{corridas\_paralelos.py}}, es el que tiene la 
-capacidad de correr
-=======
 El módulo python \textbf{\textit{corridas\_paralelos.py}}, es el que tiene la capacidad de correr
->>>>>>> SimRui/master
 en una máquina con varios núcleos.
 
-El código se paraleliza usando el paquete \textbf{mpi4py}, desarrollado por Lisandro Dalcin.
+El código se paraleliza usando el paquete \href{http://mpi4py.scipy.org/} {\textbf{mpi4py}} ,  desarrollado por Lisandro Dalcin.
 De esa manera lo que se hizo, es paralelizar desde python y no desde Fortran.
 
 El criterio utilizado para paralelizar es hacer en simultaneo  las corridas a una dada temteratura. 
