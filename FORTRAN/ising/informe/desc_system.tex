@@ -1,31 +1,4 @@
-\subsection{Análisis de los resultados del cálculo de las correlaciones}
 
-Aplicando la ecuación  \ref{eq:corr_est}  para el estimador de la autocorrelación de la muestra discreta
-se calcularon autocorrelaciones a distintas temperaturas y con distintos tamaños 
-de matriz de espines. Se agruparon los resultados de manera de mostrar en un mismo
-tamaño de matriz, diferentes temperaturas y en iguales temperaturas distintos tamaños de matriz.
-
-\subsubsection{Correlación en función de la temperatura}
-
-En la figura \ref{fig:corre_20x20}, se pueden ver los resultados del cálculo
-de correlaciones para  temperaturas $T =9.0 $, $T = 1.0 $, $T =0.8 $ y $T = 2.3 $, en una matriz de tamaño 20x20.
-En este caso con el descenso de la temperatura se observa un aumento del valor del parámetro
-de correlación $\tau_{c}$.
-
-
-\begin{figure}[H]
-   \begin{center}
-        \includegraphics[scale=0.6]{corre_temperature.png} \\
-        \caption{Parámetro de correlación  $\tau_{c}$ en función de la temperatura $T$}\label{fig:corre_tempe}
-    \end{center}
-\end{figure}
-
-
-\subsubsection{Correlación en función del tamaño del problema}
-En las figuras \ref{fig:corre_tamano_t2} y \ref{fig:corre_tamano_t9}, se pueden ver los resultados del cálculo
-de correlaciones para los tamaños de matriz 20x20 y 100x100 para valores de $T = 2.3$  y $T = 9.0$. 
-En los dos casos se observa un aumento del parámetro de correlación con el aumento del 
-tamaño de la matriz de spines.
 
 \section{Descripci\'on del sistema de c\'alculo}
 
@@ -120,8 +93,49 @@ o si se quiere correr la versión paralelo:
 \end{verbatim}
 
 Luego de una corrida en una serie de temperaturas, queda una estructura de directorios
-como la que se muestra en \ref{fig:arbol.dir}, con la información necesaria para postprocesar
+como la que se muestra en \ref{fig:arboldir}, con la información necesaria 
+para postprocesar
 los resultados y obtener los valores de las mediciones en función de la temperatura.
+
+
+\tikzstyle{every node}=[thick,anchor=west, 
+font={\scriptsize\ttfamily}, inner sep=2.5pt]
+\tikzstyle{selected}=[draw=blue,fill=blue!10]
+\tikzstyle{root}=[draw=blue, fill=blue!30]
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[%
+    scale=.7,
+    grow via three points={one child at (0.5,-0.65) and
+    two children at (0.5,-0.65) and (0.5,-1.2)},
+    edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
+  	\node [root] {bin}
+  	child { node [red] {ising}}
+  	child { node [red] {corridas\_paralelo.py}}
+  	child { node [red] {corridas.py}}
+  	child { node {tablas\_temperatura.dat}}
+    child { node [selected] {0.5\_tmpfolder}
+      child { node {parametros.dat}}
+      child { node {runs\_estadistica.dat}}
+      child { node [selected] {RUN00}
+	     child { node {val\_medios.dat}}
+	     child { node {estado.dat}}
+	     child { node {ultimo\_estado.dat}}
+      }
+      child { node at(0,-1.8) [selected] {RUN01}}
+      child { node at(0,-1.9) [selected] {RUN02}}
+      child { node at (0,-2.0) {\dots}}
+    }       
+    child { node at (0,-5.5) [selected]{0.6\_tmpfolder}}
+    child { node at (0,-5.8)[selected] {0.7\_tmpfolder}}
+    child { node at (0,-6.1) {\dots}};
+\end{tikzpicture}
+\end{center}
+\caption{Esquema de carpetas y archivos que se obtienen al realizar una corrida 
+completa haciendo estadísticas en cada temperatura.}
+\label{fig:arboldir}
+\end{figure}
 
 Una vez que se terminan los cálculos para todas las temperaturas,  en 
 la carpeta \textbf{bin/}, se corre:
