@@ -322,7 +322,20 @@ incrementarse haciendo que el sistema pueda recorrer mayor cantidad de estados.
 En la sección anterior se realizaron las simulaciones consiedrando una matriz 
 de spines de 20x20. Si bien se utilizaron condiciones periódicas de contorno, 
 los efectos del tamaño finito de la red se hicieron evidente, principalemnte en 
-la zona de la temperatura crítica, donde se espera divergencia de $c$ y $\chi$.
+la zona de la temperatura crítica, donde se espera divergencia de $c$ y $\chi$. 
+Para analizar con más detalle los efectos de borde, se procedió a repetir las 
+mediciones anteriores, pero ahora cambiando el tamaño de la red de spines. Se 
+utilizaron redes de 10x10, 20x20, 40x40 y 100x100.
+
+Al utilizar las redes de mayor tamaño, y en particular la de 100x100, se 
+encontró que la cantidad de pasos necesarios tanto para la termalización como 
+para la medición aumentó considerablemente. Para esta simulación, cada corrida 
+se realizón con $K_{term}=2E6$ para la termalización y $K=1.2E8$ puntos para 
+las mediciones.
+
+En la Figura \eqref{fig:tam_val_medios} se muestran los resultados para la 
+energía y magnetización por spin en función de la tempeoratura para las cuatro 
+redes simuladas.
 
 \begin{figure}[H]
     \begin{center}
@@ -332,21 +345,41 @@ la zona de la temperatura crítica, donde se espera divergencia de $c$ y $\chi$.
     \end{center}
 \end{figure}
 
+Como primera observación, se puede decir que los efectos de borde resultan 
+irrelevantes fuera de la zone carcana a la temperatura crítica. Los valores de 
+energía ni siqueira cambiand demasiado en dicha zona. En cambio, la 
+magnetización presenta mayores variaciones para las distintas redes, 
+principalmente en las redes de 10x10 y 20x20. Sin embargo, la diferencia se 
+vuelve muy exigua al comparar las redes de 40x40 y 100x100 donde los efectos de 
+borde no parece ser relevantes para la magnetización.
+
+En la Figura \eqref{fig:tam_fluctuaciones} se muestran los resultados obtenidos 
+del calor específico y suceptibilidad magnética para los cuatro tamaños 
+simulados. Al igual con con $E$ y $M$, aquí los efectos de borde son más 
+notorios cerca de la temperatura crítica.
+
+La principal diferencia que se observa es que a medida que se aumenta el 
+tamaño, el efecto de la divergencia en $T_c$ se hace más evidente. Las curvas 
+son suaves para las redes de menor tamaño, mientras que se vuelven más 
+puntiagudas para las redes de mayor tamaño. La diferencia entre las redes de 
+40x40 y 100x100 se hacen notorias sólo muy cerca de la $T_c$ donde los valores 
+de la última de ellas aumentan a más del doble.
+
 \begin{figure}[H]
     \begin{center}
       \includegraphics[scale=0.7]{tamano_fluctuaciones.pdf} \\
-      \caption{Calor específico y suceptibilidad magnética para redes de sping 
+      \caption{Calor específico y suceptibilidad magnética para redes de spin 
       de distintos tamaños}\label{fig:tam_fluctuaciones}
     \end{center}
 \end{figure}
 
-\begin{figure}[H]
-    \begin{center}
-      \includegraphics[scale=0.5]{tamano_aceptaciones.pdf} \\
-      \caption{Porcentaje de aceptaciones en el algoritmo de Metrópolis para 
-      redes de spin de distintos tamaños}\label{fig:tam_aceptaciones}
-    \end{center}
-\end{figure}
+%\begin{figure}[H]
+%    \begin{center}
+%      \includegraphics[scale=0.5]{tamano_aceptaciones.pdf} \\
+%      \caption{Porcentaje de aceptaciones en el algoritmo de Metrópolis para 
+%      redes de spin de distintos tamaños}\label{fig:tam_aceptaciones}
+%    \end{center}
+%\end{figure}
 
 \subsection{Correlaciones temporales de la energía}
 
