@@ -4,7 +4,8 @@
 
 
 Se desarrollo un c\'odigo de c\'alculo en Fortran y dos c\'odigos
-en python uno  de pre y el otro de post-procesamiento. Tanto el código de preprocesamiento, 
+en python uno  de pre y el otro de postprocesamiento. Tanto el código de 
+preprocesamiento, 
 como el código de postprocesamiento, comprenden varios módulos responsables de distintas
 tareas.
 
@@ -89,11 +90,11 @@ o si se quiere correr la versión paralelo:
 
 \begin{verbatim}
   > cd bin/
-  > python corridas_paralelos.py
+  > mpirun.mpich -n 8 python corridas_paralelos.py
 \end{verbatim}
 
 Luego de una corrida en una serie de temperaturas, queda una estructura de directorios
-como la que se muestra en \ref{fig:arboldir}, con la información necesaria 
+como la que se muestra en \eqref{fig:arboldir}, con la información necesaria 
 para postprocesar
 los resultados y obtener los valores de las mediciones en función de la temperatura.
 
@@ -160,10 +161,10 @@ se debe correr:
 \subsubsection{Par\'ametros de entrada}
 
 El programa ising lee la configuraci\'on de una corrida del 
-archivo parametros.dat que tiene que estar en la carpeta donde se
+archivo \texttt{parametros.dat} que tiene que estar en la carpeta donde se
 corre ising.
 
-El archivo \textbf{parametros.dat} tiene la forma: 
+El archivo \texttt{parametros.dat} tiene la forma: 
 
 \begin{verbatim}
      N M T J MCS PE. 
@@ -180,36 +181,36 @@ es una cantidad que especifica cada cuantos pasos Monte Carlo se graba la energ\
 
 
 \paragraph{Preprocesamiento en python}
-En la carpeta \textbf{src/} el archivo parametros.py contiene la parametrizaci\'on 
-de los scripts
-en python que permiten correr el sistema en serie (ver \ref{serie}), 
-o en paralelo (ver \ref{paralelo}).
+En la carpeta \textbf{src/} el archivo \texttt{parametros.py} contiene la 
+parametrizaci\'on de los scripts en python que permiten correr el sistema en 
+serie (ver \eqref{serie}), 
+o en paralelo (ver \eqref{paralelo}).
 El preprocesamiento en python, permite definir una zona de c\'alculo de paso
 de temperatura fino. Es decir se puede parametrizar un paso de temperatura de
-0,1 para todo el rango de temperatura y dentro de ese rango definir una zona
-donde el paso de temperatura puede ser menor, ej. $\Delta T$ = 0.01. Para lograr una mejor resoluci\'on
+$0.1$ para todo el rango de temperatura y dentro de ese rango definir una zona
+donde el paso de temperatura puede ser menor, ej. $\Delta T = 0.02$. Para 
+lograr una mejor resoluci\'on
 en esa zona.
 
 En particular en este c\'alculo se uso para explorar con m\'as detalle la zona
 cr\'itica.
 
-El preprocesamiento en python, crea el archivo parametros.dat, 
- corre el programa de ising a distintas temperaturas
-  Crea una carpeta para cada temperatura. En cada una de esas carpetas, a su
-  vez, crea Nruns carpetas para hacer estadística y obtener los valores con
-  sus respectivos errores.
+El preprocesamiento en python, crea el archivo \texttt{parametros.dat}, 
+ corre el programa de ising a distintas temperaturas y crea una carpeta para 
+ cada temperatura. En cada una de esas carpetas, a su vez, crea Nruns carpetas 
+ para hacer estadística y obtener los valores con sus respectivos errores.
  
   En cada temperatura, se utiliza el valor final de la temperatura anterior.
   Arbitrariamente, se toma el valor final de RUN00 como el valor inicial de
-  todas las corridas a la siguiente temperatura (menor)
+  todas las corridas a la siguiente temperatura (menor).
  
 
 \subsubsection{Salida del programa}
 
-Los resultados los guarda en el archivo tablas\_temperatura.dat.
+Los resultados los guarda en el archivo \texttt{tablas\_temperatura.dat}.
 
-Cada fila de tablas\_temperatura.dat representa los resultados a una dada
-temperatura con sus respectivos errores. Las columnas son:
+Cada fila de \texttt{tablas\_temperatura.dat} representa los resultados a una 
+dada temperatura con sus respectivos errores. Las columnas son:
 
 \begin{verbatim}
   T <E> std(E) <M> std(M) <c> std(c) <suc> std(suc) <acept> std(acept)
@@ -238,10 +239,6 @@ Donde:
     \item $<acept>$: Aceptaci\'on media calculada
     \item  $std(acept)$: desviaci\'on standard de la Aceptaci\'on calculada
 \end{itemize}
-
-
-
-  Los errores se calculan como $std(RUN)/sqrt(NRUN)$
 
 
 \subsubsection{Librer\'ias utilizadas}
@@ -281,23 +278,25 @@ las capacidades provistas por la librer\'ia ziggurat.
 
 
 \subsection{Corridas en serie}\label{serie}
-El módulo python \textbf{\textit{corridas.py}}, es el que tiene la capacidad de correr
-el código de cálculo en una máquina con un único núcleo. Parametrizando adecuadamente
-\textbf{\textit{parametros.py}} se logran tiempos de corrida razonables en una máquina
-con un único procesador. El parámetro que permite acelerar la velocidad de porcesamiento, 
-es el que indica cada cuantos pasos Monte Carlo, se quieren grabar las energías.
+El módulo python \texttt{corridas.py}, es el que tiene la capacidad de correr
+el código de cálculo en una máquina con un único núcleo. Parametrizando 
+adecuadamente \texttt{parametros.py} se logran tiempos de corrida razonables en 
+una máquina con un único procesador. El parámetro que permite acelerar la 
+velocidad de procesamiento, es el que indica cada cuantos pasos Monte Carlo se 
+quieren grabar las energías.
 
 \subsection{Corridas en paralelo}\label{paralelo}
 
-El módulo python \textbf{\textit{corridas\_paralelos.py}}, es el que tiene la capacidad de correr
-en una máquina con varios núcleos.
+El módulo python \texttt{corridas\_paralelos.py}, es el que tiene la capacidad 
+de correr en una máquina con varios núcleos.
 
 El código se paraleliza usando el paquete \href{http://mpi4py.scipy.org/} {\textbf{mpi4py}} ,  desarrollado por Lisandro Dalcin.
 De esa manera lo que se hizo, es paralelizar desde python y no desde Fortran.
 
-El criterio utilizado para paralelizar es hacer en simultaneo  las corridas a una dada temteratura. 
-Una vez que terminan los cálculos a una dada temperatura, se hacen los cálculos en la próxima
-temperatura con el estado final de la temperatura anterior.
+El criterio utilizado para paralelizar es hacer en simultaneo  las corridas a 
+una dada temperatura. 
+Una vez que terminan los cálculos a una dada temperatura, se hacen los cálculos 
+en la próxima temperatura con el estado final de la temperatura anterior.
 
 Este diseño permitió hacer cálculos en sistemas de mayor tamaño, lograndose llegar a dimensiones
 de 100x100. De esa manera se obtuvieron las curvas que muestran el comportamiento del sistema en
