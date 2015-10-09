@@ -10,7 +10,11 @@ formato de parametros.dat
 
 T Npart L Dt Ntime sigma epsil
 
-293 1000 16 .1 1000 1 1
+293 1000 100 .1 1000 4 1
+
+                     Xe   Ar 
+epsilon (kJ/mol)    1.77  0.997
+sigma (angstroms)   4.10  4.0
 
 donde
 
