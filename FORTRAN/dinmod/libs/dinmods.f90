@@ -2,6 +2,7 @@ module dinmods
     use types, only: dp
     use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil
     use utils, only: write_array3D_lin
+    use ziggurat
 
 
     implicit none
@@ -20,7 +21,38 @@ contains
 
     end subroutine inicializacion 
 
-    
+   
+    !===============================================================================
+    ! Condiciones períodicas de contorno
+    !===============================================================================
+    subroutine cpc(nl, l)
+            integer, intent(in) :: l, nl
+            if (gR(1,l) .lt. 0) then
+                    gR(1,l) = gR(1,l) + gL
+            endif        
+
+            if (gR(2,l) .lt. 0) then
+                    gR(2,l) = gR(2,l) + gL
+            endif        
+
+            if (gR(3,l) .lt. 0) then
+                    gR(3,l) = gR(3,l) + gL
+            endif
+
+            if (gR(1,l) .gt. nL) then
+                    gR(1,l) = gR(1,l) - nL
+            endif        
+
+            if (gR(2,l) .gt. nL) then
+                    gR(2,l) = gR(2,l) - nL
+            endif        
+
+            if (gR(3,l) .gt. nL) then
+                    gR(3,l) = gR(3,l) - nL
+            endif
+
+    endsubroutine cpc
+
     !===============================================================================
     ! INICIALIZA Posicion en Red periódica cúbica simple
     !===============================================================================
@@ -39,25 +71,27 @@ contains
         i = 1
         k = 1
         do l = 1, gNpart
-            gR(1, l) = rx
-            gR(2, l) = ry
-            gR(3, l) = rz
+            gR(1, l) = rx + uni() - 0.5 
+            gR(2, l) = ry + uni() - 0.5 
+            gR(3, l) = rz + uni() - 0.5 
+
+            call cpc(nl, l)
+           
             j = j + 1
             k = k + 1
             rx = rx + 1
-            if ( mod(j, 10) .eq. 0) then
-                print *, "cambia y"
+            if ( mod(j, nl) .eq. 0) then
                 rx = 0.0
                 ry = ry  + 1
             end if        
-            if ( mod(k, 100) .eq. 0) then
-                print *, "cambia z"
+            if ( mod(k, nl ** 2) .eq. 0) then
                 ry = 0.0
                 rx = 0.0
                 rz = rz + 1
             end if        
         enddo     
         call write_array3D_lin (gR)
+        print *, "potencial", potencial()
     end subroutine inicia_posicion_cs
 
     ! calculo del potencial de pag 18 del allen-tildesley

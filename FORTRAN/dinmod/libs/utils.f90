@@ -34,7 +34,11 @@ module utils
         !    write(*,700) (b(i,j), j = 1,m)
         !enddo
 
-        700 format (10F7.2)
+        do i = 1, m
+            write(*,700) b(1,i), b(2,i), b(3,i)
+        enddo
+
+        700 format (F7.3 F7.3 F7.3)
     endsubroutine
 
 
