@@ -55,10 +55,8 @@ contains
                 rx = 0.0
                 rz = rz + 1
             end if        
-          
         enddo     
 
-        print * , gR
     end subroutine inicia_posicion_cs
 
     ! calculo del potencial de pag 18 del allen-tildesley

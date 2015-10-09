@@ -9,6 +9,7 @@ set(libs_LIBS_SRCS
         types.f90
         constants.f90
         dinmods.f90
+        utils.f90
 	io_parametros.f90
     )
 
