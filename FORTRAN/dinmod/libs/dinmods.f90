@@ -9,7 +9,7 @@ module dinmods
     public :: inicializacion
 contains
     !===============================================================================
-    ! INICIALIZA PARAMETROS
+    ! INICIALIZA SISTEMA de CALCULO
     !===============================================================================
     subroutine inicializacion()
         allocate(gR(3,gNpart))
