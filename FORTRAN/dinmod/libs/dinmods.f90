@@ -4,11 +4,12 @@ module dinmods
     use utils, only: write_array3D_lin
     use ziggurat
     use usozig
+    use mc
 
     implicit none
 
     private
-    public :: inicializacion, potencial, inicia_posicion_cs, finalizacion
+    public :: inicializacion, potencial, inicia_posicion_cs, finalizacion, cpc
 
 contains
     !===============================================================================
@@ -18,10 +19,7 @@ contains
         allocate(gR(3,gNpart))
         allocate(gV(3,gNpart))
         allocate(gF(3,gNpart))
-
         call inic_zig()
-
-
     end subroutine inicializacion 
 
    
@@ -94,8 +92,9 @@ contains
                 rz = rz + 1
             end if        
         enddo     
-        call write_array3D_lin (gR)
-        print *, "potencial", potencial()
+        !call write_array3D_lin (gR)
+        !print *, "potencial", potencial()
+        call metropolis ()
     end subroutine inicia_posicion_cs
 
     ! calculo del potencial de pag 18 del allen-tildesley
