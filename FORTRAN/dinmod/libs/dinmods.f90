@@ -4,7 +4,6 @@ module dinmods
     use utils, only: write_array3D_lin
     use ziggurat
     use usozig
-    use mc
 
     implicit none
 
@@ -92,9 +91,9 @@ contains
                 rz = rz + 1
             end if        
         enddo     
-        !call write_array3D_lin (gR)
-        !print *, "potencial", potencial()
-        call metropolis ()
+        call write_array3D_lin (gR)
+        print *, "potencial", potencial()
+        !call metropolis ()
     end subroutine inicia_posicion_cs
 
     ! calculo del potencial de pag 18 del allen-tildesley

@@ -4,7 +4,6 @@ module mc
     use types, only: dp
     use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil,&
         obs_ener
-    use dinmods
     use constants
 
     implicit none
@@ -26,7 +25,7 @@ contains
 
         allocate(obs_ener( gNtime))
 
-        n_energy = potencial() 
+        !n_energy = potencial() 
 
         do i=1, gNtime
             iPart = rand_int(gNpart)
@@ -41,7 +40,7 @@ contains
        
             call cpc(iPart)
 
-            deltaE = potencial() - n_energy
+            !deltaE = potencial() - n_energy
 
             if (deltaE .lt. 0) then
                 n_energy = n_energy + deltaE    
@@ -57,6 +56,7 @@ contains
             endif        
             obs_ener(i) = n_energy
         enddo
+        print *, obs_ener
     endsubroutine metropolis
 
 endmodule mc
