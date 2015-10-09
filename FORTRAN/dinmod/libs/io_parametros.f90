@@ -1,6 +1,6 @@
 module io_parametros
     use types, only: dp
-    use globales,     only: gT, gDt, gL, gNpart, gNtime
+    use globales,     only: gT, gDt, gL, gNpart, gNtime, sigma, epsil
 
     implicit none
 
@@ -17,7 +17,7 @@ contains
         inquire(file='./parameters.dat',exist=es)
         if(es) then
             open(unit=10,file='./parameters.dat',status='old')
-            read(10,*) gT, gNpart, gL, gDt, gNtime
+            read(10,*) gT, gNpart, gL, gDt, gNtime, sigma, epsil
             close(10)
         else
             print *, "Usando parametros por default"
@@ -26,8 +26,10 @@ contains
             gL = 10
             gDt = .1
             gNtime = 100
+            sigma = 1.0
+            epsil = 1.0
         end if
-        print *,"* read_parameters ", gT, gNpart, gL, gDt, gNtime 
+        print *,"* read_parameters ", gT, gNpart, gL, gDt, gNtime, sigma, epsil
 
   end subroutine read_parameters
 

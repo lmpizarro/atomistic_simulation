@@ -10,6 +10,10 @@ module globales
   ! gNpart: cantidad de partículas del sistema
   ! gNtime: cantidad de pasos de  tiempo
   integer :: gNpart, gNtime
+  ! sigma: 
+  ! epsil:
+  ! parametros del potencial de LJ
+  real(dp) :: sigma, epsil
   ! gR:  posicion de la particula
   ! gF:  fuerza entre particulas particula
   ! gV:  velocidad de la particula

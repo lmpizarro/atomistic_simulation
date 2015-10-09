@@ -8,9 +8,9 @@ crear una carpeta ./build
 
 formato de parametros.dat
 
-T Npart L Dt Ntime
+T Npart L Dt Ntime sigma epsil
 
-293 1000 16 .1 1000
+293 1000 16 .1 1000 1 1
 
 donde
 
@@ -19,5 +19,6 @@ Npart: cantidad de partículas
 L: Tamaño de la caja
 Ntime: cantidad de pasos de tiempo
 Dt: tamaño del paso de tiempo
-
+sigma: potemcial de LJ
+epsil: potemcial de LJ
        
