@@ -30,16 +30,17 @@ contains
     !===============================================================================
     subroutine cpc(nl, l)
             integer, intent(in) :: l, nl
+
             if (gR(1,l) .lt. 0) then
-                    gR(1,l) = gR(1,l) + gL
+                    gR(1,l) = gR(1,l) + nL
             endif        
 
             if (gR(2,l) .lt. 0) then
-                    gR(2,l) = gR(2,l) + gL
+                    gR(2,l) = gR(2,l) + nL
             endif        
 
             if (gR(3,l) .lt. 0) then
-                    gR(3,l) = gR(3,l) + gL
+                    gR(3,l) = gR(3,l) + nL
             endif
 
             if (gR(1,l) .gt. nL) then

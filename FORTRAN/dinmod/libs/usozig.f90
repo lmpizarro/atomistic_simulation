@@ -76,7 +76,7 @@ contains
   end function uni_2st
 
 !==============================================================================
-! Probabilidad uniforme tipo Bernoulli: enteros -1 o 1  
+! Probabilidad uniforme entre 1 y N  
 !==============================================================================
 
   function rand_int(N) result(i_sel)
