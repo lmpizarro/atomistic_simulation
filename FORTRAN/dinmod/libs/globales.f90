@@ -10,6 +10,9 @@ module globales
   ! gNpart: cantidad de partículas del sistema
   ! gNtime: cantidad de pasos de  tiempo
   integer :: gNpart, gNtime
-  !real(dp),  dimension(:), allocatable:: 
+  ! gR:  posicion de la particula
+  ! gF:  fuerza entre particulas particula
+  ! gV:  velocidad de la particula
+  real(dp),  dimension(:,:), allocatable:: gR, gF, gV
 
 end module globales
