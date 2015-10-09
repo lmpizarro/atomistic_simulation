@@ -6,6 +6,7 @@
 set(libs_LIBS_SRCS
         globales.f90
         ziggurat.f90
+        types.f90
 	io_parametros.f90
     )
 

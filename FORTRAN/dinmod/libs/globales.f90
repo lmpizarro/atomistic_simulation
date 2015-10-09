@@ -1,8 +1,8 @@
 module globales
-  
+   use types, only: dp
+
   implicit none
 
-  integer, parameter :: dp=kind(0.d0)
   ! gT: Temperatura de la corrida
   ! gDt: Paso de tiempo de la corrida
   ! gL: longitud de un lado del cubo

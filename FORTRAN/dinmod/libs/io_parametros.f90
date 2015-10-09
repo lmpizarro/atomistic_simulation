@@ -1,9 +1,10 @@
 module io_parametros
-  use globales,     only: dp, gT, gDt, gL, gNpart, gNtime
+    use types, only: dp
+    use globales,     only: gT, gDt, gL, gNpart, gNtime
 
-  implicit none
+    implicit none
 
-  public  :: read_parameters
+    public  :: read_parameters
 contains
 
 !===============================================================================
