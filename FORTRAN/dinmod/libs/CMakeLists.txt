@@ -11,6 +11,7 @@ set(libs_LIBS_SRCS
         dinmods.f90
         utils.f90
         usozig.f90
+        mc.f90
 	io_parametros.f90
     )
 
