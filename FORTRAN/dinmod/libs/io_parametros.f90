@@ -1,6 +1,6 @@
 module io_parametros
     use types, only: dp
-    use globales,     only: gT, gDt, gL, gNpart, gNtime, sigma, epsil
+    use globales, only: gT, gDt, gL, gNpart, gNtime, sigma, epsil
 
     implicit none
 

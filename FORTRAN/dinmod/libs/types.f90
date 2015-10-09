@@ -1,11 +1,12 @@
 module types
 
-     !http://stackoverflow.com/questions/12523524/f2py-specifying-real-precision-in-fortran-when-interfacing-with-python
-     !http://stackoverflow.com/questions/10935126/subroutine-argument-not-passed-correctly-from-python-to-fortran
 
      implicit none
      integer, parameter :: sp = selected_real_kind(6,37) ! single precision
      !integer, parameter :: dp = selected_real_kind(15,307) ! double precision
+     
+     ! Viene de las corridas de ising 
+     !integer, parameter :: dp=kind(0.d0)
      integer, parameter :: DP=SELECTED_REAL_KIND( 12, 60 )
 
      !! Ejemplo de uso

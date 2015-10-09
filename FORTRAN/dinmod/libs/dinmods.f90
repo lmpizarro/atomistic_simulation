@@ -1,6 +1,7 @@
 module dinmods 
     use types, only: dp
     use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil
+    use utils, only: write_array3D_lin
 
 
     implicit none
@@ -56,7 +57,7 @@ contains
                 rz = rz + 1
             end if        
         enddo     
-
+        call write_array3D_lin (gR)
     end subroutine inicia_posicion_cs
 
     ! calculo del potencial de pag 18 del allen-tildesley
