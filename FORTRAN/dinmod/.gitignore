@@ -1,0 +1,8 @@
+.*.swp
+build/
+src/ising_fun.pyc
+src/parametros.pyc
+docs/informe.pdf
+docs/informe.log
+docs/informe.aux
+docs/informe.out
