@@ -6,7 +6,8 @@ module dinmods
     implicit none
 
     private
-    public :: inicializacion, potencial
+    public :: inicializacion, potencial, inicia_posicion_cs
+
 contains
     !===============================================================================
     ! INICIALIZA SISTEMA de CALCULO
@@ -17,6 +18,48 @@ contains
         allocate(gF(3,gNpart))
 
     end subroutine inicializacion 
+
+    
+    !===============================================================================
+    ! INICIALIZA Posicion en Red periódica cúbica simple
+    !===============================================================================
+    subroutine inicia_posicion_cs()
+        integer :: i, j, k, l, nl
+        real(dp) :: rx, ry, rz
+
+        nl = gNpart ** (1.0/3.0) 
+
+        print *, "nl", nl
+
+        rx = 0.0
+        ry = 0.0
+        rz = 0.0
+        j = 1
+        i = 1
+        k = 1
+        do l = 1, gNpart
+            gR(1, l) = rx
+            gR(2, l) = ry
+            gR(3, l) = rz
+            j = j + 1
+            k = k + 1
+            rx = rx + 1
+            if ( mod(j, 10) .eq. 0) then
+                print *, "cambia y"
+                rx = 0.0
+                ry = ry  + 1
+            end if        
+            if ( mod(k, 100) .eq. 0) then
+                print *, "cambia z"
+                ry = 0.0
+                rx = 0.0
+                rz = rz + 1
+            end if        
+          
+        enddo     
+
+        print * , gR
+    end subroutine inicia_posicion_cs
 
     ! calculo del potencial de pag 18 del allen-tildesley
     function potencial () result(v)
