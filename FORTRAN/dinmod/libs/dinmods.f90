@@ -28,31 +28,31 @@ contains
     !===============================================================================
     ! Condiciones períodicas de contorno
     !===============================================================================
-    subroutine cpc(nl, l)
-            integer, intent(in) :: l, nl
+    subroutine cpc( l)
+            integer, intent(in) :: l
 
             if (gR(1,l) .lt. 0) then
-                    gR(1,l) = gR(1,l) + nL
+                    gR(1,l) = gR(1,l) + gL
             endif        
 
             if (gR(2,l) .lt. 0) then
-                    gR(2,l) = gR(2,l) + nL
+                    gR(2,l) = gR(2,l) + gL
             endif        
 
             if (gR(3,l) .lt. 0) then
-                    gR(3,l) = gR(3,l) + nL
+                    gR(3,l) = gR(3,l) + gL
             endif
 
-            if (gR(1,l) .gt. nL) then
-                    gR(1,l) = gR(1,l) - nL
+            if (gR(1,l) .gt. gL) then
+                    gR(1,l) = gR(1,l) - gL
             endif        
 
-            if (gR(2,l) .gt. nL) then
-                    gR(2,l) = gR(2,l) - nL
+            if (gR(2,l) .gt. gL) then
+                    gR(2,l) = gR(2,l) - gL
             endif        
 
-            if (gR(3,l) .gt. nL) then
-                    gR(3,l) = gR(3,l) - nL
+            if (gR(3,l) .gt. gL) then
+                    gR(3,l) = gR(3,l) - gL
             endif
 
     endsubroutine cpc
@@ -75,11 +75,11 @@ contains
         i = 1
         k = 1
         do l = 1, gNpart
-            gR(1, l) = rx + uni() - 0.5 
-            gR(2, l) = ry + uni() - 0.5 
-            gR(3, l) = rz + uni() - 0.5 
+            gR(1, l) = (rx + uni() - 0.5) * gL / nl 
+            gR(2, l) = (ry + uni() - 0.5) * gL / nl 
+            gR(3, l) = (rz + uni() - 0.5) * gL / nl 
 
-            call cpc(nl, l)
+            call cpc( l)
            
             j = j + 1
             k = k + 1

@@ -14,9 +14,9 @@ contains
   subroutine read_parameters()
         logical :: es
      
-        inquire(file='./parameters.dat',exist=es)
+        inquire(file='./parametros.dat',exist=es)
         if(es) then
-            open(unit=10,file='./parameters.dat',status='old')
+            open(unit=10,file='./parametros.dat',status='old')
             read(10,*) gT, gNpart, gL, gDt, gNtime, sigma, epsil
             close(10)
         else
@@ -29,8 +29,9 @@ contains
             sigma = 1.0
             epsil = 1.0
         end if
-        print *,"* read_parameters ", gT, gNpart, gL, gDt, gNtime, sigma, epsil
+        write(*, 700)  gT, gNpart, gL, gDt, gNtime, sigma, epsil
 
+        700 format (F7.3 I7 F7.3 F7.3 I7 F7.3 F7.3)
   end subroutine read_parameters
 
 
