@@ -40,9 +40,9 @@ endif (Fortran_COMPILER_NAME MATCHES "gfortran.*")
 #============================================================================
 
 file (COPY "${PROJECT_SOURCE_DIR}/src/parametros.dat" DESTINATION ${EXECUTABLE_OUTPUT_PATH}) 
-file (COPY "${PROJECT_SOURCE_DIR}/src/corridas_paralelo.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})              
-file (COPY "${PROJECT_SOURCE_DIR}/src/corridas.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
-file (COPY "${PROJECT_SOURCE_DIR}/src/parametros.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
+file (COPY "${PROJECT_SOURCE_DIR}/scripts/corridas_paralelo.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})              
+file (COPY "${PROJECT_SOURCE_DIR}/scripts/corridas.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
+file (COPY "${PROJECT_SOURCE_DIR}/scripts/parametros.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
 
 
 #============================================================================

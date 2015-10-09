@@ -3,12 +3,12 @@ module dinmods
     use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil
     use utils, only: write_array3D_lin
     use ziggurat
-
+    use usozig
 
     implicit none
 
     private
-    public :: inicializacion, potencial, inicia_posicion_cs
+    public :: inicializacion, potencial, inicia_posicion_cs, finalizacion
 
 contains
     !===============================================================================
@@ -18,6 +18,9 @@ contains
         allocate(gR(3,gNpart))
         allocate(gV(3,gNpart))
         allocate(gF(3,gNpart))
+
+        call inic_zig()
+
 
     end subroutine inicializacion 
 
@@ -123,5 +126,13 @@ contains
         enddo
         v = 4.0 * epsil * v
     endfunction potencial
+
+    !===============================================================================
+    ! FINALIZA PARAMETROS
+    !===============================================================================
+    subroutine finalizacion()
+        call fin_zig()
+    endsubroutine finalizacion
+
 
 end module dinmods 
