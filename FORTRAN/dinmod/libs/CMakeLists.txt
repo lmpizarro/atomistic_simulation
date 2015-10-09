@@ -10,6 +10,7 @@ set(libs_LIBS_SRCS
         constants.f90
         dinmods.f90
         utils.f90
+        usozig.f90
 	io_parametros.f90
     )
 
