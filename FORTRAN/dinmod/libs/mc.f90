@@ -57,10 +57,7 @@ contains
             endif        
             gAbs_ener(i) = n_energy
         enddo
-<<<<<<< HEAD
-=======
         print *, gAbs_ener
->>>>>>> 7e6390b2fe7064f065c661d67f30e5d6b3cc93e2
     endsubroutine metropolis
 
 endmodule mc
