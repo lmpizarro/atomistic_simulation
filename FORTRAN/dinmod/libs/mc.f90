@@ -35,9 +35,9 @@ contains
             ry = gR(2, iPart)
             rz = gR(3, iPart)
 
-            gR(1, iPart) = gR(1, iPart) + .1*sigma * (uni() - 0.5)
-            gR(1, iPart) = gR(2, iPart) + .1*sigma * (uni() - 0.5)
-            gR(1, iPart) = gR(3, iPart) + .1*sigma * (uni() - 0.5)
+            gR(1, iPart) = gR(1, iPart) + .1*gSigma * (uni() - 0.5)
+            gR(1, iPart) = gR(2, iPart) + .1*gSigma * (uni() - 0.5)
+            gR(1, iPart) = gR(3, iPart) + .1*gSigma * (uni() - 0.5)
       
             call cpc(iPart)
 
