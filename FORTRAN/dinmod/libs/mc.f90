@@ -35,13 +35,17 @@ contains
             ry = gR(2, iPart)
             rz = gR(3, iPart)
 
+            ! actualizo el arreglo de posiciones con una nueva posicion
             gR(1, iPart) = gR(1, iPart) + .1*gSigma * (uni() - 0.5)
-            gR(1, iPart) = gR(2, iPart) + .1*gSigma * (uni() - 0.5)
-            gR(1, iPart) = gR(3, iPart) + .1*gSigma * (uni() - 0.5)
-      
+            gR(2, iPart) = gR(2, iPart) + .1*gSigma * (uni() - 0.5)
+            gR(3, iPart) = gR(3, iPart) + .1*gSigma * (uni() - 0.5)
+     
+            ! llamo a condiciones períodicas de contorno
             call cpc(iPart)
 
-            deltaE = poten_lj() - n_energy
+            ! calculo de la variacion de energia
+            !deltaE = poten_lj() - n_energy
+            deltaE = delta_poten_lj(iPart, rx, ry, rz)
 
             if (deltaE .lt. 0) then
                 n_energy = n_energy + deltaE 
@@ -56,7 +60,7 @@ contains
                 endif        
             endif        
             gAbs_ener(i) = n_energy
-            print *, n_energy
+            print *, n_energy 
         enddo
     endsubroutine metropolis
 

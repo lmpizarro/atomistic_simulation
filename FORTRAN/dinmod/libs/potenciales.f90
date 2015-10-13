@@ -5,7 +5,7 @@ module potenciales
   implicit none
 
   private
-  public :: poten_lj
+  public :: poten_lj, delta_poten_lj
 
 contains
 
@@ -38,6 +38,77 @@ contains
       enddo
       v = 4.0 * gEpsil * v
   endfunction poten_lj
+
+
+  ! i: particula i-esima
+  ! rx, ry, rz: vieja posicion de la particula
+  function delta_poten_lj (i, rxi, ryi, rzi) result(v)
+    real(dp) :: v, vo, vn, rxi, ryi, rzi
+    real(dp) :: rxij, ryij, rzij, rijsq
+    real(dp) :: sr2, sr6, sr12
+    integer :: i, j
+
+    vo = 0
+
+    do j = 1, i - 1
+      rxij = rxi - gR(1, j)
+      ryij = rxi - gR(2, j)
+      rzij = rxi - gR(3, j)
+
+      rijsq = rxij ** 2 + ryij ** 2 + rzij ** 2
+      sr2 = gSigma / rijsq
+      sr6 = sr2 ** 3
+      sr12 = sr6 ** 2
+      vo = vo + sr12 - sr6
+
+    enddo
+
+    do j = i + 1, gNpart 
+      rxij = gR(1, j)
+      ryij = gR(2, j)
+      rzij = gR(3, j)
+
+      rijsq = rxij ** 2 + ryij ** 2 + rzij ** 2
+      sr2 = gSigma / rijsq
+      sr6 = sr2 **3
+      sr12 = sr6 ** 2
+      vo = vo + sr12 - sr6
+    enddo
+
+    vn = 0
+    rxi = gR(1, i)
+    ryi = gR(2, i)
+    rzi = gR(3, i)
+
+    do j = 1, i - 1
+      rxij = rxi - gR(1, j)
+      ryij = rxi - gR(2, j)
+      rzij = rxi - gR(3, j)
+
+      rijsq = rxij ** 2 + ryij ** 2 + rzij ** 2
+      sr2 = gSigma / rijsq
+      sr6 = sr2 **3
+      sr12 = sr6 ** 2
+      vn = vn + sr12 - sr6
+
+    enddo
+
+    do j = i + 1, gNpart 
+      rxij = gR(1, j)
+      ryij = gR(2, j)
+      rzij = gR(3, j)
+
+      rijsq = rxij ** 2 + ryij ** 2 + rzij ** 2
+      sr2 = gSigma / rijsq
+      sr6 = sr2 **3
+      sr12 = sr6 ** 2
+      vn = vn + sr12 - sr6
+    enddo
+
+
+    v = vn - vo
+
+  endfunction delta_poten_lj
 
   function cuadrado () result(v)
     real(dp) :: v
