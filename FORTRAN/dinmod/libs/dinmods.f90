@@ -26,7 +26,6 @@ contains
     call inic_zig()
 
   end subroutine inicializacion 
-
    
   !===============================================================================
   ! Condiciones períodicas de contorno
@@ -37,27 +36,27 @@ contains
     integer, intent(in) :: l
 
     if (gR(1,l) .lt. 0) then
-            gR(1,l) = gR(1,l) + gL
+      gR(1,l) = gR(1,l) + gL
     endif        
 
     if (gR(2,l) .lt. 0) then
-            gR(2,l) = gR(2,l) + gL
+     gR(2,l) = gR(2,l) + gL
     endif        
 
     if (gR(3,l) .lt. 0) then
-            gR(3,l) = gR(3,l) + gL
+     gR(3,l) = gR(3,l) + gL
     endif
 
     if (gR(1,l) .gt. gL) then
-            gR(1,l) = gR(1,l) - gL
+     gR(1,l) = gR(1,l) - gL
     endif        
 
     if (gR(2,l) .gt. gL) then
-            gR(2,l) = gR(2,l) - gL
+     gR(2,l) = gR(2,l) - gL
     endif        
 
     if (gR(3,l) .gt. gL) then
-            gR(3,l) = gR(3,l) - gL
+     gR(3,l) = gR(3,l) - gL
     endif
 
   endsubroutine cpc
@@ -74,8 +73,8 @@ contains
     nl = gNpart ** (1.0_dp/3.0_dp) 
 
     rx = 0.0_dp
-    ry = 0.0
-    rz = 0.0
+    ry = 0.0_dp
+    rz = 0.0_dp
     j = 1
     i = 1
     k = 1
@@ -90,12 +89,12 @@ contains
       k = k + 1
       rx = rx + 1
       if ( mod(j, nl) .eq. 0) then
-        rx = 0.0
+        rx = 0.0_dp
         ry = ry  + 1
       end if        
       if ( mod(k, nl ** 2) .eq. 0) then
-        ry = 0.0
-        rx = 0.0
+        ry = 0.0_dp
+        rx = 0.0_dp
         rz = rz + 1
        end if        
      enddo     
@@ -137,7 +136,7 @@ contains
     integer                 :: i,j       
 
     rc2 = (2.5_dp)**2                ! Definición provisoria del radio de corte
-    pot_cut = 4*gEpsil*( 1/(rc2**6) - 1/(rc2**3) ) 
+    pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
 
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
     gF  = 0.0_dp
@@ -154,7 +153,7 @@ contains
         rij_vec = rij_vec - gL*nint(rij_vec/gL)
         r2ij   = dot_product( rij_vec , rij_vec )    ! Cuadrado de la distancia
         if ( r2ij < rc2 ) then               
-          r2in = 1/r2ij                              ! Inversa al cuadrado
+          r2in = 1.0_dp/r2ij                         ! Inversa al cuadrado
           r6in = r2in**3                             ! Inversa a la sexta
           Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
           gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
@@ -165,11 +164,11 @@ contains
     end do
 
     ! Constantes que faltaban en la energía
-    Fij = 48 * gEpsil * Fij                
+    Fij = 48.0_dp * gEpsil * Fij                
     ! Constantes que faltaban en el potencial
     ! Agrego el desplazamiento del potencial considerando la cantidad de
     ! pares con que se obtuvo la energía potencial N(N-1)/2
-    Pot =  4 * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2  
+    Pot =  4.0_dp * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2.0_dp  
 
     ! Se vuelven a pasar a las coordenadas absolutas
     gR = gR*gSigma
