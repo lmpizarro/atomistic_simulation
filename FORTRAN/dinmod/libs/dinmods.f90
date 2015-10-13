@@ -12,7 +12,7 @@ module dinmods
 
   private
 
-  public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, fuerza
+  public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, fuerza, integracion_min
 
 contains
 
@@ -187,16 +187,20 @@ contains
   ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
   ! Es el Problema 3 de la Guia_2a
 
-  real(dp)    :: t, Pot
+  real(dp)    :: t
   real(dp), dimension(gNtime+1)   :: Eng_t
   integer    :: i
 
   t = 0.0_dp
+  Eng_t(1) = Pot
 
   do i = 1, gNtime 
     gR = gR + 0.5_dp * gF * gDT**2 / gM
     call fuerza()
+    Eng_t(i+1) = Pot
   end do
+
+!  write(*,*) Eng_t
 
   end subroutine integracion_min
 
