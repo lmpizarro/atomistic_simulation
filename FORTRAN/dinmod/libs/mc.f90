@@ -2,8 +2,8 @@ module mc
     use ziggurat
     use usozig
     use types, only: dp
-    use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil,&
-        obs_ener
+    use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil,&
+        gAbs_ener
     use constants
     use potenciales
 
@@ -24,7 +24,7 @@ contains
         !beta = 1.0 / (gT * K_BOLTZMANN)
         beta = 1.0 / (gT * kb)
 
-        allocate(obs_ener( gNtime))
+        allocate(gAbs_ener( gNtime))
 
         n_energy = poten_lj() 
 
@@ -35,9 +35,9 @@ contains
             ry = gR(2, iPart)
             rz = gR(3, iPart)
 
-            gR(1, iPart) = gR(1, iPart) + .1*sigma * uni()
-            gR(1, iPart) = gR(2, iPart) + .1*sigma * uni()
-            gR(1, iPart) = gR(3, iPart) + .1*sigma * uni()
+            gR(1, iPart) = gR(1, iPart) + .1*gSigma * uni()
+            gR(1, iPart) = gR(2, iPart) + .1*gSigma * uni()
+            gR(1, iPart) = gR(3, iPart) + .1*gSigma * uni()
        
             call cpc(iPart)
 
@@ -55,9 +55,9 @@ contains
                     gR(3, iPart) = rz
                 endif        
             endif        
-            obs_ener(i) = n_energy
+            gAbs_ener(i) = n_energy
         enddo
-        print *, obs_ener
+        print *, gAbs_ener
     endsubroutine metropolis
 
 endmodule mc

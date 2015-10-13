@@ -13,11 +13,11 @@ module globales
     ! sigma: 
     ! epsil:
     ! parametros del potencial de LJ
-    real(dp) :: sigma, epsil
+    real(dp) :: gSigma, gEpsil
     ! gR:  posicion de la particula
     ! gF:  fuerza entre particulas particula
     ! gV:  velocidad de la particula
     real(dp),  dimension(:,:), allocatable:: gR, gF, gV
-    real(dp),  dimension(:), allocatable:: obs_ener
+    real(dp),  dimension(:), allocatable:: gAbs_ener
 
 end module globales
