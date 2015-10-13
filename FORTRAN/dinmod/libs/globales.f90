@@ -17,7 +17,9 @@ module globales
     ! gR:  posicion de la particula
     ! gF:  fuerza entre particulas particula
     ! gV:  velocidad de la particula
-    real(dp),  dimension(:,:), allocatable:: gR, gF, gV
-    real(dp),  dimension(:), allocatable:: gAbs_ener
+    ! gM:  masa de la partícula
+    real(dp),  dimension(:,:), allocatable  :: gR, gF, gV
+    real(dp)                                :: gM
+    real(dp),  dimension(:), allocatable    :: gAbs_ener
 
 end module globales

@@ -1,12 +1,14 @@
 module dinmods 
 
   use types,      only: dp
-  use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil
+  use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM
   use utils,      only: write_array3D_lin
   use ziggurat
   use usozig
 
   implicit none
+
+  real(dp)    :: Pot     ! Energía potencial del sistema
 
   private
 
@@ -128,7 +130,6 @@ contains
     real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
     real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
     real(dp)                :: Fij       ! Módulo fuerza entre partículas i y j
-    real(dp)                :: Pot       ! Energía potencial
     real(dp)                :: rc2       ! Cuadrado del radio de corte
     real(dp)                :: pot_cut   ! Potencial L-J en el radio de corte
     real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
@@ -177,6 +178,27 @@ contains
     print *, 'Potencial: ', Pot
 
   end subroutine fuerza 
+
+  !===============================================================================
+  ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO  
+  !===============================================================================
+
+  subroutine integracion_min()
+  ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
+  ! Es el Problema 3 de la Guia_2a
+
+  real(dp)    :: t, Pot
+  real(dp), dimension(gNtime+1)   :: Eng_t
+  integer    :: i
+
+  t = 0.0_dp
+
+  do i = 1, gNtime 
+    gR = gR + 0.5_dp * gF * gDT**2 / gM
+    call fuerza()
+  end do
+
+  end subroutine integracion_min
 
   !===============================================================================
   ! FINALIZA PARAMETROS
