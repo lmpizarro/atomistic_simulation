@@ -79,9 +79,9 @@ contains
     i = 1
     k = 1
     do l = 1, gNpart
-      gR(1, l) = (rx + uni() - 0.5) * gL / nl 
-      gR(2, l) = (ry + uni() - 0.5) * gL / nl 
-      gR(3, l) = (rz + uni() - 0.5) * gL / nl 
+      gR(1, l) = (rx + uni() - 0.5_dp) * gL / nl 
+      gR(2, l) = (ry + uni() - 0.5_dp) * gL / nl 
+      gR(3, l) = (rz + uni() - 0.5_dp) * gL / nl 
 
       call cpc(l)
            
@@ -90,12 +90,12 @@ contains
       rx = rx + 1
       if ( mod(j, nl) .eq. 0) then
         rx = 0.0_dp
-        ry = ry  + 1
+        ry = ry  + 1.0_dp
       end if        
       if ( mod(k, nl ** 2) .eq. 0) then
         ry = 0.0_dp
         rx = 0.0_dp
-        rz = rz + 1
+        rz = rz + 1.0_dp
        end if        
      enddo     
   
