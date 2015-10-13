@@ -6,12 +6,12 @@ module mc
         gAbs_ener
     use constants
     use potenciales
+    use dinmods
 
     implicit none
 
     private        
     public :: metropolis
-
 
 contains
 
@@ -44,7 +44,7 @@ contains
             deltaE = poten_lj() - n_energy
 
             if (deltaE .lt. 0) then
-                n_energy = n_energy + deltaE    
+                n_energy = n_energy + deltaE 
             else
                 pr = exp(-beta * deltaE)
                 if (uni() .lt. pr) then
@@ -56,8 +56,8 @@ contains
                 endif        
             endif        
             gAbs_ener(i) = n_energy
+            print *, n_energy
         enddo
-        print *, gAbs_ener
     endsubroutine metropolis
 
 endmodule mc
