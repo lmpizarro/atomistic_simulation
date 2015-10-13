@@ -102,7 +102,7 @@ contains
   end subroutine inicia_posicion_cs
 
   !===============================================================================
-  ! INICIALIZA Posicion agrega aleatoreidad alrededor de la posición
+  ! INICIALIZA Posicion aleatoria dentro de la caga 
   !===============================================================================
 
   subroutine inicia_posicion_rn()
