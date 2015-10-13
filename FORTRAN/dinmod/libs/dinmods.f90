@@ -5,16 +5,24 @@ module dinmods
   use utils,      only: write_array3D_lin
   use ziggurat
   use usozig
+  use io_parametros,  only: escribe_trayectoria
 
   implicit none
 
-  real(dp)    :: Pot     ! Energía potencial del sistema
-
   private
+
 
   public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, fuerza, &
             integracion_min, inicia_posicion_rn
+  
+  !===============================================================================
+  ! VARIABLE PROPIAS DEL MÓDULO
+  !===============================================================================
 
+  real(dp)        :: Pot     ! Energía potencial del sistema
+  real(dp)        :: rc2       ! Cuadrado del radio de corte
+  real(dp)        :: pot_cut   ! Potencial L-J en el radio de corte
+  
 contains
 
   !===============================================================================
@@ -26,10 +34,26 @@ contains
     allocate(gV(3,gNpart))
     allocate(gF(3,gNpart))
 
+    ! Inicial generador de número aleatorios
     call inic_zig()
+    ! Define el radio de corte y el potencial desplazado
+    call corta_desplaza_pote()
 
   end subroutine inicializacion 
-   
+
+  !===============================================================================
+  ! RADIO DE CORTE 
+  !===============================================================================
+ 
+  subroutine corta_desplaza_pote()   
+
+    ! Radio de corte fijo
+    rc2 = (2.5_dp)**2                
+    ! Potencial de L-J evaluado en el radio de corte
+    pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
+    
+  end subroutine corta_desplaza_pote
+
   !===============================================================================
   ! Condiciones períodicas de contorno
   !===============================================================================
@@ -139,20 +163,15 @@ contains
     real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
     real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
     real(dp)                :: Fij       ! Módulo fuerza entre partículas i y j
-    real(dp)                :: rc2       ! Cuadrado del radio de corte
-    real(dp)                :: pot_cut   ! Potencial L-J en el radio de corte
     real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
     integer                 :: i,j       
-
-    rc2 = (2.5_dp)**2                ! Definición provisoria del radio de corte
-    pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
 
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
     gF  = 0.0_dp
     Pot = 0.0_dp
     ! Paso a trabajar distancias en unidades de sigma
-!    gR = gR/gSigma
-!!    gL = gL/gSigma
+    gR = gR/gSigma
+    gL = gL/gSigma
 
     do i = 1, gNpart - 1       
       do j = i+1, gNpart
@@ -180,8 +199,8 @@ contains
     Pot =  4.0_dp * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2.0_dp  
 
     ! Se vuelven a pasar a las coordenadas absolutas
-!    gR = gR*gSigma
-!    gL = gL*gSigma
+    gR = gR*gSigma
+    gL = gL*gSigma
 
 !    write(*,'(A,2X,3(E15.5,3X))')  'Sumatoria de fuerzas:' , sum(gF,2)
 !    print *, 'Potencial: ', Pot
@@ -196,33 +215,32 @@ contains
   ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
   ! Es el Problema 3 de la Guia_2a
 
-  real(dp)    :: t
-  real(dp), dimension(gNtime+1)   :: Eng_t
-  integer    :: i
+    real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
+    integer    :: i
 
-  t = 0.0_dp
-  Eng_t(1) = Pot
+    ! El primer punto es la energía inicial
+    Eng_t(1) = Pot
 
-  call write_array3D_lin(gR)
+    call write_array3D_lin(gR)
 
-  call cpc_vec()
+    call cpc_vec()
 
-  do i = 1, gNtime 
-    gR = gR + 0.5_dp * gF * gDT**2 / gM
-    call cpc_vec()    
-    call fuerza()
-    Eng_t(i+1) = Pot
-  end do
+    do i = 1, gNtime 
+      gR = gR + 0.5_dp * gF * gDT**2 / gM
+      call cpc_vec()    
+     ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
+      call escribe_trayectoria(gR)    
+      call fuerza()
+      Eng_t(i+1) = Pot
+    end do
 
-  open(unit=10,file='./energia.dat',status='unknown')
-  !write(10,'(F10.4)') gDt
-  write(10,'(E15.5)') Eng_t
-  close(10)
+    open(unit=10,file='./energia.dat',status='unknown')
+    !write(10,'(F10.4)') gDt
+    write(10,'(E15.5)') Eng_t
+    close(10)
   
-  call write_array3D_lin(gR)
-  print *, gR
-  print *, floor(-0.5)
-!  write(*,*) Eng_t
+    call write_array3D_lin(gR)
+    print *, 'Energía' , Pot
 
   end subroutine integracion_min
 

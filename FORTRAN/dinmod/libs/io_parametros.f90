@@ -5,7 +5,7 @@ module io_parametros
 
   implicit none
 
-  public  :: read_parameters
+  public  :: read_parameters, escribe_trayectoria
 
 contains
 
@@ -37,5 +37,28 @@ contains
     700 format (F8.3 I7 F8.3 F8.3 I7 F8.3 F8.3 F8.3)
     
   end subroutine read_parameters
+
+!===============================================================================
+! ESBRIBE POSICIONES PARA VISUALIZAR TRAYECTORIAS 
+!===============================================================================
+
+  subroutine escribe_trayectoria(r)
+    ! Se puede optimizar abriendo y cerrando el archivo en el momento de usarla
+
+    real(dp), dimension(3,gNpart), intent(in)    :: r    ! Posición
+    integer                                      :: i,j
+
+    open(unit=20, file ='./trayectoria.vtf',status='unknown',position='append')
+
+    do j = 1, gNpart
+      write(20,200) (r(i,j), i=1,3)
+      200 format (3(F10.5))
+    end do
+      write(20,*) 'timestep'    
+      write(20,*) ''
+    close(20)
+
+  end subroutine
+
 
 end module io_parametros
