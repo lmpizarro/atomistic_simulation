@@ -13,8 +13,8 @@ program main_dimod
     call read_parameters()
     call inicializacion()
 
-    !call inicia_posicion_cs ()
-    call inicia_posicion_rn()
+    call inicia_posicion_cs ()
+    !call inicia_posicion_rn()
 
     call fuerza()
 
