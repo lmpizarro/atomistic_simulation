@@ -11,6 +11,7 @@ program main_dimod
     ! Lee los datos necesario
     call read_parameters()
     call inicializacion()
+
     call inicia_posicion_cs ()
 
     call fuerza()

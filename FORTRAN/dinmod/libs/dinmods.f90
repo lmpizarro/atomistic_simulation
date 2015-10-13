@@ -69,11 +69,9 @@ contains
         integer :: i, j, k, l, nl
         real(dp) :: rx, ry, rz
 
-        nl = gNpart ** (1.0/3.0) 
+        nl = gNpart ** (1.0_dp/3.0_dp) 
 
-        print *, "nl", nl
-
-        rx = 0.0
+        rx = 0.0_dp
         ry = 0.0
         rz = 0.0
         j = 1
@@ -100,6 +98,18 @@ contains
             end if        
         enddo     
     end subroutine inicia_posicion_cs
+
+    subroutine inicia_posicion_rn()
+        integer :: l
+
+        do l = 1, gNpart
+            gR(1, l) = uni() * gL 
+            gR(2, l) = uni() * gL 
+            gR(3, l) = uni() * gL 
+
+            call cpc(l)
+        enddo     
+    end subroutine inicia_posicion_rn
 
     !===============================================================================
     ! CALCULA LA FUERZA  
@@ -157,7 +167,6 @@ contains
 
       write(*,'(A,2X,3(E15.5,3X))')  'Sumatoria de fuerzas:' , sum(gF,2)
       print *, 'Potencial: ', Pot
-
 
     end subroutine fuerza 
 
