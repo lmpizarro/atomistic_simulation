@@ -12,7 +12,8 @@ module dinmods
 
   private
 
-  public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, fuerza, integracion_min
+  public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, fuerza, &
+            integracion_min, inicia_posicion_rn
 
 contains
 
@@ -142,8 +143,8 @@ contains
     gF  = 0.0_dp
     Pot = 0.0_dp
     ! Paso a trabajar distancias en unidades de sigma
-    gR = gR/gSigma
-    gL = gL/gSigma
+!    gR = gR/gSigma
+!!    gL = gL/gSigma
 
     do i = 1, gNpart - 1       
       do j = i+1, gNpart
@@ -171,11 +172,11 @@ contains
     Pot =  4.0_dp * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2.0_dp  
 
     ! Se vuelven a pasar a las coordenadas absolutas
-    gR = gR*gSigma
-    gL = gL*gSigma
+!    gR = gR*gSigma
+!    gL = gL*gSigma
 
-    write(*,'(A,2X,3(E15.5,3X))')  'Sumatoria de fuerzas:' , sum(gF,2)
-    print *, 'Potencial: ', Pot
+!    write(*,'(A,2X,3(E15.5,3X))')  'Sumatoria de fuerzas:' , sum(gF,2)
+!    print *, 'Potencial: ', Pot
 
   end subroutine fuerza 
 
@@ -199,6 +200,11 @@ contains
     call fuerza()
     Eng_t(i+1) = Pot
   end do
+
+  open(unit=10,file='./energia.dat',status='unknown')
+  !write(10,'(F10.4)') gDt
+  write(10,'(f15.5)') Eng_t
+  close(10)
 
 !  write(*,*) Eng_t
 
