@@ -190,7 +190,8 @@ contains
       gL = gL*sigma
 
       write(*,'(A,2X,3(E15.5,3X))')  'Sumatoria de fuerzas:' , sum(gF,2)
-      print *, Pot
+      print *, 'Potencial: ', Pot
+
 
     end subroutine fuerza 
 
