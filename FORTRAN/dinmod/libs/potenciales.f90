@@ -30,13 +30,13 @@ contains
           rzij = rzi - gR(3,j)
     
           rijsq = rxij ** 2 + ryij ** 2 + rzij ** 2
-          sr2 = sigma / rijsq
+          sr2 = gSigma / rijsq
           sr6 = sr2 **3
           sr12 = sr6 ** 2
           v = v + sr12 - sr6
         enddo
       enddo
-      v = 4.0 * epsil * v
+      v = 4.0 * gEpsil * v
   endfunction poten_lj
 
   function cuadrado ()

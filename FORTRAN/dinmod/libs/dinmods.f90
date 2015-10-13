@@ -1,7 +1,7 @@
 module dinmods 
 
     use types, only: dp
-    use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil
+    use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil
     use utils, only: write_array3D_lin
     use ziggurat
     use usozig
@@ -127,14 +127,14 @@ contains
     integer                 :: i,j       
 
     rc2 = (2.5_dp)**2                ! Definición provisoria del radio de corte
-    pot_cut = 4*epsil*( 1/(rc2**6) - 1/(rc2**3) ) 
+    pot_cut = 4*gEpsil*( 1/(rc2**6) - 1/(rc2**3) ) 
 
       ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
       gF  = 0.0_dp
       Pot = 0.0_dp
       ! Paso a trabajar distancias en unidades de sigma
-      gR = gR/sigma
-      gL = gL/sigma
+      gR = gR/gSigma
+      gL = gL/gSigma
 
       do i = 1, gNpart - 1       
         do j = i+1, gNpart
@@ -155,15 +155,15 @@ contains
       end do
 
       ! Constantes que faltaban en la energía
-      Fij = 48 * epsil * Fij                
+      Fij = 48 * gEpsil * Fij                
       ! Constantes que faltaban en el potencial
       ! Agrego el desplazamiento del potencial considerando la cantidad de
       ! pares con que se obtuvo la energía potencial N(N-1)/2
-      Pot =  4 * epsil * Pot - gNpart*(gNpart-1)*pot_cut/2  
+      Pot =  4 * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2  
  
       ! Se vuelven a pasar a las coordenadas absolutas
-      gR = gR*sigma
-      gL = gL*sigma
+      gR = gR*gSigma
+      gL = gL*gSigma
 
       write(*,'(A,2X,3(E15.5,3X))')  'Sumatoria de fuerzas:' , sum(gF,2)
       print *, 'Potencial: ', Pot

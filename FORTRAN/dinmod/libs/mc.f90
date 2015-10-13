@@ -3,7 +3,7 @@ module mc
     use usozig
     use types, only: dp
     use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil,&
-        obs_ener
+        gAbs_ener
     use constants
     use potenciales
 
@@ -24,7 +24,7 @@ contains
         beta = 1.0 / (gT * K_BOLTZMANN)
         !beta = 1.0 / (gT * kb)
 
-        allocate(obs_ener( gNtime))
+        allocate(gAbs_ener( gNtime))
 
         n_energy = poten_lj() 
 
@@ -38,7 +38,7 @@ contains
             gR(1, iPart) = gR(1, iPart) + .1*sigma * (uni() - 0.5)
             gR(1, iPart) = gR(2, iPart) + .1*sigma * (uni() - 0.5)
             gR(1, iPart) = gR(3, iPart) + .1*sigma * (uni() - 0.5)
-       
+      
             call cpc(iPart)
 
             deltaE = poten_lj() - n_energy
@@ -55,8 +55,12 @@ contains
                     gR(3, iPart) = rz
                 endif        
             endif        
-            obs_ener(i) = n_energy
+            gAbs_ener(i) = n_energy
         enddo
+<<<<<<< HEAD
+=======
+        print *, gAbs_ener
+>>>>>>> 7e6390b2fe7064f065c661d67f30e5d6b3cc93e2
     endsubroutine metropolis
 
 endmodule mc
