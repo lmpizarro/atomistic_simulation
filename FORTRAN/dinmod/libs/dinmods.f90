@@ -31,7 +31,7 @@ contains
   ! Condiciones períodicas de contorno
   !===============================================================================
 
-  subroutine cpc( l)
+  subroutine cpc(l)
   
     integer, intent(in) :: l
 
@@ -83,7 +83,7 @@ contains
       gR(2, l) = (ry + uni() - 0.5) * gL / nl 
       gR(3, l) = (rz + uni() - 0.5) * gL / nl 
 
-      call cpc( l)
+      call cpc(l)
            
       j = j + 1
       k = k + 1
@@ -115,7 +115,6 @@ contains
       gR(3, l) = uni() * gL 
 
        call cpc(l)
- 
    enddo     
     
   end subroutine inicia_posicion_rn
@@ -124,7 +123,7 @@ contains
   ! CALCULA LA FUERZA  
   !===============================================================================
 
-  subroutine fuerza
+  subroutine fuerza()
 
     real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
     real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
@@ -186,6 +185,8 @@ contains
   subroutine finalizacion()
 
     call fin_zig()
+
+    deallocate(gR,gV,gF)
 
   endsubroutine finalizacion
 
