@@ -3,7 +3,7 @@ program main_dimod
     use io_parametros, only: read_parameters
     use globales, only: gT, gDt, gL, gNpart, gNtime
     use constants, only: kb
-    use dinmods, only: inicializacion, inicia_posicion_cs, finalizacion
+    use dinmods, only: inicializacion, inicia_posicion_cs, finalizacion, fuerza
   
 
     implicit none
@@ -12,6 +12,8 @@ program main_dimod
     call read_parameters()
     call inicializacion()
     call inicia_posicion_cs ()
+
+    call fuerza()
 
     call finalizacion()
 
