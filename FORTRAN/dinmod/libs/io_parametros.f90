@@ -14,7 +14,6 @@ contains
 !===============================================================================
 
   subroutine read_parameters()
-
     logical :: es
  
     inquire(file='./parametros.dat',exist=es)
