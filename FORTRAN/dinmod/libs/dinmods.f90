@@ -64,6 +64,14 @@ contains
 
   endsubroutine cpc
 
+  ! Verson vectorizada
+
+  subroutine cpc_vec()
+
+    gR = gR - gL*floor(gR/gL)
+
+  end subroutine
+
   !===============================================================================
   ! INICIALIZA Posicion en Red periódica cúbica simple
   !===============================================================================
@@ -90,7 +98,7 @@ contains
            
       j = j + 1
       k = k + 1
-      rx = rx + 1
+      rx = rx + 1.0_dp
       if ( mod(j, nl) .eq. 0) then
         rx = 0.0_dp
         ry = ry  + 1.0_dp
@@ -195,17 +203,25 @@ contains
   t = 0.0_dp
   Eng_t(1) = Pot
 
+  call write_array3D_lin(gR)
+
+  call cpc_vec()
+
   do i = 1, gNtime 
     gR = gR + 0.5_dp * gF * gDT**2 / gM
+    call cpc_vec()    
     call fuerza()
     Eng_t(i+1) = Pot
   end do
 
   open(unit=10,file='./energia.dat',status='unknown')
   !write(10,'(F10.4)') gDt
-  write(10,'(f15.5)') Eng_t
+  write(10,'(E15.5)') Eng_t
   close(10)
-
+  
+  call write_array3D_lin(gR)
+  print *, gR
+  print *, floor(-0.5)
 !  write(*,*) Eng_t
 
   end subroutine integracion_min
