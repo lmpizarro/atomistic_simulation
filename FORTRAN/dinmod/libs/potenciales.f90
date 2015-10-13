@@ -38,5 +38,11 @@ contains
       enddo
       v = 4.0 * gEpsil * v
   endfunction poten_lj
- 
+
+  function cuadrado ()
+  endfunction cuadrado
+
+  function esfera_rigida ()
+  endfunction esfera_rigida
+
 end module potenciales 

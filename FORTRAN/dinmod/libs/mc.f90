@@ -21,8 +21,8 @@ contains
         real(dp):: pr, beta
         integer :: iPart, i
 
-        !beta = 1.0 / (gT * K_BOLTZMANN)
-        beta = 1.0 / (gT * kb)
+        beta = 1.0 / (gT * K_BOLTZMANN)
+        !beta = 1.0 / (gT * kb)
 
         allocate(gAbs_ener( gNtime))
 
@@ -35,10 +35,10 @@ contains
             ry = gR(2, iPart)
             rz = gR(3, iPart)
 
-            gR(1, iPart) = gR(1, iPart) + .1*gSigma * uni()
-            gR(1, iPart) = gR(2, iPart) + .1*gSigma * uni()
-            gR(1, iPart) = gR(3, iPart) + .1*gSigma * uni()
-       
+            gR(1, iPart) = gR(1, iPart) + .1*sigma * (uni() - 0.5)
+            gR(1, iPart) = gR(2, iPart) + .1*sigma * (uni() - 0.5)
+            gR(1, iPart) = gR(3, iPart) + .1*sigma * (uni() - 0.5)
+      
             call cpc(iPart)
 
             deltaE = poten_lj() - n_energy
