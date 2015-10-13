@@ -39,10 +39,12 @@ contains
       v = 4.0 * gEpsil * v
   endfunction poten_lj
 
-  function cuadrado ()
+  function cuadrado () result(v)
+    real(dp) :: v
   endfunction cuadrado
 
-  function esfera_rigida ()
+  function esfera_rigida () result(v)
+    real(dp) :: v
   endfunction esfera_rigida
 
 end module potenciales 
