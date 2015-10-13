@@ -2,7 +2,7 @@ module mc
     use ziggurat
     use usozig
     use types, only: dp
-    use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil,&
+    use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil,&
         obs_ener
     use constants
     use potenciales
@@ -21,8 +21,8 @@ contains
         real(dp):: pr, beta
         integer :: iPart, i
 
-        !beta = 1.0 / (gT * K_BOLTZMANN)
-        beta = 1.0 / (gT * kb)
+        beta = 1.0 / (gT * K_BOLTZMANN)
+        !beta = 1.0 / (gT * kb)
 
         allocate(obs_ener( gNtime))
 
@@ -35,9 +35,9 @@ contains
             ry = gR(2, iPart)
             rz = gR(3, iPart)
 
-            gR(1, iPart) = gR(1, iPart) + .1*sigma * uni()
-            gR(1, iPart) = gR(2, iPart) + .1*sigma * uni()
-            gR(1, iPart) = gR(3, iPart) + .1*sigma * uni()
+            gR(1, iPart) = gR(1, iPart) + .1*sigma * (uni() - 0.5)
+            gR(1, iPart) = gR(2, iPart) + .1*sigma * (uni() - 0.5)
+            gR(1, iPart) = gR(3, iPart) + .1*sigma * (uni() - 0.5)
        
             call cpc(iPart)
 
@@ -57,7 +57,6 @@ contains
             endif        
             obs_ener(i) = n_energy
         enddo
-        print *, obs_ener
     endsubroutine metropolis
 
 endmodule mc

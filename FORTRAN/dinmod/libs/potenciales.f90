@@ -1,6 +1,6 @@
 module potenciales 
   use types, only: dp
-  use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil
+  use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil
 
   implicit none
 
@@ -38,5 +38,11 @@ contains
       enddo
       v = 4.0 * epsil * v
   endfunction poten_lj
- 
+
+  function cuadrado ()
+  endfunction cuadrado
+
+  function esfera_rigida ()
+  endfunction esfera_rigida
+
 end module potenciales 
