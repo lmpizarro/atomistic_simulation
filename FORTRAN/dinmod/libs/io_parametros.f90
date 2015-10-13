@@ -31,7 +31,7 @@ contains
         end if
         write(*, 700)  gT, gNpart, gL, gDt, gNtime, gSigma, gEpsil
 
-        700 format (F7.3 I7 F7.3 F7.3 I7 F7.3 F7.3)
+        700 format (F8.3 I7 F8.3 F8.3 I7 F8.3 F8.3)
   end subroutine read_parameters
 
 
