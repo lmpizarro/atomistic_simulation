@@ -12,6 +12,7 @@ set(libs_LIBS_SRCS
         utils.f90
         usozig.f90
         mc.f90
+	potenciales.f90
 	io_parametros.f90
     )
 

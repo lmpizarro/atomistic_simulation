@@ -5,6 +5,7 @@ module mc
     use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, sigma, epsil,&
         obs_ener
     use constants
+    use potenciales
 
     implicit none
 
@@ -25,7 +26,7 @@ contains
 
         allocate(obs_ener( gNtime))
 
-        !n_energy = potencial() 
+        n_energy = poten_lj() 
 
         do i=1, gNtime
             iPart = rand_int(gNpart)
@@ -40,7 +41,7 @@ contains
        
             call cpc(iPart)
 
-            !deltaE = potencial() - n_energy
+            deltaE = poten_lj() - n_energy
 
             if (deltaE .lt. 0) then
                 n_energy = n_energy + deltaE    
