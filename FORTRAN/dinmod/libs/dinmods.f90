@@ -10,7 +10,7 @@ module dinmods
 
     private
 
-    public :: inicializacion, potencial, inicia_posicion_cs, finalizacion, cpc, fuerza
+    public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, fuerza
 
 contains
 
@@ -122,7 +122,7 @@ contains
       ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
       gF  = 0.0_dp
       Pot = 0.0_dp
-      ! Paso a trabajar ditancias en unidades de sigma
+      ! Paso a trabajar distancias en unidades de sigma
       gR = gR/sigma
       gL = gL/sigma
 
