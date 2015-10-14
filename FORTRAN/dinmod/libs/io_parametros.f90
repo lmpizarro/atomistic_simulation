@@ -42,20 +42,34 @@ contains
 ! ESBRIBE POSICIONES PARA VISUALIZAR TRAYECTORIAS 
 !===============================================================================
 
-  subroutine escribe_trayectoria(r)
+  subroutine escribe_trayectoria(r,k)
     ! Se puede optimizar abriendo y cerrando el archivo en el momento de usarla
 
     real(dp), dimension(3,gNpart), intent(in)    :: r    ! Posición
     integer                                      :: i,j
+    integer, intent(in)                          :: k
 
-    open(unit=20, file ='./trayectoria.vtf',status='unknown',position='append')
-
+    if ( k==1 ) then
+      open(unit=20, file='./trayectoria.vtf',status='unknown')
+    else
+      open(unit=20, file ='./trayectoria.vtf',status='unknown',position='append')
+    end if
+    ! Escribe el encabezado del archivo
+    if (k == 1) then
+      write(20,*) '### Trayectorias ###'
+      write(20,*) 'atom default   radius 0.1 name P'
+      write(20,'(A,I0)') ' atom 1:',gNpart
+      write(20,*) 'timstep'
+      write(20,*) ''
+    end if
+    ! Escribe las coordenadas de cada partícula a un dado tiempo
     do j = 1, gNpart
       write(20,200) (r(i,j), i=1,3)
       200 format (3(F10.5))
     end do
-      write(20,*) 'timestep'    
-      write(20,*) ''
+    write(20,*) 'timestep'    
+    write(20,*) ''
+
     close(20)
 
   end subroutine

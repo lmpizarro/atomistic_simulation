@@ -222,14 +222,13 @@ contains
     Eng_t(1) = Pot
 
     call write_array3D_lin(gR)
-
     call cpc_vec()
 
     do i = 1, gNtime 
       gR = gR + 0.5_dp * gF * gDT**2 / gM
       call cpc_vec()    
      ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      call escribe_trayectoria(gR)    
+      call escribe_trayectoria(gR,i)    
       call fuerza()
       Eng_t(i+1) = Pot
     end do
