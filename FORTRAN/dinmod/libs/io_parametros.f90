@@ -54,6 +54,7 @@ contains
     else
       open(unit=20, file ='./trayectoria.vtf',status='unknown',position='append')
     end if
+
     ! Escribe el encabezado del archivo
     if (k == 1) then
       write(20,*) '### Trayectorias ###'

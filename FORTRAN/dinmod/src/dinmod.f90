@@ -4,7 +4,7 @@ program main_dimod
     use globales, only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM
     use constants, only: kb
     use dinmods, only: inicializacion, inicia_posicion_cs, finalizacion, fuerza, &
-                       integracion_min, inicia_posicion_rn
+                       integracion_min, integracion, inicia_posicion_rn
   
 
     implicit none

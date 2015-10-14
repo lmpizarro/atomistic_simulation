@@ -11,9 +11,8 @@ module dinmods
 
   private
 
-
   public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, fuerza, &
-            integracion_min, inicia_posicion_rn
+            integracion_min, integracion, inicia_posicion_rn
   
   !===============================================================================
   ! VARIABLE PROPIAS DEL MÓDULO
@@ -149,7 +148,7 @@ contains
       gR(2, l) = uni() * gL 
       gR(3, l) = uni() * gL 
 
-       call cpc(l)
+      call cpc(l)
    enddo     
     
   end subroutine inicia_posicion_rn
@@ -208,7 +207,7 @@ contains
   end subroutine fuerza 
 
   !===============================================================================
-  ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO  
+  ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - MINIMIZACIÓN ENERGÍA
   !===============================================================================
 
   subroutine integracion_min()
@@ -222,17 +221,20 @@ contains
     Eng_t(1) = Pot
 
     call write_array3D_lin(gR)
-    call cpc_vec()
 
     do i = 1, gNtime 
       gR = gR + 0.5_dp * gF * gDT**2 / gM
+      ! Aplica condiciones peródicas de contorno
       call cpc_vec()    
-     ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
+      ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
       call escribe_trayectoria(gR,i)    
+      ! Calcula fuerza y energía
       call fuerza()
+      ! Escribe energía potencial en vector
       Eng_t(i+1) = Pot
     end do
 
+    ! Guarda la energía potencial en un archivo
     open(unit=10,file='./energia.dat',status='unknown')
     !write(10,'(F10.4)') gDt
     write(10,'(E15.5)') Eng_t
@@ -242,6 +244,46 @@ contains
     print *, 'Energía' , Pot
 
   end subroutine integracion_min
+
+  !===============================================================================
+  ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - VELOCITY VERLET
+  !===============================================================================
+
+  subroutine integracion()
+  ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
+  ! Es el Problema 3 de la Guia_2a
+
+    real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
+    integer    :: i
+
+    ! El primer punto es la energía inicial
+    Eng_t(1) = Pot
+
+    call write_array3D_lin(gR)
+
+    do i = 1, gNtime 
+      gR = gR + 0.5_dp * gF * gDT**2 / gM
+      ! Aplica condiciones peródicas de contorno
+      call cpc_vec()    
+      ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
+      call escribe_trayectoria(gR,i)    
+      ! Calcula fuerza y energía
+      call fuerza()
+      ! Escribe energía potencial en vector
+      Eng_t(i+1) = Pot
+    end do
+
+    ! Guarda la energía potencial en un archivo
+    open(unit=10,file='./energia.dat',status='unknown')
+    !write(10,'(F10.4)') gDt
+    write(10,'(E15.5)') Eng_t
+    close(10)
+  
+    call write_array3D_lin(gR)
+    print *, 'Energía' , Pot
+
+  end subroutine integracion
+
 
   !===============================================================================
   ! FINALIZA PARAMETROS
