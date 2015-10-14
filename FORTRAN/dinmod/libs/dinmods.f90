@@ -89,7 +89,7 @@ contains
     end do
     ! Le especifico el módulo
     ! Se debe poner una Gaussiana
-    gV = 0.5_dp*gV 
+    gV = 5.0_dp*gV 
     
   end subroutine vel_inic
 
