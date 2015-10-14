@@ -41,7 +41,9 @@ contains
     call corta_desplaza_pote()
     ! Define velocidades iniciales
     call vel_inic()
-
+    ! Calcula la fuerza inicial
+    call fuerza()
+ 
   end subroutine inicializacion 
 
   !===============================================================================
@@ -164,10 +166,8 @@ contains
       gR(1, l) = uni() * gL 
       gR(2, l) = uni() * gL 
       gR(3, l) = uni() * gL 
-
-      call cpc(l)
    enddo     
-    
+
   end subroutine inicia_posicion_rn
 
   !===============================================================================
@@ -209,7 +209,7 @@ contains
     end do
 
     ! Constantes que faltaban en la energía
-    Fij = 48.0_dp * gEpsil * Fij                
+    gF = 48.0_dp * gEpsil * gF                
     ! Constantes que faltaban en el potencial
     ! Agrego el desplazamiento del potencial considerando la cantidad de
     ! pares con que se obtuvo la energía potencial N(N-1)/2
@@ -259,6 +259,7 @@ contains
     call write_array3D_lin(gR)
 
     do i = 1, gNtime 
+      call escribe_trayectoria(gR,i)
       gR = gR + 0.5_dp * gF * gDt**2 / gM
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()    
@@ -277,7 +278,7 @@ contains
     close(10)
   
     call write_array3D_lin(gR)
-    print *, 'Energía' , Pot
+    print *, 'Energía minimizada: ' , Pot
 
   end subroutine integracion_min
 

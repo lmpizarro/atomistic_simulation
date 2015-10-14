@@ -17,11 +17,9 @@ program main_dimod
     !call inicia_posicion_cs ()
     call inicia_posicion_rn()
 
-    call fuerza()
-
     call integracion_min()
 
-    call integracion()
+   ! call integracion()
 
     call finalizacion()
 
