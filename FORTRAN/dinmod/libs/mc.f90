@@ -21,7 +21,7 @@ contains
         real(dp):: pr, beta
         integer :: iPart, i
 
-        beta = 1.0 / (gT * K_BOLTZMANN)
+        beta = 1.0 / (gT * K_B_KJ)
         !beta = 1.0 / (gT * kb)
 
         allocate(gAbs_ener( gNtime))
