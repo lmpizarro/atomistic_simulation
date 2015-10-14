@@ -10,7 +10,7 @@ program main_mc_pote
     ! Lee los datos necesario
     call read_parameters()
     call inicializacion()
-    call inicia_posicion_cs()
+    call inicia_posicion_rn()
 
     call metropolis()
 
