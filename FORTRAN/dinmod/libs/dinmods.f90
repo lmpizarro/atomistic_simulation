@@ -3,6 +3,7 @@ module dinmods
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM
   use utils,      only: write_array3D_lin
+  use constants,  only: PI
   use ziggurat
   use usozig
   use io_parametros,  only: escribe_trayectoria
@@ -62,7 +63,7 @@ contains
   subroutine corta_desplaza_pote()   
 
     ! Radio de corte fijo
-    rc2 = (2000.5_dp)**2                
+    rc2 = (2.5_dp)**2                
     ! Potencial de L-J evaluado en el radio de corte
     pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
     
@@ -81,13 +82,13 @@ contains
     ! Muestreo una dirección aleatoria uniforme 
     ! Este loop genera una velocidad de módulo unidad               
     do i = 1, gNpart
-      phi     = 2.0_dp * 3.1416 * uni()
+      phi     = 2.0_dp * PI * uni()
       gV(3,i) = 1.0_dp - 2.0_dp * uni()
       gV(1,i) = sqrt( 1.0_dp - gV(3,i)**2 ) * cos(phi)
       gV(2,i) = gV(1,i) * tan(phi)
-      print *, gV(:,i)
     end do
     ! Le especifico el módulo
+    ! Se debe poner una Gaussiana
     gV = 0.5*gV
     
   end subroutine vel_inic
