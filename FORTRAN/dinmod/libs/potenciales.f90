@@ -5,7 +5,7 @@ module potenciales
   implicit none
 
   private
-  public :: poten_lj, delta_poten_lj, poten_lj_vec
+  public :: poten_lj, delta_poten_lj, poten_lj_vec, delta_poten_lj_vec
 
   !===============================================================================
   ! VARIABLE PROPIAS DEL MÓDULO
@@ -40,11 +40,9 @@ contains
     v = 0
 
     do i = 1, gNpart - 1
-
       rxi = gR(1, i)
       ryi = gR(2, i)
       rzi = gR(3, i)
-
         do j = i + 1, gNpart
           rxij = rxi - gR(1,j)
           ryij = ryi - gR(2,j)
@@ -136,26 +134,20 @@ contains
     real(dp) :: deltaPot
     real(dp) :: vo, vn
 
-
     deltaPot = 0.0_dp
 
     vo = 0.0_dp
-    do j = 1, i - 1
-      vo     = vo + kernel_pot(j, ri_vec)   ! Energía potencial
-    enddo
-
-    do j = i + 1, gNpart 
-      vo     = vo + kernel_pot(j, ri_vec)   ! Energía potencial
-    enddo
-
-
     vn = 0.0_dp
     do j = 1, i - 1
-      vn     = vn + kernel_pot(j, gR(:,j))   ! Energía potencial
+      vo     = vo + kernel_pot(j, ri_vec)   ! Energía potencial
+      vn     = vn + kernel_pot(j, gR(:,i))   ! Energía potencial
     enddo
 
     do j = i + 1, gNpart 
+      vo     = vo + kernel_pot(j, ri_vec)   ! Energía potencial
+      vn     = vn + kernel_pot(j, gR(:,i))   ! Energía potencial
     enddo
+
 
     deltaPot =  4.0_dp * gEpsil * (vn - vo)   
 
@@ -226,7 +218,6 @@ contains
       sr12 = sr6 ** 2
       vn = vn + sr12 - sr6
     enddo
-
 
     v = vn - vo
 

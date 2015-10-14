@@ -20,6 +20,7 @@ contains
     real(dp) :: n_energy, deltaE
     real(dp):: pr, beta
     integer :: iPart, i
+    real(dp), dimension(3)  :: ri_vec
 
     beta = 1.0 / (gT * K_B_KJ)
     !beta = 1.0 / (gT * kb)
@@ -44,8 +45,9 @@ contains
             call cpc(iPart)
 
             ! calculo de la variacion de energia
-            !deltaE = poten_lj() - n_energy
-            deltaE = delta_poten_lj(iPart, rx, ry, rz)
+            !deltaE = delta_poten_lj(iPart, rx, ry, rz)
+            ri_vec = (/rx, ry, rz/)
+            deltaE = delta_poten_lj_vec(iPart, ri_vec)
 
             if (deltaE .lt. 0) then
                 n_energy = n_energy + deltaE 
