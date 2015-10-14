@@ -7,8 +7,29 @@ module potenciales
   private
   public :: poten_lj, delta_poten_lj
 
+  !===============================================================================
+  ! VARIABLE PROPIAS DEL MÓDULO
+  !===============================================================================
+
+  real(dp)        :: rc2       ! Cuadrado del radio de corte
+  real(dp)        :: pot_cut   ! Potencial L-J en el radio de corte
+ 
 contains
 
+  !===============================================================================
+  ! RADIO DE CORTE 
+  !===============================================================================
+  ! Define el radio de corte y calcula el desplazamiento del potencial de L-J 
+
+  subroutine corta_desplaza_pote()   
+
+    ! Radio de corte fijo
+    rc2 = (2.5_dp)**2                
+    ! Potencial de L-J evaluado en el radio de corte
+    pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
+    
+  end subroutine corta_desplaza_pote
+ 
   ! calculo del potencial de pag 18 del allen-tildesley
   function poten_lj () result(v)
     integer :: i, j     
@@ -31,7 +52,7 @@ contains
     
           rijsq = rxij ** 2 + ryij ** 2 + rzij ** 2
           sr2 = gSigma / rijsq
-          sr6 = sr2 **3
+          sr6 = sr2 ** 3
           sr12 = sr6 ** 2
           v = v + sr12 - sr6
         enddo
@@ -39,6 +60,47 @@ contains
       v = 4.0 * gEpsil * v
   endfunction poten_lj
 
+
+  function poten_lj_vec () result(Pot)
+    real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
+    real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
+    real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
+    real(dp)                :: Pot
+    integer                 :: i,j       
+
+    call corta_desplaza_pote()
+
+    ! Paso a trabajar distancias en unidades de sigma
+    gR = gR/gSigma
+    gL = gL/gSigma
+
+    Pot = 0.0_dp
+
+    do i = 1, gNpart - 1       
+      do j = i+1, gNpart
+        rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
+        ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
+        ! Siempre en distancias relativas de sigma
+        rij_vec = rij_vec - gL*nint(rij_vec/gL)
+        r2ij   = dot_product( rij_vec , rij_vec )    ! Cuadrado de la distancia
+        if ( r2ij < rc2 ) then               
+          r2in = 1.0_dp/r2ij                         ! Inversa al cuadrado
+          r6in = r2in**3                             ! Inversa a la sexta
+          Pot     = Pot + r6in * ( r6in - 1.0_dp)    ! Energía potencial
+        end if
+      enddo
+    enddo
+
+    ! Constantes que faltaban en el potencial
+    ! Agrego el desplazamiento del potencial considerando la cantidad de
+    ! pares con que se obtuvo la energía potencial N(N-1)/2
+    Pot =  4.0_dp * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2.0_dp  
+
+    ! Se vuelven a pasar a las coordenadas absolutas
+    gR = gR*gSigma
+    gL = gL*gSigma
+
+  endfunction poten_lj_vec
 
   ! i: particula i-esima
   ! rx, ry, rz: vieja posicion de la particula
@@ -48,7 +110,7 @@ contains
     real(dp) :: sr2, sr6, sr12
     integer :: i, j
 
-    vo = 0
+    vo = 0.0_dp
 
     do j = 1, i - 1
       rxij = rxi - gR(1, j)
@@ -75,7 +137,7 @@ contains
       vo = vo + sr12 - sr6
     enddo
 
-    vn = 0
+    vn = 0.0_dp
     rxi = gR(1, i)
     ryi = gR(2, i)
     rzi = gR(3, i)
