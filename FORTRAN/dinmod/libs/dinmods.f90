@@ -27,6 +27,7 @@ contains
   !===============================================================================
   ! INICIALIZA SISTEMA de CALCULO
   !===============================================================================
+
   subroutine inicializacion()
 
     allocate(gR(3,gNpart))
@@ -45,7 +46,8 @@ contains
   !===============================================================================
   ! RADIO DE CORTE 
   !===============================================================================
- 
+  ! Define el radio de corte y calcula el desplazamiento del potencial de L-J 
+
   subroutine corta_desplaza_pote()   
 
     ! Radio de corte fijo
@@ -58,7 +60,8 @@ contains
   !===============================================================================
   ! VELOCIDADES INICIALES 
   !===============================================================================
- 
+  ! Subrutina para inicializar las velocidades del problema 
+
   subroutine vel_inic()   
 
     ! Por ahora todas quietas
@@ -169,6 +172,7 @@ contains
   !===============================================================================
   ! CALCULA LA FUERZA  
   !===============================================================================
+  ! Calcula la fuerza ya la energía potencial del potencial de L-J
 
   subroutine fuerza()
 
@@ -222,10 +226,10 @@ contains
   !===============================================================================
   ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - MINIMIZACIÓN ENERGÍA
   !===============================================================================
-
-  subroutine integracion_min()
   ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
   ! Es el Problema 3 de la Guia_2a
+
+  subroutine integracion_min()
 
     real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
     integer    :: i
@@ -261,10 +265,9 @@ contains
   !===============================================================================
   ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - VELOCITY VERLET
   !===============================================================================
+  ! Integra las ecuaciones dinámicas con el algoritmo de Velocity-Verlet
 
   subroutine integracion()
-  ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
-  ! Es el Problema 3 de la Guia_2a
 
     real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
     integer    :: i
