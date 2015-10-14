@@ -89,7 +89,7 @@ contains
     end do
     ! Le especifico el módulo
     ! Se debe poner una Gaussiana
-    gV = 0.5*gV
+    gV = 0.5_dp*gV 
     
   end subroutine vel_inic
 
@@ -292,7 +292,7 @@ contains
     end do
 
     ! Guarda la energía potencial en un archivo
-    open(unit=10,file='./energia.dat',status='unknown')
+    open(unit=10,file='./energia_pot_min.dat',status='unknown')
     !write(10,'(F10.4)') gDt
     write(10,'(E15.5)') Eng_t
     close(10)
@@ -316,7 +316,6 @@ contains
     Eng_t(1) = Pot + Kin
 
     do i = 1, gNtime 
-      print *, i, Pot, Kin, Pot + Kin
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()
       gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM           ! gR(t+dt)
@@ -332,7 +331,7 @@ contains
     end do
 
     ! Guarda la energía potencial en un archivo
-    open(unit=10,file='./energia.dat',status='unknown')
+    open(unit=10,file='./energia_tot.dat',status='unknown')
     !write(10,'(F10.4)') gDt
     write(10,'(E15.5)') Eng_t
     close(10)
