@@ -37,6 +37,8 @@ contains
 
     ! Inicial generador de número aleatorios
     call inic_zig()
+    ! Define posiciones iniciales
+    call inicia_posicion_rn()
     ! Define el radio de corte y el potencial desplazado
     call corta_desplaza_pote()
     ! Define velocidades iniciales

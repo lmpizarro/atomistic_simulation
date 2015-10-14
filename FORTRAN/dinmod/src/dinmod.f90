@@ -15,7 +15,7 @@ program main_dimod
     call inicializacion()
 
     !call inicia_posicion_cs ()
-    call inicia_posicion_rn()
+    !call inicia_posicion_rn()
 
     call integracion_min()
 
