@@ -20,7 +20,6 @@ contains
   ! RADIO DE CORTE 
   !===============================================================================
   ! Define el radio de corte y calcula el desplazamiento del potencial de L-J 
-
   subroutine corta_desplaza_pote()   
 
     ! Radio de corte fijo
@@ -29,8 +28,10 @@ contains
     pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
     
   end subroutine corta_desplaza_pote
- 
+
+  ! 
   ! calculo del potencial de pag 18 del allen-tildesley
+  !
   function poten_lj () result(v)
     integer :: i, j     
     real(dp) :: v, rxi, ryi, rzi
@@ -58,7 +59,9 @@ contains
       v = 4.0 * gEpsil * v
   endfunction poten_lj
 
-
+  !
+  ! Calculo del potencial en forma vectorial
+  ! 
   function poten_lj_vec () result(Pot)
     real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
     real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
@@ -100,6 +103,9 @@ contains
 
   endfunction poten_lj_vec
 
+  !
+  ! una funcion para simplificar los calculos del delta de potencial
+  !
   function kernel_pot (j, ri_vec) result (Pot)
     real(dp), intent(in), dimension(3)  :: ri_vec
     integer, intent(in) :: j
@@ -120,11 +126,11 @@ contains
        r6in = r2in**3                             ! Inversa a la sexta
        Pot = r6in * ( r6in - 1.0_dp)    ! Energía potencial
     end if
-
-
   endfunction kernel_pot
 
-
+  !
+  !  calculo del delta de potencial en forma vectorial
+  !
   function delta_poten_lj_vec  (i, ri_vec) result(deltaPot)
     ! la particula con la que se hace le calculo
     integer, intent(in) :: i    
@@ -148,12 +154,13 @@ contains
       vn     = vn + kernel_pot(j, gR(:,i))   ! Energía potencial
     enddo
 
-
     deltaPot =  4.0_dp * gEpsil * (vn - vo)   
 
   endfunction delta_poten_lj_vec
 
-
+  !
+  !  calculo del delta de potencial en forma escalar 
+  !
   ! i: particula i-esima
   ! rx, ry, rz: vieja posicion de la particula
   function delta_poten_lj (i, rxi, ryi, rzi) result(v)

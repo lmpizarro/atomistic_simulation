@@ -37,9 +37,9 @@ contains
             rz = gR(3, iPart)
 
             ! actualizo el arreglo de posiciones con una nueva posicion
-            gR(1, iPart) = gR(1, iPart) + .1*gSigma * (uni() - 0.5)
-            gR(2, iPart) = gR(2, iPart) + .1*gSigma * (uni() - 0.5)
-            gR(3, iPart) = gR(3, iPart) + .1*gSigma * (uni() - 0.5)
+            gR(1, iPart) = gR(1, iPart) + .2*gSigma * (uni() - 0.5)
+            gR(2, iPart) = gR(2, iPart) + .2*gSigma * (uni() - 0.5)
+            gR(3, iPart) = gR(3, iPart) + .2*gSigma * (uni() - 0.5)
      
             ! llamo a condiciones períodicas de contorno
             call cpc(iPart)
