@@ -43,9 +43,15 @@ contains
     call corta_desplaza_pote()
     ! Define velocidades iniciales
     call vel_inic()
+    ! Calcula energía cinética inicial 
+    call calcula_kin()
     ! Calcula la fuerza inicial
     call fuerza()
- 
+
+    print *, 'Valores iniciales'
+    print *, 'Potencial = ', Pot, 'Cinética = ' , Kin
+    print *, 'Total = ', Pot+Kin
+
   end subroutine inicializacion 
 
   !===============================================================================
@@ -56,7 +62,7 @@ contains
   subroutine corta_desplaza_pote()   
 
     ! Radio de corte fijo
-    rc2 = (2.5_dp)**2                
+    rc2 = (2000.5_dp)**2                
     ! Potencial de L-J evaluado en el radio de corte
     pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
     
@@ -69,8 +75,20 @@ contains
 
   subroutine vel_inic()   
 
-    ! Por ahora todas quietas
-    gV = 0                
+    real(dp)   :: phi
+    integer    :: i
+
+    ! Muestreo una dirección aleatoria uniforme 
+    ! Este loop genera una velocidad de módulo unidad               
+    do i = 1, gNpart
+      phi     = 2.0_dp * 3.1416 * uni()
+      gV(3,i) = 1.0_dp - 2.0_dp * uni()
+      gV(1,i) = sqrt( 1.0_dp - gV(3,i)**2 ) * cos(phi)
+      gV(2,i) = gV(1,i) * tan(phi)
+      print *, gV(:,i)
+    end do
+    ! Le especifico el módulo
+    gV = 0.5*gV
     
   end subroutine vel_inic
 
@@ -261,12 +279,11 @@ contains
     call write_array3D_lin(gR)
 
     do i = 1, gNtime 
-      call escribe_trayectoria(gR,i)
       gR = gR + 0.5_dp * gF * gDt**2 / gM
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()    
       ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      ! call escribe_trayectoria(gR,i)    
+      call escribe_trayectoria(gR,i)    
       ! Calcula fuerza y energía
       call fuerza()
       ! Escribe energía potencial en vector
@@ -295,9 +312,10 @@ contains
     integer    :: i
 
     ! El primer punto es la energía inicial
-    Eng_t(1) = Pot
+    Eng_t(1) = Pot + Kin
 
     do i = 1, gNtime 
+      print *, i, Pot, Kin, Pot + Kin
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()
       gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM           ! gR(t+dt)
@@ -306,10 +324,10 @@ contains
       gV =          gV + 0.5_dp * gF * gDt / gM              ! gV(t+dt)
       ! Calcula la energia cinetica
       call calcula_kin()
-      ! Escribe posiciones de las partículas
-      call escribe_trayectoria(gR,i)
       ! Escribe energía total
       Eng_t(i+1) = Pot + Kin
+      ! Escribe posiciones de las partículas
+      call escribe_trayectoria(gR,i)
     end do
 
     ! Guarda la energía potencial en un archivo
