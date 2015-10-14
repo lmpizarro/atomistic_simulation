@@ -15,18 +15,18 @@ module mc
 
 contains
 
-    subroutine metropolis ()
-        real(dp) :: rx, ry, rz
-        real(dp) :: n_energy, deltaE
-        real(dp):: pr, beta
-        integer :: iPart, i
+  subroutine metropolis ()
+    real(dp) :: rx, ry, rz
+    real(dp) :: n_energy, deltaE
+    real(dp):: pr, beta
+    integer :: iPart, i
 
-        beta = 1.0 / (gT * K_B_KJ)
-        !beta = 1.0 / (gT * kb)
+    beta = 1.0 / (gT * K_B_KJ)
+    !beta = 1.0 / (gT * kb)
 
-        allocate(gAbs_ener( gNtime))
+    allocate(gAbs_ener( gNtime))
 
-        n_energy = poten_lj() 
+    n_energy = poten_lj_vec() 
 
         do i=1, gNtime
             iPart = rand_int(gNpart)
