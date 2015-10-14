@@ -18,7 +18,8 @@ module dinmods
   ! VARIABLE PROPIAS DEL MÓDULO
   !===============================================================================
 
-  real(dp)        :: Pot     ! Energía potencial del sistema
+  real(dp)        :: Pot       ! Energía potencial del sistema
+  real(dp)        :: Kin       ! Energia cinetica del sistema
   real(dp)        :: rc2       ! Cuadrado del radio de corte
   real(dp)        :: pot_cut   ! Potencial L-J en el radio de corte
   
@@ -222,6 +223,24 @@ contains
 !    print *, 'Potencial: ', Pot
 
   end subroutine fuerza 
+ 
+  !===============================================================================
+  ! CALCULA ENERGIA CINETICA 
+  !===============================================================================
+  ! Calcula la anergia cinetica total del sistema
+
+  subroutine calcula_kin()
+    
+    real(dp), dimension(gNpart)   :: v2    ! Vector con la velocidad cuadratica
+    integer                       :: i
+
+    do i = 1, gNpart
+      v2(i) =  dot_product(gV(:,i),gV(:,i))  
+    end do
+
+    Kin = 0.5_dp * gM * sum( v2 )
+
+  end subroutine
 
   !===============================================================================
   ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - MINIMIZACIÓN ENERGÍA
@@ -282,10 +301,12 @@ contains
       gV =          gV + 0.5_dp * gF * gDt / gM              ! gV(t+0.5dt) 
       call fuerza()                                          ! Calcula fuerzas y potencial
       gV =          gV + 0.5_dp * gF * gDt / gM              ! gV(t+dt)
+      ! Calcula la energia cinetica
+      call calcula_kin()
       ! Escribe posiciones de las partículas
       call escribe_trayectoria(gR,i)
-      ! Escribe energía potencial en vector
-      Eng_t(i+1) = Pot
+      ! Escribe energía total
+      Eng_t(i+1) = Pot + Kin
     end do
 
     ! Guarda la energía potencial en un archivo
