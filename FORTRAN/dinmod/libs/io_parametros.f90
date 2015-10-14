@@ -59,7 +59,7 @@ contains
     if (k == 1) then
       write(20,*) '### Trayectorias ###'
       write(20,*) 'atom default   radius 0.1 name P'
-      write(20,'(A,I0)') ' atom 1:',gNpart
+      write(20,'(A,I0)') ' atom 0:',gNpart-1 
       write(20,*) 'timstep'
       write(20,*) ''
     end if
