@@ -37,6 +37,8 @@ contains
     call inic_zig()
     ! Define el radio de corte y el potencial desplazado
     call corta_desplaza_pote()
+    ! Define velocidades iniciales
+    call vel_inic()
 
   end subroutine inicializacion 
 
@@ -52,6 +54,17 @@ contains
     pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
     
   end subroutine corta_desplaza_pote
+  
+  !===============================================================================
+  ! VELOCIDADES INICIALES 
+  !===============================================================================
+ 
+  subroutine vel_inic()   
+
+    ! Por ahora todas quietas
+    gV = 0                
+    
+  end subroutine vel_inic
 
   !===============================================================================
   ! Condiciones períodicas de contorno
@@ -223,11 +236,11 @@ contains
     call write_array3D_lin(gR)
 
     do i = 1, gNtime 
-      gR = gR + 0.5_dp * gF * gDT**2 / gM
+      gR = gR + 0.5_dp * gF * gDt**2 / gM
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()    
       ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      call escribe_trayectoria(gR,i)    
+      ! call escribe_trayectoria(gR,i)    
       ! Calcula fuerza y energía
       call fuerza()
       ! Escribe energía potencial en vector
@@ -259,16 +272,15 @@ contains
     ! El primer punto es la energía inicial
     Eng_t(1) = Pot
 
-    call write_array3D_lin(gR)
-
     do i = 1, gNtime 
-      gR = gR + 0.5_dp * gF * gDT**2 / gM
       ! Aplica condiciones peródicas de contorno
-      call cpc_vec()    
-      ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      call escribe_trayectoria(gR,i)    
-      ! Calcula fuerza y energía
-      call fuerza()
+      call cpc_vec()
+      gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM           ! gR(t+dt)
+      gV =          gV + 0.5_dp * gF * gDt / gM              ! gV(t+0.5dt) 
+      call fuerza()                                          ! Calcula fuerzas y potencial
+      gV =          gV + 0.5_dp * gF * gDt / gM              ! gV(t+dt)
+      ! Escribe posiciones de las partículas
+      call escribe_trayectoria(gR,i)
       ! Escribe energía potencial en vector
       Eng_t(i+1) = Pot
     end do
@@ -279,9 +291,6 @@ contains
     write(10,'(E15.5)') Eng_t
     close(10)
   
-    call write_array3D_lin(gR)
-    print *, 'Energía' , Pot
-
   end subroutine integracion
 
 
