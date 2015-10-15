@@ -12,21 +12,28 @@ program main_dimod
     implicit none
 
     integer   :: n_core, n_thread
+    real      :: wtime
 
-    !n_core   = omp_get_num_procs()
-    !n_thread = omp_get_max_threads()
+    n_core   = omp_get_num_procs()
+    n_thread = omp_get_max_threads()
 
-    write(*,*) 'Número de procesadores: ', n_core
-    write(*,*) 'Número de threads disponibles: ', n_thread
+    write(*,*) ' Número de procesadores:        ', n_core
+    write(*,*) ' Número de threads disponibles: ', n_thread
 
     ! Lee los datos necesario
     call read_parameters()
     ! Inicializa parámetros 
     call inicializacion()
-    ! Busca el mínimo de energía
+    
+    wtime = omp_get_wtime()
+   ! Busca el mínimo de energía
     call integracion_min()
     ! Integración de la dinámica
     call integracion()
+    wtime = omp_get_wtime( ) - wtime
+
+    write(*,*) ' Tiempo transcurrido : ', wtime
+   
     ! Finalización del programa
     call finalizacion()
 

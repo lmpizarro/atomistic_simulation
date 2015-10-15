@@ -205,29 +205,39 @@ contains
     integer                 :: i,j       
 
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
-    gF  = 0.0_dp
-    Pot = 0.0_dp
+    gF  = 0.0
+    Pot = 0.0
     ! Paso a trabajar distancias en unidades de sigma
     gR = gR/gSigma
     gL = gL/gSigma
 
-    do i = 1, gNpart - 1       
-      do j = i+1, gNpart
-        rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
-        ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
-        ! Siempre en distancias relativas de sigma
-        rij_vec = rij_vec - gL*nint(rij_vec/gL)
-        r2ij   = dot_product( rij_vec , rij_vec )    ! Cuadrado de la distancia
-        if ( r2ij < rc2 ) then               
-          r2in = 1.0_dp/r2ij                         ! Inversa al cuadrado
-          r6in = r2in**3                             ! Inversa a la sexta
-          Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
-          gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
-          gF(:,j) = gF(:,j) - Fij * rij_vec          ! Contribucion a la partícula j
-          Pot     = Pot + r6in * ( r6in - 1.0_dp)    ! Energía potencial
+!$omp parallel &
+!$omp shared (gR, gL, gF,rc2, gNpart) &
+!$omp private (i,j, rij_vec, r2ij, r2in, r6in, Fij)
+
+!$omp do reduction ( + : Pot )
+
+    do i = 1, gNpart        
+      do j = 1, gNpart
+        if ( i /= j) then
+          rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
+          ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
+          ! Siempre en distancias relativas de sigma
+          rij_vec = rij_vec - gL*nint(rij_vec/gL)
+          r2ij   = dot_product( rij_vec , rij_vec )    ! Cuadrado de la distancia
+          if ( r2ij < rc2 ) then               
+            r2in = 1.0D+00/r2ij                         ! Inversa al cuadrado
+            r6in = r2in**3                             ! Inversa a la sexta
+            Fij     = r2in * r6in * (r6in - 0.5D+00)    ! Fuerza entre partículas
+            gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
+            gF(:,j) = gF(:,j) - Fij * rij_vec          ! Contribucion a la partícula j
+            Pot     = Pot +0.5D+00* r6in * ( r6in - 1.0D+00)    ! Energía potencial
+          end if
         end if
       end do
     end do
+!$omp end do
+!$omp end parallel
 
     ! Constantes que faltaban en la energía
     gF = 48.0_dp * gEpsil * gF                
@@ -317,6 +327,11 @@ contains
     print *, 'Energias al comienzo de la integración'
     print *, 'Pot=' , Pot, 'Kin= ', Kin, 'Tot: ', Pot+Kin
 
+!$omp parallel &
+!$omp shared ( gNtime, gDt,gf, gV, gM, gR, Eng_t, Pot, Kin ) &
+!$omp private ( i )
+
+!$omp do
     do i = 1, gNtime 
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()
@@ -331,6 +346,8 @@ contains
       ! Escribe posiciones de las partículas
       call escribe_trayectoria(gR,i)
     end do
+!$omp end do
+!$omp end parallel
 
     ! Guarda la energía potencial en un archivo
     open(unit=10,file='./energia_tot.dat',status='unknown')
