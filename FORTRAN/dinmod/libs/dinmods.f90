@@ -205,39 +205,32 @@ contains
     integer                 :: i,j       
 
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
-    gF  = 0.0
-    Pot = 0.0
+    gF  = 0.0_dp
+    Pot = 0.0_dp
     ! Paso a trabajar distancias en unidades de sigma
     gR = gR/gSigma
     gL = gL/gSigma
 
-!$omp parallel &
-!$omp shared (gR, gL, gF,rc2, gNpart) &
-!$omp private (i,j, rij_vec, r2ij, r2in, r6in, Fij)
 
-!$omp do reduction ( + : Pot )
-
-    do i = 1, gNpart        
-      do j = 1, gNpart
-        if ( i /= j) then
+    do i = 1, gNpart-1        
+      do j = i+1, gNpart
+       ! if ( i /= j) then
           rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
           ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
           ! Siempre en distancias relativas de sigma
           rij_vec = rij_vec - gL*nint(rij_vec/gL)
           r2ij   = dot_product( rij_vec , rij_vec )    ! Cuadrado de la distancia
           if ( r2ij < rc2 ) then               
-            r2in = 1.0D+00/r2ij                         ! Inversa al cuadrado
+            r2in = 1.0_dp/r2ij                         ! Inversa al cuadrado
             r6in = r2in**3                             ! Inversa a la sexta
-            Fij     = r2in * r6in * (r6in - 0.5D+00)    ! Fuerza entre partículas
+            Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
             gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
             gF(:,j) = gF(:,j) - Fij * rij_vec          ! Contribucion a la partícula j
-            Pot     = Pot +0.5D+00* r6in * ( r6in - 1.0D+00)    ! Energía potencial
-          end if
+            Pot     = Pot +r6in * ( r6in - 1.0_dp)    ! Energía potencial
+        !  end if
         end if
       end do
     end do
-!$omp end do
-!$omp end parallel
 
     ! Constantes que faltaban en la energía
     gF = 48.0_dp * gEpsil * gF                
@@ -320,7 +313,7 @@ contains
   subroutine integracion()
 
     real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
-    integer    :: i
+    integer    :: i,j
 
     ! El primer punto es la energía inicial
     Eng_t(1) = Pot + Kin

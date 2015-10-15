@@ -27,7 +27,7 @@ program main_dimod
     
     wtime = omp_get_wtime()
    ! Busca el mínimo de energía
-    call integracion_min()
+   ! call integracion_min()
     ! Integración de la dinámica
     call integracion()
     wtime = omp_get_wtime( ) - wtime
