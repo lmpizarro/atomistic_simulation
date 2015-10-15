@@ -1,4 +1,6 @@
 program main_dimod 
+ 
+    use omp_lib
 
     use io_parametros,    only: read_parameters
     use globales,         only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM

@@ -22,7 +22,7 @@ get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
   # gfortran
 #  set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
-  set (CMAKE_Fortran_FLAGS_RELEASE "-O3")
+  set (CMAKE_Fortran_FLAGS_RELEASE "-O3 -fopenmp")
   message("Fortran compiler: " ${CMAKE_Fortran_COMPILER})
 elseif (Fortran_COMPILER_NAME MATCHES "ifort.*")
   # ifort (untested)
