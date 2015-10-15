@@ -277,7 +277,7 @@ contains
     ! El primer punto es la energía inicial
     Eng_t(1) = Pot
 
-    call write_array3D_lin(gR)
+    !call write_array3D_lin(gR)
 
     do i = 1, gNtime 
       gR = gR + 0.5_dp * gF * gDt**2 / gM
@@ -297,7 +297,7 @@ contains
     write(10,'(E15.5)') Eng_t
     close(10)
   
-    call write_array3D_lin(gR)
+    !call write_array3D_lin(gR)
     print *, 'Energía minimizada: ' , Pot
 
   end subroutine integracion_min
@@ -314,6 +314,8 @@ contains
 
     ! El primer punto es la energía inicial
     Eng_t(1) = Pot + Kin
+    print *, 'Energias al comienzo de la integración'
+    print *, 'Pot=' , Pot, 'Kin= ', Kin, 'Tot: ', Pot+Kin
 
     do i = 1, gNtime 
       ! Aplica condiciones peródicas de contorno
@@ -335,7 +337,10 @@ contains
     !write(10,'(F10.4)') gDt
     write(10,'(E15.5)') Eng_t
     close(10)
-  
+
+    print *, 'Energias al final de la integración'
+    print *, 'Pot=' , Pot, 'Kin= ', Kin, 'Tot: ', Pot+Kin
+
   end subroutine integracion
 
 
