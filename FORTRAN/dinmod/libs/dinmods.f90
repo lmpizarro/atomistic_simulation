@@ -337,7 +337,7 @@ contains
       ! Escribe energía total
       Eng_t(i+1) = Pot + Kin
       ! Escribe posiciones de las partículas
-      call escribe_trayectoria(gR,i)
+      ! call escribe_trayectoria(gR,i)
     end do
 !$omp end do
 !$omp end parallel
