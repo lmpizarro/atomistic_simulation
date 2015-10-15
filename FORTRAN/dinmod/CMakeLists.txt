@@ -14,6 +14,13 @@ set(PACKAGE ising)
 # EL lugar donde se guardaran los ejecutables (dentro de build)
 set( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin )
 
+# Define por default que sea la versión RELEASE
+if (NOT CMAKE_BUILD_TYPE)
+  set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
+      "Choose the type of build, options are: None Debug Release."
+      FORCE)
+endif (NOT CMAKE_BUILD_TYPE)
+
 #============================================================================
 # FFLAGS depend on the compiler
 #============================================================================
@@ -23,6 +30,7 @@ if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
   # gfortran
 #  set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
   set (CMAKE_Fortran_FLAGS_RELEASE "-O3")
+  set (CMAKE_Fortran_FLAGS_DEBUG "-g")
   message("Fortran compiler: " ${CMAKE_Fortran_COMPILER})
 elseif (Fortran_COMPILER_NAME MATCHES "ifort.*")
   # ifort (untested)
