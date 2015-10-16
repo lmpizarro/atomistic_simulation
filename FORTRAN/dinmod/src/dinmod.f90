@@ -1,17 +1,27 @@
 program main_dimod 
 
-    use globales,         only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM, gNmed
-    use dinmods,          only: inicializacion, finalizacion, integracion_min, integracion 
+  use globales,         only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM, gNmed
+  use dinmods,          only: inicializacion, finalizacion, integracion_min, integracion 
+  use utils,            only: wtime
+  use types,            only: dp
 
-    implicit none
+  implicit none
 
-    ! Inicializa parámetros 
-    call inicializacion()
-    ! Busca el mínimo de energía
-    call integracion_min()
-    ! Integración de la dinámica
-    call integracion()
-    ! Finalización del programa
-    call finalizacion()
+  real(dp)   :: wt ! Variable auxiliar para calcular tiempos de ejecución
+
+  ! Inicializa parámetros 
+  call inicializacion()
+    
+  wt = wtime()
+
+  ! Busca el mínimo de energía
+  call integracion_min()
+  ! Integración de la dinámica
+  call integracion()
+
+  print *, 'Tiempo transcurrido: ', wtime()-wt
+
+  ! Finalización del programa
+  call finalizacion()
 
 end program main_dimod
