@@ -32,9 +32,20 @@ contains
       gEpsil = 1.0_dp
       gM = 1.0_dp
     end if
+   
+    write(*,'(a)') ''
+    write(*,'(a)')      '************ PARAMETROS LEIDOS **************'
+    write(*,'(a,F8.3)') '************ Temperatura           = ' , gT 
+    write(*,'(a,I8)')   '************ Número de partículas  = ' , gNpart 
+    write(*,'(a,F8.3)') '************ Masa de la partícula  = ' , gM
+    write(*,'(a,F8.3)') '************ Lado del cubo         = ' , gL 
+    write(*,'(a,F8.5)') '************ Paso temporal dt      = ' , gDt 
+    write(*,'(a,I8)')   '************ Número de pasos dt    = ' , gNtime 
+    write(*,'(a)')      '************ Potencial de L-J' 
+    write(*,'(a,F8.4)') '************ Epsilon               = ' , gEpsil
+    write(*,'(a,F8.4)') '************ Sigma                 = ' , gSigma
+    write(*,'(a)')      '*********************************************'
 
-    write(*, 700)  gT, gNpart, gL, gDt, gNtime, gSigma, gEpsil, gM
-    700 format (F8.3 I7 F8.3 F8.3 I7 F8.3 F8.3 F8.3)
     
   end subroutine read_parameters
 
@@ -133,16 +144,16 @@ contains
             read(20,*) (r(j,i),j=1,3) , (v(j,i),j=1,3)
             100 format (6(E24.17))
         end do 
-        write(*,*) 'Archivo de configuracion inicial leido correctamente'
+        write(*,*) '* Archivo de configuracion inicial leido correctamente'
         exito = .TRUE.
         close(20)
       else
         ! No coinciden las cantidades de partículas
-        write(*,*) 'La cantidad de datos leidos no coincide con las partículas actuales'
+        write(*,*) '* La cantidad de datos leidos no coincide con las partículas actuales'
       end if
     else
       ! No existe el archivo
-      write(*,*) 'No existe archivo de estados iniciales'
+      write(*,*) '* No existe archivo de estados iniciales'
     end if
 
   end subroutine lee_estados 

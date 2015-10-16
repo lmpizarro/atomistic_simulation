@@ -6,13 +6,14 @@ module dinmods
   use constants,  only: PI
   use ziggurat
   use usozig
-  use io_parametros,  only: escribe_trayectoria, escribe_estados, lee_estados
+  use io_parametros,  only: escribe_trayectoria, escribe_estados, lee_estados, &
+                            read_parameters
 
   implicit none
 
   private
 
-  public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, fuerza, &
+  public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, &
             integracion_min, integracion, inicia_posicion_rn
   
   !===============================================================================
@@ -34,6 +35,10 @@ contains
    
     logical   :: leido  ! Indica si se leyo bien el archivo con la configuracion inicial
 
+    ! Lee los datos necesario del archivo parametros.dat
+    ! Lee todas las variables globales
+    call read_parameters()
+    
     allocate(gR(3,gNpart))
     allocate(gV(3,gNpart))
     allocate(gF(3,gNpart))
@@ -50,16 +55,16 @@ contains
       call inicia_posicion_rn()
       ! Define velocidades iniciales
       call vel_inic()
-      write(*,*) ' Se generan posiciones de r y v aleatorias'
+      write(*,*) '*  Se generan posiciones de r y v aleatorias'
     end if
     ! Calcula energía cinética inicial 
     call calcula_kin()
     ! Calcula la fuerza inicial
     call fuerza()
 
-    print *, 'Valores iniciales'
+    print *, '* Valores iniciales'
     print *, 'Pot=', Pot, 'Kin=' , Kin, 'Tot=', Pot+Kin
-
+    print *, '* Se termina la inicialización de parámetros'
   end subroutine inicializacion 
 
   !===============================================================================
@@ -73,8 +78,11 @@ contains
     rc2 = (2.5_dp)**2                
     ! Potencial de L-J evaluado en el radio de corte
     pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
-    write(*,*) 'Radio de corte = ' , rc2
-    write(*,*) 'V(Rc) = ' , pot_cut
+    ! Imprime en pantalla
+    write(*,'(a)')      '*************** RADIO DE CORTE **************'
+    write(*,'(a,F9.4)') '************ Rc    = ' , sqrt(rc2)
+    write(*,'(a,F9.5)') '************ V(Rc) = ' , pot_cut
+    write(*,'(a)')      '*********************************************'
 
   end subroutine corta_desplaza_pote
   
@@ -245,7 +253,7 @@ contains
     ! pares con que se obtuvo la energía potencial N(N-1)/2
     Pot =  4.0_dp * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2.0_dp  
 
-    ! Se vuelven a pasar a las coordenadas absolutas
+    ! Se vuelven a pasar a las coordenadas absoluta
     gR = gR*gSigma
     gL = gL*gSigma
 
@@ -307,7 +315,8 @@ contains
     close(10)
   
     !call write_array3D_lin(gR)
-    print *, 'Energía minimizada: ' , Pot
+    write(*,*) '********************************************'
+    write(*,*) '* Energía minimizada: ' , Pot
 
   end subroutine integracion_min
 
@@ -323,7 +332,8 @@ contains
 
     ! El primer punto es la energía inicial
     Eng_t(1) = Pot + Kin
-    print *, 'Energias al comienzo de la integración'
+    write(*,*) '********************************************'
+    print *, '* Energias al comienzo de la integración'
     print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
 
     do i = 1, gNtime 
@@ -347,7 +357,8 @@ contains
     write(10,'(E15.5)') Eng_t
     close(10)
 
-    print *, 'Energias al final de la integración'
+    write(*,*) '********************************************'
+    print *, '* Energias al final de la integración'
     print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
 
   end subroutine integracion
