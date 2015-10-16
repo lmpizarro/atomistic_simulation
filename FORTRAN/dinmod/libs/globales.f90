@@ -9,7 +9,8 @@ module globales
     real(dp) :: gT, gDt, gL
     ! gNpart: cantidad de partículas del sistema
     ! gNtime: cantidad de pasos de  tiempo
-    integer :: gNpart, gNtime
+    ! gNmed : cantidad de pasos entre mediciones
+    integer :: gNpart, gNtime, gNmed
     ! sigma: 
     ! epsil:
     ! parametros del potencial de LJ

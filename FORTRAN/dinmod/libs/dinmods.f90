@@ -1,7 +1,7 @@
 module dinmods 
 
   use types,      only: dp
-  use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM
+  use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, gNmed
   use utils,      only: write_array3D_lin
   use constants,  only: PI
   use ziggurat
@@ -333,6 +333,7 @@ contains
     ! El primer punto es la energía inicial
     Eng_t(1) = Pot + Kin
     write(*,*) '********************************************'
+    print *, '* Comienza integracion temporal (Vel-Verlet)'
     print *, '* Energias al comienzo de la integración'
     print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
 
@@ -357,9 +358,9 @@ contains
     write(10,'(E15.5)') Eng_t
     close(10)
 
-    write(*,*) '********************************************'
     print *, '* Energias al final de la integración'
     print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
+    print *, '* Fin de la integracion temporal'
 
   end subroutine integracion
 

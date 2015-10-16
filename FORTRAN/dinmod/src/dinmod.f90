@@ -1,6 +1,6 @@
 program main_dimod 
 
-    use globales,         only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM
+    use globales,         only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM, gNmed
     use dinmods,          only: inicializacion, finalizacion, integracion_min, integracion 
 
     implicit none

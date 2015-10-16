@@ -1,7 +1,7 @@
 module io_parametros
 
   use types,     only: dp
-  use globales,  only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM
+  use globales,  only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM, gNmed
 
   implicit none
 
@@ -19,7 +19,7 @@ contains
     inquire(file='./parametros.dat',exist=es)
     if(es) then
       open(unit=10,file='./parametros.dat',status='old')
-      read(10,*) gT, gNpart, gL, gDt, gNtime, gSigma, gEpsil, gM
+      read(10,*) gT, gNpart, gL, gDt, gNtime, gSigma, gEpsil, gM, gNmed
       close(10)
     else
       print *, "Usando parametros por default"
@@ -41,6 +41,7 @@ contains
     write(*,'(a,F8.3)') '************ Lado del cubo         = ' , gL 
     write(*,'(a,F8.5)') '************ Paso temporal dt      = ' , gDt 
     write(*,'(a,I8)')   '************ Número de pasos dt    = ' , gNtime 
+    write(*,'(a,I8)')   '************ Pasos mediciones      = ' , gNmed 
     write(*,'(a)')      '************ Potencial de L-J' 
     write(*,'(a,F8.4)') '************ Epsilon               = ' , gEpsil
     write(*,'(a,F8.4)') '************ Sigma                 = ' , gSigma

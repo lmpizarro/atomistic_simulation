@@ -1,9 +1,9 @@
-293 40 100.0 0.001 10000 1.0 1.0 1.0
+293 40 100.0 0.001 10000 1.0 1.0 1.0 1
 
 # De este archivo sólo se lee la primer línea
 
-# T  Npart  L dt Ntime  sigma epsilon masa
-293 40 50.0 0.01 20000 1.0 1.0 1.0
+# T  Npart  L dt Ntime  sigma epsilon masa Nmed
+293 40 50.0 0.01 20000 1.0 1.0 1.0 1
 
 # T       - Temperatura
 # Npart   - Número de partículas
@@ -13,3 +13,4 @@
 # sigma   - Parámetro del potencial de L-J
 # epsilon - Parámetro del potencial de L-J
 # masa    - Masa de la partícula
+# Nmed    - Número de pasos entre mediciones
