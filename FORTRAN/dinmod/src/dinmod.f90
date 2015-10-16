@@ -11,7 +11,7 @@ program main_dimod
 
     implicit none
 
-    integer   :: n_core, n_thread
+    integer   :: n_core, n_thread, id
     real      :: wtime
 
     n_core   = omp_get_num_procs()
@@ -26,10 +26,12 @@ program main_dimod
     call inicializacion()
     
     wtime = omp_get_wtime()
-   ! Busca el mínimo de energía
-   ! call integracion_min()
+    
+    ! Busca el mínimo de energía
+    call integracion_min()
     ! Integración de la dinámica
     call integracion()
+    
     wtime = omp_get_wtime( ) - wtime
 
     write(*,*) ' Tiempo transcurrido : ', wtime

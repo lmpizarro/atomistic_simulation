@@ -7,6 +7,7 @@ module dinmods
   use ziggurat
   use usozig
   use io_parametros,  only: escribe_trayectoria
+  use omp_lib
 
   implicit none
 
@@ -131,7 +132,14 @@ contains
 
   subroutine cpc_vec()
 
+!$omp parallel &
+!$omp shared (gR, gL)
+
+!$omp workshare
     gR = gR - gL*floor(gR/gL)
+!$omp end workshare
+
+!$omp end parallel
 
   end subroutine
 
@@ -204,6 +212,11 @@ contains
     real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
     integer                 :: i,j       
 
+!$omp parallel &
+!$omp shared (gf,Pot,gR,gL,gSigma)
+
+!$omp workshare
+
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
     gF  = 0.0_dp
     Pot = 0.0_dp
@@ -211,6 +224,14 @@ contains
     gR = gR/gSigma
     gL = gL/gSigma
 
+!$omp end workshare
+!$omp end parallel
+
+!$omp parallel &
+!$omp shared (gF,gNpart,gR,gL,rc2) &
+!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
+
+!$omp do reduction (+ : pot)
 
     do i = 1, gNpart-1        
       do j = i+1, gNpart
@@ -232,6 +253,13 @@ contains
       end do
     end do
 
+!$omp end do
+!$omp end parallel
+
+!$omp parallel &
+!$omp shared (gf,gEpsil,Pot,gNpart,pot_cut,gR,gL,gSigma)
+
+!$omp workshare
     ! Constantes que faltaban en la energía
     gF = 48.0_dp * gEpsil * gF                
     ! Constantes que faltaban en el potencial
@@ -242,6 +270,8 @@ contains
     ! Se vuelven a pasar a las coordenadas absolutas
     gR = gR*gSigma
     gL = gL*gSigma
+!$omp end workshare
+!$omp end parallel
 
 !    write(*,'(A,2X,3(E15.5,3X))')  'Sumatoria de fuerzas:' , sum(gF,2)
 !    print *, 'Potencial: ', Pot
@@ -258,11 +288,28 @@ contains
     real(dp), dimension(gNpart)   :: v2    ! Vector con la velocidad cuadratica
     integer                       :: i
 
+!$omp parallel &
+!$omp shared (v2,gNpart,gV) &
+!$omp private (i)
+
+!$omp do
+
     do i = 1, gNpart
       v2(i) =  dot_product(gV(:,i),gV(:,i))  
     end do
+!$omp end do
+!$omp end parallel
+
+!$omp parallel &
+!$omp shared (Kin,gM,v2)
+
+!$omp workshare
 
     Kin = 0.5_dp * gM * sum( v2 )
+
+!$omp end workshare
+!$omp end parallel
+
 
   end subroutine
 
@@ -287,7 +334,7 @@ contains
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()    
       ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      call escribe_trayectoria(gR,i)    
+      !call escribe_trayectoria(gR,i)    
       ! Calcula fuerza y energía
       call fuerza()
       ! Escribe energía potencial en vector
@@ -313,18 +360,14 @@ contains
   subroutine integracion()
 
     real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
-    integer    :: i,j
+    integer    :: i
 
     ! El primer punto es la energía inicial
     Eng_t(1) = Pot + Kin
     print *, 'Energias al comienzo de la integración'
     print *, 'Pot=' , Pot, 'Kin= ', Kin, 'Tot: ', Pot+Kin
 
-!$omp parallel &
-!$omp shared ( gNtime, gDt,gf, gV, gM, gR, Eng_t, Pot, Kin ) &
-!$omp private ( i )
 
-!$omp do
     do i = 1, gNtime 
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()
@@ -339,8 +382,6 @@ contains
       ! Escribe posiciones de las partículas
       ! call escribe_trayectoria(gR,i)
     end do
-!$omp end do
-!$omp end parallel
 
     ! Guarda la energía potencial en un archivo
     open(unit=10,file='./energia_tot.dat',status='unknown')
