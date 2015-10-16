@@ -6,7 +6,7 @@ module dinmods
   use constants,  only: PI
   use ziggurat
   use usozig
-  use io_parametros,  only: escribe_trayectoria
+  use io_parametros,  only: escribe_trayectoria, escribe_estados, lee_estados
 
   implicit none
 
@@ -31,6 +31,8 @@ contains
   !===============================================================================
 
   subroutine inicializacion()
+   
+    logical   :: leido  ! Indica si se leyo bien el archivo con la configuracion inicial
 
     allocate(gR(3,gNpart))
     allocate(gV(3,gNpart))
@@ -38,20 +40,25 @@ contains
 
     ! Inicial generador de número aleatorios
     call inic_zig()
-    ! Define posiciones iniciales
-    call inicia_posicion_rn()
     ! Define el radio de corte y el potencial desplazado
     call corta_desplaza_pote()
-    ! Define velocidades iniciales
-    call vel_inic()
+    ! Trata de leer el archivo con la configuracion inicial
+    call lee_estados(gR,gV,leido)
+    ! Si no se leyo, define posicion y velocidades 
+    if (leido .eqv. .FALSE. ) then
+      ! Define posiciones iniciales
+      call inicia_posicion_rn()
+      ! Define velocidades iniciales
+      call vel_inic()
+      write(*,*) ' Se generan posiciones de r y v aleatorias'
+    end if
     ! Calcula energía cinética inicial 
     call calcula_kin()
     ! Calcula la fuerza inicial
     call fuerza()
 
     print *, 'Valores iniciales'
-    print *, 'Potencial = ', Pot, 'Cinética = ' , Kin
-    print *, 'Total = ', Pot+Kin
+    print *, 'Pot=', Pot, 'Kin=' , Kin, 'Tot=', Pot+Kin
 
   end subroutine inicializacion 
 
@@ -66,7 +73,9 @@ contains
     rc2 = (2.5_dp)**2                
     ! Potencial de L-J evaluado en el radio de corte
     pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
-    
+    write(*,*) 'Radio de corte = ' , rc2
+    write(*,*) 'V(Rc) = ' , pot_cut
+
   end subroutine corta_desplaza_pote
   
   !===============================================================================
@@ -315,7 +324,7 @@ contains
     ! El primer punto es la energía inicial
     Eng_t(1) = Pot + Kin
     print *, 'Energias al comienzo de la integración'
-    print *, 'Pot=' , Pot, 'Kin= ', Kin, 'Tot: ', Pot+Kin
+    print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
 
     do i = 1, gNtime 
       ! Aplica condiciones peródicas de contorno
@@ -339,7 +348,7 @@ contains
     close(10)
 
     print *, 'Energias al final de la integración'
-    print *, 'Pot=' , Pot, 'Kin= ', Kin, 'Tot: ', Pot+Kin
+    print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
 
   end subroutine integracion
 
@@ -350,8 +359,13 @@ contains
 
   subroutine finalizacion()
 
+    ! Finaliza el generador de número aleatorios
     call fin_zig()
 
+    ! Escribe la última configuración de posición y velocidad en un archivo
+    call escribe_estados(gR,gV)
+
+    ! Libera memoria
     deallocate(gR,gV,gF)
 
   endsubroutine finalizacion
