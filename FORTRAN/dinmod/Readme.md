@@ -34,5 +34,5 @@ Si se usa gfortran, se debe compilar con el flag '-fopenmp'
 Luego, para ejecutarlo se le pasa la cantidad de threads que
 se quieran utilizar:
 
-> OMP_NUM_THREADS=2
+> export OMP_NUM_THREADS=2
 > ./dinmod

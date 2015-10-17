@@ -189,13 +189,20 @@ contains
 
   subroutine inicia_posicion_rn()
  
-    integer :: l
+    integer :: l,j
+!$omp parallel &
+!$omp shared (gR,gL,gNpart) &
+!$omp private (l,j)
 
+!$omp do
     do l = 1, gNpart
-      gR(1, l) = uni() * gL 
-      gR(2, l) = uni() * gL 
-      gR(3, l) = uni() * gL 
+      do j = 1, 3
+        gR(j, l) = uni() * gL 
+      end do
    enddo     
+!$omp end do
+!$omp end parallel
+
 
   end subroutine inicia_posicion_rn
 
@@ -231,11 +238,11 @@ contains
 !$omp shared (gF,gNpart,gR,gL,rc2) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
 
-!$omp do reduction (+ : pot)
+!$omp do reduction (+ : Pot)
 
     do i = 1, gNpart-1        
       do j = i+1, gNpart
-       ! if ( i /= j) then
+        !if ( i /= j) then
           rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
           ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
           ! Siempre en distancias relativas de sigma
@@ -247,8 +254,8 @@ contains
             Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
             gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
             gF(:,j) = gF(:,j) - Fij * rij_vec          ! Contribucion a la partícula j
-            Pot     = Pot +r6in * ( r6in - 1.0_dp)    ! Energía potencial
-        !  end if
+            Pot     = Pot + r6in * ( r6in - 1.0_dp)    ! Energía potencial
+         ! end if
         end if
       end do
     end do

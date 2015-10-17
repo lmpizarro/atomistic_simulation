@@ -20,12 +20,12 @@ program main_dimod
     write(*,*) ' Número de procesadores:        ', n_core
     write(*,*) ' Número de threads disponibles: ', n_thread
 
+    wtime = omp_get_wtime()
     ! Lee los datos necesario
     call read_parameters()
+    
     ! Inicializa parámetros 
     call inicializacion()
-    
-    wtime = omp_get_wtime()
     
     ! Busca el mínimo de energía
     call integracion_min()
