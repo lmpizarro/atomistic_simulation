@@ -103,16 +103,16 @@ contains
     real(dp), dimension(3,gNpart)    :: r, v
     integer                          :: i, j
 
-    open(unit=20, file='./estados.dat', status='replace')
+    open(unit=30, file='./estados.dat', status='replace')
     ! Escribe la cantidad de partículas en la primer línea
-    write(20,'(I8)')  gNpart
+    write(30,'(I8)')  gNpart
     ! Escribe posiciones y velocidades de las partículas
     do i = 1, gNpart
-     write(20,100) (r(j,i),j=1,3) , (v(j,i),j=1,3)
+     write(30,100) (r(j,i),j=1,3) , (v(j,i),j=1,3)
      100 format (6(E24.17,3X))
     end do 
 
-    close(20)
+    close(30)
 
   end subroutine escribe_estados 
 

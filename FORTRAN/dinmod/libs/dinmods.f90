@@ -51,11 +51,14 @@ contains
     call lee_estados(gR,gV,leido)
     ! Si no se leyo, define posicion y velocidades 
     if (leido .eqv. .FALSE. ) then
+      write(*,*) '* Se generan posiciones de r y v aleatorias'
       ! Define posiciones iniciales
       call inicia_posicion_rn()
+      ! Busca el mínimo de energía
+      write(*,*) '* Se busca un mínimo de energía potencial'
+      call integracion_min()
       ! Define velocidades iniciales
       call vel_inic()
-      write(*,*) '*  Se generan posiciones de r y v aleatorias'
     end if
     ! Calcula energía cinética inicial 
     call calcula_kin()
@@ -315,7 +318,6 @@ contains
     close(10)
   
     !call write_array3D_lin(gR)
-    write(*,*) '********************************************'
     write(*,*) '* Energía minimizada: ' , Pot
 
   end subroutine integracion_min
@@ -338,18 +340,18 @@ contains
     print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
 
     do i = 1, gNtime 
-      ! Aplica condiciones peródicas de contorno
-      call cpc_vec()
       gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM           ! gR(t+dt)
       gV =          gV + 0.5_dp * gF * gDt / gM              ! gV(t+0.5dt) 
       call fuerza()                                          ! Calcula fuerzas y potencial
       gV =          gV + 0.5_dp * gF * gDt / gM              ! gV(t+dt)
+      ! Aplica condiciones peródicas de contorno
+      call cpc_vec()
       ! Calcula la energia cinetica
       call calcula_kin()
       ! Escribe energía total
       Eng_t(i+1) = Pot + Kin
       ! Escribe posiciones de las partículas
-      call escribe_trayectoria(gR,i)
+      !call escribe_trayectoria(gR,i)
     end do
 
     ! Guarda la energía potencial en un archivo

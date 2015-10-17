@@ -1,7 +1,7 @@
 program main_dimod 
 
   use globales,         only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM, gNmed
-  use dinmods,          only: inicializacion, finalizacion, integracion_min, integracion 
+  use dinmods,          only: inicializacion, finalizacion, integracion 
   use utils,            only: wtime
   use types,            only: dp
 
@@ -14,8 +14,6 @@ program main_dimod
     
   wt = wtime()
 
-  ! Busca el mínimo de energía
-  call integracion_min()
   ! Integración de la dinámica
   call integracion()
 
