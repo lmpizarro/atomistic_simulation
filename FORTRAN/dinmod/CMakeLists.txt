@@ -6,11 +6,11 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Nombre del proyecto
-project(ising)
+project(Dinamica_Molecular)
 # Lenguaje de programacion
 enable_language (Fortran)
 # Nombre del paquete ¿para qué?
-set(PACKAGE ising)
+set(PACKAGE dinmol)
 # EL lugar donde se guardaran los ejecutables (dentro de build)
 set( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin )
 
@@ -48,9 +48,10 @@ endif (Fortran_COMPILER_NAME MATCHES "gfortran.*")
 #============================================================================
 
 file (COPY "${PROJECT_SOURCE_DIR}/src/parametros.dat" DESTINATION ${EXECUTABLE_OUTPUT_PATH}) 
-file (COPY "${PROJECT_SOURCE_DIR}/scripts/corridas_paralelo.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})              
-file (COPY "${PROJECT_SOURCE_DIR}/scripts/corridas.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
-file (COPY "${PROJECT_SOURCE_DIR}/scripts/parametros.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
+# Se guarda en la variable scripts_py todos los archivos python de la carpeta scripts
+file (GLOB scripts_py "${PROJECT_SOURCE_DIR}/scripts/*.py")
+# Se copian los scripts de python a la carpeta del ejecutable
+file (COPY ${scripts_py} DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 
 
 #============================================================================
