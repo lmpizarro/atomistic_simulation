@@ -250,7 +250,7 @@ contains
     end do
 
     ! Constantes que faltaban en la energía
-    gF = 48.0_dp * gEpsil * gF                
+    gF = 48.0_dp * gEpsil * gF / gSigma                
     ! Constantes que faltaban en el potencial
     ! Agrego el desplazamiento del potencial considerando la cantidad de
     ! pares con que se obtuvo la energía potencial N(N-1)/2
