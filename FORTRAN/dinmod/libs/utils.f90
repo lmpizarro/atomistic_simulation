@@ -40,7 +40,8 @@ contains
       write(*,700) b(1,i), b(2,i), b(3,i)
     enddo
 
-    700 format (F7.3 F7.3 F7.3)
+    700 format (F7.3 , F7.3 , F7.3)
+
   endsubroutine
 
   !================================================================================
@@ -93,7 +94,7 @@ contains
           / real ( clock_rate, kind = dp )
 
     return
-  end
+  end function
 
 
 end module utils
