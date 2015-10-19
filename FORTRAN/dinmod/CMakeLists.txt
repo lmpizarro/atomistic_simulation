@@ -15,7 +15,7 @@ set(PACKAGE dinmol)
 set( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin )
 
 #===============================================================================
-# Opciones a través de cmake ( cmake -Dprofile=ON , por ejemplo)
+# OPCIONES A TRAVÉS DE CMAKE ( cmake -Dprofile=ON , por ejemplo)
 #===============================================================================
 
 option(openmp   "Enable shared-memory parallelism with OpenMP"   OFF)
@@ -28,10 +28,24 @@ if (verbose)
   set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
-#============================================================================
-# FFLAGS QUE DEPENDEN DEL COMPILADOR UTILIZADO
-#============================================================================
+#===============================================================================
+# DETECTA LA VARIBLA FC Y HABILITA EL USO DE MPI 
+#===============================================================================
 
+set(MPI_ENABLED FALSE)
+if($ENV{FC} MATCHES "mpi[^/]*$")
+  message("-- Detected MPI wrapper: $ENV{FC}")
+  add_definitions(-DMPI)
+  set(MPI_ENABLED TRUE)
+endif()
+  
+#============================================================================
+# FLAGS QUE DEPENDEN DEL COMPILADOR UTILIZADO
+#============================================================================
+# A su vez, se agregan los flags despendiendo de las opciones especificadas
+# para la compilación ( cmake -D[opt] = ON)
+
+message("-- Compilador utilizado: ${CMAKE_Fortran_COMPILER}")
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   # GNU Fortran compiler options
   set(f90flags  "-cpp -std=f2003 -fbacktrace")
@@ -50,7 +64,7 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
     set(f90flags  "-fopenmp ${f90flags}")
     set(ldflags   "-fopenmp ${ldflags}")
   endif()
-
+  
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
   # Intel Fortran compiler options
   set(f90flags  "-fpp -std08 -assume byterecl -traceback")
