@@ -14,34 +14,62 @@ set(PACKAGE dinmol)
 # EL lugar donde se guardaran los ejecutables (dentro de build)
 set( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin )
 
-# Define por default que sea la versión RELEASE
-if (NOT CMAKE_BUILD_TYPE)
-  set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
-      "Choose the type of build, options are: None Debug Release."
-      FORCE)
-endif (NOT CMAKE_BUILD_TYPE)
+#===============================================================================
+# Opciones a través de cmake ( cmake -Dprofile=ON , por ejemplo)
+#===============================================================================
+
+option(openmp   "Enable shared-memory parallelism with OpenMP"   OFF)
+option(profile  "Compile with profiling flags"                   OFF)
+option(debug    "Compile with debug flags"                       OFF)
+option(optimize "Turn on all compiler optimization flags"        OFF)
+option(verbose  "Create verbose Makefiles"                       OFF)
+
+if (verbose)
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+endif()
 
 #============================================================================
-# FFLAGS depend on the compiler
+# FFLAGS QUE DEPENDEN DEL COMPILADOR UTILIZADO
 #============================================================================
-get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
-if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
-  # gfortran
-#  set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
-  set (CMAKE_Fortran_FLAGS_RELEASE "-O3")
-  set (CMAKE_Fortran_FLAGS_DEBUG "-g")
-  message("Fortran compiler: " ${CMAKE_Fortran_COMPILER})
-elseif (Fortran_COMPILER_NAME MATCHES "ifort.*")
-  # ifort (untested)
-  set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
-elseif (Fortran_COMPILER_NAME MATCHES "g77")
-  # g77
-  set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3 -m32")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g -m32")
-endif (Fortran_COMPILER_NAME MATCHES "gfortran.*")
-#============================================================================
+if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+  # GNU Fortran compiler options
+  set(f90flags  "-cpp -std=f2003 -fbacktrace")
+  if(debug)
+    set(f90flags  "-g -Wall -pedantic -fbounds-check -ffpe-trap=invalid,overflow,underflow ${f90flags}")
+    set(ldflags   "-g")
+  endif()
+  if(profile)
+    set(f90flags  "-pg ${f90flags}")
+    set(ldflags   "-pg ${ldflags}")
+  endif()
+  if(optimize)
+    set(f90flags  "-O3 ${f90flags}")
+  endif()
+  if(openmp)
+    set(f90flags  "-fopenmp ${f90flags}")
+    set(ldflags   "-fopenmp ${ldflags}")
+  endif()
+
+elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
+  # Intel Fortran compiler options
+  set(f90flags  "-fpp -std08 -assume byterecl -traceback")
+  if(debug)
+    set(f90flags "-g -warn -ftrapuv -fp-stack-check -check all -fpe0 ${f90flags}")
+    set(ldflags  "-g")
+  endif()
+  if(profile)
+    set(f90flags  "-pg ${f90flags}")
+    set(ldflags   "-pg ${ldflags}")
+  endif()
+  if(optimize)
+    set(f90flags  "-O3 ${f90flags}")
+  endif()
+  if(openmp)
+    set(f90flags  "-openmp ${f90flags}")
+    set(ldflags   "-openmp ${ldflags}")
+  endif()
+endif()
 
 #============================================================================
 # CCPIO ARCHIVOS SECUNDARIOS EL LUGAR DONDE VOY A EJECUTAR EL PROGRAMA
