@@ -241,6 +241,53 @@ contains
     gR = gR/gSigma
     gL = gL/gSigma
 
+! Se escribe dos loops distintos dependiendo de si se compila el programa con
+! OPENMP o no. La razón es que para paralelizar correctamente el loop de fuerza
+! se debe cambiar la forma de recorrer las interacciones i,j en vez de j<i
+! Esto implicaría peor performance en caso de no utilizar openmp.
+! Por ejemplo, para Npart = 100, Ntime = 10000
+! los tiempos serían:  sin openmp  - 2.8
+!                      1 thread    - 5.0
+!                      2 threads   - 2.6
+!                      4 threads   - 1.5
+#ifdef _OPENMP
+! Si se compila con OPENMP
+! Se usa un loop corriendo sobre todas los ij. Se calcula la fuerza sólo una vez y se
+! divide el potencial por 1/2 para cada partícula
+
+!$omp parallel &
+!$omp shared (gNpart, gR, gL, rc2, gF ) &
+!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
+
+!$omp do reduction( + : Pot)
+
+     do i = 1, gNpart       
+      do j = 1, gNpart
+        if (i /= j) then
+          rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
+          ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
+          ! Siempre en distancias relativas de sigma
+          rij_vec = rij_vec - gL*nint(rij_vec/gL)
+          r2ij   = dot_product( rij_vec , rij_vec )    ! Cuadrado de la distancia
+          if ( r2ij < rc2 ) then               
+            r2in = 1.0_dp/r2ij                         ! Inversa al cuadrado
+            r6in = r2in**3                             ! Inversa a la sexta
+            Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
+            gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
+            Pot     = Pot + 0.5_dp*r6in * ( r6in - 1.0_dp)    ! Energía potencial
+          end if
+        end if
+      end do
+    end do
+
+!$omp end do
+!$omp end parallel
+
+#else
+! Si no se compila con OPENMP
+! Se usa un loop corriendo sólo sobre los j<i. Se asigna la fuerza a dos partículas
+! con signo contrario. Se calcula el potencial por cada interacción (sin repetir)
+
     do i = 1, gNpart - 1       
       do j = i+1, gNpart
         rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
@@ -258,6 +305,9 @@ contains
         end if
       end do
     end do
+
+#endif
+
 
     ! Constantes que faltaban en la energía
     gF = 48.0_dp * gEpsil * gF / gSigma                
