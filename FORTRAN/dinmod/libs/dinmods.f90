@@ -335,11 +335,22 @@ contains
     real(dp), dimension(gNpart)   :: v2    ! Vector con la velocidad cuadratica
     integer                       :: i
 
+!$omp parallel &
+!$omp shared( gNpart, v2, gV) &
+!$omp private ( i )
+!$omp do
     do i = 1, gNpart
       v2(i) =  dot_product(gV(:,i),gV(:,i))  
     end do
+!$omp end do
+!$omp end parallel
 
+!$omp parallel &
+!$omp shared (Kin, gM, v2)
+!$omp workshare
     Kin = 0.5_dp * gM * sum( v2 )
+!$omp end workshare
+!$omp end parallel
 
   end subroutine
 
