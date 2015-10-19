@@ -143,7 +143,6 @@ contains
         ! Lee el resto del archivo
         do i = 1, gNpart
             read(20,*) (r(j,i),j=1,3) , (v(j,i),j=1,3)
-            100 format (6(E24.17))
         end do 
         write(*,*) '* Archivo de configuracion inicial leido correctamente'
         exito = .TRUE.
