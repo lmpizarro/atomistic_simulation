@@ -2,8 +2,8 @@
 
 mkdir build
 cd build
-#cmake ..
-cmake -Dverbose=OFF  ..
+cmake -Doptimize=ON ..
+#cmake -Ddebug=OFF -Dopenmp=ON  -Dverbose=ON -Dprofile=OFF ..
 make 
 
 # Para pasarle opciones de compilación al cmake:
