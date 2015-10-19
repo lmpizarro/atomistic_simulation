@@ -9,6 +9,16 @@ module dinmods
   use io_parametros,  only: escribe_trayectoria, escribe_estados, lee_estados, &
                             read_parameters
 
+! Si se utiliza openmp
+#ifdef _OPENMP
+  use omp_lib
+#endif
+
+! Si se utiliza mpi
+#ifdef MPI
+  use mpi
+#endif
+
   implicit none
 
   private
@@ -32,7 +42,7 @@ contains
   !===============================================================================
 
   subroutine inicializacion()
-   
+
     logical   :: leido  ! Indica si se leyo bien el archivo con la configuracion inicial
 
     ! Lee los datos necesario del archivo parametros.dat
