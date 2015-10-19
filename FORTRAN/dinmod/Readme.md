@@ -47,3 +47,14 @@ sigma  : potemcial de LJ
 epsil  : potemcial de LJ
 M      : Masa de la partícula
 Nmed   : Cada cuántos pasos se realizan mediciones       
+
+
+---------------------------------------------------------------------
+- EJECUTAR CON OPENMP
+---------------------------------------------------------------------
+
+Si se compiló el programa con la opción 'cmake -Dopenmp=ON' se ejecuta el programa
+especificando primero la cantidad de threads que se quieren utilizar
+
+ > export OMP_NUM_THREADS=4 && ./dinmod
+
