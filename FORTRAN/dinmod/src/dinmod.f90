@@ -1,9 +1,9 @@
 program main_dimod 
 
-  use globales,         only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM, gNmed
   use dinmods,          only: inicializacion, finalizacion, integracion 
   use utils,            only: wtime
   use types,            only: dp
+
 
   implicit none
 
