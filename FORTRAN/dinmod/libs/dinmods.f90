@@ -234,12 +234,14 @@ contains
     real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
     integer                 :: i,j       
 
+!$omp parallel workshare
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
     gF  = 0.0_dp
     Pot = 0.0_dp
     ! Paso a trabajar distancias en unidades de sigma
     gR = gR/gSigma
     gL = gL/gSigma
+!$omp end parallel workshare
 
 ! Se escribe dos loops distintos dependiendo de si se compila el programa con
 ! OPENMP o no. La razón es que para paralelizar correctamente el loop de fuerza
@@ -308,7 +310,7 @@ contains
 
 #endif
 
-
+!$omp parallel workshare
     ! Constantes que faltaban en la energía
     gF = 48.0_dp * gEpsil * gF / gSigma                
     ! Constantes que faltaban en el potencial
@@ -319,6 +321,7 @@ contains
     ! Se vuelven a pasar a las coordenadas absoluta
     gR = gR*gSigma
     gL = gL*gSigma
+!$omp end parallel workshare
 
 !    write(*,'(A,2X,3(E15.5,3X))')  'Sumatoria de fuerzas:' , sum(gF,2)
 !    print *, 'Potencial: ', Pot
