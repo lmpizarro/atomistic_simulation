@@ -23,7 +23,7 @@ contains
   !================================================================================
   subroutine write_array3D_lin (b)
 
-    integer  :: i, j, k, n, m, l
+    integer  :: i, n, m
     real(dp), dimension(:,:), intent(in) :: b
 
     n = size(b,1)
