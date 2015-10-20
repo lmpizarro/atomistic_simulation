@@ -6,43 +6,93 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Nombre del proyecto
-project(ising)
+project(Dinamica_Molecular)
 # Lenguaje de programacion
 enable_language (Fortran)
 # Nombre del paquete ¿para qué?
-set(PACKAGE ising)
+set(PACKAGE dinmol)
 # EL lugar donde se guardaran los ejecutables (dentro de build)
 set( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin )
 
-#============================================================================
-# FFLAGS depend on the compiler
-#============================================================================
-get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
+#===============================================================================
+# OPCIONES A TRAVÉS DE CMAKE ( cmake -Dprofile=ON , por ejemplo)
+#===============================================================================
 
-if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
-  # gfortran
-  # set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
-  set (CMAKE_Fortran_FLAGS_RELEASE "-O3")
-  message("Fortran compiler: " ${CMAKE_Fortran_COMPILER})
-elseif (Fortran_COMPILER_NAME MATCHES "ifort.*")
-  # ifort (untested)
-  set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
-elseif (Fortran_COMPILER_NAME MATCHES "g77")
-  # g77
-  set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3 -m32")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g -m32")
-endif (Fortran_COMPILER_NAME MATCHES "gfortran.*")
+option(openmp   "Enable shared-memory parallelism with OpenMP"   OFF)
+option(profile  "Compile with profiling flags"                   OFF)
+option(debug    "Compile with debug flags"                       OFF)
+option(optimize "Turn on all compiler optimization flags"        OFF)
+option(verbose  "Create verbose Makefiles"                       OFF)
+
+if (verbose)
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+endif()
+
+#===============================================================================
+# DETECTA LA VARIBLA FC Y HABILITA EL USO DE MPI 
+#===============================================================================
+
+set(MPI_ENABLED FALSE)
+if($ENV{FC} MATCHES "mpi[^/]*$")
+  message("-- Detected MPI wrapper: $ENV{FC}")
+  add_definitions(-DMPI)
+  set(MPI_ENABLED TRUE)
+endif()
+  
+
 #============================================================================
+# A su vez, se agregan los flags despendiendo de las opciones especificadas
+# para la compilación ( cmake -D[opt] = ON)
+
+message("-- Compilador utilizado: ${CMAKE_Fortran_COMPILER}")
+if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+  # GNU Fortran compiler options
+  set(f90flags  "-cpp -std=f2003 -fbacktrace")
+  if(debug)
+    set(f90flags  "-g -Wall -pedantic -fbounds-check -ffpe-trap=invalid,overflow,underflow ${f90flags}")
+    set(ldflags   "-g")
+  endif()
+  if(profile)
+    set(f90flags  "-pg ${f90flags}")
+    set(ldflags   "-pg ${ldflags}")
+  endif()
+  if(optimize)
+    set(f90flags  "-O3 ${f90flags}")
+  endif()
+  if(openmp)
+    set(f90flags  "-fopenmp ${f90flags}")
+    set(ldflags   "-fopenmp ${ldflags}")
+  endif()
+  
+elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
+  # Intel Fortran compiler options
+  set(f90flags  "-fpp -std08 -assume byterecl -traceback")
+  if(debug)
+    set(f90flags "-g -warn -ftrapuv -fp-stack-check -check all -fpe0 ${f90flags}")
+    set(ldflags  "-g")
+  endif()
+  if(profile)
+    set(f90flags  "-pg ${f90flags}")
+    set(ldflags   "-pg ${ldflags}")
+  endif()
+  if(optimize)
+    set(f90flags  "-O3 ${f90flags}")
+  endif()
+  if(openmp)
+    set(f90flags  "-openmp ${f90flags}")
+    set(ldflags   "-openmp ${ldflags}")
+  endif()
+endif()
 
 #============================================================================
 # CCPIO ARCHIVOS SECUNDARIOS EL LUGAR DONDE VOY A EJECUTAR EL PROGRAMA
 #============================================================================
 
 file (COPY "${PROJECT_SOURCE_DIR}/src/parametros.dat" DESTINATION ${EXECUTABLE_OUTPUT_PATH}) 
-file (COPY "${PROJECT_SOURCE_DIR}/scripts/corridas_paralelo.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})              
-file (COPY "${PROJECT_SOURCE_DIR}/scripts/corridas.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
-file (COPY "${PROJECT_SOURCE_DIR}/scripts/parametros.py" DESTINATION ${EXECUTABLE_OUTPUT_PATH})        
+# Se guarda en la variable scripts_py todos los archivos python de la carpeta scripts
+file (GLOB scripts_py "${PROJECT_SOURCE_DIR}/scripts/*.py")
+# Se copian los scripts de python a la carpeta del ejecutable
+file (COPY ${scripts_py} DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 
 
 #============================================================================
