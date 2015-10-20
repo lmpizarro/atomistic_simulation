@@ -2,7 +2,7 @@ module dinmods
 
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, gNmed
-  use utils,      only: write_array3D_lin
+  use utils,      only: write_array3D_lin, init_openmp
   use constants,  only: PI
   use ziggurat
   use usozig
@@ -45,6 +45,12 @@ contains
 
     logical   :: leido  ! Indica si se leyo bien el archivo con la configuracion inicial
 
+    ! Inicializa parametros para el calculo en paralelo con OpenMP
+    ! Por ahora nada en particular.
+#ifdef _OPENMP
+    call init_openmp()
+#endif
+
     ! Lee los datos necesario del archivo parametros.dat
     ! Lee todas las variables globales
     call read_parameters()
@@ -75,8 +81,8 @@ contains
     ! Calcula la fuerza inicial
     call fuerza()
 
-    print *, '* Valores iniciales'
-    print *, 'Pot=', Pot, 'Kin=' , Kin, 'Tot=', Pot+Kin
+    print *, '* Valores iniciales por partícula'
+    print *, 'Pot=', Pot/gNpart, 'Kin=' , Kin/gNpart, 'Tot=', (Pot+Kin)/gNPart
     print *, '* Se termina la inicialización de parámetros'
   end subroutine inicializacion 
 
@@ -92,6 +98,7 @@ contains
     ! Potencial de L-J evaluado en el radio de corte
     pot_cut = 4.0_dp*gEpsil*( 1.0_dp/(rc2**6) - 1.0_dp/(rc2**3) ) 
     ! Imprime en pantalla
+    write(*,'(a)')      ''
     write(*,'(a)')      '*************** RADIO DE CORTE **************'
     write(*,'(a,F9.4)') '************ Rc    = ' , sqrt(rc2)
     write(*,'(a,F9.5)') '************ V(Rc) = ' , pot_cut
@@ -396,7 +403,7 @@ contains
     ! Guarda la energía potencial en un archivo
     open(unit=10,file='./energia_pot_min.dat',status='unknown')
     !write(10,'(F10.4)') gDt
-    write(10,'(E15.5)') Eng_t
+    write(10,'(E16.9)') Eng_t
     close(10)
   
     !call write_array3D_lin(gR)
@@ -418,8 +425,8 @@ contains
     Eng_t(1) = Pot + Kin
     write(*,*) '********************************************'
     print *, '* Comienza integracion temporal (Vel-Verlet)'
-    print *, '* Energias al comienzo de la integración'
-    print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
+    print *, '* Energias por partícula al comienzo de la integración'
+    print *, 'Pot=' , Pot/gNpart, 'Kin=', Kin/gNpart, 'Tot=', (Pot+Kin)/gNpart
 
     do i = 1, gNtime 
       gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM           ! gR(t+dt)
@@ -439,11 +446,11 @@ contains
     ! Guarda la energía potencial en un archivo
     open(unit=10,file='./energia_tot.dat',status='unknown')
     !write(10,'(F10.4)') gDt
-    write(10,'(E15.5)') Eng_t
+    write(10,'(E16.9)') Eng_t/gNpart
     close(10)
 
-    print *, '* Energias al final de la integración'
-    print *, 'Pot=' , Pot, 'Kin=', Kin, 'Tot=', Pot+Kin
+    print *, '* Energias por partícula al final de la integración'
+    print *, 'Pot=' , Pot/gNpart, 'Kin=', Kin/gNpart, 'Tot=', (Pot+Kin)/gNpart
     print *, '* Fin de la integracion temporal'
 
   end subroutine integracion
