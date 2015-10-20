@@ -3,24 +3,23 @@ module utils
   use types, only :dp
   use globales, only : gR
 
+! Si se utiliza openmp
+#ifdef _OPENMP
+  use omp_lib
+#endif
+
   implicit none
 
   private
 
-  public :: write_pos, write_array3D_lin, wtime
+  public :: write_array3D_lin, wtime, init_openmp
 
 contains
-
-  !
-  ! Para grabar las posiciones ?? 
-  !
-  subroutine write_pos()
-  endsubroutine
-
 
   !================================================================================
   ! imprime con formato por pantalla un array 3D en lineal 
   !================================================================================
+
   subroutine write_array3D_lin (b)
 
     integer  :: i, n, m
@@ -96,5 +95,25 @@ contains
     return
   end function
 
+  !================================================================================
+  ! INICIALIZA PARAMETROS DE OPENMP
+  !================================================================================
+  ! Subrutina para inicializar parametros en el caso de haber compilado con OpenMP
+
+  subroutine init_openmp()
+
+    integer     :: num_proc         ! Cantidad de procesadores disponibles
+    integer     :: num_threads      ! Cantidad de threads disponibles (especificados)
+
+    num_proc    = omp_get_num_procs()
+    num_threads = omp_get_max_threads()
+
+    write(*,'(a)') ''
+    write(*,'(a)')      '************ PARAMETROS OPENMP **************'
+    write(*,'(a,I8)')   '********* Procesadores disponibles = ' , num_proc 
+    write(*,'(a,I8)')   '********* Threads disponibles      = ' , num_threads
+    write(*,'(a)')      '*********************************************'
+
+  end subroutine init_openmp
 
 end module utils
