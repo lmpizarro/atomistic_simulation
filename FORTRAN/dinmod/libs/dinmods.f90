@@ -106,21 +106,29 @@ contains
 
   subroutine vel_inic()   
 
-    real(dp)   :: phi
-    integer    :: i
+    integer    :: i, j
 
-    ! Muestreo una dirección aleatoria uniforme 
-    ! Este loop genera una velocidad de módulo unidad               
+!    ! Muestreo una dirección aleatoria uniforme 
+!    ! Este loop genera una velocidad de módulo unidad               
+!    do i = 1, gNpart
+!      phi     = 2.0_dp * PI * uni()
+!      gV(3,i) = 1.0_dp - 2.0_dp * uni()
+!      gV(1,i) = sqrt( 1.0_dp - gV(3,i)**2 ) * cos(phi)
+!      gV(2,i) = gV(1,i) * tan(phi)
+!    end do
+!    ! Le especifico el módulo
+!    ! Se debe poner una Gaussiana
+!    gV = 5.0_dp*gV 
+
+    ! Asigna a cada componente de la velocidad una distribución gaussiana N(0,1)
     do i = 1, gNpart
-      phi     = 2.0_dp * PI * uni()
-      gV(3,i) = 1.0_dp - 2.0_dp * uni()
-      gV(1,i) = sqrt( 1.0_dp - gV(3,i)**2 ) * cos(phi)
-      gV(2,i) = gV(1,i) * tan(phi)
+      do j = 1, 3
+        gV(j,i) = rnor()
+      end do
     end do
-    ! Le especifico el módulo
-    ! Se debe poner una Gaussiana
-    gV = 5.0_dp*gV 
-    
+    ! Define la desviación estandar sqrt(kT/m) en unidades adimensionales
+    gV = sqrt( gT * gEpsil / gM) * gV
+
   end subroutine vel_inic
 
   !===============================================================================
