@@ -1,4 +1,5 @@
 module globales
+    
     use types, only: dp
 
     implicit none
@@ -23,4 +24,7 @@ module globales
     real(dp)                                :: gM
     real(dp),  dimension(:), allocatable    :: gAbs_ener
 
+    real(dp)        :: gRc2       ! Cuadrado del radio de corte
+    real(dp)        :: gPot_cut   ! Potencial L-J en el radio de corte
+   
 end module globales
