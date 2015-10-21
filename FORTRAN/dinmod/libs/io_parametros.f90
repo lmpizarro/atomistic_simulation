@@ -5,7 +5,9 @@ module io_parametros
 
   implicit none
 
- ! public  :: read_parameters, escribe_trayectoria
+  private
+
+  public  :: read_parameters, escribe_trayectoria, escribe_estados, lee_estados
 
 contains
 
@@ -39,7 +41,7 @@ contains
     write(*,'(a,I8)')   '************ Número de partículas  = ' , gNpart 
     write(*,'(a,F8.3)') '************ Masa de la partícula  = ' , gM
     write(*,'(a,F8.3)') '************ Lado del cubo         = ' , gL 
-    write(*,'(a,F8.5)') '************ Paso temporal dt      = ' , gDt 
+    write(*,'(a,E8.2)') '************ Paso temporal dt      = ' , gDt 
     write(*,'(a,I8)')   '************ Número de pasos dt    = ' , gNtime 
     write(*,'(a,I8)')   '************ Pasos mediciones      = ' , gNmed 
     write(*,'(a)')      '************ Potencial de L-J' 
