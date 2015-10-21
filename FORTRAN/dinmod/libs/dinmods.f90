@@ -34,6 +34,7 @@ module dinmods
   real(dp)        :: Kin       ! Energia cinetica del sistema
   real(dp)        :: rc2       ! Cuadrado del radio de corte
   real(dp)        :: pot_cut   ! Potencial L-J en el radio de corte
+  real(dp)        :: virial    ! Cálculo del virial para la presión 
   
 contains
 
@@ -251,8 +252,9 @@ contains
 
 !$omp parallel workshare
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
-    gF  = 0.0_dp
-    Pot = 0.0_dp
+    gF     = 0.0_dp
+    Pot    = 0.0_dp
+    virial = 0.0_dp
     ! Paso a trabajar distancias en unidades de sigma
     gR = gR/gSigma
     gL = gL/gSigma
@@ -291,11 +293,15 @@ contains
             r6in = r2in**3                             ! Inversa a la sexta
             Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
             gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
-            Pot     = Pot + 0.5_dp*r6in * ( r6in - 1.0_dp)    ! Energía potencial
+            Pot     = Pot + r6in * ( r6in - 1.0_dp)    ! Energía potencial
+            virial  = virial - Fij * r2ij              ! Término del virial para la presión
           end if
         end if
       end do
     end do
+
+    Pot = 0.5_dp * Pot       ! En este loop se cuentan dos veces las interacciones
+    virial = 0.5_dp * virial ! En este loop se cuentan dos veces las interacciones
 
 !$omp end do
 !$omp end parallel
@@ -319,6 +325,7 @@ contains
           gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
           gF(:,j) = gF(:,j) - Fij * rij_vec          ! Contribucion a la partícula j
           Pot     = Pot + r6in * ( r6in - 1.0_dp)    ! Energía potencial
+          virial  = virial - Fij * r2ij              ! Término del virial para la presión
         end if
       end do
     end do
@@ -332,6 +339,8 @@ contains
     ! Agrego el desplazamiento del potencial considerando la cantidad de
     ! pares con que se obtuvo la energía potencial N(N-1)/2
     Pot =  4.0_dp * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2.0_dp  
+    ! Se agregan las constantes que faltan para el término del virial
+    virial = - 48.0_dp * gEpsil * virial / 3.0_dp
 
     ! Se vuelven a pasar a las coordenadas absoluta
     gR = gR*gSigma
