@@ -26,5 +26,7 @@ module globales
 
     real(dp)        :: gRc2       ! Cuadrado del radio de corte
     real(dp)        :: gPot_cut   ! Potencial L-J en el radio de corte
+    real(dp)        :: gVol       ! Volumen del cubo
+    real(dp)        :: gRho       ! Densidad numero de particulas N/V
    
 end module globales
