@@ -4,7 +4,6 @@ program main_dimod
   use utils,            only: wtime
   use types,            only: dp
 
-
   implicit none
 
   real(dp)   :: wt ! Variable auxiliar para calcular tiempos de ejecución

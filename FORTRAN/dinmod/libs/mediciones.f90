@@ -1,7 +1,8 @@
 module mediciones
 
   use types,      only: dp
-  use globales,   only: gT, gNpart, gV, gM, gR, gF, gL, gSigma, gEpsil, gRc2, gPot_cut
+  use globales,   only: gT, gNpart, gV, gM, gR, gF, gL, gSigma, gEpsil, gRc2, &
+                        gPot_cut, gRho, gVol
 
 ! Si se utiliza openmp
 #ifdef _OPENMP
@@ -137,14 +138,12 @@ contains
   !===============================================================================
   ! Calcula la presion en base al teorema del virial (Ver 2.4 del Allen)
 
-  subroutine calcula_pres(pres, virial, rho, Vol)
+  subroutine calcula_pres(presion, virial)
 
-    real(dp), intent(out)    :: pres
+    real(dp), intent(out)    :: presion
     real(dp), intent(in)     :: virial
-    real(dp), intent(in)     :: Vol
-    real(dp), intent(in)     :: rho
 
-   pres = rho * gT + virial / Vol 
+   presion = gRho * gT + virial / gVol 
 
   end subroutine calcula_pres
 
@@ -177,6 +176,5 @@ contains
 !$omp end parallel
 
   end subroutine calcula_kin
-
 
 end module mediciones
