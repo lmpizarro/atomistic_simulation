@@ -294,7 +294,8 @@ contains
             Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
             gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
             Pot     = Pot + r6in * ( r6in - 1.0_dp)    ! Energía potencial
-            virial  = virial - Fij * r2ij              ! Término del virial para la presión
+            virial  = virial + Fij * r2ij              ! Término del virial para la presión
+                                                       ! pg 48 de Allen W=-1/3 sum(r dv/dr)
           end if
         end if
       end do
@@ -325,7 +326,8 @@ contains
           gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
           gF(:,j) = gF(:,j) - Fij * rij_vec          ! Contribucion a la partícula j
           Pot     = Pot + r6in * ( r6in - 1.0_dp)    ! Energía potencial
-          virial  = virial - Fij * r2ij              ! Término del virial para la presión
+          virial  = virial + Fij * r2ij              ! Término del virial para la presión
+                                                     ! pg 48 de Allen W=-1/3 sum(r dv/dr)
         end if
       end do
     end do
@@ -340,7 +342,7 @@ contains
     ! pares con que se obtuvo la energía potencial N(N-1)/2
     Pot =  4.0_dp * gEpsil * Pot - gNpart*(gNpart-1)*pot_cut/2.0_dp  
     ! Se agregan las constantes que faltan para el término del virial
-    virial = - 48.0_dp * gEpsil * virial / 3.0_dp
+    virial = 48.0_dp * gEpsil * virial / 3.0_dp
 
     ! Se vuelven a pasar a las coordenadas absoluta
     gR = gR*gSigma
