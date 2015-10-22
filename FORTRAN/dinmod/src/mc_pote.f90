@@ -2,7 +2,7 @@ program main_mc_pote
 
     use types
     use dinmods
-    use mc
+    use mc, only : Monte_Carlo
     use potenciales
     use datos_problema, only : Parametros
   
@@ -11,13 +11,14 @@ program main_mc_pote
 
     real(dp) :: pot 
     type(Parametros) :: params
+    type(Monte_Carlo) :: mc
 
     ! Lee los datos necesario
     call params % leer()
     !call inicializacion()
     !call inicia_posicion_rn()
 
-    !call metropolis()
+    call mc % run_metropolis(params)
 
     !pot = poten_lj_vec() 
 
