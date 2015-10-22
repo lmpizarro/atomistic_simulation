@@ -4,7 +4,7 @@ module mc
     use types, only: dp
     use globales, only:  gR, gF, gV
     use constants
-    use potenciales
+    use potenciales, only: Lenard_Jones
     use dinmods
 
     use datos_problema, only : Parametros
@@ -21,9 +21,11 @@ module mc
     public :: Monte_Carlo 
 
 contains
+
   subroutine metropolis_oo (this, params)
     class (Monte_Carlo) :: this
     type(Parametros), intent(in) :: params
+    type(Lenard_Jones):: l_j
 
     real(dp) :: rx, ry, rz
     real(dp) :: n_energy, deltaE
@@ -36,7 +38,7 @@ contains
 
     allocate(this % abs_ener( params % gNtime))
 
-    n_energy = poten_lj_vec() 
+    !n_energy = poten_lj_vec() 
 
         do i=1, params % gNtime
             iPart = rand_int(params % gNpart)
@@ -56,7 +58,7 @@ contains
             ! calculo de la variacion de energia
             !deltaE = delta_poten_lj(iPart, rx, ry, rz)
             ri_vec = (/rx, ry, rz/)
-            deltaE = delta_poten_lj_vec(iPart, ri_vec)
+            !deltaE = delta_poten_lj_vec(iPart, ri_vec)
 
             if (deltaE .lt. 0) then
                 n_energy = n_energy + deltaE 
