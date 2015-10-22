@@ -1,8 +1,9 @@
 program main_dimod 
 
-  use dinmods,          only: inicializacion, finalizacion, integracion 
+  use inic_fin,         only: inicializacion, finalizacion 
   use utils,            only: wtime
   use types,            only: dp
+  use integra,          only: integracion
 
   implicit none
 
