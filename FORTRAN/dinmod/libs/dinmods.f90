@@ -249,13 +249,13 @@ contains
 
   subroutine inicia_posicion_rn()
  
-    integer :: l
+    integer :: i, j
 
-    do l = 1, gNpart
-      gR(1, l) = uni() * gL 
-      gR(2, l) = uni() * gL 
-      gR(3, l) = uni() * gL 
-   enddo     
+    do i = 1, gNpart
+      do j= 1, 3
+        gR(j, i) = uni() * gL 
+      end do
+   end do     
 
   end subroutine inicia_posicion_rn
 
