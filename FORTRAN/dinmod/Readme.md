@@ -32,12 +32,12 @@ crear una carpeta ./build
 
 formato de parametros.dat
 
-T Npart L Dt Ntime sigma epsil M Nmed
+T Npart L Dt Ntime sigma epsil Masa Nmed
 
 293 1000 100 .1 1000 4 1 1 100
 
                      Xe   Ar 
-epsilon (kJ/mol)    1.77  0.997
+epsilon (kJ/mol)    1.77  0.997 (1.83592*10-2 1.03413*10-2 en eV/at)
 sigma (angstroms)   4.10  4.0
 
 donde

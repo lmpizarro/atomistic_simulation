@@ -5,6 +5,10 @@
 # T  Npart  L dt Ntime  sigma epsilon masa Nmed
 293 40 50.0 0.01 20000 1.0 1.0 1.0 1
 
+# posibles parametros para montecarlo (a cambiar)
+
+800 40 50 0.01 1000000 4 0.015 1 1000
+
 # T       - Temperatura
 # Npart   - Número de partículas
 # L       - Longuitud de la caja (Vol=L**3)
