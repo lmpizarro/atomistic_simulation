@@ -57,6 +57,7 @@ contains
     write(*,'(a)')      '************ Potencial de L-J' 
     write(*,'(a,F8.4)') '************ Epsilon               = ' , this%gEpsil
     write(*,'(a,F8.4)') '************ Sigma                 = ' , this%gSigma
+    write(*,'(a,F8.4)') '************ Masa                  = ' , this%gM
     write(*,'(a)')      '*********************************************'
 
  

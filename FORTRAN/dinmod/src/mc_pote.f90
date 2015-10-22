@@ -10,18 +10,19 @@ program main_mc_pote
     implicit none
 
     real(dp) :: pot 
+    type(Parametros) :: params
 
     ! Lee los datos necesario
-    !call read_parameters()
-    call inicializacion()
+    call params % leer()
+    !call inicializacion()
     !call inicia_posicion_rn()
 
     !call metropolis()
 
-    pot = poten_lj_vec() 
+    !pot = poten_lj_vec() 
 
-    print *, "potenciales lj vec", pot
+    !print *, "potenciales lj vec", pot
 
-    call finalizacion()
+    !call finalizacion()
 
 end program main_mc_pote
