@@ -302,13 +302,13 @@ contains
 
   subroutine integracion()
 !TODO Ver cómo escbirir energías y presiones. Ahora sólo anda si Nmed=1
-    real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
+    real(dp), dimension(3,gNtime+1)   :: Eng_t   ! Energía en función del tiempo
     real(dp), dimension(gNtime+1)   :: Pres_t  ! Presión en función del tiempo
-    integer    :: i
+    integer    :: i, j
 
     Pres_t(1) = Pres
     ! El primer punto es la energía inicial
-    Eng_t(1) = gPot + gKin
+    Eng_t(:,1) = (/ gPot, gKin, gPot + gKin/) 
     write(*,*) '********************************************'
     print *, '* Comienza integracion temporal (Vel-Verlet)'
     print *, '* Energias por partícula al comienzo de la integración'
@@ -328,7 +328,7 @@ contains
         ! Presión
         call calcula_pres(Pres)
         ! Escribe energía total
-        Eng_t(i+1) = gPot + gKin
+        Eng_t(:,i+1) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(i+1) = Pres
         ! Escribe posiciones de las partículas
         !call escribe_trayectoria(gR,i)
@@ -338,7 +338,9 @@ contains
     ! Guarda la energía potencial en un archivo
     open(unit=10,file='./energia_tot.dat',status='unknown')
     !write(10,'(F10.4)') gDt
-    write(10,'(E16.9)') Eng_t/gNpart
+    do j= 1,gNtime+1
+      write(10,'(4(E16.9,2X))') (/ (j-1)*gDt, ( Eng_t(i,j)/gNpart, i=1,3) /)
+    end do
     close(10)
 
     ! Guarda la presion en un archivo
