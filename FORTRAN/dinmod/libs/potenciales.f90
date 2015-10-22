@@ -22,13 +22,6 @@ module potenciales
   private
   public :: Lenard_Jones 
 
-  !===============================================================================
-  ! VARIABLE PROPIAS DEL MÓDULO
-  !===============================================================================
-
-  !real(dp)        :: rc2       ! Cuadrado del radio de corte
-  !real(dp)        :: pot_cut   ! Potencial L-J en el radio de corte
- 
 contains
   subroutine set_params(this, pars)   
     class (Lenard_Jones) :: this
