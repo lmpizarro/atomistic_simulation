@@ -316,11 +316,11 @@ contains
 
     do i = 1, gNtime 
       gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM     ! gR(t+dt)
+      ! Aplica condiciones peródicas de contorno
+      call cpc_vec()
       gV =          gV + 0.5_dp * gF * gDt / gM        ! gV(t+0.5dt) 
       call calcula_fuerza()                            ! Calcula fuerzas y potencial
       gV =          gV + 0.5_dp * gF * gDt / gM        ! gV(t+dt)
-      ! Aplica condiciones peródicas de contorno
-      call cpc_vec()
       ! Se realizan las mediciones
       if (mod(i,gNmed) == 0) then
         ! Energia cinetica
