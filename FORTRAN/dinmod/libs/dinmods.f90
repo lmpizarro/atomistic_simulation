@@ -181,7 +181,7 @@ contains
       gR(2, l) = (ry + uni() - 0.5_dp) * gL / nl 
       gR(3, l) = (rz + uni() - 0.5_dp) * gL / nl 
 
-      call cpc(l)
+      call cpc_vec()
            
       j = j + 1
       k = k + 1
