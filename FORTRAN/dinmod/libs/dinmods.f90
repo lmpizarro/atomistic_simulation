@@ -14,7 +14,7 @@ module dinmods
 ! Si se utiliza openmp
 #ifdef _OPENMP
   use omp_lib
-  use utils,      only: write_array3D_lin, init_openmp
+  use utils,      only: init_openmp
 #endif
 
 ! Si se utiliza mpi
