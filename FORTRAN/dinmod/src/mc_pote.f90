@@ -1,10 +1,10 @@
 program main_mc_pote 
 
     use types
-    use io_parametros, only: read_parameters
     use dinmods
     use mc
     use potenciales
+    use datos_problema, only : Parametros
   
 
     implicit none
@@ -12,7 +12,7 @@ program main_mc_pote
     real(dp) :: pot 
 
     ! Lee los datos necesario
-    call read_parameters()
+    !call read_parameters()
     call inicializacion()
     !call inicia_posicion_rn()
 
