@@ -24,6 +24,10 @@ crear una carpeta ./build
 
  Los flags se van acumulando si se ponen varias opciones simultáneas
 
+ Sin OpenMC hacer:
+
+         >     cmake -Dopenmp=OFF ..
+
 ---------------------------------------------------------------------
 
 formato de parametros.dat
