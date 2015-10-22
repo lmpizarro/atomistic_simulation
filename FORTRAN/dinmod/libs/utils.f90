@@ -1,7 +1,7 @@
 module utils
   
-  use types, only :dp
-  use globales, only : gR
+  use types,        only : dp
+  use globales,     only : gR
 
 ! Si se utiliza openmp
 #ifdef _OPENMP

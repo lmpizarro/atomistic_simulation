@@ -3,9 +3,8 @@ module inic_fin
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                         gNmed, gRc2, gPot_cut, gRho, gVol, gPot, gKin, gVir 
-  use utils,      only: write_array3D_lin
   use mediciones, only: calcula_kin, calcula_pres, calcula_fuerza 
-  use constants,  only: PI
+  use utils,      only: write_array3D_lin  ! No se usa. Se pone para que cmake procese dependencias
   use ziggurat
   use usozig
   use io_parametros,  only: escribe_trayectoria, escribe_estados, lee_estados, &
@@ -28,12 +27,7 @@ module inic_fin
   private
 
   public :: inicializacion,  finalizacion
-           
   
-  !===============================================================================
-  ! VARIABLE PROPIAS DEL MÓDULO
-  !===============================================================================
-
 contains
 
   !===============================================================================
@@ -136,18 +130,6 @@ contains
 
     integer    :: i, j
 
-!    ! Muestreo una dirección aleatoria uniforme 
-!    ! Este loop genera una velocidad de módulo unidad               
-!    do i = 1, gNpart
-!      phi     = 2.0_dp * PI * uni()
-!      gV(3,i) = 1.0_dp - 2.0_dp * uni()
-!      gV(1,i) = sqrt( 1.0_dp - gV(3,i)**2 ) * cos(phi)
-!      gV(2,i) = gV(1,i) * tan(phi)
-!    end do
-!    ! Le especifico el módulo
-!    ! Se debe poner una Gaussiana
-!    gV = 5.0_dp*gV 
-
     ! Asigna a cada componente de la velocidad una distribución gaussiana N(0,1)
     do i = 1, gNpart
       do j = 1, 3
@@ -229,8 +211,6 @@ contains
     ! El primer punto es la energía inicial
     Eng_t(1) = gPot
 
-    !call write_array3D_lin(gR)
-
     do i = 1, gNtime 
       gR = gR + 0.5_dp * gF * gDt**2 / gM
       ! Aplica condiciones peródicas de contorno
@@ -249,7 +229,6 @@ contains
     write(10,'(E16.9)') Eng_t
     close(10)
   
-    !call write_array3D_lin(gR)
     write(*,*) '* Energía minimizada: ' , gPot
 
   end subroutine integracion_min
