@@ -14,15 +14,15 @@ program main_mc_pote
 
     ! Lee los datos necesario
     call params % leer()
-    call inicializacion()
+    call mc % init(params)
     call inicia_posicion_rn()
 
-    call mc % run_metropolis(params)
+    call mc % run_metropolis()
 
     !pot = poten_lj_vec() 
 
     !print *, "potenciales lj vec", pot
 
-    !call finalizacion()
+    call mc % clear()
 
 end program main_mc_pote
