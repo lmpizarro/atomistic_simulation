@@ -1,8 +1,8 @@
 module integra
 
   use types,          only: dp
-  use globales,       only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
-                        gNmed, gRc2, gPot_cut, gRho, gVol, gPot, gKin, gVir 
+  use globales,       only: gt, gL,gDt, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
+                            gNmed, gPot, gKin, gVir 
   use mediciones,     only: calcula_kin, calcula_pres, calcula_fuerza 
 
 implicit none
