@@ -29,4 +29,8 @@ module globales
     real(dp)        :: gVol       ! Volumen del cubo
     real(dp)        :: gRho       ! Densidad numero de particulas N/V
    
+    real(dp)        :: gPot       ! Energía potencial del sistema
+    real(dp)        :: gKin       ! Energia cinetica del sistema
+    real(dp)        :: gVir       ! Cálculo del virial para la presión 
+  
 end module globales

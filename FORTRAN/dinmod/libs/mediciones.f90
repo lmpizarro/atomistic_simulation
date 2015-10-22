@@ -2,7 +2,7 @@ module mediciones
 
   use types,      only: dp
   use globales,   only: gT, gNpart, gV, gM, gR, gF, gL, gSigma, gEpsil, gRc2, &
-                        gPot_cut, gRho, gVol
+                        gPot_cut, gRho, gVol, gPot, gKin, gVir
 
 ! Si se utiliza openmp
 #ifdef _OPENMP
@@ -22,10 +22,8 @@ contains
   !===============================================================================
   ! Calcula la fuerza ya la energía potencial del potencial de L-J
 
-  subroutine calcula_fuerza(E_pot, vir)
+  subroutine calcula_fuerza()
 
-    real(dp), intent(out)   :: E_pot     ! Energía potencial
-    real(dp), intent(out)   :: vir       ! Término del virial
     real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
     real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
     real(dp)                :: Fij       ! Módulo fuerza entre partículas i y j
@@ -35,8 +33,8 @@ contains
 !$omp parallel workshare
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
     gF    = 0.0_dp
-    E_pot = 0.0_dp
-    vir   = 0.0_dp
+    gPot  = 0.0_dp
+    gVir   = 0.0_dp
     ! Paso a trabajar distancias en unidades de sigma
     gR = gR/gSigma
     gL = gL/gSigma
@@ -60,7 +58,7 @@ contains
 !$omp shared (gNpart, gR, gL, gRc2, gF ) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
 
-!$omp do reduction( + : E_pot, vir)
+!$omp do reduction( + : gPot, gVir)
 
      do i = 1, gNpart       
       do j = 1, gNpart
@@ -75,8 +73,8 @@ contains
             r6in = r2in**3                             ! Inversa a la sexta
             Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
             gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
-            E_pot   = E_pot + r6in * ( r6in - 1.0_dp)  ! Energía potencial
-            vir     = vir + Fij * r2ij                 ! Término del virial para la presión
+            gPot    = gPot + r6in * ( r6in - 1.0_dp)   ! Energía potencial
+            gVir    = gVir + Fij * r2ij                ! Término del virial para la presión
                                                        ! pg 48 de Allen W=-1/3 sum(r dv/dr)
           end if
         end if
@@ -86,8 +84,8 @@ contains
 !$omp end do
 !$omp end parallel
 
-    E_pot = 0.5_dp * E_pot   ! En este loop se cuentan dos veces las interacciones
-    vir   = 0.5_dp * vir    ! En este loop se cuentan dos veces las interacciones
+    gPot = 0.5_dp * gPot   ! En este loop se cuentan dos veces las interacciones
+    gVir = 0.5_dp * gVir    ! En este loop se cuentan dos veces las interacciones
 
 #else
 ! Si no se compila con OPENMP
@@ -107,8 +105,8 @@ contains
           Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
           gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
           gF(:,j) = gF(:,j) - Fij * rij_vec          ! Contribucion a la partícula j
-          E_pot   = E_pot + r6in * ( r6in - 1.0_dp)  ! Energía potencial
-          vir     = vir + Fij * r2ij                 ! Término del virial para la presión
+          gPot    = gPot + r6in * ( r6in - 1.0_dp)  ! Energía potencial
+          gVir    = gVir + Fij * r2ij                 ! Término del virial para la presión
                                                      ! pg 48 de Allen W=-1/3 sum(r dv/dr)
         end if
       end do
@@ -122,9 +120,9 @@ contains
     ! Constantes que faltaban en el potencial
     ! Agrego el desplazamiento del potencial considerando la cantidad de
     ! pares con que se obtuvo la energía potencial N(N-1)/2
-    E_pot =  4.0_dp * gEpsil * E_pot - gNpart*(gNpart-1)*gPot_cut/2.0_dp  
+    gPot =  4.0_dp * gEpsil * gPot - gNpart*(gNpart-1)*gPot_cut/2.0_dp  
     ! Se agregan las constantes que faltan para el término del virial
-    vir = 48.0_dp * gEpsil * vir / 3.0_dp
+    gVir = 48.0_dp * gEpsil * gVir / 3.0_dp
 
     ! Se vuelven a pasar a las coordenadas absoluta
     gR = gR*gSigma
@@ -138,12 +136,11 @@ contains
   !===============================================================================
   ! Calcula la presion en base al teorema del virial (Ver 2.4 del Allen)
 
-  subroutine calcula_pres(presion, virial)
+  subroutine calcula_pres(presion)
 
     real(dp), intent(out)    :: presion
-    real(dp), intent(in)     :: virial
 
-   presion = gRho * gT + virial / gVol 
+   presion = gRho * gT + gVir / gVol 
 
   end subroutine calcula_pres
 
@@ -152,9 +149,8 @@ contains
   !===============================================================================
   ! Calcula la anergia cinetica total del sistema
 
-  subroutine calcula_kin(E_kin)
+  subroutine calcula_kin()
     
-    real(dp), intent(out)         :: E_kin  ! Energía cinética
     real(dp), dimension(gNpart)   :: v2     ! Vector con la velocidad cuadratica
     integer                       :: i
 
@@ -169,9 +165,9 @@ contains
 !$omp end parallel
 
 !$omp parallel &
-!$omp shared (E_kin, gM, v2)
+!$omp shared (gKin, gM, v2)
 !$omp workshare
-    E_kin = 0.5_dp * gM * sum( v2 )
+    gKin = 0.5_dp * gM * sum( v2 )
 !$omp end workshare
 !$omp end parallel
 

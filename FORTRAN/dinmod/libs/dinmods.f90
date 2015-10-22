@@ -2,7 +2,7 @@ module dinmods
 
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
-                        gNmed, gRc2, gPot_cut, gRho, gVol 
+                        gNmed, gRc2, gPot_cut, gRho, gVol, gPot, gKin, gVir 
   use utils,      only: write_array3D_lin, init_openmp
   use mediciones, only: calcula_kin, calcula_pres, calcula_fuerza 
   use constants,  only: PI
@@ -32,9 +32,6 @@ module dinmods
   ! VARIABLE PROPIAS DEL MÓDULO
   !===============================================================================
 
-  real(dp)        :: Pot       ! Energía potencial del sistema
-  real(dp)        :: Kin       ! Energia cinetica del sistema
-  real(dp)        :: Vir       ! Cálculo del virial para la presión 
   real(dp)        :: Pres      ! Presión instantánea
 
 contains
@@ -96,14 +93,14 @@ contains
       call vel_inic()
     end if
     ! Calcula energía cinética inicial 
-    call calcula_kin(Kin)
+    call calcula_kin()
     ! Calcula la fuerza inicial
-    call calcula_fuerza(Pot,Vir)
+    call calcula_fuerza()
     ! Calcula la presión inicial
-    call calcula_pres(Pres,Vir)
+    call calcula_pres(Pres)
 
     print *, '* Valores iniciales por partícula'
-    print *, 'Pot=', Pot/gNpart, 'Kin=' , Kin/gNpart, 'Tot=', (Pot+Kin)/gNPart
+    print *, 'Pot=', gPot/gNpart, 'Kin=' , gKin/gNpart, 'Tot=', (gPot+gKin)/gNPart
     print *, 'Presion= ' , Pres
     print *, '* Se termina la inicialización de parámetros'
 
@@ -271,7 +268,7 @@ contains
     integer    :: i
 
     ! El primer punto es la energía inicial
-    Eng_t(1) = Pot
+    Eng_t(1) = gPot
 
     !call write_array3D_lin(gR)
 
@@ -282,9 +279,9 @@ contains
       ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
       call escribe_trayectoria(gR,i)    
       ! Calcula fuerza y energía
-      call calcula_fuerza(Pot,Vir)
+      call calcula_fuerza()
       ! Escribe energía potencial en vector
-      Eng_t(i+1) = Pot
+      Eng_t(i+1) = gPot
     end do
 
     ! Guarda la energía potencial en un archivo
@@ -294,7 +291,7 @@ contains
     close(10)
   
     !call write_array3D_lin(gR)
-    write(*,*) '* Energía minimizada: ' , Pot
+    write(*,*) '* Energía minimizada: ' , gPot
 
   end subroutine integracion_min
 
@@ -311,27 +308,27 @@ contains
 
     Pres_t(1) = Pres
     ! El primer punto es la energía inicial
-    Eng_t(1) = Pot + Kin
+    Eng_t(1) = gPot + gKin
     write(*,*) '********************************************'
     print *, '* Comienza integracion temporal (Vel-Verlet)'
     print *, '* Energias por partícula al comienzo de la integración'
-    print *, 'Pot=' , Pot/gNpart, 'Kin=', Kin/gNpart, 'Tot=', (Pot+Kin)/gNpart
+    print *, 'Pot=' , gPot/gNpart, 'Kin=', gKin/gNpart, 'Tot=', (gPot+gKin)/gNpart
 
     do i = 1, gNtime 
-      gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM        ! gR(t+dt)
-      gV =          gV + 0.5_dp * gF * gDt / gM           ! gV(t+0.5dt) 
-      call calcula_fuerza(Pot,Vir)                     ! Calcula fuerzas y potencial
-      gV =          gV + 0.5_dp * gF * gDt / gM           ! gV(t+dt)
+      gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM     ! gR(t+dt)
+      gV =          gV + 0.5_dp * gF * gDt / gM        ! gV(t+0.5dt) 
+      call calcula_fuerza()                            ! Calcula fuerzas y potencial
+      gV =          gV + 0.5_dp * gF * gDt / gM        ! gV(t+dt)
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()
       ! Se realizan las mediciones
       if (mod(i,gNmed) == 0) then
         ! Energia cinetica
-        call calcula_kin(Kin)
+        call calcula_kin()
         ! Presión
-        call calcula_pres(Pres,Vir)
+        call calcula_pres(Pres)
         ! Escribe energía total
-        Eng_t(i+1) = Pot + Kin
+        Eng_t(i+1) = gPot + gKin
         Pres_t(i+1) = Pres
         ! Escribe posiciones de las partículas
         !call escribe_trayectoria(gR,i)
@@ -351,11 +348,11 @@ contains
     close(20)
     
     ! En caso de que no se hagan mediciones, se calculan los valores finales
-    call calcula_kin(Kin)
-    call calcula_pres(Pres,Vir)
+    call calcula_kin()
+    call calcula_pres(Pres)
     ! Se imprime en pantalla los resultados finales
     print *, '* Energias por partícula al final de la integración'
-    print *, 'Pot=' , Pot/gNpart, 'Kin=', Kin/gNpart, 'Tot=', (Pot+Kin)/gNpart
+    print *, 'Pot=' , gPot/gNpart, 'Kin=', gKin/gNpart, 'Tot=', (gPot+gKin)/gNpart
     print *, 'Presion= ' , Pres
     print *, '* Fin de la integracion temporal'
 
