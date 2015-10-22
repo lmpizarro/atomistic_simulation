@@ -26,7 +26,7 @@ module dinmods
 
   private
 
-  public :: inicializacion, inicia_posicion_cs, finalizacion, cpc, &
+  public :: inicializacion, finalizacion, &
             integracion_min, integracion, inicia_posicion_rn
   
   !===============================================================================
@@ -163,36 +163,6 @@ contains
   ! Condiciones períodicas de contorno
   !===============================================================================
 
-  subroutine cpc(l)
-  
-    integer, intent(in) :: l
-
-    if (gR(1,l) .lt. 0) then
-      gR(1,l) = gR(1,l) + gL
-    endif        
-
-    if (gR(2,l) .lt. 0) then
-     gR(2,l) = gR(2,l) + gL
-    endif        
-
-    if (gR(3,l) .lt. 0) then
-     gR(3,l) = gR(3,l) + gL
-    endif
-
-    if (gR(1,l) .gt. gL) then
-     gR(1,l) = gR(1,l) - gL
-    endif        
-
-    if (gR(2,l) .gt. gL) then
-     gR(2,l) = gR(2,l) - gL
-    endif        
-
-    if (gR(3,l) .gt. gL) then
-     gR(3,l) = gR(3,l) - gL
-    endif
-
-  endsubroutine cpc
-
   ! Verson vectorizada
 
   subroutine cpc_vec()
@@ -223,7 +193,7 @@ contains
       gR(2, l) = (ry + uni() - 0.5_dp) * gL / nl 
       gR(3, l) = (rz + uni() - 0.5_dp) * gL / nl 
 
-      call cpc(l)
+      call cpc_vec()
            
       j = j + 1
       k = k + 1
@@ -240,6 +210,11 @@ contains
      enddo     
   
   end subroutine inicia_posicion_cs
+
+
+
+
+
 
   !===============================================================================
   ! INICIALIZA Posicion aleatoria dentro de la caga 

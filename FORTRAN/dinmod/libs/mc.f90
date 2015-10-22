@@ -4,7 +4,6 @@ module mc
     use types, only: dp
     use constants
     use potenciales, only: Lenard_Jones
-    use dinmods
 
     use datos_problema, only : Parametros
 
@@ -19,6 +18,7 @@ module mc
       procedure :: init => inicializa
       procedure :: clear => finaliza
       procedure :: run_metropolis => metropolis_oo
+      procedure :: cpc => cpc_vec
     end type Monte_Carlo
 
     private        
@@ -26,9 +26,18 @@ module mc
 
 contains
 
+  subroutine cpc_vec(this)
+    class (Monte_Carlo) :: this
+
+    this % R = this % R - this % params % gL*floor(this % R/this % params % gL)
+
+  end subroutine
+
+
   subroutine inicializa (this, pars)
     class (Monte_Carlo) :: this
     type(Parametros) :: pars
+    integer :: i, j
 
     this % params = pars
 
@@ -47,6 +56,15 @@ contains
 
     ! Inicial generador de número aleatorios
     call inic_zig()
+
+
+   ! INICIALIZA Posicion aleatoria dentro de la caja 
+   do i = 1, this % params % gNpart
+     do j= 1, 3
+        this % R(j, i) = uni() * this % params % gL 
+     end do
+   end do     
+
 
   end subroutine inicializa
 
@@ -88,7 +106,7 @@ contains
             this % R(3, iPart) = this % R(3, iPart) + .2*this % params % gSigma * (uni() - 0.5)
      
             ! llamo a condiciones períodicas de contorno
-            call cpc(iPart)
+            call this % cpc()
 
             ! calculo de la variacion de energia
             !deltaE = delta_poten_lj(iPart, rx, ry, rz)
@@ -112,5 +130,37 @@ contains
         enddo
 
   endsubroutine metropolis_oo
+
+
+
+!  subroutine cpc(l)
+  
+!    integer, intent(in) :: l
+
+!    if (gR(1,l) .lt. 0) then
+!      gR(1,l) = gR(1,l) + gL
+!    endif        
+
+!    if (gR(2,l) .lt. 0) then
+!     gR(2,l) = gR(2,l) + gL
+!    endif        
+
+!    if (gR(3,l) .lt. 0) then
+!     gR(3,l) = gR(3,l) + gL
+!    endif
+
+!    if (gR(1,l) .gt. gL) then
+!     gR(1,l) = gR(1,l) - gL
+!    endif        
+
+!    if (gR(2,l) .gt. gL) then
+!     gR(2,l) = gR(2,l) - gL
+!    endif        
+
+!    if (gR(3,l) .gt. gL) then
+!     gR(3,l) = gR(3,l) - gL
+!    endif
+
+!  endsubroutine cpc
 
 endmodule mc
