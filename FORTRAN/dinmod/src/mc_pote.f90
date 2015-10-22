@@ -1,14 +1,13 @@
 program main_mc_pote 
 
     use types
-    use dinmods
+   ! use dinmods
     use mc, only : Monte_Carlo
     use datos_problema, only : Parametros
   
 
     implicit none
 
-    real(dp) :: pot 
     type(Parametros) :: params
     type(Monte_Carlo) :: mc
 

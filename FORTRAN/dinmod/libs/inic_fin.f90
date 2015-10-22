@@ -1,4 +1,4 @@
-module dinmods 
+module inic_fin 
 
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
@@ -10,7 +10,7 @@ module dinmods
   use usozig
   use io_parametros,  only: escribe_trayectoria, escribe_estados, lee_estados, &
                             read_parameters
-  use integra,        only: cpc_vec, cpc
+  use integra,        only: cpc_vec
 
 ! Si se utiliza openmp
 #ifdef _OPENMP
@@ -27,8 +27,8 @@ module dinmods
 
   private
 
-  public :: inicializacion, inicia_posicion_cs, finalizacion,  &
-            inicia_posicion_rn
+  public :: inicializacion,  finalizacion
+           
   
   !===============================================================================
   ! VARIABLE PROPIAS DEL MÓDULO
@@ -272,4 +272,4 @@ contains
   endsubroutine finalizacion
 
 
-end module dinmods 
+end module inic_fin 
