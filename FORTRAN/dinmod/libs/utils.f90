@@ -12,7 +12,10 @@ module utils
 
   private
 
-  public :: write_array3D_lin, wtime, init_openmp
+  public :: write_array3D_lin, wtime
+#ifdef _OPENMP
+  init_openmp
+#endif
 
 contains
 
@@ -100,6 +103,7 @@ contains
   !================================================================================
   ! Subrutina para inicializar parametros en el caso de haber compilado con OpenMP
 
+#ifdef _OPENMP
   subroutine init_openmp()
 
     integer     :: num_proc         ! Cantidad de procesadores disponibles
@@ -115,5 +119,6 @@ contains
     write(*,'(a)')      '*********************************************'
 
   end subroutine init_openmp
+#endif
 
 end module utils

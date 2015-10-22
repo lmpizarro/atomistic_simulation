@@ -1,27 +1,29 @@
 program main_mc_pote 
 
     use types
-    use io_parametros, only: read_parameters
     use dinmods
-    use mc
+    use mc, only : Monte_Carlo
     use potenciales
+    use datos_problema, only : Parametros
   
 
     implicit none
 
     real(dp) :: pot 
+    type(Parametros) :: params
+    type(Monte_Carlo) :: mc
 
     ! Lee los datos necesario
-    call read_parameters()
-    call inicializacion()
+    call params % leer()
+    !call inicializacion()
     !call inicia_posicion_rn()
 
-    !call metropolis()
+    call mc % run_metropolis(params)
 
-    pot = poten_lj_vec() 
+    !pot = poten_lj_vec() 
 
-    print *, "potenciales lj vec", pot
+    !print *, "potenciales lj vec", pot
 
-    call finalizacion()
+    !call finalizacion()
 
 end program main_mc_pote

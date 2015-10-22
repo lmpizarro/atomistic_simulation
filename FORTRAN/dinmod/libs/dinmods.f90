@@ -3,7 +3,7 @@ module dinmods
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                         gNmed, gRc2, gPot_cut, gRho, gVol, gPot, gKin, gVir 
-  use utils,      only: write_array3D_lin, init_openmp
+  use utils,      only: write_array3D_lin
   use mediciones, only: calcula_kin, calcula_pres, calcula_fuerza 
   use constants,  only: PI
   use ziggurat
@@ -14,6 +14,7 @@ module dinmods
 ! Si se utiliza openmp
 #ifdef _OPENMP
   use omp_lib
+  use utils,      only: write_array3D_lin, init_openmp
 #endif
 
 ! Si se utiliza mpi
