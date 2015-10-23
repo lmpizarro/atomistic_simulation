@@ -44,7 +44,6 @@ contains
   end subroutine
 
 
-
   subroutine inicializa (this, pars)
     class (Monte_Carlo) :: this
     type(Parametros) :: pars
@@ -53,6 +52,7 @@ contains
     this % params = pars
 
     allocate(this % R(3,this % params % gNpart))
+    allocate(this % abs_ener( this % params % gNtime))
 
 
     ! Calcula volumen y densidad
@@ -68,14 +68,12 @@ contains
     ! Inicial generador de número aleatorios
     call inic_zig()
 
-
    ! INICIALIZA Posicion aleatoria dentro de la caja 
    do i = 1, this % params % gNpart
      do j= 1, 3
         this % R(j, i) = uni() * this % params % gL 
      end do
    end do     
-
 
   end subroutine inicializa
 
@@ -84,8 +82,7 @@ contains
 
      ! Libera memoria
     deallocate(this % R)
- end subroutine finaliza
- 
+  end subroutine finaliza
 
   subroutine metropolis_oo (this)
     class (Monte_Carlo) :: this
@@ -100,7 +97,6 @@ contains
     beta = 1.0 / (this % params % gT * K_B_KJ)
     !beta = 1.0 / (gT * kb)
 
-    allocate(this % abs_ener( this % params % gNtime))
 
     n_energy = this % potencial  % potencial(this % R) 
 
@@ -147,8 +143,6 @@ contains
     enddo
 
   endsubroutine metropolis_oo
-
-
 
 !  subroutine cpc(l)
   

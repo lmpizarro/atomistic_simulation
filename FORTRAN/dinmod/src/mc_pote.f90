@@ -13,12 +13,17 @@ program main_mc_pote
     type(Monte_Carlo) :: mc
     type(Lenard_Jones) :: lj
 
-    ! Lee los datos necesario
+    ! Lee los datos del problema
     call params % leer()
+    ! inicializa montecarlo 
     call mc % init(params)
+    ! inicializa el potencial
     call lj % init(params)
+
+    ! setea el potencial en Monte Carlo
     call mc % set_potencial(lj)
 
+    ! Corre metropolis
     call mc % run_metropolis()
 
 
