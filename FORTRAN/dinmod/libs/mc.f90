@@ -91,7 +91,7 @@ contains
 
     allocate(this % abs_ener( this % params % gNtime))
 
-    n_energy = l_j % potencial() 
+    n_energy = l_j % potencial(this % R) 
 
         do i=1, this % params % gNtime
             iPart = rand_int(this % params % gNpart)
@@ -111,7 +111,7 @@ contains
             ! calculo de la variacion de energia
             !deltaE = delta_poten_lj(iPart, rx, ry, rz)
             ri_vec = (/rx, ry, rz/)
-            deltaE = l_j % delta_potencial(iPart, ri_vec)
+            deltaE = l_j % delta_potencial(iPart, ri_vec, this % R)
 
             if (deltaE .lt. 0) then
                 n_energy = n_energy + deltaE 
