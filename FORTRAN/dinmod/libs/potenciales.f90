@@ -30,6 +30,13 @@ contains
 
     this % params = pars
 
+    write(*,'(a)') ''
+    write(*,'(a)')      '********  Parámetros en el Potencial ********'
+    write(*,'(a,F8.4)') '************ Sigma              = ' , this % params % gSigma 
+    write(*,'(a,F8.4)') '************ Sigma              = ' , this % params % gEpsil 
+    write(*,'(a)')      '*********************************************'
+
+
   end subroutine set_params   
 
 

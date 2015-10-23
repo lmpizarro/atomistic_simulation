@@ -14,11 +14,13 @@ module mc
       real(dp),  dimension(:,:), allocatable  :: R
       real(dp) :: Vol, Rho
       type(Parametros) :: params
+      type(Lenard_Jones) :: potencial
     contains
       procedure :: init => inicializa
       procedure :: clear => finaliza
       procedure :: run_metropolis => metropolis_oo
       procedure :: cpc => cpc_vec
+      procedure :: set_potencial => set_potencial
     end type Monte_Carlo
 
     private        
@@ -32,6 +34,15 @@ contains
     this % R = this % R - this % params % gL*floor(this % R/this % params % gL)
 
   end subroutine
+
+  subroutine set_potencial(this, pot)
+    class (Monte_Carlo) :: this
+    type(Lenard_Jones) :: pot
+
+    this % potencial =  pot
+
+  end subroutine
+
 
 
   subroutine inicializa (this, pars)
@@ -91,43 +102,49 @@ contains
 
     allocate(this % abs_ener( this % params % gNtime))
 
-    n_energy = l_j % potencial(this % R) 
+    n_energy = this % potencial  % potencial(this % R) 
 
-        do i=1, this % params % gNtime
-            iPart = rand_int(this % params % gNpart)
-            ! guardo el valor original de la energia
-            rx = this % R(1, iPart) 
-            ry = this % R(2, iPart)
-            rz = this % R(3, iPart)
+    write(*,'(a)') ''
+    write(*,'(a)')      '***********  Energia Inicial MC ************'
+    write(*,'(a,F8.4)') '************ Densidad              = ' , n_energy 
+    write(*,'(a)')      '*********************************************'
 
-            ! actualizo el arreglo de posiciones con una nueva posicion
-            this % R(1, iPart) = this % R(1, iPart) + .2*this % params % gSigma * (uni() - 0.5)
-            this % R(2, iPart) = this % R(2, iPart) + .2*this % params % gSigma * (uni() - 0.5)
-            this % R(3, iPart) = this % R(3, iPart) + .2*this % params % gSigma * (uni() - 0.5)
+
+    do i=1, this % params % gNtime
+      iPart = rand_int(this % params % gNpart)
+      ! guardo el valor original de la energia
+      rx = this % R(1, iPart) 
+      ry = this % R(2, iPart)
+      rz = this % R(3, iPart)
+
+      ! actualizo el arreglo de posiciones con una nueva posicion
+      this % R(1, iPart) = this % R(1, iPart) + .2*this % params % gSigma * (uni() - 0.5)
+      this % R(2, iPart) = this % R(2, iPart) + .2*this % params % gSigma * (uni() - 0.5)
+      this % R(3, iPart) = this % R(3, iPart) + .2*this % params % gSigma * (uni() - 0.5)
      
-            ! llamo a condiciones períodicas de contorno
-            call this % cpc()
+      ! llamo a condiciones períodicas de contorno
+      call this % cpc()
 
-            ! calculo de la variacion de energia
-            !deltaE = delta_poten_lj(iPart, rx, ry, rz)
-            ri_vec = (/rx, ry, rz/)
-            deltaE = l_j % delta_potencial(iPart, ri_vec, this % R)
+      ! calculo de la variacion de energia
+      !deltaE = delta_poten_lj(iPart, rx, ry, rz)
+      ri_vec = (/rx, ry, rz/)
+      deltaE = this % potencial  % delta_potencial(iPart, ri_vec, this % R)
 
-            if (deltaE .lt. 0) then
-                n_energy = n_energy + deltaE 
-            else
-                pr = exp(-beta * deltaE)
-                if (uni() .lt. pr) then
-                    n_energy = n_energy + deltaE    
-                else
-                    this % R(1, iPart) = rx
-                    this % R(2, iPart) = ry
-                    this % R(3, iPart) = rz
-                endif        
-            endif        
-            this % abs_ener(i) = n_energy
-            print *, n_energy 
-        enddo
+      if (deltaE .lt. 0) then
+          n_energy = n_energy + deltaE 
+      else
+          pr = exp(-beta * deltaE)
+          if (uni() .lt. pr) then
+              n_energy = n_energy + deltaE    
+          else
+              this % R(1, iPart) = rx
+              this % R(2, iPart) = ry
+              this % R(3, iPart) = rz
+          endif        
+      endif        
+      this % abs_ener(i) = n_energy
+      print *, n_energy 
+    enddo
 
   endsubroutine metropolis_oo
 
