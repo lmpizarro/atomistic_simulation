@@ -12,11 +12,11 @@ module potenciales
     type(Parametros) :: params
  
   contains
-    procedure :: calc_radio_corte => corta_desplaza_pote
     procedure :: delta_potencial => delta_poten_lj_vec
     procedure :: potencial => poten_lj_vec
     procedure :: kernel => kernel_pot
     procedure :: init => set_params
+    procedure :: calc_radio_corte => corta_desplaza_pote
   end type Lenard_Jones
 
   private
@@ -29,6 +29,16 @@ contains
     type(Parametros) :: pars
 
     this % params = pars
+
+    call this % calc_radio_corte()
+
+    write(*,'(a)') ''
+    write(*,'(a)')      '********  Parámetros en el Potencial ********'
+    write(*,'(a,F8.4)') '************ Sigma              = ' , this % params % gSigma 
+    write(*,'(a,F8.4)') '************ Epsilon            = ' , this % params % gEpsil 
+    write(*,'(a,F8.4)') '************ Radio de Corte     = ' , this % params % gEpsil 
+    write(*,'(a,F8.4)') '************ Potencial de Corte = ' , this % params % gEpsil 
+    write(*,'(a)')      '*********************************************'
 
   end subroutine set_params   
 
@@ -59,7 +69,6 @@ contains
     integer                 :: i,j       
     real(dp),  dimension(:,:) :: R
 
-    call this % calc_radio_corte()
 
     ! Paso a trabajar distancias en unidades de sigma
     R = R/this % params % gSigma
