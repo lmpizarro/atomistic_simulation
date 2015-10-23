@@ -1,5 +1,5 @@
 module inic_fin 
-
+#include "control.h"
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                         gNmed, gRc2, gPot_cut, gRho, gVol, gPot, gKin, gVir 
@@ -43,6 +43,14 @@ contains
     ! Por ahora nada en particular.
 #ifdef _OPENMP
     call init_openmp()
+#endif
+
+print *, 'Estoy en libs'
+#if THERM == 1
+print *, 'Se definió THERM == 1'
+#endif
+#if THERM == 0
+print *, 'Se definió THERM == 0'
 #endif
 
     ! Lee los datos necesario del archivo parametros.dat

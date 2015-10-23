@@ -6,13 +6,14 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Nombre del proyecto
-project(Dinamica_Molecular)
+project(DinMol)
 # Lenguaje de programacion
 enable_language (Fortran)
-# Nombre del paquete ¿para qué?
-set(PACKAGE dinmol)
 # EL lugar donde se guardaran los ejecutables (dentro de build)
 set( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin )
+# Estas dos líneas permiten agregar el archivo de preprocesamiento
+configure_file ("${PROJECT_SOURCE_DIR}/src/control.h" "${PROJECT_BINARY_DIR}/libs/control.h")
+include_directories("${PROJECT_BINARY_DIR}/libs")
 
 #===============================================================================
 # OPCIONES A TRAVÉS DE CMAKE ( cmake -Dprofile=ON , por ejemplo)
@@ -39,7 +40,6 @@ if($ENV{FC} MATCHES "mpi[^/]*$")
   set(MPI_ENABLED TRUE)
 endif()
   
-
 #============================================================================
 # A su vez, se agregan los flags despendiendo de las opciones especificadas
 # para la compilación ( cmake -D[opt] = ON)
@@ -87,16 +87,16 @@ endif()
 #============================================================================
 # CCPIO ARCHIVOS SECUNDARIOS EL LUGAR DONDE VOY A EJECUTAR EL PROGRAMA
 #============================================================================
-
+# Cosas que se podrían hacer con INSTALL
 file (COPY "${PROJECT_SOURCE_DIR}/src/parametros.dat" DESTINATION ${EXECUTABLE_OUTPUT_PATH}) 
 # Se guarda en la variable scripts_py todos los archivos python de la carpeta scripts
 file (GLOB scripts_py "${PROJECT_SOURCE_DIR}/scripts/*.py")
 # Se copian los scripts de python a la carpeta del ejecutable
 file (COPY ${scripts_py} DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 
-
 #============================================================================
 # LISTA DE LOS DIRECTORIOS A INCLUIR
 #============================================================================
 add_subdirectory(src)
 add_subdirectory(libs)
+
