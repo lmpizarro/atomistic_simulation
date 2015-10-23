@@ -80,8 +80,12 @@ contains
   subroutine finaliza (this)
     class (Monte_Carlo) :: this
 
+    ! finaliza el generador de randoms
+    call fin_zig()
+
      ! Libera memoria
     deallocate(this % R)
+
   end subroutine finaliza
 
   subroutine metropolis_oo (this)
