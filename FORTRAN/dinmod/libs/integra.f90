@@ -79,9 +79,6 @@ contains
       close(20)
     end if
     
-    ! En caso de que no se hagan mediciones, se calculan los valores finales
-    call calcula_kin()
-    call calcula_pres(Pres)
     ! Se imprime en pantalla los resultados finales
     print *, '* Energias por partícula al final de la integración'
     call print_info(Pres)
