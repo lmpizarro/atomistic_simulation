@@ -33,7 +33,7 @@ contains
     write(*,*) '********************************************'
     print *, '* Comienza integracion temporal (Vel-Verlet)'
     print *, '* Energias por partícula al comienzo de la integración'
-    print *, 'Pot=' , gPot/gNpart, 'Kin=', gKin/gNpart, 'Tot=', (gPot+gKin)/gNpart
+    call print_info(Pres)
 
     do i = 1, gNtime 
       gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM     ! gR(t+dt)
@@ -75,9 +75,20 @@ contains
     call calcula_pres(Pres)
     ! Se imprime en pantalla los resultados finales
     print *, '* Energias por partícula al final de la integración'
-    print *, 'Pot=' , gPot/gNpart, 'Kin=', gKin/gNpart, 'Tot=', (gPot+gKin)/gNpart
-    print *, 'Presion= ' , Pres
+    call print_info(Pres)
     print *, '* Fin de la integracion temporal'
+
+contains
+
+    subroutine print_info(presion)
+    ! Subrutina para imprimir en pantalla resultados de interes
+ 
+      real(dp), intent(in)        :: presion     ! Presión instantánea
+
+      print *, 'Pot=' , gPot/gNpart, 'Kin=', gKin/gNpart, 'Tot=', (gPot+gKin)/gNpart
+      print *, 'Presion= ' , presion
+     
+    end subroutine print_info
 
   end subroutine integracion
 
