@@ -17,4 +17,5 @@
 # sigma   - Parámetro del potencial de L-J
 # epsilon - Parámetro del potencial de L-J
 # masa    - Masa de la partícula
-# Nmed    - Número de pasos entre mediciones
+# Nmed    - abs(Nmed) es el número de pasos entre mediciones
+#           Si Nmed > 0 , se graban datos en archivos. De lo contrario no.
