@@ -35,9 +35,6 @@ contains
     gF    = 0.0_dp
     gPot  = 0.0_dp
     gVir   = 0.0_dp
-    ! Paso a trabajar distancias en unidades de sigma
-    gR = gR/gSigma
-    gL = gL/gSigma
 !$omp end parallel workshare
 
 ! Se escribe dos loops distintos dependiendo de si se compila el programa con
@@ -116,17 +113,14 @@ contains
 
 !$omp parallel workshare
     ! Constantes que faltaban en la energía
-    gF = 48.0_dp * gEpsil * gF / gSigma                
+    gF = 48.0_dp * gF                
     ! Constantes que faltaban en el potencial
     ! Agrego el desplazamiento del potencial considerando la cantidad de
     ! pares con que se obtuvo la energía potencial N(N-1)/2
-    gPot =  4.0_dp * gEpsil * gPot - gNpart*(gNpart-1)*gPot_cut/2.0_dp  
+    gPot =  4.0_dp * gPot - gNpart*(gNpart-1)*gPot_cut/2.0_dp  
     ! Se agregan las constantes que faltan para el término del virial
-    gVir = 48.0_dp * gEpsil * gVir / 3.0_dp
+    gVir = 48.0_dp * gVir / 3.0_dp
 
-    ! Se vuelven a pasar a las coordenadas absoluta
-    gR = gR*gSigma
-    gL = gL*gSigma
 !$omp end parallel workshare
 
   end subroutine calcula_fuerza 
