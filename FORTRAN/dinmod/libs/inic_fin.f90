@@ -1,5 +1,7 @@
 module inic_fin 
+
 #include "control.h"
+
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                         gNmed, gRc2, gPot_cut, gRho, gVol, gPot, gKin, gVir 
@@ -119,7 +121,7 @@ print *, 'Se definió THERM == 0'
     ! Radio de corte fijo
     gRc2 = (2.5_dp)**2                
     ! Potencial de L-J evaluado en el radio de corte
-    gPot_cut = 4.0_dp*gEpsil*( 1.0_dp/(gRc2**6) - 1.0_dp/(gRc2**3) ) 
+    gPot_cut = 4.0_dp * ( 1.0_dp / (gRc2**6) - 1.0_dp / (gRc2**3) ) 
     ! Imprime en pantalla
     write(*,'(a)')      ''
     write(*,'(a)')      '*************** RADIO DE CORTE **************'
@@ -145,7 +147,7 @@ print *, 'Se definió THERM == 0'
       end do
     end do
     ! Define la desviación estandar sqrt(kT/m) en unidades adimensionales
-    gV = sqrt( gT * gEpsil / gM) * gV
+    gV = sqrt( gT ) * gV
 
   end subroutine vel_inic
 
