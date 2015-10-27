@@ -1,5 +1,7 @@
 module integra
 
+#include "control.h"
+
   use types,          only: dp
   use globales,       only: gt, gL,gDt, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                             gNmed, gPot, gKin, gVir 
@@ -25,12 +27,18 @@ contains
     real(dp), dimension(:,:), allocatable   :: Eng_t   ! Energía en función del tiempo
     real(dp), dimension(:), allocatable     :: Pres_t  ! Presión en función del tiempo
     real(dp), dimension(:), allocatable     :: Temp_t  ! Temperatura en función del tiempo
+#ifdef CONTROL_TEMP
+    real(dp), dimension(:,:), allocatable   :: Vel_t   ! Temperatura en función del tiempo
+#endif
     integer    :: i, j
     integer    :: Kmed                                 ! Cantidad de puntos medidos
 
     ! Se define la cantidad de puntos que se van a medir
     Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
     allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed) )
+#ifdef CONTROL_TEMP
+    allocate( Vel_t(1:3,1:Kmed) )
+#endif
 
     ! El primer punto son los valores iniciales
     call calcula_pres(Pres)
@@ -62,6 +70,10 @@ contains
         Eng_t(:,j) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(j)  = Pres
         Temp_t(j)  = Temp
+#ifdef CONTROL_TEMP
+        ! Guardo las velocidades de una partícula arbitraria
+        Vel_t(:,j) = gV(:,15)
+#endif
         ! Escribe posiciones de las partículas
         !call escribe_trayectoria(gR,i)
         j = j + 1                                      ! Actualiza contador mediciones
@@ -69,6 +81,7 @@ contains
     end do
 
     if (gNmed > 0) then
+
       ! Guarda la energía potencial en un archivo
       open(unit=10,file='./energia_tot.dat',status='unknown')
       !write(10,'(F10.4)') gDt
@@ -88,6 +101,15 @@ contains
       !write(10,'(F10.4)') gDt
       write(30,'(E16.9)') Temp_t 
       close(30)
+#ifdef CONTROL_TEMP  
+      ! Guarda la velocidad en un archivo
+      open(unit=31,file='./velocidades_control_T.dat',status='unknown')
+      !write(10,'(F10.4)') gDt
+      do j= 1, Kmed
+        write(31,'(3(E16.9,3X))')  ( Vel_t(i,j) ,i=1,3)
+      end do
+      close(32)
+#endif
 
     end if
     
@@ -97,6 +119,9 @@ contains
     print *, '* Fin de la integracion temporal'
     ! Se libera memoria
     deallocate( Eng_t, Pres_t, Temp_t )
+#ifdef CONTROL_TEMP
+    deallocate( Vel_t )
+#endif
 
 contains
 

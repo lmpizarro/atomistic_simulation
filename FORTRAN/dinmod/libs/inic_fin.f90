@@ -216,7 +216,7 @@ contains
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()    
       ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      call escribe_trayectoria(gR,i)    
+      ! call escribe_trayectoria(gR,i)    
       ! Calcula fuerza y energía
       call calcula_fuerza()
       ! Escribe energía potencial en vector
