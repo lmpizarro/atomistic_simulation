@@ -20,7 +20,7 @@ module mediciones
 
   private
 
-  public :: calcula_pres, calcula_kin, calcula_fuerza
+  public :: calcula_pres, calcula_kin, calcula_fuerza, calcula_temp
 
 contains
   

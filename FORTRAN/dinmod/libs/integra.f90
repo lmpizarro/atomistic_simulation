@@ -3,7 +3,7 @@ module integra
   use types,          only: dp
   use globales,       only: gt, gL,gDt, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                             gNmed, gPot, gKin, gVir 
-  use mediciones,     only: calcula_kin, calcula_pres, calcula_fuerza 
+  use mediciones,     only: calcula_kin, calcula_pres, calcula_fuerza, calcula_temp 
 
 implicit none
 
@@ -21,14 +21,16 @@ contains
   subroutine integracion()
 
     real(dp)                                :: Pres    ! Presión instantánea
+    real(dp)                                :: Temp    ! Presión instantánea
     real(dp), dimension(:,:), allocatable   :: Eng_t   ! Energía en función del tiempo
     real(dp), dimension(:), allocatable     :: Pres_t  ! Presión en función del tiempo
+    real(dp), dimension(:), allocatable     :: Temp_t  ! Temperatura en función del tiempo
     integer    :: i, j
     integer    :: Kmed                                 ! Cantidad de puntos medidos
 
     ! Se define la cantidad de puntos que se van a medir
     Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
-    allocate(Eng_t(1:3,1:Kmed),Pres_t(1:Kmed))
+    allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed) )
 
     ! El primer punto son los valores iniciales
     call calcula_pres(Pres)
@@ -52,11 +54,14 @@ contains
       if (mod(i,gNmed) == 0) then
         ! Energia cinetica
         call calcula_kin()
+        ! Temperatura
+        call calcula_temp(Temp)
         ! Presión
         call calcula_pres(Pres)
         ! Escribe energía total
         Eng_t(:,j) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(j)  = Pres
+        Temp_t(j)  = Temp
         ! Escribe posiciones de las partículas
         !call escribe_trayectoria(gR,i)
         j = j + 1                                      ! Actualiza contador mediciones
@@ -77,6 +82,13 @@ contains
       !write(10,'(F10.4)') gDt
       write(20,'(E16.9)') Pres_t 
       close(20)
+      
+      ! Guarda la temperatura en un archivo
+      open(unit=30,file='./temperatura.dat',status='unknown')
+      !write(10,'(F10.4)') gDt
+      write(30,'(E16.9)') Temp_t 
+      close(30)
+
     end if
     
     ! Se imprime en pantalla los resultados finales
@@ -84,7 +96,7 @@ contains
     call print_info(Pres)
     print *, '* Fin de la integracion temporal'
     ! Se libera memoria
-    deallocate(Eng_t,Pres_t)
+    deallocate( Eng_t, Pres_t, Temp_t )
 
 contains
 
