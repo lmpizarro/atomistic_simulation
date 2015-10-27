@@ -1,9 +1,11 @@
 1.5 100 6.3 0.001 10000 1.0 1.0 1.0 1
-
-# De este archivo sólo se lee la primer línea
+0.5
+# De este archivo sólo se leen las dos primeras líneas
 
 # T  Npart  L dt Ntime  sigma epsilon masa Nmed
 293 40 50.0 0.01 20000 1.0 1.0 1.0 1
+# Gamma
+0.5
 
 # posibles parametros para montecarlo (a cambiar)
 
@@ -19,3 +21,4 @@
 # masa    - Masa de la partícula
 # Nmed    - abs(Nmed) es el número de pasos entre mediciones
 #           Si Nmed > 0 , se graban datos en archivos. De lo contrario no.
+# Gamma   - Parámetro gamma para el termostato de Langevin
