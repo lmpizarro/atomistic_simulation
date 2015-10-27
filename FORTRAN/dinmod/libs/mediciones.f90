@@ -4,7 +4,7 @@ module mediciones
 
   use types,      only: dp
   use globales,   only: gT, gNpart, gV, gM, gR, gF, gL, gSigma, gEpsil, gRc2, &
-                        gPot_cut, gRho, gVol, gPot, gKin, gVir
+                        gPot_cut, gRho, gVol, gPot, gKin, gVir, gDt
   use ziggurat,   only: rnor
 
 ! Si se usa el termostato de Langevin
@@ -152,7 +152,7 @@ contains
 !$omp do
   do i = 1, gNpart
     do j = 1, 3
-      gF(j,i) = gF(j,i) + gGamma*rnor()
+      gF(j,i) = gF(j,i) - gGamma * gV(j,i) + sqrt(2.0_dp*gT*gGamma/gDt) * rnor()
     end do
   end do
 !$omp end do
@@ -202,5 +202,24 @@ contains
 !$omp end parallel
 
   end subroutine calcula_kin
+
+  !===============================================================================
+  ! CALCULA TEMPERATURA INSTANTANEA 
+  !===============================================================================
+  ! Calcula la anergia cinetica total del sistema
+
+  subroutine calcula_temp(Temp_ins)
+    
+    real(dp), intent(out)         :: Temp_ins ! Temperatura instantánea
+
+!$omp parallel &
+!$omp shared (gKin, Temp_ins, gNpart)
+!$omp workshare
+    Temp_ins = 2.0_dp * gKin / (3*gNpart-3)
+!$omp end workshare
+!$omp end parallel
+
+  end subroutine calcula_temp
+
 
 end module mediciones
