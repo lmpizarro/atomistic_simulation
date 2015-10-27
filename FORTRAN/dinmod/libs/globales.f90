@@ -32,5 +32,7 @@ module globales
     real(dp)        :: gPot       ! Energía potencial del sistema
     real(dp)        :: gKin       ! Energia cinetica del sistema
     real(dp)        :: gVir       ! Cálculo del virial para la presión 
-  
+
+    real(dp)        :: gGamma     ! Parámetro para el termostato de Langevin  
+
 end module globales

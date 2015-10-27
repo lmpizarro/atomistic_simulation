@@ -1,9 +1,16 @@
 module mediciones
 
+#include "control.h"
+
   use types,      only: dp
   use globales,   only: gT, gNpart, gV, gM, gR, gF, gL, gSigma, gEpsil, gRc2, &
                         gPot_cut, gRho, gVol, gPot, gKin, gVir
+  use ziggurat,   only: rnor
 
+! Si se usa el termostato de Langevin
+#if THERM == 1
+  use globales,   only: gGamma
+#endif
 ! Si se utiliza openmp
 #ifdef _OPENMP
   use omp_lib
@@ -120,10 +127,39 @@ contains
     gPot =  4.0_dp * gPot - gNpart*(gNpart-1)*gPot_cut/2.0_dp  
     ! Se agregan las constantes que faltan para el término del virial
     gVir = 48.0_dp * gVir / 3.0_dp
-
 !$omp end parallel workshare
 
+! Si se utiliza el termostato de Langevin
+#if THERM == 1
+    call fuerza_langevin()
+#endif
+
   end subroutine calcula_fuerza 
+
+#if THERM == 1
+  !===============================================================================
+  ! TERMOSTATO DE LANGEVIN
+  !===============================================================================
+  ! Agrega la parte estocástica al a fuerza de cada partícula
+
+  subroutine fuerza_langevin()
+
+  integer  :: i, j
+
+!$omp parallel &
+!$omp shared( gNpart, gF, gGamma) &
+!$omp private ( i, j )
+!$omp do
+  do i = 1, gNpart
+    do j = 1, 3
+      gF(j,i) = gF(j,i) + gGamma*rnor()
+    end do
+  end do
+!$omp end do
+!$omp end parallel
+
+  end subroutine fuerza_langevin
+#endif
  
   !===============================================================================
   ! CALCULA  PRESION 

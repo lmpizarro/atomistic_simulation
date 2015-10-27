@@ -1,7 +1,10 @@
 module io_parametros
 
+#include "control.h"
+
   use types,     only: dp
-  use globales,  only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM, gNmed
+  use globales,  only: gT, gDt, gL, gNpart, gNtime, gSigma, gEpsil, gM, gNmed, &
+                       gGamma
 
   implicit none
 
@@ -22,6 +25,9 @@ contains
     if(es) then
       open(unit=10,file='./parametros.dat',status='old')
       read(10,*) gT, gNpart, gL, gDt, gNtime, gSigma, gEpsil, gM, gNmed
+#if THERM == 1
+      read(10,*) gGamma
+#endif
       close(10)
     else
       print *, "Usando parametros por default"
@@ -49,7 +55,18 @@ contains
     write(*,'(a,F8.4)') '************ Sigma                 = ' , gSigma
     write(*,'(a)')      '*********************************************'
 
-    
+#if THERM == 0
+    write(*,'(a)') ''
+    write(*,'(a)')      '******** SIMULACION A E CONSTANTE ***********'
+    write(*,'(a)')      '*********************************************'
+#elif THERM == 1
+    write(*,'(a)') ''
+    write(*,'(a)')      '******** SIMULACION A T CONSTANTE ***********'
+    write(*,'(a)')      '********* TERMOSTATO DE LANGEVIN ************'
+    write(*,'(a,F8.3)') '************ Gamma                 = ' , gGamma
+    write(*,'(a)')      '*********************************************'
+#endif
+
   end subroutine read_parameters
 
 !===============================================================================
@@ -87,7 +104,7 @@ contains
 
     close(20)
 
-  end subroutine
+  end subroutine 
 
 !===============================================================================
 ! ESBRIBE ESTADOS DE POSICION Y VELOCIDAD
