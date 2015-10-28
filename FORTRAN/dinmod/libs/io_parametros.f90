@@ -8,9 +8,20 @@ module io_parametros
 
   implicit none
 
+  ! ------------------------------------------------------------------------------
+  ! Se crea un wrapper para poder escribir vectores en columnas independientemente
+  ! de su rango. Debo duplicar subrutinas.
+
+  interface escribe_en_columnas
+    module procedure escribe_en_columnas_1D
+    module procedure escribe_en_columnas_2D
+  end interface escribe_en_columnas
+  ! -----------------------------------------------------------------------------
+
   private
 
-  public  :: read_parameters, escribe_trayectoria, escribe_estados, lee_estados
+  public  :: read_parameters, escribe_trayectoria, escribe_estados, lee_estados, &
+             escribe_en_columnas
 
 contains
 
@@ -66,7 +77,13 @@ contains
     write(*,'(a,F8.3)') '************ Gamma                 = ' , gGamma
     write(*,'(a)')      '*********************************************'
 #endif
-
+#ifdef CONTROL_TEMP
+    write(*,'(a)') ''
+    write(*,'(a)')      '****** COMPILADO CON VERIFICACIÓN DE T ******'
+    write(*,'(a)')      '**** Se guardan valores de [vx vy vz]  ******'
+    write(*,'(a)')      '**** para una partícula arbitraria     ******'
+    write(*,'(a)')      '*********************************************'
+#endif
   end subroutine read_parameters
 
 !===============================================================================
@@ -105,6 +122,65 @@ contains
     close(20)
 
   end subroutine 
+
+!===============================================================================
+! ESBRIBE UN VECTOR 1D A UN ARCHIVO EN COLUMNAS
+!===============================================================================
+! Escribe al vector con el siguiente formato:
+! #puntos  dt
+! x(1)
+! x(2)
+! ...
+
+  subroutine escribe_en_columnas_1D(x,nombre,dt)
+
+    real(dp), dimension(:), intent(in)      :: x       ! Vector que se escribirá
+    character(*), intent(in)                :: nombre  ! Nombre del archivo
+    real(dp), intent(in)                    :: dt      ! dt entre dos puntos
+
+    
+    open(unit=20, file=nombre, status='unknown')
+
+    write(20, *) size(x,1), dt          ! Primer linea con # puntos y dt
+    write(20,200) x                     ! Vector 
+    200 format (1(E16.9))
+
+    close(20)
+
+  end subroutine escribe_en_columnas_1D 
+
+!===============================================================================
+! ESBRIBE UN VECTOR 2D A UN ARCHIVO EN COLUMNAS
+!===============================================================================
+! Escribe al vector con el siguiente formato:
+! #puntos  dt
+! x(1,1) x(2,1) x(3,1)
+! x(1,2) x(2,2) x(3,2)
+! ...  
+
+  subroutine escribe_en_columnas_2D(x,nombre,dt)
+
+    real(dp), dimension(:,:), intent(in)    :: x       ! Vector que se escribirá
+    character(*), intent(in)                :: nombre  ! Nombre del archivo
+    real(dp), intent(in)                    :: dt      ! dt entre dos puntos
+    integer                                 :: npuntos ! # puntos del vector
+    integer                                 :: ncompo  ! # compunentes del vector
+    integer                                 :: i,j
+    
+    npuntos = size(x,2)
+    ncompo  = size(x,1)
+
+    open(unit=20, file=nombre, status='unknown')
+
+    write(20, *) npuntos, dt          ! Primer linea con # puntos y dt
+    do j = 1, npuntos
+      write(20,200)  ( x(i,j) , i = 1, ncompo )   
+    end do
+    200 format (3(E16.9))
+
+    close(20)
+
+  end subroutine escribe_en_columnas_2D 
 
 !===============================================================================
 ! ESBRIBE ESTADOS DE POSICION Y VELOCIDAD
