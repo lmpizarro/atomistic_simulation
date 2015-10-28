@@ -1,8 +1,12 @@
 module estadistica
   
-  use globales,            only: dp
+  use types,               only: dp
 
   implicit none
+ 
+  private
+
+  public   :: vector_mean_var_dir
 
 contains
 
