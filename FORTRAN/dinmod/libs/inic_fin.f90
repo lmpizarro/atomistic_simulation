@@ -214,6 +214,8 @@ contains
     real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
     integer    :: i
 
+    ! Escribe encabezado y primer punto de la trayectoria
+    ! call escribe_trayectoria(gR,.FALSE.) 
     ! El primer punto es la energía inicial
     Eng_t(1) = gPot
 
@@ -222,7 +224,7 @@ contains
       ! Aplica condiciones peródicas de contorno
       call cpc_vec()    
       ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      ! call escribe_trayectoria(gR,i)    
+      ! call escribe_trayectoria(gR,.FALSE.)    
       ! Calcula fuerza y energía
       call calcula_fuerza()
       ! Escribe energía potencial en vector

@@ -9,6 +9,10 @@ module integra
   use io_parametros,  only: escribe_en_columnas 
   use procesamiento,  only: hace_estadistica 
 
+#ifdef GRABA_TRAYECTORIA
+  use io_parametros,  only: escribe_trayectoria
+#endif
+
   implicit none
 
   private
@@ -40,6 +44,9 @@ contains
     allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed) )
 #ifdef CONTROL_TEMP
     allocate( Vel_t(1:3,1:Kmed) )
+#endif
+#ifdef GRABA_TRAYECTORIA
+    call escribe_trayectoria(gR,.TRUE.)
 #endif
 
     ! El primer punto son los valores iniciales
@@ -83,6 +90,9 @@ contains
 #ifdef CONTROL_TEMP
         ! Guardo las velocidades de una partícula arbitraria
         Vel_t(:,j) = gV(:,15)
+#endif
+#ifdef GRABA_TRAYECTORIA
+        call escribe_trayectoria(gR,.FALSE.)
 #endif
         ! Escribe posiciones de las partículas
         !call escribe_trayectoria(gR,i)

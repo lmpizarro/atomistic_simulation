@@ -90,21 +90,21 @@ contains
 ! ESBRIBE POSICIONES PARA VISUALIZAR TRAYECTORIAS 
 !===============================================================================
 
-  subroutine escribe_trayectoria(r,k)
+  subroutine escribe_trayectoria(r,primera)
     ! Se puede optimizar abriendo y cerrando el archivo en el momento de usarla
 
     real(dp), dimension(3,gNpart), intent(in)    :: r    ! Posición
+    logical, intent(in)                          :: primera
     integer                                      :: i,j
-    integer, intent(in)                          :: k
 
-    if ( k==1 ) then
+    if ( primera .eqv. .TRUE. ) then
       open(unit=20, file='./trayectoria.vtf',status='unknown')
     else
       open(unit=20, file ='./trayectoria.vtf',status='unknown',position='append')
     end if
 
     ! Escribe el encabezado del archivo
-    if (k == 1) then
+    if (primera .eqv. .TRUE.) then
       write(20,*) '### Trayectorias ###'
       write(20,*) 'atom default   radius 0.1 name P'
       write(20,'(A,I0)') ' atom 0:',gNpart-1 
