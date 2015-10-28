@@ -116,7 +116,7 @@ contains
     write(*,*) '* Energias por partícula al final de la integración'
     call print_info(Pres,Temp)
 
-    ! Se calculan valores medios de presión y temperatura
+    ! Se calculan valores medios de presión y temperatura y se escriben a archivo
     call hace_estadistica(Pres_t, Temp_t)
 
     write(*,*) '********************************************'
