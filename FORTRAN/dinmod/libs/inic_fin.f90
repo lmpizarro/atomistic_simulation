@@ -3,7 +3,7 @@ module inic_fin
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                         gNmed, gRc2, gPot_cut, gRho, gVol, gPot, gKin, gVir 
-  use mediciones, only: calcula_kin, calcula_pres, calcula_fuerza 
+  use mediciones, only: calcula_kin, calcula_pres, calcula_fuerza, calcula_temp 
   use utils,      only: write_array3D_lin  ! No se usa. Se pone para que cmake procese dependencias
   use ziggurat
   use usozig
@@ -36,7 +36,8 @@ contains
 
   subroutine inicializacion()
 
-    real(dp)  :: Pres      ! Presión instantánea
+    real(dp)  :: Pres   ! Presión instantánea
+    real(dp)  :: Temp   ! Temperatura instantánea
     logical   :: leido  ! Indica si se leyo bien el archivo con la configuracion inicial
 
     ! Inicializa parametros para el calculo en paralelo con OpenMP
@@ -57,7 +58,7 @@ contains
     gVol = gL**3
     gRho = gNpart / gVol
 
-    write(*,'(a)') ''
+    write(*,'(a)') 
     write(*,'(a)')      '*********** PARAMETROS DERIVADOS ************'
     write(*,'(a,F8.3)') '************ Volumen               = ' , gVol 
     write(*,'(a,F8.4)') '************ Densidad              = ' , gRho
@@ -93,11 +94,15 @@ contains
     call calcula_fuerza()
     ! Calcula la presión inicial
     call calcula_pres(Pres)
+    ! Calcula la temperatura inicial
+    call calcula_temp(Temp)
 
-    print *, '* Valores iniciales por partícula'
-    print *, 'Pot=', gPot/gNpart, 'Kin=' , gKin/gNpart, 'Tot=', (gPot+gKin)/gNPart
-    print *, 'Presion= ' , Pres
-    print *, '* Se termina la inicialización de parámetros'
+    write(*,*) '* Valores iniciales por partícula'
+    write(*,100) gPot/gNpart, gKin/gNpart, (gPot+gKin)/gNpart
+    100 format(1X,'Potencial = ', E14.7, 5X, 'Cinética = ', E14.7, 5X, 'Total = ', E14.7) 
+    write(*,*)
+    write(*,200)  Pres, Temp 
+    200 format(1X,'Presion = ' ,E14.7,5X,'Temperatura = ',E14.7)
 
   end subroutine inicializacion 
 
@@ -118,6 +123,7 @@ contains
     write(*,'(a,F9.4)') '************ Rc    = ' , sqrt(gRc2)
     write(*,'(a,F9.5)') '************ V(Rc) = ' , gPot_cut
     write(*,'(a)')      '*********************************************'
+    write(*,*)
 
   end subroutine corta_desplaza_pote
   

@@ -41,14 +41,18 @@ contains
 #endif
 
     ! El primer punto son los valores iniciales
+    Eng_t(:,1) = (/ gPot, gKin, gPot + gKin/) 
     call calcula_pres(Pres)
     Pres_t(1) = Pres
-    Eng_t(:,1) = (/ gPot, gKin, gPot + gKin/) 
+    call calcula_temp(Temp)
+    Temp_t(1) = Temp
     ! Imprime en pantalla info
     write(*,*) '********************************************'
-    print *, '* Comienza integracion temporal (Vel-Verlet)'
-    print *, '* Energias por partícula al comienzo de la integración'
-    call print_info(Pres)
+    write(*,*) '* Comienza integracion temporal (Vel-Verlet)'
+    write(*,*) 
+    write(*,*) '* Energias por partícula al comienzo de la integración'
+    call print_info(Pres,Temp)
+    write(*,*) '********************************************'
 
 ! -------------------------------------------------------------------------------------------
 ! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
@@ -70,7 +74,7 @@ contains
         call calcula_temp(Temp)
         ! Presión
         call calcula_pres(Pres)
-        ! Escribe energía total
+        ! Guarda magnitudes
         Eng_t(:,j) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(j)  = Pres
         Temp_t(j)  = Temp
@@ -107,22 +111,28 @@ contains
     end if
     
     ! Se imprime en pantalla los resultados finales
-    print *, '* Energias por partícula al final de la integración'
-    call print_info(Pres)
-    print *, '* Fin de la integracion temporal'
+    write(*,*) '* Energias por partícula al final de la integración'
+    call print_info(Pres,Temp)
+    write(*,*) '********************************************'
+    write(*,*) '* Fin de la integracion temporal'
+    write(*,*) '********************************************'
     ! Se libera memoria
     deallocate( Eng_t, Pres_t, Temp_t )
 
 contains
 
-    subroutine print_info(presion)
+    subroutine print_info(presion,temperatura)
     ! Subrutina para imprimir en pantalla resultados de interes
  
       real(dp), intent(in)        :: presion     ! Presión instantánea
+      real(dp), intent(in)        :: temperatura ! Temperatura instantánea
 
-      print *, 'Pot=' , gPot/gNpart, 'Kin=', gKin/gNpart, 'Tot=', (gPot+gKin)/gNpart
-      print *, 'Presion= ' , presion
-     
+      write(*,100) gPot/gNpart, gKin/gNpart, (gPot+gKin)/gNpart
+      100 format(1X,'Potencial = ', E14.7, 5X, 'Cinética = ', E14.7, 5X, 'Total = ', E14.7) 
+      write(*,*)
+      write(*,200)  presion, temperatura
+      200 format(1X,'Presion = ' ,E14.7,5X,'Temperatura = ',E14.7)
+
     end subroutine print_info
 
   end subroutine integracion
