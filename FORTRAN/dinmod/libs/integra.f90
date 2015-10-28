@@ -6,7 +6,7 @@ module integra
   use globales,       only: gt, gL,gDt, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                             gNmed, gPot, gKin, gVir 
   use mediciones,     only: calcula_kin, calcula_pres, calcula_fuerza, calcula_temp 
-
+  use io_parametros,  only: escribe_en_columnas 
 implicit none
 
 private
@@ -50,7 +50,11 @@ contains
     print *, '* Energias por partícula al comienzo de la integración'
     call print_info(Pres)
 
-    j = 1                                              ! Contador para el loop de mediciones
+! -------------------------------------------------------------------------------------------
+! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
+! ------------------------------------------------------------------------------------------
+    j = 2                                              ! Contador para el loop de mediciones
+                                                       ! (j=1 lo usé para el valor inicial)
     do i = 1, gNtime 
       gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gM     ! gR(t+dt)
       ! Aplica condiciones peródicas de contorno
@@ -79,38 +83,27 @@ contains
         j = j + 1                                      ! Actualiza contador mediciones
       end if
     end do
+! -------------------------------------------------------------------------------------------
+! FIN DEL LOOP PRINCIPAL DE INTEGRACION
+! -------------------------------------------------------------------------------------------
 
+    ! Escritura de las magnitudes en función del tiempo
     if (gNmed > 0) then
-
-      ! Guarda la energía potencial en un archivo
-      open(unit=10,file='./energia_tot.dat',status='unknown')
-      !write(10,'(F10.4)') gDt
-      do j= 1,Kmed
-        write(10,'(4(E16.9,2X))') (/ (j-1)*gDt, ( Eng_t(i,j)/gNpart, i=1,3) /)
-      end do
-      close(10)
+      ! Guarda las energías en un archivo [Potencial, Cinética, Total]
+      call escribe_en_columnas(Eng_t,'energias.dat',gNmed*gDt)
 
       ! Guarda la presion en un archivo
-      open(unit=20,file='./presion.dat',status='unknown')
-      !write(10,'(F10.4)') gDt
-      write(20,'(E16.9)') Pres_t 
-      close(20)
+      call escribe_en_columnas(Pres_t,'presion.dat',gNmed*gDt)
       
       ! Guarda la temperatura en un archivo
-      open(unit=30,file='./temperatura.dat',status='unknown')
-      !write(10,'(F10.4)') gDt
-      write(30,'(E16.9)') Temp_t 
-      close(30)
-#ifdef CONTROL_TEMP  
-      ! Guarda la velocidad en un archivo
-      open(unit=31,file='./velocidades_control_T.dat',status='unknown')
-      !write(10,'(F10.4)') gDt
-      do j= 1, Kmed
-        write(31,'(3(E16.9,3X))')  ( Vel_t(i,j) ,i=1,3)
-      end do
-      close(32)
-#endif
+      call escribe_en_columnas(Temp_t,'temperatura.dat',gNmed*gDt)
 
+#ifdef CONTROL_TEMP  
+      ! Guarda la velocidad en un archivo [v_x  v_y  v_z]
+      call escribe_en_columnas(Vel_t,'velocidades_control_T.dat',gNmed*gDt)
+      ! Libera memoria 
+      deallocate( Vel_t )
+#endif
     end if
     
     ! Se imprime en pantalla los resultados finales
@@ -119,9 +112,6 @@ contains
     print *, '* Fin de la integracion temporal'
     ! Se libera memoria
     deallocate( Eng_t, Pres_t, Temp_t )
-#ifdef CONTROL_TEMP
-    deallocate( Vel_t )
-#endif
 
 contains
 
