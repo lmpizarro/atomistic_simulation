@@ -7,11 +7,13 @@ module integra
                             gNmed, gPot, gKin, gVir 
   use mediciones,     only: calcula_kin, calcula_pres, calcula_fuerza, calcula_temp 
   use io_parametros,  only: escribe_en_columnas 
-implicit none
+  use procesamiento,  only: hace_estadistica 
 
-private
+  implicit none
 
-public      :: integracion, cpc_vec
+  private
+
+  public      :: integracion, cpc_vec
 
 contains
 
@@ -113,6 +115,10 @@ contains
     ! Se imprime en pantalla los resultados finales
     write(*,*) '* Energias por partícula al final de la integración'
     call print_info(Pres,Temp)
+
+    ! Se calculan valores medios de presión y temperatura
+    call hace_estadistica(Pres_t, Temp_t)
+
     write(*,*) '********************************************'
     write(*,*) '* Fin de la integracion temporal'
     write(*,*) '********************************************'
