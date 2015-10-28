@@ -64,10 +64,10 @@ contains
 
   subroutine histograma(cuentas,bins,nombre,N,lim_op)
 
+    integer, intent(in)                      :: N      ! Cantidad de datos
     real(dp), dimension(1:N), intent(out)    :: cuentas! Cuentas normalizadas
     real(dp), dimension(1:N), intent(out)    :: bins   ! bines utilizados
     character (len=*), intent(in)            :: nombre ! Nombre del archvo a leer
-    integer, intent(in)                      :: N      ! Cantidad de datos
     real(dp), dimension(2),  optional        :: lim_op ! [lim_inf, lim_sup]
 
     integer, dimension(1:N)                  :: Ncuen  ! Cuentas sin normalizar
