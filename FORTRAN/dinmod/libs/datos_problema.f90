@@ -35,29 +35,28 @@ contains
       close(10)
     else
       print *, "Usando parametros por default"
-      this%gT = 293.0_dp
-      this%gNpart = 1000
-      this%gL = 10.0_dp
-      this%gDt = 0.1_dp
-      this%gNtime = 100
-      this%gSigma = 1.0_dp
-      this%gEpsil = 1.0_dp
-      this%gM = 1.0_dp
+      this % gT = 293.0_dp
+      this % gNpart = 40
+      this % gL = 50.0_dp
+      this % gDt = 0.1_dp
+      this % gNtime = 100
+      this % gSigma = 1.0_dp
+      this % gEpsil = 1.0_dp
+      this % gM = 1.0_dp
     end if
    
     write(*,'(a)') ''
     write(*,'(a)')      '************ PARAMETROS LEIDOS **************'
-    write(*,'(a,F8.3)') '************ Temperatura           = ' , this%gT 
-    write(*,'(a,I8)')   '************ Número de partículas  = ' , this%gNpart 
-    write(*,'(a,F8.3)') '************ Masa de la partícula  = ' , this%gM
-    write(*,'(a,F8.3)') '************ Lado del cubo         = ' , this%gL 
-    write(*,'(a,F8.5)') '************ Paso temporal dt      = ' , this%gDt 
-    write(*,'(a,I8)')   '************ Número de pasos dt    = ' , this%gNtime 
-    write(*,'(a,I8)')   '************ Pasos mediciones      = ' , this%gNmed 
+    write(*,'(a,F8.3)') '************ Temperatura           = ' , this % gT 
+    write(*,'(a,I8)')   '************ Número de partículas  = ' , this % gNpart 
+    write(*,'(a,F8.3)') '************ Masa de la partícula  = ' , this % gM
+    write(*,'(a,F8.3)') '************ Lado del cubo         = ' , this % gL 
+    write(*,'(a,F8.5)') '************ Paso temporal dt      = ' , this % gDt 
+    write(*,'(a,I8)')   '************ Número de pasos dt    = ' , this % gNtime 
+    write(*,'(a,I8)')   '************ Pasos mediciones      = ' , this % gNmed 
     write(*,'(a)')      '************ Potencial de L-J' 
-    write(*,'(a,F8.4)') '************ Epsilon               = ' , this%gEpsil
-    write(*,'(a,F8.4)') '************ Sigma                 = ' , this%gSigma
-    write(*,'(a,F8.4)') '************ Masa                  = ' , this%gM
+    write(*,'(a,F8.4)') '************ Epsilon               = ' , this % gEpsil
+    write(*,'(a,F8.4)') '************ Sigma                 = ' , this % gSigma
     write(*,'(a)')      '*********************************************'
 
  

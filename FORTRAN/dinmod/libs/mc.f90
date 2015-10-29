@@ -98,8 +98,8 @@ contains
     integer :: iPart, i
     real(dp), dimension(3)  :: ri_vec
 
-    beta = 1.0 / (this % params % gT * K_B_KJ)
-    !beta = 1.0 / (gT * kb)
+    !beta = 1.0 / (this % params % gT * K_BOLTZMANN)
+    beta = 1.0 / (this % params % gT * kb)
 
 
     n_energy = this % potencial  % potencial(this % R) 
@@ -118,9 +118,13 @@ contains
       rz = this % R(3, iPart)
 
       ! actualizo el arreglo de posiciones con una nueva posicion
-      this % R(1, iPart) = this % R(1, iPart) + .2*this % params % gSigma * (uni() - 0.5)
-      this % R(2, iPart) = this % R(2, iPart) + .2*this % params % gSigma * (uni() - 0.5)
-      this % R(3, iPart) = this % R(3, iPart) + .2*this % params % gSigma * (uni() - 0.5)
+      !this % R(1, iPart) = this % R(1, iPart) + .2*this % params % gSigma * (uni() - 0.5)
+      !this % R(2, iPart) = this % R(2, iPart) + .2*this % params % gSigma * (uni() - 0.5)
+      !this % R(3, iPart) = this % R(3, iPart) + .2*this % params % gSigma * (uni() - 0.5)
+
+      this % R(1, iPart) = this % R(1, iPart) + .2 * (uni() - 0.5)
+      this % R(2, iPart) = this % R(2, iPart) + .2 * (uni() - 0.5)
+      this % R(3, iPart) = this % R(3, iPart) + .2 * (uni() - 0.5)
      
       ! llamo a condiciones períodicas de contorno
       call this % cpc()
