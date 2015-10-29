@@ -55,6 +55,10 @@ contains
     Pres_t(1) = Pres
     call calcula_temp(Temp)
     Temp_t(1) = Temp
+#ifdef CONTROL_TEMP
+    ! Guardo la velocidade inicial de una partícula arbitraria
+    Vel_t(:,1) = gV(:,15)
+#endif   
     ! Imprime en pantalla info
     write(*,*) '********************************************'
     write(*,*) '* Comienza integracion temporal (Vel-Verlet)'
