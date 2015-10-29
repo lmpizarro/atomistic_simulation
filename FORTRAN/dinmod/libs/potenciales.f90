@@ -36,8 +36,8 @@ contains
     write(*,'(a)')      '********  Parámetros en el Potencial ********'
     write(*,'(a,F8.4)') '************ Sigma              = ' , this % params % gSigma 
     write(*,'(a,F8.4)') '************ Epsilon            = ' , this % params % gEpsil 
-    write(*,'(a,F8.4)') '************ Radio de Corte     = ' , this % params % gEpsil 
-    write(*,'(a,F8.4)') '************ Potencial de Corte = ' , this % params % gEpsil 
+    write(*,'(a,F8.4)') '************ Radio de Corte     = ' , sqrt(this % rc2) 
+    write(*,'(a,F8.4)') '************ Potencial de Corte = ' , this % pot_cut  
     write(*,'(a)')      '*********************************************'
 
   end subroutine set_params   

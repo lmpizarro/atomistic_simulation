@@ -12,15 +12,19 @@ module mc
     type Monte_Carlo
       real(dp),  dimension(:), allocatable    :: abs_ener
       real(dp),  dimension(:,:), allocatable  :: R
-      real(dp) :: Vol, Rho
+      real(dp),  dimension(:), allocatable:: obs_ener
+      real(dp) :: Vol, Rho, beta
       type(Parametros) :: params
       type(Lenard_Jones) :: potencial
+
+      integer :: r_aceptacion, kmed
     contains
       procedure :: init => inicializa
       procedure :: clear => finaliza
       procedure :: run_metropolis => metropolis_oo
       procedure :: cpc => cpc_vec
       procedure :: set_potencial => set_potencial
+      procedure :: out_energ => write_energ
     end type Monte_Carlo
 
     private        
@@ -51,13 +55,21 @@ contains
 
     this % params = pars
 
+    this % kmed = int(this % params % gNtime / abs (this % params % gNmed)) + 1
+
     allocate(this % R(3,this % params % gNpart))
     allocate(this % abs_ener( this % params % gNtime))
-
+    allocate(this % obs_ener (this % kmed))
 
     ! Calcula volumen y densidad
     this % Vol = this % params % gL**3
     this % Rho = this % params % gNpart / this % Vol
+
+    !beta = 1.0 / (this % params % gT * K_BOLTZMANN)
+    this % beta = 1.0 / (this % params % gT * kb)
+
+    this % r_aceptacion = 0
+
 
     write(*,'(a)') ''
     write(*,'(a)')      '*********** PARAMETROS DERIVADOS ************'
@@ -88,27 +100,46 @@ contains
 
   end subroutine finaliza
 
+  !================================================================================
+  ! para escribir valores de energía intermedia
+  !================================================================================
+  subroutine write_energ (this)
+    class (Monte_Carlo) :: this
+    character (len=32) :: file_energy
+    logical :: es
+
+    write(file_energy, 1000)"energy", this % params % gT, ".txt"
+    print *, file_energy
+
+    inquire(file=file_energy,exist=es)
+    if ( .not. es) then
+      open(unit=10,file=file_energy,status='new')
+      write(10,800) this % abs_ener(10000:)
+      close(10)
+    end if
+
+
+    800 format (E15.5)
+    1000 format (A, F0.3, A)
+  end subroutine write_energ
+
   subroutine metropolis_oo (this)
     class (Monte_Carlo) :: this
     type(Lenard_Jones):: l_j
 
     real(dp) :: rx, ry, rz
     real(dp) :: n_energy, deltaE
-    real(dp):: pr, beta
+    real(dp):: pr
     integer :: iPart, i
     real(dp), dimension(3)  :: ri_vec
 
-    !beta = 1.0 / (this % params % gT * K_BOLTZMANN)
-    beta = 1.0 / (this % params % gT * kb)
 
-
+    n_energy = 0.0_dp
     n_energy = this % potencial  % potencial(this % R) 
 
     write(*,'(a)') ''
-    write(*,'(a)')      '***********  Energia Inicial MC ************'
-    write(*,'(a,F8.4)') '************ Densidad              = ' , n_energy 
+    write(*,'(a,F8.4)') '************ Energia              = ' ,n_energy 
     write(*,'(a)')      '*********************************************'
-
 
     do i=1, this % params % gNtime
       iPart = rand_int(this % params % gNpart)
@@ -118,9 +149,9 @@ contains
       rz = this % R(3, iPart)
 
       ! actualizo el arreglo de posiciones con una nueva posicion
-      this % R(1, iPart) = this % R(1, iPart) + .2 * (uni() - 0.5)
-      this % R(2, iPart) = this % R(2, iPart) + .2 * (uni() - 0.5)
-      this % R(3, iPart) = this % R(3, iPart) + .2 * (uni() - 0.5)
+      this % R(1, iPart) = this % R(1, iPart) + (uni() - 0.5)
+      this % R(2, iPart) = this % R(2, iPart) + (uni() - 0.5)
+      this % R(3, iPart) = this % R(3, iPart) + (uni() - 0.5)
      
       ! llamo a condiciones períodicas de contorno
       call this % cpc()
@@ -132,10 +163,12 @@ contains
 
       if (deltaE .lt. 0) then
           n_energy = n_energy + deltaE 
+          this % r_aceptacion = this % r_aceptacion + 1
       else
-          pr = exp(-beta * deltaE)
+          pr = exp(-this % beta * deltaE)
           if (uni() .lt. pr) then
               n_energy = n_energy + deltaE    
+              this % r_aceptacion = this % r_aceptacion + 1
           else
               this % R(1, iPart) = rx
               this % R(2, iPart) = ry
@@ -143,8 +176,14 @@ contains
           endif        
       endif        
       this % abs_ener(i) = n_energy
-      print *, n_energy 
+      !if (mod(i, this % params % gNmed) .eq. 0) then
+        !print *, n_energy 
+      !endif
+
     enddo
+
+    call this % out_energ()
+    print *, this % r_aceptacion 
 
   endsubroutine metropolis_oo
 
