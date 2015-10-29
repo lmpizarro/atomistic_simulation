@@ -28,13 +28,33 @@ crear una carpeta ./build
 
          >     cmake -Dopenmp=OFF ..
 
+--------------------------------------------------------------------
+ Con el preprocesador se controlas los siguientes parámetros
+ definidos en el archivo <control.h>: 
+
+1) Termostato
+   #define THERM 0 -> No se utiliza termostato ( E constante)
+   #define THERM 1 -> Termostato de langevin
+2) Corroborar la temperatura
+   #define/undef CONTROL_TEMP -> Activa opciones para guardar las
+        componentes de temperatura de una partícula arbitraria. Con 
+        ellas se puede obtener un histograma y verificar que
+        std(v_i) = sqrt(T)
+        * Se escribe al archivo <velocidades_control_T.dat>
+3) Guardar trayectorias de las partículas para visualizar con VMD
+   #define/undef GRABA_TRAYECTORIA -> Activa opciones para guardar
+        las posiciones de las partículas con el formato para ser
+        visualizados con el programa VMD.
+        * Se escribe al archivo <trayectoria.vtf>
+
 ---------------------------------------------------------------------
 
 formato de parametros.dat
 
 T Npart L Dt Ntime sigma epsil Masa Nmed
-
+Gamma (para el termostato de Langevin)
 293 1000 100 .1 1000 4 1 1 100
+0.5
 
                      Xe   Ar 
 epsilon (kJ/mol)    1.77  0.997 (1.83592*10-2 1.03413*10-2 en eV/at)
@@ -50,8 +70,10 @@ Dt     : tamaño del paso de tiempo
 sigma  : potemcial de LJ
 epsil  : potemcial de LJ
 M      : Masa de la partícula
-Nmed   : Cada cuántos pasos se realizan mediciones       
-
+Nmed   : abs(Nmed) Cada cuántos pasos se realizan mediciones       
+         Se Nmed > 0 se graban datos temporales (energía,persión temperatura)
+         Si Nmed <= 0 no se graba ningún datos temporales (sí los
+         promedios y desviaciones estandar)
 
 ---------------------------------------------------------------------
 - EJECUTAR CON OPENMP
