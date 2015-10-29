@@ -176,7 +176,7 @@ contains
     do j = 1, npuntos
       write(20,200)  ( x(i,j) , i = 1, ncompo )   
     end do
-    200 format (3(E16.9))
+    200 format (3(E16.9,2X))
 
     close(20)
 
