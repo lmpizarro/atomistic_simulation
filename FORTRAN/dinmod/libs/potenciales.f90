@@ -54,7 +54,6 @@ contains
     this % rc2 = (2.5_dp)**2                
     ! Potencial de L-J evaluado en el radio de corte
     this % pot_cut = 4.0_dp*( 1.0_dp/(this % rc2**6) - 1.0_dp/(this % rc2**3) ) 
-    !this % pot_cut = 4.0_dp*this % params % gEpsil*( 1.0_dp/(this % rc2**6) - 1.0_dp/(this % rc2**3) ) 
     
   end subroutine corta_desplaza_pote
 
@@ -70,10 +69,6 @@ contains
     integer                 :: i,j       
     real(dp),  dimension(:,:) :: R
 
-
-    ! Paso a trabajar distancias en unidades de sigma
-    !R = R / this % params % gSigma
-    !this % params % gL = this % params % gL/this % params % gSigma
 
     Pot = 0.0_dp
 
@@ -95,12 +90,13 @@ contains
     ! Constantes que faltaban en el potencial
     ! Agrego el desplazamiento del potencial considerando la cantidad de
     ! pares con que se obtuvo la energía potencial N(N-1)/2
-    !Pot =  4.0_dp * this % params % gEpsil * Pot - this % params % gNpart*(this % params % gNpart-1)* this % pot_cut/2.0_dp  
-    Pot =  4.0_dp * Pot - this % params % gNpart*(this % params % gNpart-1)* this % pot_cut/2.0_dp  
+    Pot =  4.0_dp * Pot - this % params % gNpart*(this % params % gNpart-1)* this % pot_cut/2.0_dp
+
+    ! Escalo la energía a por partícula
+
+    Pot =   Pot / this % params % gNpart
 
     ! Se vuelven a pasar a las coordenadas absolutas
-    !R = R*this % params % gSigma
-    !this % params % gL = this % params % gL * this % params % gSigma
 
   endfunction poten_lj_vec
 
@@ -133,8 +129,7 @@ contains
       vn     = vn + this % kernel(j, R(:,i), R)   ! Energía potencial
     enddo
 
-    !deltaPot =  4.0_dp * this % params % gEpsil * (vn - vo)   
-    deltaPot =  4.0_dp  * (vn - vo)   
+    deltaPot =  4.0_dp  * (vn - vo) / this % params % gNpart
 
   endfunction delta_poten_lj_vec
 

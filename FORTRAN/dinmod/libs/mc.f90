@@ -118,10 +118,6 @@ contains
       rz = this % R(3, iPart)
 
       ! actualizo el arreglo de posiciones con una nueva posicion
-      !this % R(1, iPart) = this % R(1, iPart) + .2*this % params % gSigma * (uni() - 0.5)
-      !this % R(2, iPart) = this % R(2, iPart) + .2*this % params % gSigma * (uni() - 0.5)
-      !this % R(3, iPart) = this % R(3, iPart) + .2*this % params % gSigma * (uni() - 0.5)
-
       this % R(1, iPart) = this % R(1, iPart) + .2 * (uni() - 0.5)
       this % R(2, iPart) = this % R(2, iPart) + .2 * (uni() - 0.5)
       this % R(3, iPart) = this % R(3, iPart) + .2 * (uni() - 0.5)
