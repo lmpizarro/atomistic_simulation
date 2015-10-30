@@ -12,7 +12,7 @@ module mc
     type Monte_Carlo
       real(dp),  dimension(:), allocatable    :: abs_ener
       real(dp),  dimension(:,:), allocatable  :: R
-      real(dp),  dimension(:), allocatable:: obs_ener
+      real(dp),  dimension(:), allocatable:: obs_pres
       real(dp) :: Vol, Rho, beta
       type(Parametros) :: params
       type(Lenard_Jones) :: potencial
@@ -25,12 +25,14 @@ module mc
       procedure :: cpc => cpc_vec
       procedure :: set_potencial => set_potencial
       procedure :: out_energ => write_energ
+      procedure :: out_presion => write_presion
     end type Monte_Carlo
 
     private        
     public :: Monte_Carlo 
 
 contains
+
 
   subroutine cpc_vec(this)
     class (Monte_Carlo) :: this
@@ -59,7 +61,12 @@ contains
 
     allocate(this % R(3,this % params % gNpart))
     allocate(this % abs_ener( this % params % gNtime))
-    allocate(this % obs_ener (this % kmed))
+
+    allocate(this % obs_pres (this % kmed))
+
+
+    this % R = 0.0_dp
+    this % obs_pres = 0.0_dp
 
     ! Calcula volumen y densidad
     this % Vol = this % params % gL**3
@@ -100,28 +107,44 @@ contains
 
   end subroutine finaliza
 
-  !================================================================================
-  ! para escribir valores de energía intermedia
-  !================================================================================
+  !=============================================================
+  ! para escribir valores de energía 
+  !=============================================================
   subroutine write_energ (this)
     class (Monte_Carlo) :: this
     character (len=32) :: file_energy
-    logical :: es
 
     write(file_energy, 1000)"energy", this % params % gT, ".txt"
-    print *, file_energy
+    print *, "grabando: ",  file_energy
 
-    inquire(file=file_energy,exist=es)
-    if ( .not. es) then
-      open(unit=10,file=file_energy,status='new')
-      write(10,800) this % abs_ener(10000:)
-      close(10)
-    end if
+    open(unit=10,file=file_energy,status='replace')
+    write(10,800) this % abs_ener(10000:)
+    close(10)
 
 
     800 format (E15.5)
     1000 format (A, F0.3, A)
   end subroutine write_energ
+
+  !=============================================================
+  ! para escribir valores de fuerza 
+  !=============================================================
+  subroutine write_presion (this)
+    class (Monte_Carlo) :: this
+    character (len=32) :: file_presion
+
+    write(file_presion, 1000)"presion", this % params % gT, ".txt"
+    print *, "grabando: ", file_presion
+
+    open(unit=10,file=file_presion, status='replace')
+    write(10,800) this % obs_pres 
+    close(10)
+
+
+    800 format (E15.5)
+    1000 format (A, F0.3, A)
+  end subroutine write_presion
+
 
   subroutine metropolis_oo (this)
     class (Monte_Carlo) :: this
@@ -130,9 +153,8 @@ contains
     real(dp) :: rx, ry, rz
     real(dp) :: n_energy, deltaE
     real(dp):: pr
-    integer :: iPart, i
+    integer :: iPart, i, j
     real(dp), dimension(3)  :: ri_vec
-
 
     n_energy = 0.0_dp
     n_energy = this % potencial  % potencial(this % R) 
@@ -141,6 +163,7 @@ contains
     write(*,'(a,F8.4)') '************ Energia              = ' ,n_energy 
     write(*,'(a)')      '*********************************************'
 
+    j = 1
     do i=1, this % params % gNtime
       iPart = rand_int(this % params % gNpart)
       ! guardo el valor original de la energia
@@ -176,14 +199,15 @@ contains
           endif        
       endif        
       this % abs_ener(i) = n_energy
-      !if (mod(i, this % params % gNmed) .eq. 0) then
-        !print *, n_energy 
-      !endif
+      ! Actualizo el valor de la fuerza
+      if (mod(i, this % params % gNmed) .eq. 0) then
+        this % obs_pres(j) =  this % Rho * this % params % gT + &
+                this % potencial  % potencial(this % R) / (this % Vol)
+
+        j = j + 1
+      endif
 
     enddo
-
-    call this % out_energ()
-    print *, this % r_aceptacion 
 
   endsubroutine metropolis_oo
 

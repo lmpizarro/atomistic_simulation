@@ -26,6 +26,11 @@ program main_mc_pote
     ! Corre metropolis
     call mc % run_metropolis()
 
+    call mc % out_energ()
+    call mc % out_presion()
+    print *, mc % r_aceptacion 
+
+
 
     call mc % clear()
 

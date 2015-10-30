@@ -69,8 +69,11 @@ contains
     integer                 :: i,j       
     real(dp),  dimension(:,:) :: R
 
+    real(dp)                :: Fij       ! Módulo fuerza entre partículas i y j
+    real(dp) :: Vir
 
     Pot = 0.0_dp
+    Vir = 0.0_dp
 
     do i = 1, this % params % gNpart - 1       
       do j = i+1, this % params % gNpart
@@ -82,6 +85,12 @@ contains
         if ( r2ij < this % rc2 ) then               
           r2in = 1.0_dp/r2ij                         ! Inversa al cuadrado
           r6in = r2in**3                             ! Inversa a la sexta
+          Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
+
+
+          Vir    = Vir + Fij * r2ij                 ! Término del virial para la presión
+                                                     ! pg 48 de Allen W=-1/3 sum(r dv/dr)
+          
           Pot     = Pot + r6in * ( r6in - 1.0_dp)    ! Energía potencial
         end if
       enddo
@@ -97,6 +106,10 @@ contains
     Pot =   Pot / this % params % gNpart
 
     ! Se vuelven a pasar a las coordenadas absolutas
+
+    Vir = 48.0_dp * Vir / 3.0_dp
+
+    Pot = Vir
 
   endfunction poten_lj_vec
 
