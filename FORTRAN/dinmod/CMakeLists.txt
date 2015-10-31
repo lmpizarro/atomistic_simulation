@@ -100,4 +100,3 @@ file (COPY ${scripts_py} DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 add_subdirectory(src)
 add_subdirectory(libs)
 
->>>>>>> origin/master
