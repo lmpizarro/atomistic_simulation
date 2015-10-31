@@ -1,6 +1,7 @@
 module usozig
 
   use ziggurat
+  use types,    only:dp
 
   implicit none
 
@@ -51,7 +52,7 @@ contains
   function uni_vec(N) result(un)
   
     integer, intent(in) :: N
-    real, dimension(N) :: un
+    real(dp), dimension(N) :: un
     integer :: j
 
     do j=1,N

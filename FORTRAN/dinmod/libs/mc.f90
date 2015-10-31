@@ -2,68 +2,243 @@ module mc
     use ziggurat
     use usozig
     use types, only: dp
-    use globales, only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil,&
-        gAbs_ener
     use constants
-    use potenciales
-    use dinmods
+    use potenciales, only: Lenard_Jones
+
+    use datos_problema, only : Parametros
 
     implicit none
 
+    type Monte_Carlo
+      real(dp),  dimension(:), allocatable    :: abs_ener
+      real(dp),  dimension(:,:), allocatable  :: R
+      real(dp),  dimension(:), allocatable:: obs_pres
+      real(dp) :: Vol, Rho, beta
+      type(Parametros) :: params
+      type(Lenard_Jones) :: potencial
+
+      integer :: r_aceptacion, kmed
+    contains
+      procedure :: init => inicializa
+      procedure :: clear => finaliza
+      procedure :: run_metropolis => metropolis_oo
+      procedure :: cpc => cpc_vec
+      procedure :: set_potencial => set_potencial
+      procedure :: out_energ => write_energ
+      procedure :: out_presion => write_presion
+    end type Monte_Carlo
+
     private        
-    public :: metropolis
+    public :: Monte_Carlo 
 
 contains
 
-  subroutine metropolis ()
+
+  subroutine cpc_vec(this)
+    class (Monte_Carlo) :: this
+
+    this % R = this % R - this % params % gL*floor(this % R/this % params % gL)
+
+  end subroutine
+
+  subroutine set_potencial(this, pot)
+    class (Monte_Carlo) :: this
+    type(Lenard_Jones) :: pot
+
+    this % potencial =  pot
+
+  end subroutine
+
+
+  subroutine inicializa (this, pars)
+    class (Monte_Carlo) :: this
+    type(Parametros) :: pars
+    integer :: i, j
+
+    this % params = pars
+
+    this % kmed = int(this % params % gNtime / abs (this % params % gNmed)) + 1
+
+    allocate(this % R(3,this % params % gNpart))
+    allocate(this % abs_ener( this % params % gNtime))
+
+    allocate(this % obs_pres (this % kmed))
+
+
+    this % R = 0.0_dp
+    this % obs_pres = 0.0_dp
+
+    ! Calcula volumen y densidad
+    this % Vol = this % params % gL**3
+    this % Rho = this % params % gNpart / this % Vol
+
+    !beta = 1.0 / (this % params % gT * K_BOLTZMANN)
+    this % beta = 1.0 / (this % params % gT * kb)
+
+    this % r_aceptacion = 0
+
+
+    write(*,'(a)') ''
+    write(*,'(a)')      '*********** PARAMETROS DERIVADOS ************'
+    write(*,'(a,F8.3)') '************ Volumen               = ' , this % Vol 
+    write(*,'(a,F8.4)') '************ Densidad              = ' , this % Rho
+    write(*,'(a)')      '*********************************************'
+
+    ! Inicial generador de número aleatorios
+    call inic_zig()
+
+   ! INICIALIZA Posicion aleatoria dentro de la caja 
+   do i = 1, this % params % gNpart
+     do j= 1, 3
+        this % R(j, i) = uni() * this % params % gL 
+     end do
+   end do     
+
+  end subroutine inicializa
+
+  subroutine finaliza (this)
+    class (Monte_Carlo) :: this
+
+    ! finaliza el generador de randoms
+    call fin_zig()
+
+     ! Libera memoria
+    deallocate(this % R)
+
+  end subroutine finaliza
+
+  !=============================================================
+  ! para escribir valores de energía 
+  !=============================================================
+  subroutine write_energ (this)
+    class (Monte_Carlo) :: this
+    character (len=32) :: file_energy
+
+    write(file_energy, 1000)"energy", this % params % gT, ".txt"
+    print *, "grabando: ",  file_energy
+
+    open(unit=10,file=file_energy,status='replace')
+    write(10,800) this % abs_ener(10000:)
+    close(10)
+
+
+    800 format (E15.5)
+    1000 format (A, F0.3, A)
+  end subroutine write_energ
+
+  !=============================================================
+  ! para escribir valores de fuerza 
+  !=============================================================
+  subroutine write_presion (this)
+    class (Monte_Carlo) :: this
+    character (len=32) :: file_presion
+
+    write(file_presion, 1000)"presion", this % params % gT, ".txt"
+    print *, "grabando: ", file_presion
+
+    open(unit=10,file=file_presion, status='replace')
+    write(10,800) this % obs_pres 
+    close(10)
+
+
+    800 format (E15.5)
+    1000 format (A, F0.3, A)
+  end subroutine write_presion
+
+
+  subroutine metropolis_oo (this)
+    class (Monte_Carlo) :: this
+    type(Lenard_Jones):: l_j
+
     real(dp) :: rx, ry, rz
     real(dp) :: n_energy, deltaE
-    real(dp):: pr, beta
-    integer :: iPart, i
+    real(dp):: pr
+    integer :: iPart, i, j
     real(dp), dimension(3)  :: ri_vec
 
-    beta = 1.0 / (gT * K_B_KJ)
-    !beta = 1.0 / (gT * kb)
+    n_energy = 0.0_dp
+    n_energy = this % potencial  % potencial(this % R) 
 
-    allocate(gAbs_ener( gNtime))
+    write(*,'(a)') ''
+    write(*,'(a,F8.4)') '************ Energia              = ' ,n_energy 
+    write(*,'(a)')      '*********************************************'
 
-    n_energy = poten_lj_vec() 
+    j = 1
+    do i=1, this % params % gNtime
+      iPart = rand_int(this % params % gNpart)
+      ! guardo el valor original de la energia
+      rx = this % R(1, iPart) 
+      ry = this % R(2, iPart)
+      rz = this % R(3, iPart)
 
-        do i=1, gNtime
-            iPart = rand_int(gNpart)
-            ! guardo el valor original de la energia
-            rx = gR(1, iPart) 
-            ry = gR(2, iPart)
-            rz = gR(3, iPart)
-
-            ! actualizo el arreglo de posiciones con una nueva posicion
-            gR(1, iPart) = gR(1, iPart) + .2*gSigma * (uni() - 0.5)
-            gR(2, iPart) = gR(2, iPart) + .2*gSigma * (uni() - 0.5)
-            gR(3, iPart) = gR(3, iPart) + .2*gSigma * (uni() - 0.5)
+      ! actualizo el arreglo de posiciones con una nueva posicion
+      this % R(1, iPart) = this % R(1, iPart) + (uni() - 0.5)
+      this % R(2, iPart) = this % R(2, iPart) + (uni() - 0.5)
+      this % R(3, iPart) = this % R(3, iPart) + (uni() - 0.5)
      
-            ! llamo a condiciones períodicas de contorno
-            call cpc(iPart)
+      ! llamo a condiciones períodicas de contorno
+      call this % cpc()
 
-            ! calculo de la variacion de energia
-            !deltaE = delta_poten_lj(iPart, rx, ry, rz)
-            ri_vec = (/rx, ry, rz/)
-            deltaE = delta_poten_lj_vec(iPart, ri_vec)
+      ! calculo de la variacion de energia
+      !deltaE = delta_poten_lj(iPart, rx, ry, rz)
+      ri_vec = (/rx, ry, rz/)
+      deltaE = this % potencial  % delta_potencial(iPart, ri_vec, this % R)
 
-            if (deltaE .lt. 0) then
-                n_energy = n_energy + deltaE 
-            else
-                pr = exp(-beta * deltaE)
-                if (uni() .lt. pr) then
-                    n_energy = n_energy + deltaE    
-                else
-                    gR(1, iPart) = rx
-                    gR(2, iPart) = ry
-                    gR(3, iPart) = rz
-                endif        
-            endif        
-            gAbs_ener(i) = n_energy
-            print *, n_energy 
-        enddo
-    endsubroutine metropolis
+      if (deltaE .lt. 0) then
+          n_energy = n_energy + deltaE 
+          this % r_aceptacion = this % r_aceptacion + 1
+      else
+          pr = exp(-this % beta * deltaE)
+          if (uni() .lt. pr) then
+              n_energy = n_energy + deltaE    
+              this % r_aceptacion = this % r_aceptacion + 1
+          else
+              this % R(1, iPart) = rx
+              this % R(2, iPart) = ry
+              this % R(3, iPart) = rz
+          endif        
+      endif        
+      this % abs_ener(i) = n_energy
+      ! Actualizo el valor de la fuerza
+      if (mod(i, this % params % gNmed) .eq. 0) then
+        this % obs_pres(j) =  this % Rho * this % params % gT + &
+                this % potencial  % potencial(this % R) / (this % Vol)
+
+        j = j + 1
+      endif
+
+    enddo
+
+  endsubroutine metropolis_oo
+
+!  subroutine cpc(l)
+  
+!    integer, intent(in) :: l
+
+!    if (gR(1,l) .lt. 0) then
+!      gR(1,l) = gR(1,l) + gL
+!    endif        
+
+!    if (gR(2,l) .lt. 0) then
+!     gR(2,l) = gR(2,l) + gL
+!    endif        
+
+!    if (gR(3,l) .lt. 0) then
+!     gR(3,l) = gR(3,l) + gL
+!    endif
+
+!    if (gR(1,l) .gt. gL) then
+!     gR(1,l) = gR(1,l) - gL
+!    endif        
+
+!    if (gR(2,l) .gt. gL) then
+!     gR(2,l) = gR(2,l) - gL
+!    endif        
+
+!    if (gR(3,l) .gt. gL) then
+!     gR(3,l) = gR(3,l) - gL
+!    endif
+
+!  endsubroutine cpc
 
 endmodule mc

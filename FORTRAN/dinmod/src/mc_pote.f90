@@ -1,19 +1,37 @@
 program main_mc_pote 
 
-    use io_parametros, only: read_parameters
-    use dinmods
-    use mc
+    use types
+   ! use dinmods
+    use mc, only : Monte_Carlo
+    use datos_problema, only : Parametros
+    use potenciales, only : Lenard_Jones
   
 
     implicit none
 
-    ! Lee los datos necesario
-    call read_parameters()
-    call inicializacion()
-    call inicia_posicion_rn()
+    type(Parametros) :: params
+    type(Monte_Carlo) :: mc
+    type(Lenard_Jones) :: lj
 
-    call metropolis()
+    ! Lee los datos del problema
+    call params % leer()
+    ! inicializa montecarlo 
+    call mc % init(params)
+    ! inicializa el potencial
+    call lj % init(params)
 
-    call finalizacion()
+    ! setea el potencial en Monte Carlo
+    call mc % set_potencial(lj)
+
+    ! Corre metropolis
+    call mc % run_metropolis()
+
+    call mc % out_energ()
+    call mc % out_presion()
+    print *, mc % r_aceptacion 
+
+
+
+    call mc % clear()
 
 end program main_mc_pote
