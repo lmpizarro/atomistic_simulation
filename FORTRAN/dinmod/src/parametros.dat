@@ -1,7 +1,6 @@
-1.5 100 6.3 0.001 10000 1.0 1.0 1.0 1
+6.0 200 5.5032 0.002 20000 1.0 1.0 1.0 1
 0.5
 # De este archivo sólo se leen las dos primeras líneas
->>>>>>> origin/master
 
 # T  Npart  L dt Ntime  sigma epsilon masa Nmed
 293 40 50.0 0.01 20000 1.0 1.0 1.0 1
