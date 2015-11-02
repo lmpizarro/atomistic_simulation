@@ -114,7 +114,7 @@ contains
   subroutine corta_desplaza_pote()   
 
     ! Radio de corte fijo
-    gRc2 = (2.5_dp)**2                
+    gRc2 = (4.0_dp)**2                
     ! Potencial de L-J evaluado en el radio de corte
     gPot_cut = 4.0_dp * ( 1.0_dp / (gRc2**6) - 1.0_dp / (gRc2**3) ) 
     ! Imprime en pantalla

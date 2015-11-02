@@ -36,12 +36,18 @@ contains
     real(dp)                :: Fij       ! Módulo fuerza entre partículas i y j
     real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
     integer                 :: i,j       
+    real(dp)                :: cut4      ! Cuarta parte del potencial en r_c
+
+
+    ! Por cuestiones de eficiencia. Se evita hacer una multiplicación dentro
+    ! del loop anidado
+    cut4 = gPot_cut / 4.0_dp 
 
 !$omp parallel workshare
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
     gF    = 0.0_dp
     gPot  = 0.0_dp
-    gVir   = 0.0_dp
+    gVir  = 0.0_dp
 !$omp end parallel workshare
 
 ! Se escribe dos loops distintos dependiendo de si se compila el programa con
@@ -71,15 +77,15 @@ contains
           ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
           ! Siempre en distancias relativas de sigma
           rij_vec = rij_vec - gL*nint(rij_vec/gL)
-          r2ij   = dot_product( rij_vec , rij_vec )    ! Cuadrado de la distancia
+          r2ij   = dot_product( rij_vec , rij_vec )         ! Cuadrado de la distancia
           if ( r2ij < gRc2 ) then               
-            r2in = 1.0_dp/r2ij                         ! Inversa al cuadrado
-            r6in = r2in**3                             ! Inversa a la sexta
-            Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
-            gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
-            gPot    = gPot + r6in * ( r6in - 1.0_dp)   ! Energía potencial
-            gVir    = gVir + Fij * r2ij                ! Término del virial para la presión
-                                                       ! pg 48 de Allen W=-1/3 sum(r dv/dr)
+            r2in = 1.0_dp/r2ij                              ! Inversa al cuadrado
+            r6in = r2in**3                                  ! Inversa a la sexta
+            Fij     = r2in * r6in * (r6in - 0.5_dp)         ! Fuerza entre partículas
+            gF(:,i) = gF(:,i) + Fij * rij_vec               ! Contribución a la partícula i
+            gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4 ! Energía potencial
+            gVir    = gVir + Fij * r2ij                     ! Término del virial para la presión
+                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
           end if
         end if
       end do
@@ -102,16 +108,16 @@ contains
         ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
         ! Siempre en distancias relativas de sigma
         rij_vec = rij_vec - gL*nint(rij_vec/gL)
-        r2ij   = dot_product( rij_vec , rij_vec )    ! Cuadrado de la distancia
+        r2ij   = dot_product( rij_vec , rij_vec )          ! Cuadrado de la distancia
         if ( r2ij < gRc2 ) then               
-          r2in = 1.0_dp/r2ij                         ! Inversa al cuadrado
-          r6in = r2in**3                             ! Inversa a la sexta
-          Fij     = r2in * r6in * (r6in - 0.5_dp)    ! Fuerza entre partículas
-          gF(:,i) = gF(:,i) + Fij * rij_vec          ! Contribución a la partícula i
-          gF(:,j) = gF(:,j) - Fij * rij_vec          ! Contribucion a la partícula j
-          gPot    = gPot + r6in * ( r6in - 1.0_dp)  ! Energía potencial
-          gVir    = gVir + Fij * r2ij                 ! Término del virial para la presión
-                                                     ! pg 48 de Allen W=-1/3 sum(r dv/dr)
+          r2in = 1.0_dp/r2ij                               ! Inversa al cuadrado
+          r6in = r2in**3                                   ! Inversa a la sexta
+          Fij     = r2in * r6in * (r6in - 0.5_dp)          ! Fuerza entre partículas
+          gF(:,i) = gF(:,i) + Fij * rij_vec                ! Contribución a la partícula i
+          gF(:,j) = gF(:,j) - Fij * rij_vec                ! Contribucion a la partícula j
+          gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4  ! Energía potencial
+          gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
+                                                           ! pg 48 de Allen W=-1/3 sum(r dv/dr)
         end if
       end do
     end do
@@ -120,11 +126,9 @@ contains
 
 !$omp parallel workshare
     ! Constantes que faltaban en la energía
-    gF = 48.0_dp * gF                
+    gF = 48.0_dp * gF
     ! Constantes que faltaban en el potencial
-    ! Agrego el desplazamiento del potencial considerando la cantidad de
-    ! pares con que se obtuvo la energía potencial N(N-1)/2
-    gPot =  4.0_dp * gPot - gNpart*(gNpart-1)*gPot_cut/2.0_dp  
+    gPot =  4.0_dp * gPot
     ! Se agregan las constantes que faltan para el término del virial
     gVir = 48.0_dp * gVir / 3.0_dp
 !$omp end parallel workshare
