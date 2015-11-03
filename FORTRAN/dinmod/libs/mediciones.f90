@@ -46,6 +46,8 @@ contains
 #ifdef CORR_PAR
     real(dp)                :: r         ! Distancia entre partículas
     integer                 :: ind_bin   ! Indice de cada bin de la g(r)
+    
+    gNgr = gNgr + 1    ! Cuenta las veces que es llamada 
 #endif
 
     ! Por cuestiones de eficiencia. Se evita hacer una multiplicación dentro
@@ -74,15 +76,14 @@ contains
 ! divide el potencial por 1/2 para cada partícula
 
 #ifdef CORR_PAR
-    gNgr = gNgr + 1    ! Cuenta las veces que es llamada (se puede reemplazar por gKmed)
 !$omp parallel &
 !$omp shared (gNpart, gR, gL, gRc2, gF, cut4, gDbin, gCorr_par ) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij, r, ind_bin)
-#else
+#else /* Si no se calcula la g(r) */
 !$omp parallel &
 !$omp shared (gNpart, gR, gL, gRc2, gF, cut4 ) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
-#endif
+#endif /* Fin CORR_PAR */
 !$omp do reduction( + : gPot, gVir)
 
      do i = 1, gNpart       
@@ -103,13 +104,14 @@ contains
                                                             ! pg 48 de Allen W=-1/3 sum(r dv/dr)
           end if  ! Termina if del radio de corte
 #ifdef CORR_PAR
-          ! Calcula la función g(r)
+          ! Calcula la función g(r) -  Ver pg 86 Frenkel
           r = sqrt(r2ij)
           if (r < gL/2.0_dp) then                           ! Sólo particulas a menos de gL/2
-            ind_bin            = int(r/gDbin)               ! En dónde cae la partícula
+            ind_bin            = int(r/gDbin) + 1           ! En dónde cae la partícula
+                                                            ! +1 vva porque definí indices 1:Nh
             gCorr_par(ind_bin) = gCorr_par(ind_bin) + 1     ! Actualizo contador del bin
           end if
-#endif
+#endif /* Fin CORR_PAR */
         end if   ! Termina if de i /= j
       end do
     end do
@@ -119,8 +121,7 @@ contains
     gPot = 0.5_dp * gPot   ! En este loop se cuentan dos veces las interacciones
     gVir = 0.5_dp * gVir    ! En este loop se cuentan dos veces las interacciones
 
-#else
-    gNgr = gNgr + 1    ! Cuenta las veces que es llamada (se puede reemplazar por gKmed)
+#else /* Si no se compila con OPENMP */
 ! Si no se compila con OPENMP
 ! Se usa un loop corriendo sólo sobre los j<i. Se asigna la fuerza a dos partículas
 ! con signo contrario. Se calcula el potencial por cada interacción (sin repetir)
@@ -142,18 +143,19 @@ contains
           gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
         end if  ! Termina if del radio de corte
-#ifdef CORR_PAR
-          ! Calcula la función g(r)
+#ifdef CORR_PAR /* Si se calcula g(4) */
+          ! Calcula la función g(r) - Ver pg 86 Frenkel
           r = sqrt(r2ij)
           if (r < gL/2.0_dp) then                           ! Sólo particulas a menos de gL/2
-            ind_bin            = int(r/gDbin)               ! En dónde cae la partícula
+            ind_bin            = int(r/gDbin) + 1           ! En dónde cae la partícula
+                                                            ! +1 vva porque definí indices 1:Nh
             gCorr_par(ind_bin) = gCorr_par(ind_bin) + 2     ! Actualizo contador del bin
           end if
-#endif
+#endif /* Fin CORR_PAR */
       end do
     end do
 
-#endif
+#endif /* Fin _OPENMP */
 
 !$omp parallel workshare
     ! Constantes que faltaban en la energía
