@@ -7,10 +7,16 @@ module mediciones
                         gPot_cut, gRho, gVol, gPot, gKin, gVir, gDt
   use ziggurat,   only: rnor
 
+! Si se calcula la función g(r)
+#ifdef CORR_PAR
+  use globales,   only: gCorr_par, gNhist, gNgr, gDbin
+#endif
+
 ! Si se usa el termostato de Langevin
 #if THERM == 1
   use globales,   only: gGamma
 #endif
+
 ! Si se utiliza openmp
 #ifdef _OPENMP
   use omp_lib
@@ -37,7 +43,10 @@ contains
     real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
     integer                 :: i,j       
     real(dp)                :: cut4      ! Cuarta parte del potencial en r_c
-
+#ifdef CORR_PAR
+    real(dp)                :: r         ! Distancia entre partículas
+    integer                 :: ind_bin   ! Indice de cada bin de la g(r)
+#endif
 
     ! Por cuestiones de eficiencia. Se evita hacer una multiplicación dentro
     ! del loop anidado
@@ -64,10 +73,16 @@ contains
 ! Se usa un loop corriendo sobre todas los ij. Se calcula la fuerza sólo una vez y se
 ! divide el potencial por 1/2 para cada partícula
 
+#ifdef CORR_PAR
+    gNgr = gNgr + 1    ! Cuenta las veces que es llamada (se puede reemplazar por gKmed)
+!$omp parallel &
+!$omp shared (gNpart, gR, gL, gRc2, gF, cut4, gDbin, gCorr_par ) &
+!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij, r, ind_bin)
+#else
 !$omp parallel &
 !$omp shared (gNpart, gR, gL, gRc2, gF, cut4 ) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
-
+#endif
 !$omp do reduction( + : gPot, gVir)
 
      do i = 1, gNpart       
@@ -86,18 +101,26 @@ contains
             gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4 ! Energía potencial
             gVir    = gVir + Fij * r2ij                     ! Término del virial para la presión
                                                             ! pg 48 de Allen W=-1/3 sum(r dv/dr)
+          end if  ! Termina if del radio de corte
+#ifdef CORR_PAR
+          ! Calcula la función g(r)
+          r = sqrt(r2ij)
+          if (r < gL/2.0_dp) then                           ! Sólo particulas a menos de gL/2
+            ind_bin            = int(r/gDbin)               ! En dónde cae la partícula
+            gCorr_par(ind_bin) = gCorr_par(ind_bin) + 1     ! Actualizo contador del bin
           end if
-        end if
+#endif
+        end if   ! Termina if de i /= j
       end do
     end do
 
 !$omp end do
 !$omp end parallel
-
     gPot = 0.5_dp * gPot   ! En este loop se cuentan dos veces las interacciones
     gVir = 0.5_dp * gVir    ! En este loop se cuentan dos veces las interacciones
 
 #else
+    gNgr = gNgr + 1    ! Cuenta las veces que es llamada (se puede reemplazar por gKmed)
 ! Si no se compila con OPENMP
 ! Se usa un loop corriendo sólo sobre los j<i. Se asigna la fuerza a dos partículas
 ! con signo contrario. Se calcula el potencial por cada interacción (sin repetir)
@@ -118,7 +141,15 @@ contains
           gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4  ! Energía potencial
           gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
-        end if
+        end if  ! Termina if del radio de corte
+#ifdef CORR_PAR
+          ! Calcula la función g(r)
+          r = sqrt(r2ij)
+          if (r < gL/2.0_dp) then                           ! Sólo particulas a menos de gL/2
+            ind_bin            = int(r/gDbin)               ! En dónde cae la partícula
+            gCorr_par(ind_bin) = gCorr_par(ind_bin) + 2     ! Actualizo contador del bin
+          end if
+#endif
       end do
     end do
 

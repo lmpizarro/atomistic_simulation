@@ -1,5 +1,7 @@
 module globales
     
+#include "control.h"
+
     use types, only: dp
 
     implicit none
@@ -34,5 +36,19 @@ module globales
     real(dp)        :: gVir       ! Cálculo del virial para la presión 
 
     real(dp)        :: gGamma     ! Parámetro para el termostato de Langevin  
+
+
+#ifdef CORR_PAR
+    ! Variables utilizadas para calcular la g(r) 
+
+    ! g(r) sin normalizar (por eso definida como integer)
+    integer, dimension(:), allocatable   :: gCorr_par 
+
+    integer                 :: gNhist     ! Cantidad de bines de la g(r)
+    integer                 :: gNgr       ! Contador para saber cuántas veces se acumuló la g(r)
+    real(dp)                :: gDbin      ! Ancho del bin de la g(r)    
+   
+#endif
+
 
 end module globales
