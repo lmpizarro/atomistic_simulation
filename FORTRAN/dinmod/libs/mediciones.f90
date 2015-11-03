@@ -65,7 +65,7 @@ contains
 ! divide el potencial por 1/2 para cada partícula
 
 !$omp parallel &
-!$omp shared (gNpart, gR, gL, gRc2, gF ) &
+!$omp shared (gNpart, gR, gL, gRc2, gF, cut4 ) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
 
 !$omp do reduction( + : gPot, gVir)
