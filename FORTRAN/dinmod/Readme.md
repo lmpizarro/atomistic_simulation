@@ -117,6 +117,7 @@ especificando primero la cantidad de threads que se quieren utilizar
 
  <energia_pot_min.dat> : Valores de la energía en función del tiempo cuando se trata
                          de minimizarla
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
 
  <estados.dat>     : Posiciones y velocidades del último estado
                      Formato:   X Y Z V_X V_Y V_Z
