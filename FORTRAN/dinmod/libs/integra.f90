@@ -140,7 +140,7 @@ contains
       call escribe_en_columnas(cor_par,'gr.dat',0.0_dp)
 #endif
     end if
-    
+
     ! Se imprime en pantalla los resultados finales
     write(*,*) '* Energias por partícula al final de la integración'
     call print_info(Pres,Temp)
@@ -160,6 +160,7 @@ contains
     subroutine calcula_gr(grnor)
     ! Subrutina para normalizar y calcular la función g(r)     
     ! ver pg. 86 del Frenkel
+
       real(dp), dimension(:,:),intent(out) :: grnor  ! Función g(r)
       real(dp)                             :: dvol   ! Diferencie de volumen entre bines
       real(dp)                             :: nid    ! Parte de gas ideal en dvol
@@ -172,6 +173,7 @@ contains
 
         grnor(2,i) = real(gCorr_par(i),kind=dp) / (gNgr*gNpart*nid)      ! Función g(r) normalizada
       end do
+
     end subroutine calcula_gr
 #endif
 
