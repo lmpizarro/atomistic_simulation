@@ -119,8 +119,8 @@ contains
 
     ! Escritura de las magnitudes en función del tiempo
     if (gNmed > 0) then
-      ! Guarda las energías en un archivo [Potencial, Cinética, Total]
-      call escribe_en_columnas(Eng_t,'energias.dat',gNmed*gDt)
+      ! Guarda las energías por partícula  en un archivo [Potencial, Cinética, Total]
+      call escribe_en_columnas(Eng_t/gNpart,'energias.dat',gNmed*gDt)
 
       ! Guarda la presion en un archivo
       call escribe_en_columnas(Pres_t,'presion.dat',gNmed*gDt)
@@ -146,7 +146,7 @@ contains
     call print_info(Pres,Temp)
 
     ! Se calculan valores medios de presión y temperatura y se escriben a archivo
-    call hace_estadistica(Pres_t, Temp_t)
+    call hace_estadistica(Pres_t, Temp_t, Eng_t/gNpart)
 
     write(*,*) '********************************************'
     write(*,*) '* Fin de la integracion temporal'
