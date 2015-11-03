@@ -10,7 +10,7 @@ module inic_fin
   use ziggurat
   use usozig
   use io_parametros,  only: escribe_trayectoria, escribe_estados, lee_estados, &
-                            read_parameters
+                            read_parameters, escribe_en_columnas
   use integra,        only: cpc_vec
 
 ! Si se calcula la función g(r)
@@ -283,12 +283,9 @@ contains
     end do
 
     ! Guarda la energía potencial en un archivo
-    open(unit=10,file='./energia_pot_min.dat',status='unknown')
-    !write(10,'(F10.4)') gDt
-    write(10,'(E16.9)') Eng_t
-    close(10)
+    call escribe_en_columnas(Eng_t/gNpart,'energia_pot_min.dat',gDt)
   
-    write(*,*) '* Energía minimizada: ' , gPot
+    write(*,*) '* Energía potencial minimizada: ' , gPot
 
   end subroutine integracion_min
 
