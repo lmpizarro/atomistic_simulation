@@ -134,12 +134,14 @@ contains
       ! Libera memoria 
       deallocate( Vel_t )
 #endif
+    end if
+
 #ifdef CORR_PAR
       ! Calcula y guarda la función de correlación de pares g(r)
       call calcula_gr(cor_par)
+      ! Como se escribe también r, el dr no es necesario. Se pasa 0.0 para evitar errores
       call escribe_en_columnas(cor_par,'gr.dat',0.0_dp)
 #endif
-    end if
 
     ! Se imprime en pantalla los resultados finales
     write(*,*) '* Energias por partícula al final de la integración'
