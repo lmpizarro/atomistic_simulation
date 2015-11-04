@@ -97,9 +97,9 @@ contains
           if ( r2ij < gRc2 ) then               
             r2in = 1.0_dp/r2ij                              ! Inversa al cuadrado
             r6in = r2in**3                                  ! Inversa a la sexta
-            Fij     = 48.0_dp*r2in * r6in * (r6in - 0.5_dp)         ! Fuerza entre partículas
+            Fij     = r2in * r6in * (r6in - 0.5_dp)         ! Fuerza entre partículas
             gF(:,i) = gF(:,i) + Fij * rij_vec               ! Contribución a la partícula i
-            gPot    = gPot + 4.0_dp*r6in * ( r6in - 1.0_dp) - gPot_cut ! Energía potencial
+            gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4 ! Energía potencial
             gVir    = gVir + Fij * r2ij                     ! Término del virial para la presión
                                                             ! pg 48 de Allen W=-1/3 sum(r dv/dr)
           end if  ! Termina if del radio de corte
@@ -136,10 +136,10 @@ contains
         if ( r2ij < gRc2 ) then               
           r2in = 1.0_dp/r2ij                               ! Inversa al cuadrado
           r6in = r2in**3                                   ! Inversa a la sexta
-          Fij     = 48.0_dp*r2in * r6in * (r6in - 0.5_dp)          ! Fuerza entre partículas
+          Fij     = r2in * r6in * (r6in - 0.5_dp)          ! Fuerza entre partículas
           gF(:,i) = gF(:,i) + Fij * rij_vec                ! Contribución a la partícula i
           gF(:,j) = gF(:,j) - Fij * rij_vec                ! Contribucion a la partícula j
-          gPot    = gPot + 4.0_dp*r6in * ( r6in - 1.0_dp) - gPot_cut  ! Energía potencial
+          gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4  ! Energía potencial
           gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
         end if  ! Termina if del radio de corte
@@ -159,11 +159,11 @@ contains
 
 !$omp parallel workshare
     ! Constantes que faltaban en la energía
-    !gF = 48.0_dp * gF
+    gF = 48.0_dp * gF
     ! Constantes que faltaban en el potencial
-    !gPot =  4.0_dp * gPot
+    gPot =  4.0_dp * gPot
     ! Se agregan las constantes que faltan para el término del virial
-    !gVir = gVir / 3.0_dp
+    gVir = 48.0_dp*gVir / 3.0_dp
 !$omp end parallel workshare
 
 ! Si se utiliza el termostato de Langevin
@@ -207,7 +207,7 @@ contains
 
     real(dp), intent(out)    :: presion
 
-   presion = gRho * gT + gVir / gVol / 3.0_dp 
+   presion = gRho * gT + gVir / gVol 
 
   end subroutine calcula_pres
 
