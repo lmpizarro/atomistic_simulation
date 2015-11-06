@@ -20,6 +20,11 @@ module integra
   use constants,      only: PI
 #endif
 
+! Si se controla la temperatura del termostato
+#ifdef CONTROL_TEMP
+  use estadistica,    only: histograma_vec
+#endif
+
   implicit none
 
   private
@@ -29,19 +34,23 @@ module integra
 contains
 
   !===============================================================================
-  ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - VELOCITY VERLET
+  ! integración de las ecuaciones de movimiento - velocity verlet
   !===============================================================================
-  ! Integra las ecuaciones dinámicas con el algoritmo de Velocity-Verlet
+  ! integra las ecuaciones dinámicas con el algoritmo de velocity-verlet
 
   subroutine integracion()
 
-    real(dp)                                :: Pres    ! Presión instantánea
-    real(dp)                                :: Temp    ! Presión instantánea
-    real(dp), dimension(:,:), allocatable   :: Eng_t   ! Energía en función del tiempo
-    real(dp), dimension(:), allocatable     :: Pres_t  ! Presión en función del tiempo
-    real(dp), dimension(:), allocatable     :: Temp_t  ! Temperatura en función del tiempo
+    real(dp)                                :: pres    ! presión instantánea
+    real(dp)                                :: temp    ! presión instantánea
+    real(dp), dimension(:,:), allocatable   :: eng_t   ! energía en función del tiempo
+    real(dp), dimension(:), allocatable     :: pres_t  ! presión en función del tiempo
+    real(dp), dimension(:), allocatable     :: temp_t  ! temperatura en función del tiempo
 #ifdef CONTROL_TEMP
-    real(dp), dimension(:,:), allocatable   :: Vel_t   ! Temperatura en función del tiempo
+    real(dp), dimension(:,:), allocatable   :: vel_t    ! Temperatura en función del tiempo
+    integer, parameter                      :: Nh = 400 ! Número de bines para el histograma
+    real(dp), dimension(1:Nh)               :: vel_ctas ! Valores del histograma 
+    real(dp), dimension(1:Nh)               :: vel_bins ! Valores de los bines del histograma
+    real(dp), dimension(2,1:Nh)             :: hist_tem ! Temporal para grabar hisgograma
 #endif
     integer                                 :: i, j
     integer                                 :: Kmed    ! Cantidad de puntos medidos
@@ -131,6 +140,13 @@ contains
 #ifdef CONTROL_TEMP  
       ! Guarda la velocidad en un archivo [v_x  v_y  v_z]
       call escribe_en_columnas(Vel_t,'velocidades_control_T.dat',gNmed*gDt)
+      ! Construye el histograma con una compunente
+      call histograma_vec(vel_ctas,vel_bins,Vel_t(:,1),Nh)
+      ! Guarda los datos en un archivo
+      hist_tem(1,:) = vel_bins
+      hist_tem(2,:) = vel_ctas
+      print *, hist_tem
+      call escribe_en_columnas(hist_tem,'histo_vel.dat',0.0_dp) 
       ! Libera memoria 
       deallocate( Vel_t )
 #endif
