@@ -155,7 +155,7 @@ contains
     ! parámetros de entrada al loop de fuerza. Esto sucede sólo si se inicializan las partículas
     ! de forma aleatoria, de lo contrario no se llama a la rutina de minimización de energía. 
     if ( .not. allocated(gCorr_par) ) then
-      gNhist = 200                   ! Número de bines
+      gNhist = 400                   ! Número de bines
       allocate(gCorr_par(1:gNhist))
 
       gNgr      = 0                  ! Contador para saber cuántas veces se acumuló la g(r)
