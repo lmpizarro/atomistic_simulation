@@ -141,7 +141,7 @@ contains
       ! Guarda la velocidad en un archivo [v_x  v_y  v_z]
       call escribe_en_columnas(Vel_t,'velocidades_control_T.dat',gNmed*gDt)
       ! Construye el histograma con una compunente
-      call histograma_vec(vel_ctas,vel_bins,Vel_t(:,1),Nh)
+      call histograma_vec(vel_ctas,vel_bins,Vel_t(1,:),Nh)
       ! Guarda los datos en un archivo
       hist_tem(1,:) = vel_bins
       hist_tem(2,:) = vel_ctas
