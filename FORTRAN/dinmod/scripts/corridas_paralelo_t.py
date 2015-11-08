@@ -113,20 +113,22 @@ comm.Barrier()
 ###############################################################################
 
 # Lista de temperaturas de la zona de detalle
-detalle = np.arange(T_detail_min,T_detail_max + dT_detail, dT_detail)
+#detalle = np.arange(T_detail_min,T_detail_max + dT_detail, dT_detail)
 
 # Lista de temperaturas de paso grueso
-tempe = np.arange(T_min,T_max+dT,dT)
+tempe = np.arange(Temp_min,Temp_max+dTemp,dTemp)
 
-tempe = np.append(tempe, detalle)
+#tempe = np.append(tempe, detalle)
 # filtra por valores unicos de temperatura
 # se debe redondear (con algún criterio) para evitar falsas duplicaciones
 # por errores de redondeo de python
-tempe = np.unique(tempe.round(decimals=6))
+#tempe = np.unique(tempe.round(decimals=6))
 # ordena de mayor a menor el array numpy
 tempe = np.fliplr([tempe])[0]
 
-# Cantidad de corridas por core 
+# Cantidad de corridas por core
+# Notar que Nrun conviene que sea múltiplo de la cantidad
+# de procesos con que se corra, de lo contrario se redondea para abajo.
 Nrun_local = Nrun//size
 
 # Llista de las corridas para cada core
@@ -143,7 +145,7 @@ T_anterior = []    # Buffer para copiar el estado final a T anterior
 for T in tempe:
     Tnombre = str(T)
     # Nombre de la carpeta uqe se va a crear
-    carpeta = Tnombre + '_tmpfolder'
+    carpeta = 'temperatura_' + Tnombre 
     # Camino completo de la carpeta que se va a crear
     path_carpeta = os.path.join(curr_dir,carpeta)
     # Sólo un core se encarga de armar el directorio de temperatura
