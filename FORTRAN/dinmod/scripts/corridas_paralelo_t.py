@@ -93,7 +93,7 @@ else:
     Nrun = 8
 
 # Calcula el lado del cubo para la densidad y número de partículas especificado
-L = (N_part/Rho)^(1/3)
+L = np.power( N_part/Rho , np.float(1)/3 ) 
 # Escribe los valores al archivo parametros.dat
 # Lo hace el root
 if rank==0:
@@ -104,7 +104,7 @@ if rank==0:
     # Escribe el dt de la integración temporal
     dm.escribe_entrada('dt',str(dt))
     # Escribe cada cuánto se hacen mediciones y si se guardan archivos
-    dm.escribe_entrada('N_medi',str(N_medi))
+    dm.escribe_entrada('N_grab',str(N_grab))
 
 # Todos esperan a que root haya terminado
 comm.Barrier()

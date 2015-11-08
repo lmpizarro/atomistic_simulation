@@ -11,8 +11,9 @@ import numpy as np
 ###############################################################################
 def escribe_entrada(nombre,valor):
     with open('parametros.dat','r') as f1:
-        fila = f1.readline()        
-        col  = fila.split()
+        fila  = f1.readline()
+        resto = f1.read()
+        col   = fila.split()
         if nombre== 'Temp':
             col[0] = valor
         elif nombre == 'N_part':
@@ -23,14 +24,15 @@ def escribe_entrada(nombre,valor):
             col[3] = valor
         elif nombre == 'N_pasos':
             col[4] = valor
-        elif nombre == 'N_medi':
+        elif nombre == 'N_grab':
             col[8] = valor
         else:
             print('No se reconoce el valor a escribir')
             exit
     new = ' '.join(col)
     with open('parametros.dat','w') as fileout:
-        fileout.write(new)
+        fileout.write(new+'\n')
+        fileout.write(resto)
 ###############################################################################
 
 ###############################################################################

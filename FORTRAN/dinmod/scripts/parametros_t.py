@@ -26,7 +26,7 @@ dt = 0.001
 # Número de pasos para la primer corrida (termalización)
 N_term = '4000'
 # Número de pasos para la segunda corrida (medición)
-N_medi = '10000'
+N_medi = '1000'
 # Número de corridas para cada temperatura
 Nrun = 8
 #
