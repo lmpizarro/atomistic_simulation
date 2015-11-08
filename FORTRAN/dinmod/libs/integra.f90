@@ -145,7 +145,6 @@ contains
       ! Guarda los datos en un archivo
       hist_tem(1,:) = vel_bins
       hist_tem(2,:) = vel_ctas
-      print *, hist_tem
       call escribe_en_columnas(hist_tem,'histo_vel.dat',0.0_dp) 
       ! Libera memoria 
       deallocate( Vel_t )
