@@ -46,7 +46,20 @@ crear una carpeta ./build
         las posiciones de las partículas con el formato para ser
         visualizados con el programa VMD.
         * Se escribe al archivo <trayectoria.vtf>
-
+4) Cálculo de la función g(r)
+   #define/undef CORR_PAR -> activa opciones de cálculo de la función
+        de correlación de pares g(r). El cálculo principal se hace
+        dentro del loop de fuerzas (paralelizado  y en serie). También
+        hay porciones de codigo en la inicializacion y finalización
+        del programa. Se basa en el algoritmo de la pg. 86 de Frenkesl
+        El resultado se guara en el archivo <gr.dat> con el formato:      
+                     r(1)  gr(1)
+                     r(2)  gr(2)
+                      ....... 
+                     r(N)  gr(N)
+        El valor de N (cantidad de histogramas) está hardcodeado en la 
+        inicialización del programa.
+            
 ---------------------------------------------------------------------
 
 formato de parametros.dat
@@ -62,7 +75,6 @@ sigma (angstroms)   4.10  4.0
 
 donde
 
-<<<<<<< HEAD
 T: Temperatura
 Npart: cantidad de partículas
 L: Tamaño de la caja
@@ -104,4 +116,42 @@ especificando primero la cantidad de threads que se quieren utilizar
 
  > export OMP_NUM_THREADS=4 && ./dinmod
 
->>>>>>> origin/master
+----------------------------------------------------------------------
+- ARCHIVOS DE SALIDA
+----------------------------------------------------------------------
+
+ <val_medios.dat>  : Valores medios y desviaciones estándar de presión, temperatura 
+                     y energías (potencial, cinética y total).
+                     Las primeras líneas tienen información de los datos de entrada
+
+ <presion.dat>     : Valores de la presión en función del tiempo
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
+
+ <temperatura.dat> : Valores de la temperatura en función del tiempo
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
+
+ <energias.dat>    : Valores de las energías (pot, cin, y total) en función del tiempo
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
+                     Las columnas son:    E_POT   E_CIN   E_TOT
+
+ <energia_pot_min.dat> : Valores de la energía en función del tiempo cuando se trata
+                         de minimizarla
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
+
+ <estados.dat>     : Posiciones y velocidades del último estado
+                     Formato:   X Y Z V_X V_Y V_Z
+
+ <gr.dat>          : (OPCIONAL) Sólo si se definió CORR_PAR en control.h del preprocesador
+                     Da la función g(r) normalizada junto con la posición r.
+                     La primer linea contiene la cantidad de datos y un cero (irrelevante) 
+                     Formato:     r  g(r)                   
+  
+ <trayectoria.vtf>  : (OPCIONAL) Sólo si se definió GRABA_TRAYECTORIA en control.h del
+                      preprocesador. Guarda las trayectorias en el formato para ser 
+                      visualizado con el programa VMD.
+
+<velocidades_control_T.dat> : (OPCIONAL) Sólo si se definió CONTROL_TEMP en control.h del
+                              preprocesador. Guarda las tres componentes de velocidades
+                              de una partícula cualquiera a lo largo del tiempo. Con este
+                              archivo se hace un histograma y calcula su desviación estandar
+                              y se controla que el termostato de Langevin esté funcionando.

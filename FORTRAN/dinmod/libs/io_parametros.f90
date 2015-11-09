@@ -166,17 +166,24 @@ contains
     integer                                 :: npuntos ! # puntos del vector
     integer                                 :: ncompo  ! # compunentes del vector
     integer                                 :: i,j
+    character(50)                           :: fmt1
     
     npuntos = size(x,2)
     ncompo  = size(x,1)
 
     open(unit=20, file=nombre, status='unknown')
 
+    if (ncompo==2) then
+      fmt1 = '(2(E16.9,2X))'
+    else if (ncompo==3) then
+      fmt1 = '(3(E16.9,2X))'
+    end if
+
     write(20, *) npuntos, dt          ! Primer linea con # puntos y dt
     do j = 1, npuntos
-      write(20,200)  ( x(i,j) , i = 1, ncompo )   
+      write(20,fmt1)  ( x(i,j) , i = 1, ncompo )   
     end do
-    200 format (3(E16.9,2X))
+    !200 format (3(E16.9,2X))
 
     close(20)
 

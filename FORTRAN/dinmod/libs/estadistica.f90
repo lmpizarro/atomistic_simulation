@@ -6,7 +6,7 @@ module estadistica
  
   private
 
-  public   :: vector_mean_var_dir
+  public   :: vector_mean_var_dir, histograma_vec
 
 contains
 

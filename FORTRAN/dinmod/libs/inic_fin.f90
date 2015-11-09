@@ -1,5 +1,7 @@
 module inic_fin 
 
+#include "control.h"
+
   use types,      only: dp
   use globales,   only: gT, gDt, gL, gNpart, gNtime, gR, gF, gV, gSigma, gEpsil, gM, & 
                         gNmed, gRc2, gPot_cut, gRho, gVol, gPot, gKin, gVir 
@@ -8,8 +10,13 @@ module inic_fin
   use ziggurat
   use usozig
   use io_parametros,  only: escribe_trayectoria, escribe_estados, lee_estados, &
-                            read_parameters
+                            read_parameters, escribe_en_columnas
   use integra,        only: cpc_vec
+
+! Si se calcula la función g(r)
+#ifdef CORR_PAR
+  use globales,      only: gCorr_par, gNhist, gNgr, gDbin 
+#endif
 
 ! Si se utiliza openmp
 #ifdef _OPENMP
@@ -75,10 +82,14 @@ contains
     call inic_zig()
     ! Define el radio de corte y el potencial desplazado
     call corta_desplaza_pote()
+#ifdef CORR_PAR
+    call inic_gr()
+#endif   
     ! Trata de leer el archivo con la configuracion inicial
     call lee_estados(gR,gV,leido)
     ! Si no se leyo, define posicion y velocidades 
-    if (leido .eqv. .FALSE. ) then
+
+   if (leido .eqv. .FALSE. ) then
       write(*,*) '* Se generan posiciones de r y v aleatorias'
       ! Define posiciones iniciales
       call inicia_posicion_rn()
@@ -96,6 +107,10 @@ contains
     call calcula_pres(Pres)
     ! Calcula la temperatura inicial
     call calcula_temp(Temp)
+
+#ifdef CORR_PAR
+    call inic_gr()
+#endif
 
     write(*,*) '* Valores iniciales por partícula'
     write(*,100) gPot/gNpart, gKin/gNpart, (gPot+gKin)/gNpart
@@ -126,7 +141,43 @@ contains
     write(*,*)
 
   end subroutine corta_desplaza_pote
+
+#ifdef CORR_PAR
+  !===============================================================================
+  ! INICIALIZA PARAMETROS PARA LA g(r) 
+  !===============================================================================
+  ! Inicialización de variables para galcular la g(r)
   
+  subroutine inic_gr()
+   
+    ! Este if es porque la rutina de inicialización llama a la de fuerza para minimizar energía
+    ! Se están haciendo los cálculos de forma repetida, pero es mejor que modificar y agregar
+    ! parámetros de entrada al loop de fuerza. Esto sucede sólo si se inicializan las partículas
+    ! de forma aleatoria, de lo contrario no se llama a la rutina de minimización de energía. 
+    if ( .not. allocated(gCorr_par) ) then
+      gNhist = 400                   ! Número de bines
+      allocate(gCorr_par(1:gNhist))
+
+      gNgr      = 0                  ! Contador para saber cuántas veces se acumuló la g(r)
+      gDbin     = gL / (2 * gNhist)  ! Ancho del bin
+      gCorr_par = 0                  ! Inicializo la g(r) sin normalizar
+    
+      ! Imprime en pantalla
+      write(*,'(a)')      ''
+      write(*,'(a)')      '************* CALCULO DE LA g(r) ************'
+      write(*,'(a,I0)') '************ Nhist    = ' , gNhist
+      write(*,'(a)')      '*********************************************'
+      write(*,*)
+    else
+      ! Vuelvo a inicializar. Los datos guardados correspondían a la minimización de energía y no
+      ! tienen ningún significado físico.
+      gNgr      = 0 
+      gCorr_par = 0
+    end if
+
+  end subroutine inic_gr
+#endif
+ 
   !===============================================================================
   ! VELOCIDADES INICIALES 
   !===============================================================================
@@ -232,12 +283,9 @@ contains
     end do
 
     ! Guarda la energía potencial en un archivo
-    open(unit=10,file='./energia_pot_min.dat',status='unknown')
-    !write(10,'(F10.4)') gDt
-    write(10,'(E16.9)') Eng_t
-    close(10)
+    call escribe_en_columnas(Eng_t/gNpart,'energia_pot_min.dat',gDt)
   
-    write(*,*) '* Energía minimizada: ' , gPot
+    write(*,*) '* Energía potencial minimizada: ' , gPot
 
   end subroutine integracion_min
 
@@ -255,6 +303,10 @@ contains
 
     ! Libera memoria
     deallocate(gR,gV,gF)
+
+#ifdef CORR_PAR
+    deallocate(gCorr_par)
+#endif
 
   endsubroutine finalizacion
 

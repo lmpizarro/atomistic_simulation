@@ -9,8 +9,20 @@ module integra
   use io_parametros,  only: escribe_en_columnas 
   use procesamiento,  only: hace_estadistica 
 
+! Si graba la posición de las partículas
 #ifdef GRABA_TRAYECTORIA
   use io_parametros,  only: escribe_trayectoria
+#endif
+
+! Si calcula la correlación entre pares
+#ifdef CORR_PAR
+  use globales,       only: gNhist, gDbin, gRho, gCorr_par, gNgr 
+  use constants,      only: PI
+#endif
+
+! Si se controla la temperatura del termostato
+#ifdef CONTROL_TEMP
+  use estadistica,    only: histograma_vec
 #endif
 
   implicit none
@@ -22,22 +34,29 @@ module integra
 contains
 
   !===============================================================================
-  ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - VELOCITY VERLET
+  ! integración de las ecuaciones de movimiento - velocity verlet
   !===============================================================================
-  ! Integra las ecuaciones dinámicas con el algoritmo de Velocity-Verlet
+  ! integra las ecuaciones dinámicas con el algoritmo de velocity-verlet
 
   subroutine integracion()
 
-    real(dp)                                :: Pres    ! Presión instantánea
-    real(dp)                                :: Temp    ! Presión instantánea
-    real(dp), dimension(:,:), allocatable   :: Eng_t   ! Energía en función del tiempo
-    real(dp), dimension(:), allocatable     :: Pres_t  ! Presión en función del tiempo
-    real(dp), dimension(:), allocatable     :: Temp_t  ! Temperatura en función del tiempo
+    real(dp)                                :: pres    ! presión instantánea
+    real(dp)                                :: temp    ! presión instantánea
+    real(dp), dimension(:,:), allocatable   :: eng_t   ! energía en función del tiempo
+    real(dp), dimension(:), allocatable     :: pres_t  ! presión en función del tiempo
+    real(dp), dimension(:), allocatable     :: temp_t  ! temperatura en función del tiempo
 #ifdef CONTROL_TEMP
-    real(dp), dimension(:,:), allocatable   :: Vel_t   ! Temperatura en función del tiempo
+    real(dp), dimension(:,:), allocatable   :: vel_t    ! Temperatura en función del tiempo
+    integer, parameter                      :: Nh = 400 ! Número de bines para el histograma
+    real(dp), dimension(1:Nh)               :: vel_ctas ! Valores del histograma 
+    real(dp), dimension(1:Nh)               :: vel_bins ! Valores de los bines del histograma
+    real(dp), dimension(2,1:Nh)             :: hist_tem ! Temporal para grabar hisgograma
 #endif
-    integer    :: i, j
-    integer    :: Kmed                                 ! Cantidad de puntos medidos
+    integer                                 :: i, j
+    integer                                 :: Kmed    ! Cantidad de puntos medidos
+#ifdef CORR_PAR
+    real(dp), dimension(1:2,1:gNhist)       :: cor_par ! Función g(r)
+#endif
 
     ! Se define la cantidad de puntos que se van a medir
     Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
@@ -109,8 +128,8 @@ contains
 
     ! Escritura de las magnitudes en función del tiempo
     if (gNmed > 0) then
-      ! Guarda las energías en un archivo [Potencial, Cinética, Total]
-      call escribe_en_columnas(Eng_t,'energias.dat',gNmed*gDt)
+      ! Guarda las energías por partícula  en un archivo [Potencial, Cinética, Total]
+      call escribe_en_columnas(Eng_t/gNpart,'energias.dat',gNmed*gDt)
 
       ! Guarda la presion en un archivo
       call escribe_en_columnas(Pres_t,'presion.dat',gNmed*gDt)
@@ -121,17 +140,30 @@ contains
 #ifdef CONTROL_TEMP  
       ! Guarda la velocidad en un archivo [v_x  v_y  v_z]
       call escribe_en_columnas(Vel_t,'velocidades_control_T.dat',gNmed*gDt)
+      ! Construye el histograma con una compunente
+      call histograma_vec(vel_ctas,vel_bins,Vel_t(1,:),Nh)
+      ! Guarda los datos en un archivo
+      hist_tem(1,:) = vel_bins
+      hist_tem(2,:) = vel_ctas
+      call escribe_en_columnas(hist_tem,'histo_vel.dat',0.0_dp) 
       ! Libera memoria 
       deallocate( Vel_t )
 #endif
     end if
-    
+
+#ifdef CORR_PAR
+      ! Calcula y guarda la función de correlación de pares g(r)
+      call calcula_gr(cor_par)
+      ! Como se escribe también r, el dr no es necesario. Se pasa 0.0 para evitar errores
+      call escribe_en_columnas(cor_par,'gr.dat',0.0_dp)
+#endif
+
     ! Se imprime en pantalla los resultados finales
     write(*,*) '* Energias por partícula al final de la integración'
     call print_info(Pres,Temp)
 
     ! Se calculan valores medios de presión y temperatura y se escriben a archivo
-    call hace_estadistica(Pres_t, Temp_t)
+    call hace_estadistica(Pres_t, Temp_t, Eng_t/gNpart)
 
     write(*,*) '********************************************'
     write(*,*) '* Fin de la integracion temporal'
@@ -140,6 +172,27 @@ contains
     deallocate( Eng_t, Pres_t, Temp_t )
 
 contains
+
+#ifdef CORR_PAR
+    subroutine calcula_gr(grnor)
+    ! Subrutina para normalizar y calcular la función g(r)     
+    ! ver pg. 86 del Frenkel
+
+      real(dp), dimension(:,:),intent(out) :: grnor  ! Función g(r)
+      real(dp)                             :: dvol   ! Diferencie de volumen entre bines
+      real(dp)                             :: nid    ! Parte de gas ideal en dvol
+      integer                              :: i
+
+      do i = 1, gNhist
+        grnor(1,i) = gDbin * (i + 0.5)                ! Posición centrada de cada bin
+        dvol  = ( (i+1)**3 - i**3 ) * gDbin**3        ! Diferencia de vol entre los bin (i+1) e i
+        nid   = (4.0_dp/3.0_dp) * PI * dvol * gRho    ! Parte del gas ideal en dvol 
+
+        grnor(2,i) = real(gCorr_par(i),kind=dp) / (gNgr*gNpart*nid)      ! Función g(r) normalizada
+      end do
+
+    end subroutine calcula_gr
+#endif
 
     subroutine print_info(presion,temperatura)
     ! Subrutina para imprimir en pantalla resultados de interes
