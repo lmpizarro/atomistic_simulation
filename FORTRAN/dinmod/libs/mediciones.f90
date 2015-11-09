@@ -85,6 +85,8 @@ contains
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
 #endif /* Fin CORR_PAR */
 !$omp do schedule(static,5) reduction( + : gPot, gVir)
+! El static es casi irrelevante en este loop, porque no hay un desbalance de carga
+! significativo. Serviría si se recorre el loop con i<j
 
      do i = 1, gNpart       
       do j = 1, gNpart
