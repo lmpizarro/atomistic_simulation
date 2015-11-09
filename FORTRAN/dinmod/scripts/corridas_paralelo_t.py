@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 ###############################################################################       
-#  SE EJECUTA CON: mpirun.mpich -n 4  python corridas_paralelo.py
+#  SE EJECUTA CON: mpirun.mpich -n 4  python corridas_paralelo_t.py
 ###############################################################################
 #
 # Script para correr el programa de ising a distintas temperaturas
@@ -143,7 +143,7 @@ if rank==0:
     # Escribe la temperatura inicial (la mayor) 
     dm.escribe_entrada('Temp',str(tempe[0]))
     # Escribe el número de pasos temporale
-    dm.escribe_entrada('N_pasos','5000')
+    dm.escribe_entrada('N_pasos','3000')
     # Escribe el dt de la integración temporal
     dm.escribe_entrada('dt','0.0001')
     # Escribe cada cuánto se hacen mediciones y si se guardan archivos
@@ -237,7 +237,7 @@ for T in tempe:
 
         #########################################################
         ######### Para utilizar el estado de temperatura anterior
-        dm.copia_estado_temp_anterior(path_runs,T_anterior,Tnombre)
+        #dm.copia_estado_temp_anterior(path_runs,T_anterior,Tnombre)
         #########################################################
         
         #######################################################################
@@ -292,7 +292,7 @@ for T in tempe:
     ###########################################################################
     if rank==0:
         # Hace estadística de todas las corridas y copia en <tablas_temperatura.dat> 
-        isf.copia_val_medios(T,Nrun,curr_dir)
+        dm.copia_val_medios(T,Rho,Nrun,curr_dir)
         # Sale de la carpeta
         os.chdir(curr_dir)        
     # Guardo la temperatura para copiar archivos luego

@@ -24,9 +24,9 @@ N_grab = 10
 # Paso temporal de integración
 dt = 0.001
 # Número de pasos para la primer corrida (termalización)
-N_term = '2000'
+N_term = '1000'
 # Número de pasos para la segunda corrida (medición)
-N_medi = '4000'
+N_medi = '2000'
 # Número de corridas para cada temperatura
 Nrun = 8
 #
