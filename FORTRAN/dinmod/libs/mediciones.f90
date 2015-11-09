@@ -84,7 +84,7 @@ contains
 !$omp shared (gNpart, gR, gL, gRc2, gF, cut4 ) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
 #endif /* Fin CORR_PAR */
-!$omp do reduction( + : gPot, gVir)
+!$omp do schedule(static,5) reduction( + : gPot, gVir)
 
      do i = 1, gNpart       
       do j = 1, gNpart
