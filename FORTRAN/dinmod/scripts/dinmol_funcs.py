@@ -100,6 +100,7 @@ def copia_val_medios_runs(i,path):
         # Guardará el porcentaje de aceptaciones
         por_acep = 100.0*colu[1]/colu[2]
     arch_comun = os.path.join(path,'runs_estadistica.dat')
+    #if os.path.isfile(arch_comun):
     with open(arch_comun,'a') as comun:
         comun.write('%02i'%i + ' ' + valor.rstrip() + ' '+ str(por_acep) +'\n') 
 ###############################################################################
