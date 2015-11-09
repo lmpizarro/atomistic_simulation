@@ -140,9 +140,7 @@ def copia_estado_temp_anterior(path_act,T_ant,T_act):
         # Ruta completa del archivo a copiar
         # arch_ant = os.path.join(path_ant,'estado.dat')
         # Para todas las corridas utiliza el ultimo estado de RUN00
-        arch_ant = os.path.join(os.path.dirname(path_ant),'RUN00','estado.dat')        
+        arch_ant = os.path.join(os.path.dirname(path_ant),'RUN00','estados.dat')        
         # Copia el archivo
         shutil.copy(arch_ant,path_act)
-        # reescribe el archivo
-        os.rename('estado.dat','ultimo_estado.dat')
 ###############################################################################

@@ -51,7 +51,7 @@ if os.path.isfile("parametros_t.py"):
     
     import parametros_t as parametros
   
-    N_part   = parametros.N_part
+    N_part   = np.int(parametros.N_part)
     Rho      = np.float(parametros.Rho)
     Temp_min = np.float(parametros.Temp_min)
     Temp_max = np.float(parametros.Temp_max)
@@ -60,10 +60,10 @@ if os.path.isfile("parametros_t.py"):
     #T_detail_max = np.float(parametros.T_detail_max)
     #dT_detail = np.float(parametros.dT_detail)
     dt       = np.float(parametros.dt)
-    N_term   = parametros.N_term
-    N_medi   = parametros.N_medi
-    N_grab   = parametros.N_grab
-    Nrun     = parametros.Nrun
+    N_term   = np.int(parametros.N_term)
+    N_medi   = np.int(parametros.N_medi)
+    N_grab   = np.int(parametros.N_grab)
+    Nrun     = np.int(parametros.Nrun)
 else:
     # Número de partículas
     N_part = 200
@@ -86,9 +86,9 @@ else:
     # Paso temporal de integración
     dt = 0.001
     # Número de pasos para la primer corrida (termalización)
-    N_term = '4000'
+    N_term = 4000
     # Número de pasos para la segunda corrida (medición)
-    N_medi = '10000'
+    N_medi = 10000
     # Número de corridas para cada temperatura
     Nrun = 8
 
@@ -101,10 +101,6 @@ if rank==0:
     dm.escribe_entrada('N_part',str(N_part))
     # Escribe el lado del cubo
     dm.escribe_entrada('L',str(L))
-    # Escribe el dt de la integración temporal
-    dm.escribe_entrada('dt',str(dt))
-    # Escribe cada cuánto se hacen mediciones y si se guardan archivos
-    dm.escribe_entrada('N_grab',str(N_grab))
 
 # Todos esperan a que root haya terminado
 comm.Barrier()
@@ -138,6 +134,40 @@ run_local = range(rank*Nrun_local,(rank+1)*Nrun_local)
 curr_dir = os.getcwd()
 
 ###############################################################################
+# CORRIDA INICIAL - MINIMIZACIÓN DE LA ENERGÍA 
+###############################################################################
+# Primera corrida para separar las partículas minimizando la energía potencial.
+# Lo corre sólo root y luego se copia el archivo al resto de las carpetas
+
+if rank==0:
+    # Escribe la temperatura inicial (la mayor) 
+    dm.escribe_entrada('Temp',str(tempe[0]))
+    # Escribe el número de pasos temporale
+    dm.escribe_entrada('N_pasos','5000')
+    # Escribe el dt de la integración temporal
+    dm.escribe_entrada('dt','0.0001')
+    # Escribe cada cuánto se hacen mediciones y si se guardan archivos
+    dm.escribe_entrada('N_grab','1')
+        
+    print('Core {0} corriendo la minimización de energía a  T={1}'.format(rank,tempe[0]))
+    
+    proc = subprocess.Popen(['./dinmod'],stdout=subprocess.PIPE)
+    salida = proc.communicate()[0]
+    # Guardo la salida para ver que hizo
+    with open('log0.txt','w') as arch: arch.write(salida)
+    
+    # Reescribe parametros para dejar listo el archivo de entrada
+    # Escribe número de pasos para la termalización
+    dm.escribe_entrada('N_pasos',str(N_term))
+    # Escribe dt
+    dm.escribe_entrada('dt',str(dt))
+    # Escribe cada cuánto se hacen mediciones y si se guardan archivos
+    dm.escribe_entrada('N_grab',str(N_grab))
+
+# Todos esperan a que root haya terminado
+comm.Barrier()
+
+###############################################################################
 # LOOP QUE CORRE SOBRE TODAS LAS TEMPERATURAS
 ###############################################################################
 T_anterior = []    # Buffer para copiar el estado final a T anterior
@@ -165,13 +195,16 @@ for T in tempe:
                     print('No hay nada por hacer, se sale del programa')
                     comm.Abort()
                 continue
-        # Copia el archivo de entrada a la carpeta 
+        # Copia el archivo de estados la carpeta de temperatura
+        shutil.copy('estados.dat',path_carpeta)
+        # Copia el archivo de entrada a la carpeta de temperatura
         shutil.copy('parametros.dat',path_carpeta)
         # Se mete en la carpeta
         os.chdir(path_carpeta)       
         # Cambia el archivo de entrada adentro de la carpeta
-        isf.escribe_entrada('T',Tnombre)
-        isf.escribe_entrada('N',N_term)
+        dm.escribe_entrada('Temp',Tnombre)
+        # para utilizar el estado de temperatura anterior
+        dm.copia_estado_temp_anterior(path_carpeta,T_anterior,Tnombre)
         print('Core {0} ya armó el directorio para T={1}'.format(rank,T))
     # Una vez que root encontró la carpeta donde debe trabajar, manda la información
     # al resto de los procesos
@@ -181,6 +214,7 @@ for T in tempe:
     path_carpeta = comm.bcast(path_carpeta, root=0)
     # Se meten en la carpeta
     os.chdir(path_carpeta) 
+    
     ###########################################################################
     # DISTINTAS CORRIDAS A LA MISMA T PARA OBTENER ERROR ESTADISTICO
     #      - LOOP PARALELIZADO
@@ -194,60 +228,60 @@ for T in tempe:
         os.makedirs(path_runs)
         # Copia archivos a cada carpeta
         shutil.copy('parametros.dat',path_runs)
+        # Copia archivos de estados a cada carpeta
+        shutil.copy('estados.dat',path_runs)
+        # Pasa a carmeta de cada corrida RUN..
         os.chdir(path_runs)
         # Escribe la semmilla en la carpeta
-        isf.escribe_semilla()
+        dm.escribe_semilla()
 
         #########################################################
         ######### Para utilizar el estado de temperatura anterior
-        isf.copia_estado_temp_anterior(path_runs,T_anterior,Tnombre)
+        dm.copia_estado_temp_anterior(path_runs,T_anterior,Tnombre)
         #########################################################
         
         #######################################################################
-        # EJECUTA EL PROGRAMA ISING - TERMALIZACIÓN
+        # EJECUTA EL PROGRAMA DINMOD - TERMALIZACIÓN
         #######################################################################
         # Esto funciona para python >= 2.7         
         #salida = subprocess.check_output(curr_dir+'/ising')
         # Alternativa para python 2.6        
-        proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
+        proc = subprocess.Popen([curr_dir+'/dinmod'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]
         # Guardo la salida para ver que hizo
         with open('log1.txt','w') as arch: arch.write(salida)
         # Guardo las salidas por si hacen falta
-        if os.path.isfile('energia.dat'):
-            os.rename('energia.dat','energia_terma.dat')
-        elif os.path.isfile('magneti.dat'):
-            os.rename('magneti.dat','magneti_terma.dat')    
-
-        #########################################################
-        ######### Para utilizar el estado de temperatura anterior
-        os.rename('estado.dat','ultimo_estado.dat')
-        #########################################################
+        if os.path.isfile('energias.dat'):
+            os.rename('energias.dat','energias_terma.dat')
+        elif os.path.isfile('presion.dat'):
+            os.rename('presion.dat','presion_terma.dat')    
+        elif os.path.isfile('temperatura.dat'):
+            os.rename('temperatura.dat','temperatura_terma.dat')
         
         #######################################################################
         # EJECUTA EL PROGRAMA ISING - MEDICIÓN
         #######################################################################
         # Corre por segunda vez tomando el estado anterior. Aumento el N
-        isf.escribe_entrada('N',N_medi)
+        dm.escribe_entrada('N_pasos',str(N_medi))
         print('Core {0} corriendo {1} a la temperatura {2}'.format(rank,carpeta_runs,T))
         # Esto funciona para python >= 2.7           
         # salida = subprocess.check_output(curr_dir+'/ising')
         # Alternativa para python 2.6        
-        proc = subprocess.Popen([curr_dir+'/ising'],stdout=subprocess.PIPE)
+        proc = subprocess.Popen([curr_dir+'/dinmod'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]  
         # Guardo la salida para ver ue hizo
         with open('log2.txt','w') as arch: arch.write(salida) 
         # Lee datos del archivo <val_medios.dat> y <aceptaciones.dat>
-        datos = isf.lee_datos_runs(i)
+        datos = dm.lee_datos_runs(i)
         # Root se encarga de recibir los datos y procesarlos
         if rank==0:
             # Root escribe sus propios datos en <runs_esatadistica.dat>
-            isf.escribe_datos_runs(datos,path_carpeta) 
+            dm.escribe_datos_runs(datos,path_carpeta) 
             for j in range(1,size):
                 # root recibe los datos del resto de los procesos
                 datos_recv = comm.recv(source=MPI.ANY_SOURCE)
                 # root escribe los datos en <runs_estadistica.dat>
-                isf.escribe_datos_runs(datos_recv,path_carpeta) 
+                dm.escribe_datos_runs(datos_recv,path_carpeta) 
         else:
             # El resto de los procesos le mandan los datos a root
             comm.send(datos,dest=0)
