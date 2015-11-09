@@ -185,17 +185,11 @@ contains
 
   integer  :: i, j
 
-!$omp parallel &
-!$omp shared( gNpart, gF, gGamma) &
-!$omp private ( i, j )
-!$omp do
   do i = 1, gNpart
     do j = 1, 3
       gF(j,i) = gF(j,i) - gGamma * gV(j,i) + sqrt(2.0_dp*gT*gGamma/gDt) * rnor()
     end do
   end do
-!$omp end do
-!$omp end parallel
 
   end subroutine fuerza_langevin
 #endif
@@ -208,8 +202,12 @@ contains
   subroutine calcula_pres(presion)
 
     real(dp), intent(out)    :: presion
+    real(dp)                 :: tempe
 
-   presion = gRho * gT + gVir / gVol 
+   ! Calcula la temperatura instantánea
+   call calcula_temp(tempe)
+   ! Calcula la presión con la temperatura instantánea
+   presion = gRho * tempe + gVir / gVol 
 
   end subroutine calcula_pres
 
