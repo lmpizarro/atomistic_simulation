@@ -165,7 +165,6 @@ def copia_estado_temp_anterior(path_act,T_ant,T_act):
         path_ant = path_act.replace(T_act,T_ant)
         # Para todas las corridas utiliza el ultimo estado de RUN00
         arch_ant = os.path.join(path_ant,'RUN00','estados.dat')        
-        print(arch_ant)
         # Copia el archivo
         shutil.copy(arch_ant,path_act)
 ###############################################################################
