@@ -165,7 +165,7 @@ contains
     ! Constantes que faltaban en el potencial
     gPot =  4.0_dp * gPot
     ! Se agregan las constantes que faltan para el término del virial
-    gVir = 48.0_dp * gVir / 3.0_dp
+    gVir = 48.0_dp*gVir / 3.0_dp
 !$omp end parallel workshare
 
 ! Si se utiliza el termostato de Langevin

@@ -1,4 +1,6 @@
 program main_dimod 
+ 
+    use omp_lib
 
   use inic_fin,         only: inicializacion, finalizacion 
   use utils,            only: wtime
