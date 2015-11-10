@@ -28,7 +28,7 @@ program main_mc_pote
 
     call mc_l % out_energ()
     call mc_l % out_presion()
-    print *, mc % r_aceptacion 
+    print *, mc_l % r_aceptacion 
 
 
 
