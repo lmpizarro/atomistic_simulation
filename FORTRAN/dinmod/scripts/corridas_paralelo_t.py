@@ -265,23 +265,23 @@ for T in tempe:
         dm.escribe_entrada('N_pasos',str(N_medi))
         print('Core {0} corriendo {1} a la temperatura {2}'.format(rank,carpeta_runs,T))
         # Esto funciona para python >= 2.7           
-        # salida = subprocess.check_output(curr_dir+'/ising')
+        # salida = subprocess.check_output(curr_dir+'/dinmod')
         # Alternativa para python 2.6        
         proc = subprocess.Popen([curr_dir+'/dinmod'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]  
         # Guardo la salida para ver ue hizo
         with open('log2.txt','w') as arch: arch.write(salida) 
-        # Lee datos del archivo <val_medios.dat> y <aceptaciones.dat>
-        datos = dm.lee_datos_runs(i)
+        # Lee datos del archivo <val_medios.dat> 
+        datos,header = dm.lee_datos_runs(i)
         # Root se encarga de recibir los datos y procesarlos
         if rank==0:
             # Root escribe sus propios datos en <runs_esatadistica.dat>
-            dm.escribe_datos_runs(datos,path_carpeta) 
+            dm.escribe_datos_runs(datos,header,path_carpeta) 
             for j in range(1,size):
                 # root recibe los datos del resto de los procesos
                 datos_recv = comm.recv(source=MPI.ANY_SOURCE)
                 # root escribe los datos en <runs_estadistica.dat>
-                dm.escribe_datos_runs(datos_recv,path_carpeta) 
+                dm.escribe_datos_runs(datos_recv,header,path_carpeta) 
         else:
             # El resto de los procesos le mandan los datos a root
             comm.send(datos,dest=0)

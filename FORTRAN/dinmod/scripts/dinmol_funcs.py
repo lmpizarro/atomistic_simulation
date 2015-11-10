@@ -7,7 +7,7 @@ import random
 import numpy as np
 
 ###############################################################################
-# ESCRIBE EL ARCHIVO DE ENTRADA DE ISING
+# ESCRIBE EL ARCHIVO DE ENTRADA DE DINAMICA MOLECULAR 
 ###############################################################################
 def escribe_entrada(nombre,valor):
     with open('parametros.dat','r') as f1:
@@ -48,12 +48,13 @@ def escribe_semilla():
 
 ###############################################################################
 # HACE ESTADISTICA CON LOS RESULTADOS OBTENIDOS A UNA DADA TEMPERATURA
-# ESCRIBE EL ARCHIVO 'tablas_temperatura.dat' EN LA CARPETA T_tmpfolder
+# ESCRIBE EL ARCHIVO 'tablas_temperatura.dat' EN LA CARPETA  temperatura_T
 ###############################################################################        
 def copia_val_medios(T,rho,N,dire):
     p=[];sp=[];tem=[];U=[]
     # Copio los archivos de la carpeta local y los escribo en un archivo común
     with open('runs_estadistica.dat','r') as valruns:
+        valruns.readline() # Primera linea con el encabezado
         for line in valruns:
             col = [float(x) for x in line.split()]
             p.append(col[4])
@@ -75,11 +76,16 @@ def copia_val_medios(T,rho,N,dire):
             'mean(temp)', 'std(temp)',
             'mean(U)', 'std(U)'] 
     # Abro el archivo donde se volcarán las resultados de cada temperatura   
-    with open(arch_comun,'a') as comun:  
-        #head_str = '       '.join(head)
-        #comun.write( head_str + '\n')
-        valor_str = '  '.join( format(j,'.5E') for j in valor)         
-        comun.write( valor_str +'\n')   
+    valor_str = '     '.join( format(j,'.5E') for j in valor)         
+    head_str = '   ' + '         '.join(head)
+    if os.path.isfile(arch_comun):
+        with open(arch_comun,'a') as comun:
+            comun.write( valor_str +'\n')   
+    else:
+        with open(arch_comun,'a') as comun:
+            # Escribe el encabezado si el archivo no existe
+            comun.write( head_str + '\n')
+            comun.write( valor_str +'\n')   
 ###############################################################################
 
 ###############################################################################
@@ -88,7 +94,8 @@ def copia_val_medios(T,rho,N,dire):
 # ESCRIBE EL ARCHIVO 'runs_estadistica.dat' EN LA CARPETA T_tmpfolder
 # ---- Es usado sólo por corridas.py 
 # ---- corridas_paralelo.py usa dos funciones separadas (por la comunicación)
-###############################################################################            
+# NO SE MODIFICO PARA DINAMICA MOLECULAR
+################################################################################
 def copia_val_medios_runs(i,path):
     # Copio los archivos de la carpeta local y los escribo en un archivo común
     with open('val_medios.dat','r') as vmed:
@@ -100,17 +107,15 @@ def copia_val_medios_runs(i,path):
         # Guardará el porcentaje de aceptaciones
         por_acep = 100.0*colu[1]/colu[2]
     arch_comun = os.path.join(path,'runs_estadistica.dat')
-    #if os.path.isfile(arch_comun):
     with open(arch_comun,'a') as comun:
         comun.write('%02i'%i + ' ' + valor.rstrip() + ' '+ str(por_acep) +'\n') 
 ###############################################################################
 
         
 ###############################################################################
-# LEE 'val_medios.dat' Y 'aceptaciones.dat' EN CADA CARPETA RUNXX 
-# LOS ORDENA EN UN STRING Y LOS PASA COMO SALIDA
+# LEE 'val_medios.dat' EN CADA CARPETA RUNXX 
+# LOS ORDENA EN UN STRING Y LOS PASA COMO SALIDA JUNTO AL ENCABEZADO
 ###############################################################################            
-
 def lee_datos_runs(i):
     # Copio los archivos de la carpeta local y los escribo en un archivo común
     with open('val_medios.dat','r') as vmed:
@@ -124,23 +129,29 @@ def lee_datos_runs(i):
         dato3 = [x for x in vmed.readline().split()]
     # Se arma el string con encabezado y datos de interés para
     # ser escritos en el archivo runs_estadistica.dat
-    #head = [head1[0]] + [head1[5]] + head2 + head3[0:2]
+    head = [head1[0]] + [head1[3]] + [head1[1]] + head2 + head3[0:2]
     dato = [dato1[0]] + [dato1[3]] + [dato1[1]] + dato2 + dato3[0:2]
     # Ordena los valores leidos en un string y los pasa como salida
-    sep = '     '
-    #lin_dat ='RUN' + sep + sep.join(head) + '\n'
-    lin_dat = '%02i'%i + sep + sep.join(dato) + '\n'
-    return lin_dat
+    sep_hea = '          '
+    sep_dat = '     '
+    head  = 'RUN' + sep_dat + sep_dat.join(head[0:3]) + \
+            sep_hea + sep_hea.join(head[3:]) + '\n'
+    lin_dat = '%02i'%i + sep_dat + sep_dat.join(dato) + '\n'
+    return (lin_dat,head)
 ###############################################################################
 
 ###############################################################################
-# ESCRIBE EL ARCHIVO 'runs_estadistica.dat' EN LA CARPETA T_tmpfolder
+# ESCRIBE EL ARCHIVO 'runs_estadistica.dat' EN LA CARPETA  temperatura_T
 ###############################################################################            
-
-def escribe_datos_runs(datos_str,path):
+def escribe_datos_runs(datos_str,header,path):
     arch_comun = os.path.join(path,'runs_estadistica.dat')
-    with open(arch_comun,'a') as comun:
-        comun.write(datos_str)
+    if os.path.isfile(arch_comun):
+        with open(arch_comun,'a') as comun:
+            comun.write(datos_str)
+    else:
+        with open(arch_comun,'a') as comun:
+            comun.write(header)
+            comun.write(datos_str)
 ###############################################################################
 
 ###############################################################################

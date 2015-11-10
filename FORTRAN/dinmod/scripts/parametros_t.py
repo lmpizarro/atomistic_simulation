@@ -13,7 +13,7 @@ Temp_min = 0.7
 # Temperatura máxima
 Temp_max = 1.4
 # Paso de temperatura
-dTemp = 0.05
+dTemp = 0.25
 # Agrego el detalle cerca de la temperatura crítica
 #T_detail_min = 2.10
 #T_detail_max = 2.50

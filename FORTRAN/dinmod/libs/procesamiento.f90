@@ -58,7 +58,7 @@ contains
 
     open(unit=10, file='val_medios.dat', status='unknown')
     ! Primera parte con datos de la corrida   
-    write(10,100)   'Temp', '# partículas', 'Lado cubo', 'Densidad', 'dt', '# pasos',  '# pasos med.'
+    write(10,100)   'Temp', '#_part', 'Lado_cubo', 'Dens', 'dt', '#_pasos',  '#_pasos_med.'
     100 format (2X,7(A,8X))
     write(10,200) gT, gNpart, gL, gRho, gDt, float(gNtime), float(gNmed)
     200 format (F6.2,10X,I6,9X,F11.5,5X,F11.5,5X,3(E9.2,5X))
