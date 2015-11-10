@@ -23,7 +23,7 @@ make
 
 #####  SETEO DE COMPILADOR ######
 # Para usar otro compilador distinto de gfortran se
-# debe inicializar la variable de entorno FC como el 
+# debe inicializar la variable de entorno FC con el 
 # path al ejecutable del compilador que se quiere usar
 # por ejemplo en sheldon se usa 
 # export FC=/opt/intel/composer_xe_2013.5.192/bin/intel64/ifort
