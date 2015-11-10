@@ -65,8 +65,6 @@ rec_buf = np.empty(( 151, 5), dtype=np.float64)
 # para acumular los resultados de todos los nodos 
 acum_data =np.empty(5, dtype=np.float64) 
 
-
-
 Ti = rank * Puntos_Por_Nodo
 Tf = (rank + 1)  * Puntos_Por_Nodo
 temps =  Temperatures[Ti: Tf]
@@ -74,7 +72,6 @@ temps =  Temperatures[Ti: Tf]
 for ts in temps:
     tmp = calcula_dyn (ts, dyn)
     data  = np.vstack((data, tmp))
-
 
 print rank, temps, np.shape(data)
 #print data

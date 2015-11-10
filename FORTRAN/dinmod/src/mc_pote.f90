@@ -10,28 +10,28 @@ program main_mc_pote
     implicit none
 
     type(Parametros) :: params
-    type(Monte_Carlo) :: mc
+    type(Monte_Carlo) :: mc_l
     type(Lenard_Jones) :: lj
 
     ! Lee los datos del problema
     call params % leer()
     ! inicializa montecarlo 
-    call mc % init(params)
+    call mc_l % init(params)
     ! inicializa el potencial
     call lj % init(params)
 
     ! setea el potencial en Monte Carlo
-    call mc % set_potencial(lj)
+    call mc_l % set_potencial(lj)
 
     ! Corre metropolis
-    call mc % run_metropolis()
+    call mc_l % run_metropolis()
 
-    call mc % out_energ()
-    call mc % out_presion()
-    print *, mc % r_aceptacion 
+    call mc_l % out_energ()
+    call mc_l % out_presion()
+    print *, mc_l % r_aceptacion 
 
 
 
-    call mc % clear()
+    call mc_l % clear()
 
 end program main_mc_pote
