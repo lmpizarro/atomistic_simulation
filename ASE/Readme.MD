@@ -7,3 +7,5 @@ El programa paralelizado es md_para_ase.py
 No está completo, pero es funcional.
 
 El calculador de MD es [asap](https://wiki.fysik.dtu.dk/asap)
+
+run.qsub es el script para correr en Sheldon
