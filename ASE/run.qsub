@@ -1,0 +1,22 @@
+#PBS -N prueba
+#PBS -l nodes=8:ppn=2
+#PBS -S /bin/bash
+#PBS -q verylong
+#PBS -o nas-0-0.local:$PBS_O_WORKDIR/$PBS_JOBID.output                                                                       
+#PBS -e nas-0-0.local:$PBS_O_WORKDIR/$PBS_JOBID.error                                                                     
+cd $PBS_O_WORKDIR
+ 
+cat $PBS_NODEFILE > $PBS_O_WORKDIR/$PBS_JOBID.machines
+cat $PBS_NODEFILE | uniq > $PBS_O_WORKDIR/$PBS_JOBID.mpd.hosts
+
+NUM_PROCS=`cat $PBS_O_WORKDIR/$PBS_JOBID.machines|wc -l`
+NUM_NODES=`cat $PBS_O_WORKDIR/$PBS_JOBID.mpd.hosts|wc -l`
+
+echo NUM_PROCS = $NUM_PROCS
+echo NUM_NODES = $NUM_NODES
+
+export NUM_PROCS 
+export NUM_NODES
+
+bin="/home/pizarro/python/bin/python ./md_para_ase.py"
+/home/pizarro/opt/openmpi-1.8.1-gcc/bin/mpirun -machinefile $PBS_O_WORKDIR/$PBS_JOBID.machines -np $NUM_PROCS $bin
