@@ -216,7 +216,14 @@ contains
 
   subroutine cpc_vec()
 
-    gR = gR - gL*floor(gR/gL)
+    real(dp), dimension(3,gNpart) :: temp     ! Variable temporal
+    
+    !gR = gR - gL*floor(gR/gL)
+    
+    ! Lo escribo de esta forma porque de lo contrario da error de compilación
+    ! en el cluster (dice ser un bug de gfortran)
+    temp = gL*floor(gR/gL)
+    gR = gR - temp
 
   end subroutine
 

@@ -36,8 +36,12 @@ contains
 
   subroutine cpc_vec(this)
     class (Monte_Carlo) :: this
+    real(dp), dimension(3,this % params % gNPart) :: temp
 
-    this % R = this % R - this % params % gL*floor(this % R/this % params % gL)
+    !this % R = this % R - this % params % gL*floor(this % R/this % params % gL)
+    ! Lo escribo así porque me tira error de compilación en el cluster
+    temp  = this % params % gL*floor(this % R/this % params % gL)
+    this % R = this % R - temp
 
   end subroutine
 
