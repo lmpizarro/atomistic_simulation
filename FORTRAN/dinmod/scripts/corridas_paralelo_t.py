@@ -291,8 +291,8 @@ for T in tempe:
     # FIN DEL LOOP PARALELIZADO
     ###########################################################################
     if rank==0:
-        # Hace estadística de todas las corridas y copia en <tablas_temperatura.dat> 
-        dm.copia_val_medios(T,Rho,Nrun,curr_dir)
+        # Hace estadística de todas las corridas y copia en <tabla_temperatura.dat> 
+        dm.copia_val_medios(T,Rho,Nrun,curr_dir,'tabla_temperatura.dat')
         # Sale de la carpeta
         os.chdir(curr_dir)        
     # Guardo la temperatura para copiar archivos luego

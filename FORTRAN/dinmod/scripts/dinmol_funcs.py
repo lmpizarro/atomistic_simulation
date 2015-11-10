@@ -48,9 +48,9 @@ def escribe_semilla():
 
 ###############################################################################
 # HACE ESTADISTICA CON LOS RESULTADOS OBTENIDOS A UNA DADA TEMPERATURA
-# ESCRIBE EL ARCHIVO 'tablas_temperatura.dat' EN LA CARPETA  temperatura_T
+# ESCRIBE EL ARCHIVO 'tabla_temperatura.dat' EN LA CARPETA  temperatura_T
 ###############################################################################        
-def copia_val_medios(T,rho,N,dire):
+def copia_val_medios(T,rho,N,dire,nombre):
     p=[];sp=[];tem=[];U=[]
     # Copio los archivos de la carpeta local y los escribo en un archivo común
     with open('runs_estadistica.dat','r') as valruns:
@@ -61,7 +61,7 @@ def copia_val_medios(T,rho,N,dire):
             sp.append(col[5])            
             tem.append(col[6])
             U.append(col[8])
-    arch_comun = os.path.join(dire,'tablas_temperatura.dat')
+    arch_comun = os.path.join(dire,nombre)
     fa = 1/np.sqrt(N)
     print('Se promediaron {0} de {1} valores para T = {2}'.format(len(p),N,T))
     valor = [float(T), float(rho),  
