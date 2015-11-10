@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Script para graficar los datos del archivo tabla_temperatura.dat (o alguno con
+# Script para graficar los datos del archivo tabla_presion.dat (o alguno con
 # formato similar. Se deben cambiar los labels y títulos de acuerdo a lo que
 # se quiera hacer
 
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import sys
 
 if len(sys.argv) < 2:
-    archivo = ['tabla_temperatura.dat']
+    archivo = ['tabla_presion.dat']
 else:
     archivo = sys.argv[1:]
     
@@ -18,7 +18,7 @@ forma = []
 forma.append('b.')
 
 leg = []
-leg.append(ur'$\rho^* = 0.3$')
+leg.append(ur'$T^* = 1.1$')
 
 xLim = [0.65, 1.45]
 
@@ -40,10 +40,10 @@ for nombre in archivo:
     
     plt.figure(1,figsize=(8,6))
     
-    plt.errorbar(T_avg, p_avg, xerr=T_std, yerr=p_std, fmt=forma[j],label=leg[j])
+    plt.errorbar(rho, p_avg, yerr=p_std, fmt=forma[j],label=leg[j])
     #plt.title(r'Valores medios')
-    plt.xlabel('$T^*$')
-    plt.ylabel('$p^*$')
+    plt.xlabel('$p^*$')
+    plt.ylabel(r'$\rho^*$')
     plt.xlim(xLim)
     #plt.ylim([-2.1 , -0.2])
     plt.legend(loc='upper left',numpoints=1)
@@ -51,8 +51,8 @@ for nombre in archivo:
    
     plt.figure(2,figsize=(8,6))
     
-    plt.errorbar(T_avg, c_avg, xerr=T_std,yerr=c_std, fmt= forma[j],label=leg[j])
-    plt.xlabel('$T^*$')
+    plt.errorbar(rho, c_avg, yerr=c_std, fmt= forma[j],label=leg[j])
+    plt.xlabel(r'$\rho^*$')
     plt.ylabel('$\sigma(p^*)$')
     plt.xlim(xLim)
     #plt.ylim([-0.1 , 1.1])
@@ -61,8 +61,8 @@ for nombre in archivo:
     
     plt.figure(3,figsize=(8,6))
     
-    plt.errorbar(T_avg, U_avg, xerr=T_std,yerr=U_std, fmt= forma[j],label=leg[j])
-    plt.xlabel('$T^*$')
+    plt.errorbar(rho, U_avg, yerr=U_std, fmt= forma[j],label=leg[j])
+    plt.xlabel(r'$\rho^*$')
     plt.ylabel('$U^*$')
     plt.xlim(xLim)
     #plt.ylim([-0.1 , 1.1])
