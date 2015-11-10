@@ -2,29 +2,29 @@
 # -*- coding: utf-8 -*-
 
 ###############################################################################       
-#  SE EJECUTA CON: mpirun.mpich -n 4  python corridas_paralelo_t.py
+#  SE EJECUTA CON: mpirun.mpich -n 4  python corridas_paralelo_rho.py
 ###############################################################################
 #
-# Script para correr el programa de ising a distintas temperaturas
-# Crea una carpeta para cada temperatura. En cada una de esas carpetas, a su
+# Script para correr el programa de ising a distinta densidades
+# Crea una carpeta para cada densidad. En cada una de esas carpetas, a su
 # vez, crea Nruns carpetas para hacer estadística y obtener los valores con
 # sus respectivos errores.
 #
-# En cada temperatura, se utiliza el valor final de la temperatura anterior.
+# En cada densidad, se utiliza el valor final de la densidad anterior.
 # Arbitrariamente, se toma el valor final de RUN00 como el valor inicial de
 # todas las corridas a la siguiente temperatura (menor)
 #
-# Los resultados los guarda en el archivo 'tablas_temperatura.dat'
-# Cada fila de 'tablas_temperatura.dat' representa los resultados a una dada
-# temperatura con sus respectivos errores. Las columnas son:
+# Los resultados los guarda en el archivo 'tabla_densidad.dat'
+# Cada fila de 'tabla_densidad.dat' representa los resultados a una dada
+# densidad con sus respectivos errores. Las columnas son:
 # T rho <p> std(p) <sp> std(sp) <Temp> std(Temp) <U> std(U)
 # T es la temperatura fijada. Temp es la medida.
 # Los errores se calculan como std(RUN)/sqrt(NRUN)
 #
-# Se paralelizan las corridas que se hace a una dada tempteratura. La limitación
-# está en que se debe esperar que terminen las corridas a la temperatura anterior
+# Se paralelizan las corridas que se hace a una dada densidad. La limitación
+# está en que se debe esperar que terminen las corridas a la densidad anterior
 # para utilizar el estado final. De lo contrario se podría parelelizar también
-# la corrida para cada temperatura (en el archivo 'sin errores' está hecho así)
+# la corrida para cada densidad (en el archivo 'sin errores' está hecho así)
 ###############################################################################
 
 import os
