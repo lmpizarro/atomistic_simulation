@@ -21,7 +21,7 @@ make
 # Por default, las opciones del falg son -cpp -std=f2003 -fbacktrace
 # Todo esto se puede modificar desde el archivo CMakelists.txt
 
-#####  SETEO DE COMPILADOR ######
+######  SETEO DE COMPILADOR #######
 # Para usar otro compilador distinto de gfortran se
 # debe inicializar la variable de entorno FC con el 
 # path al ejecutable del compilador que se quiere usar
