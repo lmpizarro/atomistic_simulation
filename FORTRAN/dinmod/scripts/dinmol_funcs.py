@@ -58,12 +58,12 @@ def copia_val_medios(T,rho,N,dire,nombre):
         for line in valruns:
             col = [float(x) for x in line.split()]
             p.append(col[4])
-            sp.append(col[5])            
+            sp.append(col[5])
             tem.append(col[6])
             U.append(col[8])
     arch_comun = os.path.join(dire,nombre)
     fa = 1/np.sqrt(N)
-    print('Se promediaron {0} de {1} valores para T = {2}'.format(len(p),N,T))
+    print('Se promediaron {0} de {1} valores para T = {2} | Rho = {3}'.format(len(p),N,T,rho))
     valor = [float(T), float(rho),  
              np.mean(p), np.std(p)*fa,
              np.mean(sp), np.std(sp)*fa,
@@ -165,6 +165,17 @@ def copia_estado_temp_anterior(path_act,T_ant,T_act):
         path_ant = path_act.replace(T_act,T_ant)
         # Para todas las corridas utiliza el ultimo estado de RUN00
         arch_ant = os.path.join(path_ant,'RUN00','estados.dat')        
+        print(arch_ant)
         # Copia el archivo
         shutil.copy(arch_ant,path_act)
 ###############################################################################
+
+###############################################################################
+# CONVIERTE DENSIDAD A LADO DE LA CAJA PARA ESCRIBIR AL ARCHIVO DE ENTRADA 
+###############################################################################           
+def rho_2_lado(n_p,densidad):
+    lado = np.power( n_p/densidad , np.float(1)/3 ) 
+    lado = str(lado)
+    return lado
+###############################################################################
+
