@@ -4,7 +4,7 @@
 
 # T  Npart  L dt Ntime  sigma epsilon masa Nmed
 293 40 50.0 0.01 20000 1.0 1.0 1.0 1
-# Gamma
+# Gamma Para'metro para el termostato de Langevi
 0.5
 
 # posibles parametros para montecarlo (a cambiar)
