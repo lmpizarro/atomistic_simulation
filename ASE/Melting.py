@@ -7,14 +7,15 @@ from ase.lattice.cubic import FaceCenteredCubic
 from asap3.md.langevin import Langevin
 
 # Create the atoms
-atoms = FaceCenteredCubic(size=(5,5,5), symbol="Cu", pbc=False)
+atoms = FaceCenteredCubic(size=(5,5,5), symbol="Cu", pbc=False, latticeconstant=3.51)
 
 
 # Associate the EMT potential with the atoms
 atoms.set_calculator(EMT())
 
 # Temperature profile
-temperatures = (250, 500, 750, 1000, 1250, 1500, 1750)
+#temperatures = (250, 500, 750, 1000, 1250, 1500, 1750)
+temperatures = (250, 500)
 
 # How many steps at each temperature
 nsteps = 5000
