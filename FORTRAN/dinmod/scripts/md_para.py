@@ -3,6 +3,8 @@
 
 import os
 import shutil
+import subprocess
+
 import numpy as np 
 from mpi4py import MPI
 from mpi4py.MPI import ANY_SOURCE
@@ -19,7 +21,7 @@ size = comm.Get_size()
 ###############################################################################
 if os.path.isfile("param_md_para.py"):
     
-    import parametros_t as parametros
+    import param_md_para as parametros
   
     N_part   = np.int(parametros.N_part)
     Rho      = np.float(parametros.Rho)
@@ -79,8 +81,6 @@ root_dir = os.getcwd()
 # Calcula el lado del cubo para la densidad y número de partículas especificado
 L = np.power( N_part/Rho , np.float(1)/3 ) 
 
-print "L: ", L
-
 # Lista de temperaturas de paso grueso
 Temperatures = np.arange(Temp_min,Temp_max+dTemp,dTemp)
 
@@ -101,11 +101,11 @@ print rank, temps
 #
 
 def gen_parameters_dat (temp):
-    name = "parameters.dat"
+    name = "parametros.dat"
     p_corr = str(temp) + " " + str(N_part) + " " + str(L) + " " + str(dt) + " " + str(N_medi)   
     p_part = str(sigma) + " " + str(epsilon) + " " + str(masa)
     fo = open(name, "wb")
-    fo.write(p_corr + " " + p_part +  " " + str(N_save))
+    fo.write(p_corr + " " + p_part +  " " + str(N_save) + "\n")
     fo.write(str(sigma))
     fo.close()
 
@@ -117,7 +117,7 @@ def gen_data (rank):
 
 #
 # Creación de las carpetas
-# y parameters.dat en cada directorio
+# y parametros.dat en cada directorio
 #
 for iteration in range(Nrun):
     if rank == 0:
@@ -143,7 +143,10 @@ for iteration in range(Nrun):
     for ts in temps:
         carpeta_temp = "temp" + "_" + str(ts)
         os.chdir(carpeta_temp)
-        #gen_data(rank)
+        proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
+        salida = proc.communicate()[0]
+        # Guardo la salida para ver que hizo
+        with open('log1.txt','w') as arch: arch.write(salida)
         os.chdir("../")       
 
     os.chdir("../")       
