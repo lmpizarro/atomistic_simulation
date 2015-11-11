@@ -99,15 +99,16 @@ print rank, temps
 #1.0 200 5.5032 0.001 20000 1.0 1.0 1.0 100
 #0.5
 #
-
-def gen_parameters_dat (temp):
-    name = "parametros.dat"
-    p_corr = str(temp) + " " + str(N_part) + " " + str(L) + " " + str(dt) + " " + str(N_medi)   
+def gen_parameters_dat (temp, Nmedi):
+    file_name = "parametros.dat"
+    p_corr = str(temp) + " " + str(N_part) + " " + str(L) + " " + str(dt) + " " + str(Nmedi)   
     p_part = str(sigma) + " " + str(epsilon) + " " + str(masa)
-    fo = open(name, "wb")
-    fo.write(p_corr + " " + p_part +  " " + str(N_save) + "\n")
-    fo.write(str(sigma))
-    fo.close()
+    str_to_write = p_corr + " " + p_part +  " " + str(N_save) + "\n" + str(gamma)
+    with open(file_name,'w') as arch: arch.write(str_to_write)
+    #fo = open(name, "wb")
+    #fo.write(str_to_write)
+    #fo.write(str(sigma))
+    #fo.close()
 
 def gen_data (rank):
     name = "foo"+ str(rank)  + ".txt"
@@ -118,7 +119,7 @@ def gen_data (rank):
 #
 # Creación de las carpetas
 # y parametros.dat en cada directorio
-#
+# para termalizar
 for iteration in range(Nrun):
     if rank == 0:
         iteration_path = "iteration"+ "_" + str(iteration)
@@ -130,12 +131,15 @@ for iteration in range(Nrun):
             if not os.path.exists(carpeta_temp):
                os.makedirs(carpeta_temp)
             os.chdir(carpeta_temp)
-            gen_parameters_dat(ts)
+            # Se crean los parámetros para la termalización
+            gen_parameters_dat(ts, N_term)
             os.chdir("../")
         os.chdir("../")
 comm.Barrier()
 
-# corridas
+#
+# Corre la termalización
+#
 for iteration in range(Nrun):
     iteration_path = "iteration"+ "_" + str(iteration)
     os.chdir(iteration_path)
@@ -147,9 +151,37 @@ for iteration in range(Nrun):
         salida = proc.communicate()[0]
         # Guardo la salida para ver que hizo
         with open('log1.txt','w') as arch: arch.write(salida)
+        with open('termalizacion.txt','w') as arch: arch.write("termalizado" + " " + str(ts))
+        # Se crean los parámetros para las corridas 
+        gen_parameters_dat(ts, N_medi)
         os.chdir("../")       
 
     os.chdir("../")       
+
+
+#
+# Corre luego de la termalización 
+#
+for iteration in range(Nrun):
+    iteration_path = "iteration"+ "_" + str(iteration)
+    os.chdir(iteration_path)
+
+    for ts in temps:
+        carpeta_temp = "temp" + "_" + str(ts)
+        os.chdir(carpeta_temp)
+        proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
+        salida = proc.communicate()[0]
+        # Guardo la salida para ver que hizo
+        with open('log1.txt','w') as arch: arch.write(salida)
+        # Se crean los parámetros para las corridas 
+        os.chdir("../")       
+
+    os.chdir("../")       
+
+
+
+
+
 
 if rank == 0:
     print "fin: ", rank 
