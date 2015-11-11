@@ -19,6 +19,7 @@ size = comm.Get_size()
 # inicializa la semilla del generador de números aleatorios
 # de python para crear seed.dat 
 np.random.seed(int(time.time()))
+# para tener el máximo y el mínimo entero
 ii32 = np.iinfo(np.int32)
 
 ###############################################################################       
@@ -88,6 +89,7 @@ L = np.power( N_part/Rho , np.float(1)/3 )
 
 # Lista de temperaturas de paso grueso
 Temperatures = np.arange(Temp_min,Temp_max+dTemp,dTemp)
+# Ordeno de mayor a menor las temperaturas
 Temperatures = np.fliplr([Temperatures])[0]
 
 Cant_Puntos = Temperatures .size
@@ -112,12 +114,6 @@ def gen_parameters_dat (temp, Nmedi):
     str_to_write = p_corr + " " + p_part +  " " + str(N_save) + "\n" + str(gamma)
     with open(file_name,'w') as arch: arch.write(str_to_write)
 
-def gen_data (rank):
-    name = "foo"+ str(rank)  + ".txt"
-    fo = open(name, "wb")
-    fo.write("hola mundo: " + str(rank) )
-    fo.close()
-
 def crea_seed_dat ():
     semilla = np.random.randint(ii32.min, ii32.max)
     with open("seed.dat",'w') as arch: arch.write(str(semilla) + "\n")
@@ -139,6 +135,7 @@ if rank == 0:
     with open('log1.txt','w') as arch: arch.write(salida)
     with open('corrida0.txt','w') as arch: arch.write("corrida0" + " " + str(Temperatures[0]))
     os.chdir("../")
+# espera a que el nodo 0 termine de calcular esta DM
 comm.Barrier()
 
 #
@@ -165,6 +162,7 @@ for iteration in range(Nrun):
             shutil.copy('../../corrida0/estados.dat',"./")
             os.chdir("../")
         os.chdir("../")
+# espera a que el nodo 0 termine de crear las carpetas necesarias
 comm.Barrier()
 
 
@@ -187,27 +185,31 @@ for iteration in range(Nrun):
         # Se crean los parámetros para las corridas 
         gen_parameters_dat(ts, N_medi)
 
-        crea_seed_dat()
+        proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
+        salida = proc.communicate()[0]
+        # Guardo la salida para ver que hizo
+        with open('log2.txt','w') as arch: arch.write(salida)
 
         os.chdir("../")       
     os.chdir("../")       
 #
 # Corre luego de la termalización 
 #
-for iteration in range(Nrun):
-    iteration_path = "iteration"+ "_" + str(iteration)
-    os.chdir(iteration_path)
-
-    for ts in temps:
-        carpeta_temp = "temp" + "_" + str(ts)
-        os.chdir(carpeta_temp)
-
-        proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
-        salida = proc.communicate()[0]
-        # Guardo la salida para ver que hizo
-        with open('log2.txt','w') as arch: arch.write(salida)
-        os.chdir("../")       
-    os.chdir("../")
+#for iteration in range(Nrun):
+#    iteration_path = "iteration"+ "_" + str(iteration)
+#    os.chdir(iteration_path)
+#
+#    for ts in temps:
+#        carpeta_temp = "temp" + "_" + str(ts)
+#        os.chdir(carpeta_temp)
+#
+#        proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
+#        salida = proc.communicate()[0]
+#        # Guardo la salida para ver que hizo
+#        with open('log2.txt','w') as arch: arch.write(salida)
+#
+#        os.chdir("../")       
+#    os.chdir("../")
 
 if rank == 0:
     print "fin: ", rank 
