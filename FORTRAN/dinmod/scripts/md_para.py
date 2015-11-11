@@ -83,6 +83,7 @@ L = np.power( N_part/Rho , np.float(1)/3 )
 
 # Lista de temperaturas de paso grueso
 Temperatures = np.arange(Temp_min,Temp_max+dTemp,dTemp)
+Temperatures = np.fliplr([Temperatures])[0]
 
 Cant_Puntos = Temperatures .size
 Puntos_Por_Nodo = Cant_Puntos / size + 1
@@ -105,16 +106,29 @@ def gen_parameters_dat (temp, Nmedi):
     p_part = str(sigma) + " " + str(epsilon) + " " + str(masa)
     str_to_write = p_corr + " " + p_part +  " " + str(N_save) + "\n" + str(gamma)
     with open(file_name,'w') as arch: arch.write(str_to_write)
-    #fo = open(name, "wb")
-    #fo.write(str_to_write)
-    #fo.write(str(sigma))
-    #fo.close()
 
 def gen_data (rank):
     name = "foo"+ str(rank)  + ".txt"
     fo = open(name, "wb")
     fo.write("hola mundo: " + str(rank) )
     fo.close()
+
+#
+# Corrida cero (0)
+#
+if rank == 0:
+    corrida_cero_path = "corrida0" 
+    if not os.path.exists(corrida_cero_path):
+        os.makedirs(corrida_cero_path)
+    os.chdir(corrida_cero_path)       
+    gen_parameters_dat(Temperatures[0], N_term)
+    proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
+    salida = proc.communicate()[0]
+    # Guardo la salida para ver que hizo
+    with open('log1.txt','w') as arch: arch.write(salida)
+    with open('corrida0.txt','w') as arch: arch.write("corrida0" + " " + str(Temperatures[0]))
+    os.chdir("../")
+comm.Barrier()
 
 #
 # Creación de las carpetas
@@ -133,9 +147,12 @@ for iteration in range(Nrun):
             os.chdir(carpeta_temp)
             # Se crean los parámetros para la termalización
             gen_parameters_dat(ts, N_term)
+            # Copia el archivo de estados  de corrida0 a la carpeta de temperatura
+            shutil.copy('../../corrida0/estados.dat',"./")
             os.chdir("../")
         os.chdir("../")
 comm.Barrier()
+
 
 #
 # Corre la termalización
@@ -176,13 +193,7 @@ for iteration in range(Nrun):
         # Se crean los parámetros para las corridas 
         os.chdir("../")       
 
-    os.chdir("../")       
-
-
-
-
-
-
+    os.chdir("../")
 if rank == 0:
     print "fin: ", rank 
 

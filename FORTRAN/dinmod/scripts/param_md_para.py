@@ -13,7 +13,7 @@ Temp_min = 0.7
 # Temperatura máxima
 Temp_max = 1.4
 # Paso de temperatura
-dTemp = 0.05
+dTemp = 0.1
 # Agrego el detalle cerca de la temperatura crítica
 #T_detail_min = 2.10
 #T_detail_max = 2.50
@@ -24,16 +24,16 @@ N_grab = 10
 # Paso temporal de integración
 dt = 0.001
 # Número de pasos para la primer corrida (termalización)
-N_term = '20000'
+N_term = '2000'
 # Número de pasos para la segunda corrida (medición)
-N_medi = '80000'
+N_medi = '10000'
 # Número de corridas para cada temperatura
-Nrun = 16
+Nrun = 4 
 epsilon = 1.0
 sigma   = 1.0
 masa = 1.0
 N_save  = 1000
-gamma   = 1.0
+gamma   = 0.5
 
 #
 # FIN PARAMETROS DE ENTRADA
