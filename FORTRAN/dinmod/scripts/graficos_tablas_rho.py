@@ -42,8 +42,8 @@ for nombre in archivo:
     
     plt.errorbar(rho, p_avg, yerr=p_std, fmt=forma[j],label=leg[j])
     #plt.title(r'Valores medios')
-    plt.xlabel('$p^*$')
-    plt.ylabel(r'$\rho^*$')
+    plt.xlabel(r'$\rho*$')
+    plt.ylabel('$p^*$')
     plt.xlim(xLim)
     #plt.ylim([-2.1 , -0.2])
     plt.legend(loc='upper left',numpoints=1)
