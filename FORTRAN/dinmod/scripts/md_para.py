@@ -4,6 +4,7 @@
 import os
 import shutil
 import subprocess
+import time
 
 import numpy as np 
 from mpi4py import MPI
@@ -15,6 +16,10 @@ size = comm.Get_size()
 
 #/home/pizarro/opt/openmpi-1.8.1-gcc/bin/mpirun -np 4 /home/pizarro/python/bin/python ./Melting.py
 
+# inicializa la semilla del generador de números aleatorios
+# de python para crear seed.dat 
+np.random.seed(int(time.time()))
+ii32 = np.iinfo(np.int32)
 
 ###############################################################################       
 #   PARAMETROS DE ENTRADA
@@ -113,6 +118,9 @@ def gen_data (rank):
     fo.write("hola mundo: " + str(rank) )
     fo.close()
 
+def crea_seed_dat ():
+    semilla = np.random.randint(ii32.min, ii32.max)
+    with open("seed.dat",'w') as arch: arch.write(str(semilla) + "\n")
 #
 # Corrida cero (0)
 #
@@ -122,6 +130,9 @@ if rank == 0:
         os.makedirs(corrida_cero_path)
     os.chdir(corrida_cero_path)       
     gen_parameters_dat(Temperatures[0], N_term)
+    
+    crea_seed_dat()
+
     proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
     salida = proc.communicate()[0]
     # Guardo la salida para ver que hizo
@@ -147,6 +158,9 @@ for iteration in range(Nrun):
             os.chdir(carpeta_temp)
             # Se crean los parámetros para la termalización
             gen_parameters_dat(ts, N_term)
+
+            crea_seed_dat()
+
             # Copia el archivo de estados  de corrida0 a la carpeta de temperatura
             shutil.copy('../../corrida0/estados.dat',"./")
             os.chdir("../")
@@ -164,6 +178,7 @@ for iteration in range(Nrun):
     for ts in temps:
         carpeta_temp = "temp" + "_" + str(ts)
         os.chdir(carpeta_temp)
+        # corrida de la DM 
         proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]
         # Guardo la salida para ver que hizo
@@ -171,11 +186,11 @@ for iteration in range(Nrun):
         with open('termalizacion.txt','w') as arch: arch.write("termalizado" + " " + str(ts))
         # Se crean los parámetros para las corridas 
         gen_parameters_dat(ts, N_medi)
+
+        crea_seed_dat()
+
         os.chdir("../")       
-
     os.chdir("../")       
-
-
 #
 # Corre luego de la termalización 
 #
@@ -186,14 +201,13 @@ for iteration in range(Nrun):
     for ts in temps:
         carpeta_temp = "temp" + "_" + str(ts)
         os.chdir(carpeta_temp)
+
         proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
         salida = proc.communicate()[0]
         # Guardo la salida para ver que hizo
-        with open('log1.txt','w') as arch: arch.write(salida)
-        # Se crean los parámetros para las corridas 
+        with open('log2.txt','w') as arch: arch.write(salida)
         os.chdir("../")       
-
     os.chdir("../")
+
 if rank == 0:
     print "fin: ", rank 
-
