@@ -2,29 +2,29 @@
 # -*- coding: utf-8 -*-
 
 ###############################################################################       
-#  SE EJECUTA CON: mpirun.mpich -n 4  python corridas_paralelo_t.py
+#  SE EJECUTA CON: mpirun.mpich -n 4  python corridas_paralelo_rho.py
 ###############################################################################
 #
-# Script para correr el programa de ising a distintas temperaturas
-# Crea una carpeta para cada temperatura. En cada una de esas carpetas, a su
+# Script para correr el programa de ising a distinta densidades
+# Crea una carpeta para cada densidad. En cada una de esas carpetas, a su
 # vez, crea Nruns carpetas para hacer estadística y obtener los valores con
 # sus respectivos errores.
 #
-# En cada temperatura, se utiliza el valor final de la temperatura anterior.
+# En cada densidad, se utiliza el valor final de la densidad anterior.
 # Arbitrariamente, se toma el valor final de RUN00 como el valor inicial de
 # todas las corridas a la siguiente temperatura (menor)
 #
-# Los resultados los guarda en el archivo 'tablas_temperatura.dat'
-# Cada fila de 'tablas_temperatura.dat' representa los resultados a una dada
-# temperatura con sus respectivos errores. Las columnas son:
+# Los resultados los guarda en el archivo 'tabla_densidad.dat'
+# Cada fila de 'tabla_densidad.dat' representa los resultados a una dada
+# densidad con sus respectivos errores. Las columnas son:
 # T rho <p> std(p) <sp> std(sp) <Temp> std(Temp) <U> std(U)
 # T es la temperatura fijada. Temp es la medida.
 # Los errores se calculan como std(RUN)/sqrt(NRUN)
 #
-# Se paralelizan las corridas que se hace a una dada tempteratura. La limitación
-# está en que se debe esperar que terminen las corridas a la temperatura anterior
+# Se paralelizan las corridas que se hace a una dada densidad. La limitación
+# está en que se debe esperar que terminen las corridas a la densidad anterior
 # para utilizar el estado final. De lo contrario se podría parelelizar también
-# la corrida para cada temperatura (en el archivo 'sin errores' está hecho así)
+# la corrida para cada densidad (en el archivo 'sin errores' está hecho así)
 ###############################################################################
 
 import os
@@ -48,18 +48,19 @@ size = comm.Get_size()
 ###############################################################################       
 #   PARAMETROS DE ENTRADA
 ###############################################################################
-if os.path.isfile("parametros_t.py"):
+if os.path.isfile("parametros_rho.py"):
     
-    import parametros_t as parametros
+    import parametros_rho as parametros
   
     N_part   = np.int(parametros.N_part)
-    Rho      = np.float(parametros.Rho)
-    Temp_min = np.float(parametros.Temp_min)
-    Temp_max = np.float(parametros.Temp_max)
-    dTemp    = np.float(parametros.dTemp)
-    #T_detail_min = np.float(parametros.T_detail_min)
-    #T_detail_max = np.float(parametros.T_detail_max)
-    #dT_detail = np.float(parametros.dT_detail)
+    Temp     = np.float(parametros.Temp)
+    Rho      = np.asarray(parametros.Rho)
+    #Rho_min  = np.float(parametros.Rho_min)
+    #Rho_max  = np.float(parametros.Rho_max)
+    #dRho     = np.float(parametros.dRho)
+    Rho_detail_min = np.float(parametros.Rho_detail_min)
+    Rho_detail_max = np.float(parametros.Rho_detail_max)
+    dRho_detail = np.float(parametros.dRho_detail)
     dt       = np.float(parametros.dt)
     N_term   = np.int(parametros.N_term)
     N_medi   = np.int(parametros.N_medi)
@@ -68,19 +69,19 @@ if os.path.isfile("parametros_t.py"):
 else:
     # Número de partículas
     N_part = 200
-    # Densidad de partículas
-    Rho = 0.3
-    #------ Barrido de temperaturas
-    # Temperatura mínima
-    Temp_min = 0.7
-    # Temperatura máxima
-    Temp_max = 1.4
-    # Paso de temperatura
-    dTemp = 0.05
+    # Temperatura 
+    Temp = 1.1
+    #------ Barrido de densidades
+    # Densidad mínima
+    #Rho_min = 0.7
+    # Densidad máxima
+    # Rho_max = 1.4
+    # Paso de densidad 
+    # dRho = 0.05
     # Agrego el detalle cerca de la temperatura crítica
-    #T_detail_min = 2.10
-    #T_detail_max = 2.50
-    #dT_detail = 0.02
+    Rho_detail_min = 2.10
+    Rho_detail_max = 2.50
+    dRho_detail = 0.02
     # abs(K_grab) Cada cuántos puntos se quiere grabar el archivo temporal
     # K_grab < 0 especifica que no se grabe ningún archivo temporal
     N_grab = 10
@@ -93,15 +94,13 @@ else:
     # Número de corridas para cada temperatura
     Nrun = 8
 
-# Calcula el lado del cubo para la densidad y número de partículas especificado
-L = np.power( N_part/Rho , np.float(1)/3 ) 
 # Escribe los valores al archivo parametros.dat
 # Lo hace el root
 if rank==0:
     # Escribe la cantidad de partículas
     dm.escribe_entrada('N_part',str(N_part))
-    # Escribe el lado del cubo
-    dm.escribe_entrada('L',str(L))
+    # Escribe la temperatura 
+    dm.escribe_entrada('Temp',str(Temp))
 
 # Todos esperan a que root haya terminado
 comm.Barrier()
@@ -110,18 +109,18 @@ comm.Barrier()
 ###############################################################################
 
 # Lista de temperaturas de la zona de detalle
-#detalle = np.arange(T_detail_min,T_detail_max + dT_detail, dT_detail)
+detalle = np.arange(Rho_detail_min,Rho_detail_max + dRho_detail, dRho_detail)
 
-# Lista de temperaturas de paso grueso
-tempe = np.arange(Temp_min,Temp_max+dTemp,dTemp)
+# Lista de densidades de paso grueso
+Rho = np.array(Rho)
 
-#tempe = np.append(tempe, detalle)
-# filtra por valores unicos de temperatura
+Rho = np.append(Rho, detalle)
+# filtra por valores unicos de densidad 
 # se debe redondear (con algún criterio) para evitar falsas duplicaciones
 # por errores de redondeo de python
-#tempe = np.unique(tempe.round(decimals=6))
+Rho = np.unique(Rho.round(decimals=6))
 # ordena de mayor a menor el array numpy
-tempe = np.fliplr([tempe])[0]
+Rho = np.fliplr([Rho])[0]
 
 # Cantidad de corridas por core
 # Notar que Nrun conviene que sea múltiplo de la cantidad
@@ -141,8 +140,8 @@ curr_dir = os.getcwd()
 # Lo corre sólo root y luego se copia el archivo al resto de las carpetas
 
 if rank==0:
-    # Escribe la temperatura inicial (la mayor) 
-    dm.escribe_entrada('Temp',str(tempe[0]))
+    # Escribe la densidad inicial (la mayor), el L más chico
+    dm.escribe_entrada( 'L',dm.rho_2_lado( N_part, Rho[0] ) )
     # Escribe el número de pasos temporale
     dm.escribe_entrada('N_pasos','3000')
     # Escribe el dt de la integración temporal
@@ -150,7 +149,7 @@ if rank==0:
     # Escribe cada cuánto se hacen mediciones y si se guardan archivos
     dm.escribe_entrada('N_grab','1')
         
-    print('Core {0} corriendo la minimización de energía a  T={1}'.format(rank,tempe[0]))
+    print('Core {0} corriendo la minimización de energía a  Rho={1}'.format(rank,Rho[0]))
     
     proc = subprocess.Popen(['./dinmod'],stdout=subprocess.PIPE)
     salida = proc.communicate()[0]
@@ -169,55 +168,55 @@ if rank==0:
 comm.Barrier()
 
 ###############################################################################
-# LOOP QUE CORRE SOBRE TODAS LAS TEMPERATURAS
+# LOOP QUE CORRE SOBRE TODAS LAS DENSIDADES 
 ###############################################################################
-T_anterior = []    # Buffer para copiar el estado final a T anterior
+R_anterior = []  # Buffer para copiar el estado final a R anterior
                    # al estado actual.
-for T in tempe:
-    Tnombre = str(T)
+for R in Rho:
+    Rnombre = str(R)
     # Nombre de la carpeta uqe se va a crear
-    carpeta = 'temperatura_' + Tnombre 
+    carpeta = 'densidad_' + Rnombre 
     # Camino completo de la carpeta que se va a crear
     path_carpeta = os.path.join(curr_dir,carpeta)
-    # Sólo un core se encarga de armar el directorio de temperatura
+    # Sólo un core se encarga de armar el directorio de densidad
     if rank==0:
         # Se crea la carpeta sólo si ésta no existe. De lo contrario se saltea la 
-        # temperatura correspondiente
+        # densidad correspondiente
         try: 
             os.makedirs(path_carpeta)
         except OSError as exception:
             if exception.errno != errno.EEXIST:
                 raise
             else:
-                print('Ya existe el directorio. Se omite corrida con T=' + Tnombre)
-                T_anterior = Tnombre
+                print('Ya existe el directorio. Se omite corrida con Rho=' + Rnombre)
+                R_anterior = Rnombre
                 # Si se llega al final de la lista, se finaliza el programa
-                if T==tempe[-1]:
+                if R==Rho[-1]:
                     print('No hay nada por hacer, se sale del programa')
                     comm.Abort()
                 continue
-        # Copia el archivo de estados la carpeta de temperatura
+        # Copia el archivo de estados la carpeta de densidad 
         shutil.copy('estados.dat',path_carpeta)
-        # Copia el archivo de entrada a la carpeta de temperatura
+        # Copia el archivo de entrada a la carpeta de densidad
         shutil.copy('parametros.dat',path_carpeta)
         # Se mete en la carpeta
-        os.chdir(path_carpeta)       
+        os.chdir(path_carpeta)
         # Cambia el archivo de entrada adentro de la carpeta
-        dm.escribe_entrada('Temp',Tnombre)
+        dm.escribe_entrada('L', dm.rho_2_lado(N_part,R))
         # para utilizar el estado de temperatura anterior
-        dm.copia_estado_temp_anterior(path_carpeta,T_anterior,Tnombre)
-        print('Core {0} ya armó el directorio para T={1}'.format(rank,T))
+        dm.copia_estado_temp_anterior(path_carpeta,R_anterior,Rnombre)
+        print('Core {0} ya armó el directorio para Rho={1}'.format(rank,R))
     # Una vez que root encontró la carpeta donde debe trabajar, manda la información
     # al resto de los procesos
-    T            = comm.bcast(T, root=0)
-    T_anterior   = comm.bcast(T_anterior, root=0)
-    Tnombre      = comm.bcast(Tnombre, root=0)
+    R            = comm.bcast(R, root=0)
+    R_anterior   = comm.bcast(R_anterior, root=0)
+    Rnombre      = comm.bcast(Rnombre, root=0)
     path_carpeta = comm.bcast(path_carpeta, root=0)
     # Se meten en la carpeta
     os.chdir(path_carpeta) 
     
     ###########################################################################
-    # DISTINTAS CORRIDAS A LA MISMA T PARA OBTENER ERROR ESTADISTICO
+    # DISTINTAS CORRIDAS A LA MISMA Rho PARA OBTENER ERROR ESTADISTICO
     #      - LOOP PARALELIZADO
     ###########################################################################
     for i in run_local:
@@ -264,7 +263,7 @@ for T in tempe:
         #######################################################################
         # Corre por segunda vez tomando el estado anterior. Aumento el N
         dm.escribe_entrada('N_pasos',str(N_medi))
-        print('Core {0} corriendo {1} a la temperatura {2}'.format(rank,carpeta_runs,T))
+        print('Core {0} corriendo {1} a la densidad {2}'.format(rank,carpeta_runs,R))
         # Esto funciona para python >= 2.7           
         # salida = subprocess.check_output(curr_dir+'/dinmod')
         # Alternativa para python 2.6        
@@ -292,11 +291,11 @@ for T in tempe:
     # FIN DEL LOOP PARALELIZADO
     ###########################################################################
     if rank==0:
-        # Hace estadística de todas las corridas y copia en <tabla_temperatura.dat> 
-        dm.copia_val_medios(T,Rho,Nrun,curr_dir,'tabla_temperatura.dat')
+        # Hace estadística de todas las corridas y copia en <tabla_presion.dat> 
+        dm.copia_val_medios(Temp,R,Nrun,curr_dir,'tabla_presion.dat')
         # Sale de la carpeta
         os.chdir(curr_dir)        
     # Guardo la temperatura para copiar archivos luego
-    T_anterior = Tnombre
+    R_anterior = Rnombre
 
 ###############################################################################
