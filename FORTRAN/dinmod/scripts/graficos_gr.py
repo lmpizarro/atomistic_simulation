@@ -9,7 +9,7 @@ import sys
 if len(sys.argv) < 2:
     arch = 'gr.dat'
 else:
-    arch_tem = sys.argv[1]
+    arch = sys.argv[1]
 
 # Se leen los dos archivos, salvo la primer linea
 datos = np.loadtxt(arch,skiprows=1)
