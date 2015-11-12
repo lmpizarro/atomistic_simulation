@@ -28,7 +28,7 @@ ii32 = np.iinfo(np.int32)
 if os.path.isfile("param_md_para.py"):
     
     import param_md_para as parametros
-  
+
     N_part   = np.int(parametros.N_part)
     Rho      = np.float(parametros.Rho)
     Temp_min = np.float(parametros.Temp_min)
@@ -47,59 +47,31 @@ if os.path.isfile("param_md_para.py"):
     masa = np.float(parametros.masa)
     N_save  = np.int(parametros.N_save)
     gamma   = np.float(parametros.gamma)
-
 else:
-    # Número de partículas
-    N_part = 200
-    # Densidad de partículas
-    Rho = 0.3
-    #------ Barrido de temperaturas
-    # Temperatura mínima
-    Temp_min = 0.7
-    # Temperatura máxima
-    Temp_max = 1.4
-    # Paso de temperatura
-    dTemp = 0.05
-    # Agrego el detalle cerca de la temperatura crítica
-    #T_detail_min = 2.10
-    #T_detail_max = 2.50
-    #dT_detail = 0.02
-    # abs(K_grab) Cada cuántos puntos se quiere grabar el archivo temporal
-    # K_grab < 0 especifica que no se grabe ningún archivo temporal
-    N_grab = 10
-    # Paso temporal de integración
-    dt = 0.001
-    # Número de pasos para la primer corrida (termalización)
-    N_term = 4000
-    # Número de pasos para la segunda corrida (medición)
-    N_medi = 10000
-    # Número de corridas para cada temperatura
-    Nrun = 8
-    epsilon = 1.0
-    sigma   = 1.0
-    masa = 1.0
-    N_save  = 1000
-    gamma   = 1.0
-
-# Directorio raíz donde está el ejecutable y este script
-root_dir = os.getcwd()
+    print "El archivo param_md_para.py debe estar inicializado. "
+    print "El programa terminará inmediatamente "
+    exit()
 
 # Calcula el lado del cubo para la densidad y número de partículas especificado
 L = np.power( N_part/Rho , np.float(1)/3 ) 
+
+
+# Directorio raíz donde está el ejecutable y este script
+root_dir = os.getcwd()
 
 # Lista de temperaturas de paso grueso
 Temperatures = np.arange(Temp_min,Temp_max+dTemp,dTemp)
 # Ordeno de mayor a menor las temperaturas
 Temperatures = np.fliplr([Temperatures])[0]
 
-Cant_Puntos = Temperatures .size
-Puntos_Por_Nodo = Cant_Puntos / size + 1
+Cant_Puntos = Temperatures.size
+Puntos_Por_Nodo = (Cant_Puntos / size) + 1
 
 Ti = rank * Puntos_Por_Nodo
 Tf = (rank + 1)  * Puntos_Por_Nodo
 temps =  Temperatures[Ti: Tf]
 
-print rank, temps
+print "el nodo: ", rank, "calcula las temps", temps
 #
 # Formato de parametros.dat
 # Temp Npart L tinteg pasadas sigma epsilon masa Ngrabacion
@@ -165,10 +137,9 @@ for iteration in range(Nrun):
 # espera a que el nodo 0 termine de crear las carpetas necesarias
 comm.Barrier()
 
-
 #
 # Corre la termalización
-#
+# y la post termalización
 for iteration in range(Nrun):
     iteration_path = "iteration"+ "_" + str(iteration)
     os.chdir(iteration_path)
