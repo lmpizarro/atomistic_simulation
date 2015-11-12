@@ -15,6 +15,7 @@ size = comm.Get_size()
 
 #/home/pizarro/opt/openmpi-1.8.1-gcc/bin/mpirun -np 4 /home/pizarro/python/bin/python ./Melting.py
 
+
 Temperatures = []
 Tinic = 200
 Tfin = 2000
