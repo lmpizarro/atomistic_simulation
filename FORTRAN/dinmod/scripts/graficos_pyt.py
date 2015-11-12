@@ -26,8 +26,8 @@ N_t  = np.int(N)
 dt_t = np.float(dt)
 
 # Vector temporal
-tie_p  = np.arange(0,N_p*dt_p,dt_p)
-tie_t  = np.arange(0,N_t*dt_t,dt_t)
+tie_p  = np.linspace(0,N_p*dt_p,N_p)
+tie_t  = np.linspace(0,N_t*dt_t,N_t)
 # Se leen los dos archivos, salvo la primer linea
 pres = np.loadtxt(arch_pre,skiprows=1)
 temp = np.loadtxt(arch_tem,skiprows=1)
