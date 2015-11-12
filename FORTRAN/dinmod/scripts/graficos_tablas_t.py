@@ -45,7 +45,7 @@ for nombre in archivo:
     plt.xlabel('$T^*$')
     plt.ylabel('$p^*$')
     plt.xlim(xLim)
-    #plt.ylim([-2.1 , -0.2])
+    plt.ylim([-0.15 , 0.25])
     plt.legend(loc='upper left',numpoints=1)
     plt.grid(True)
    
@@ -65,7 +65,7 @@ for nombre in archivo:
     plt.xlabel('$T^*$')
     plt.ylabel('$U^*$')
     plt.xlim(xLim)
-    #plt.ylim([-0.1 , 1.1])
+    plt.ylim([-4.1 , -1.9])
     plt.legend(loc='upper left',numpoints=1)    
     plt.grid(True)
 #    plt.figure(2,figsize=(8,8))
