@@ -145,7 +145,7 @@ for iteration in range(N_run):
             os.makedirs(iteration_path)
         os.chdir(iteration_path)       
         for ts in Temperatures:
-            carpeta_temp = "temp" + "_" + str(ts)
+            carpeta_temp = 'temp_%04d' % (ts)
             if not os.path.exists(carpeta_temp):
                os.makedirs(carpeta_temp)
 
@@ -162,7 +162,7 @@ for iteration in range(N_run):
     os.chdir(iteration_path)
 
     for ts in temps:
-        carpeta_temp = "temp" + "_" + str(ts)
+        carpeta_temp = 'temp_%04d' % (ts)
         os.chdir(carpeta_temp)
         # corrida de la DM 
         dyn.set_temperature(units.kB*ts)
@@ -173,35 +173,14 @@ for iteration in range(N_run):
             message_calc = "E_total = %-10.5f  T = %.0f K  (goal: %.0f K, step %d of %d) \n" %\
               (etotal(atoms), temperature(atoms), ts, i, N_medi/100)
             with open('calcs.txt','a+') as arch: arch.write(message_calc)
-            atoms_file_name = 'atoms'+ '_' + str(ts) + '_' + str(i) + '.xyz'
+            atoms_file_name = 'atoms_%04d.xyz' % (i)
             atoms.write(atoms_file_name) 
-                        #atoms * parametros.Size)
- 
+
         mess_log = "corrida iteracion: " + str(iteration + 1) + " temperatura: " + str(ts)
         with open('log2.txt','w') as arch: arch.write(mess_log)
 
         os.chdir("../")       
     os.chdir("../")
  
-exit ()
-#
-# Corre luego de la termalización 
-#
-#for iteration in range(N_run):
-#    iteration_path = "iteration"+ "_" + str(iteration)
-#    os.chdir(iteration_path)
-#
-#    for ts in temps:
-#        carpeta_temp = "temp" + "_" + str(ts)
-#        os.chdir(carpeta_temp)
-#
-#        proc = subprocess.Popen([root_dir+'/dinmod'],stdout=subprocess.PIPE)
-#        salida = proc.communicate()[0]
-#        # Guardo la salida para ver que hizo
-#        with open('log2.txt','w') as arch: arch.write(salida)
-#
-#        os.chdir("../")       
-#    os.chdir("../")
-
 if rank == 0:
     print "fin: ", rank 
