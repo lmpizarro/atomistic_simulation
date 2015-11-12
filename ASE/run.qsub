@@ -18,5 +18,5 @@ echo NUM_NODES = $NUM_NODES
 export NUM_PROCS 
 export NUM_NODES
 
-bin="/home/pizarro/python/bin/python ./md_para_ase.py"
+bin="/home/pizarro/python/bin/python ./md_para.py"
 /home/pizarro/opt/openmpi-1.8.1-gcc/bin/mpirun -machinefile $PBS_O_WORKDIR/$PBS_JOBID.machines -np $NUM_PROCS $bin
