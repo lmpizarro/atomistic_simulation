@@ -63,24 +63,26 @@ else:
 root_dir = os.getcwd()
 
 # Lista de temperaturas de paso grueso
-Temperatures = np.arange(Temp_min,Temp_max+dTemp,dTemp)
+Temperatures = np.arange(Temp_min, Temp_max + dTemp, dTemp)
 # Ordeno de mayor a menor las temperaturas
 Temperatures = np.fliplr([Temperatures])[0]
 
 Cant_Puntos = Temperatures.size
-Puntos_Por_Nodo = (Cant_Puntos / size) + 1
+Puntos_Por_Nodo = (float(Cant_Puntos) / float(size)) 
 
 Ti = rank * Puntos_Por_Nodo
 Tf = (rank + 1)  * Puntos_Por_Nodo
 temps =  Temperatures[Ti: Tf]
 
+print rank,  Ti, Tf
 
 if rank == 0:
     print "nro de iteraciones ", N_run 
+    print "Temperatures: ", Temperatures
+    print Temperatures[0], Temperatures[Temperatures.size -1], Temperatures.size
 comm.Barrier()
 
 print "el nodo: ", rank, "calcula las temps", temps
-
 
 # Create the atoms
 atoms = FaceCenteredCubic(size = parametros.Size, 
@@ -167,14 +169,14 @@ for iteration in range(N_run):
         # corrida de la DM 
         dyn.set_temperature(units.kB*ts)
 
-        with open('calcs.txt','w') as arch: arch.write("Calculos a temperatura: " + str(ts))
+        with open('calcs.txt','w') as arch: arch.write("Calculos a temperatura: " + str(ts) + "\n")
         for i in range(N_medi/100):
             dyn.run(100)
-            message_calc = "E_total = %-10.5f  T = %.0f K  (goal: %.0f K, step %d of %d) \n" %\
-              (etotal(atoms), temperature(atoms), ts, i, N_medi/100)
-            with open('calcs.txt','a+') as arch: arch.write(message_calc)
             atoms_file_name = 'atoms_%04d.xyz' % (i)
-            atoms.write(atoms_file_name) 
+            atoms.write(atoms_file_name)
+            message_calc = "%-10.5f  %.0f \n" % (etotal(atoms), temperature(atoms))
+            with open('calcs.txt','a+') as arch: arch.write(message_calc)
+            print (("%04d %04d %.0f %04d %s")%(iteration, rank, ts, i, atoms_file_name))
 
         mess_log = "corrida iteracion: " + str(iteration + 1) + " temperatura: " + str(ts)
         with open('log2.txt','w') as arch: arch.write(mess_log)
