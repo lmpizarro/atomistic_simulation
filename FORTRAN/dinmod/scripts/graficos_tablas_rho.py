@@ -20,7 +20,7 @@ forma.append('b.')
 leg = []
 leg.append(ur'$T^* = 1.1$')
 
-xLim = [0.65, 1.45]
+xLim = [-0.1, 1.2]
 
 j = 0
 for nombre in archivo:
@@ -45,8 +45,8 @@ for nombre in archivo:
     plt.xlabel(r'$\rho*$')
     plt.ylabel('$p^*$')
     plt.xlim(xLim)
-    #plt.ylim([-2.1 , -0.2])
-    plt.legend(loc='upper left',numpoints=1)
+    plt.ylim([-0.5, 7.0])
+    plt.legend(loc='upper center',numpoints=1)
     plt.grid(True)
    
     plt.figure(2,figsize=(8,6))
@@ -55,7 +55,7 @@ for nombre in archivo:
     plt.xlabel(r'$\rho^*$')
     plt.ylabel('$\sigma(p^*)$')
     plt.xlim(xLim)
-    #plt.ylim([-0.1 , 1.1])
+    plt.ylim([-0.1, 1.2])
     plt.legend(loc='upper center',numpoints=1)    
     plt.grid(True)
     
@@ -65,8 +65,8 @@ for nombre in archivo:
     plt.xlabel(r'$\rho^*$')
     plt.ylabel('$U^*$')
     plt.xlim(xLim)
-    #plt.ylim([-0.1 , 1.1])
-    plt.legend(loc='upper left',numpoints=1)    
+    plt.ylim([-7.0, 1.0])
+    plt.legend(loc='upper center',numpoints=1)    
     plt.grid(True)
 #    plt.figure(2,figsize=(8,8))
 #    
