@@ -59,9 +59,6 @@ else:
     print "El programa terminará inmediatamente "
     exit()
 
-# Calcula el lado del cubo para la densidad y número de partículas especificado
-L = np.power( N_part/Rho , np.float(1)/3 ) 
-
 # Directorio raíz donde está el ejecutable y este script
 root_dir = os.getcwd()
 
@@ -79,14 +76,17 @@ temps =  Temperatures[Ti: Tf]
 
 
 if rank == 0:
-    print "nro de iteraciones", N_run
+    print "nro de iteraciones ", N_run 
 comm.Barrier()
 
 print "el nodo: ", rank, "calcula las temps", temps
 
 
 # Create the atoms
-atoms = FaceCenteredCubic(size=(2,2,2), symbol="Cu", pbc=False)
+atoms = FaceCenteredCubic(size = parametros.Size, 
+                          symbol="Cu", 
+                          pbc=parametros.Pbc,
+                          latticeconstant = parametros.LatticeConstant)
 
 # Associate the EMT potential with the atoms
 atoms.set_calculator(EMT())
@@ -102,9 +102,6 @@ def temperature(a):
 
 def etotal(a):
     return (a.get_kinetic_energy() + a.get_potential_energy()) / len(a)
-
-
-
 
 #
 # Formato de parametros.dat
@@ -176,6 +173,9 @@ for iteration in range(N_run):
             message_calc = "E_total = %-10.5f  T = %.0f K  (goal: %.0f K, step %d of %d) \n" %\
               (etotal(atoms), temperature(atoms), ts, i, N_medi/100)
             with open('calcs.txt','a+') as arch: arch.write(message_calc)
+            atoms_file_name = 'atoms'+ '_' + str(ts) + '_' + str(i) + '.xyz'
+            atoms.write(atoms_file_name) 
+                        #atoms * parametros.Size)
  
         mess_log = "corrida iteracion: " + str(iteration + 1) + " temperatura: " + str(ts)
         with open('log2.txt','w') as arch: arch.write(mess_log)

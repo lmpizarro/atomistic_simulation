@@ -13,7 +13,7 @@ Temp_min = 200
 # Temperatura máxima
 Temp_max = 2000 
 # Paso de temperatura
-dTemp = 100 
+dTemp =  50 
 # Agrego el detalle cerca de la temperatura crítica
 #T_detail_min = 2.10
 #T_detail_max = 2.50
@@ -34,6 +34,10 @@ sigma   = 1.0
 masa = 1.0
 N_save  = 1000
 gamma   = 0.5
+
+Size = (3,3,3)
+Pbc  = True
+LatticeConstant = 3.5
 
 #
 # FIN PARAMETROS DE ENTRADA
