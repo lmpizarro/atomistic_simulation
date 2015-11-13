@@ -43,7 +43,7 @@ los elementos necesarios para hacer las corridas del programa.
 
 \subsubsection{Módulos  utilizados}
 
-La carpeta \textbf{libs/} contiene las librer\'ias usadas por el sistema
+La carpeta \textbf{libs/} contiene los módulos utilizados por el sistema, ellos son:
 
 \paragraph{\underline{\textit{inic\_fin.f90}}}:
 
@@ -91,11 +91,12 @@ en todo el sistema.
 
 \paragraph{\underline{\textit{estadistica.f90}}}:
 
-Un conjunto de subrutinas para análisis estad\'istico para 
-\textbf{Calcular los datos para graficar un histograma - de forma vectorial},  
-	  \textbf{calcular los datos para graficar un histograma - punto por punto}.
+Un conjunto de subrutinas para análisis estad\'istico para:
+\begin{itemize}
+	\item{Calcular los datos para graficar un histograma - de forma vectorial},  
+	\item{calcular los datos para graficar un histograma - punto por punto}.
 
-	  \textbf{Promedio y desviacion estandar de forma iterativa.}
+	\item{Promedio y desviacion estandar de forma iterativa.}
 
  Se evita cargar en memoria todos los datos a la vez. Se leen de a uno y se 
  calculan el promedio y la varianza normalizada con \textit{sqrt(1-N)} recursivamente. 
@@ -105,19 +106,20 @@ Un conjunto de subrutinas para análisis estad\'istico para
  Sin embargo, trabajando con doble precision se mejora bastante sin hacer nada.
 
 
- \textbf{Promedio y desviacion estandar vectorizado.}
+ \item{Promedio y desviacion estandar vectorizado.}
 
  La desventaja es que debe cargar al archivo completo en memoria. La ventaja es
  que tiene menos errores de redondeo.
 
 
- \textbf{Promedio y desviacion estandar vectorizado directo.}
+ \item{Promedio y desviacion estandar vectorizado directo.}
 
  La desventaja es que debe cargar al archivo completo en memoria. La ventaja es
  que tiene menos errores de redondeo.
  Es igual a \textit{vector\_mean\_var()} solo que opera sobre el vector de entrada
  y no sobre el archivo con los datos
 
+\end{itemize}
 
 
 \paragraph{\underline{\textit{globales.f90}}}:
@@ -187,7 +189,7 @@ sistema.
 \subsection{Código Python}
 
 El control de las corridas del código en FORTRAN se hace desde scripts en el lenguaje
-de alto nivel phyton \href{http://www.python.org/}. 
+de alto nivel  \href{http://www.python.org/}{phyton}. 
 
 Para eso hay que parametrizar adecuadamente el sistema en \textbf{\textit{parametros\_t.py}}
 \textbf{\textit{parametros\_rho.py}}, en un caso se parametriza la dependecia en temperaturas
@@ -234,9 +236,8 @@ Nrun = 8
 
 \subsection{Corridas del programa}
 
-El programa se puede correr en serie, o en paralelo usando openMP 
-(paralelización multi-core en memoria compartida) \href{http://openmp.org/}
-o MPI (Message Passing Interface) \href{http://www.open-mpi.org/} .
+El programa se puede correr en serie, o en paralelo usando  \href{http://openmp.org/}{openMP} 
+(paralelización multi-core en memoria compartida)o  \href{http://www.open-mpi.org/}{MPI} (Message Passing Interface).
 
 \subsubsection{Corridas en serie}
 Para correr en serie se debe poner en el script \textbf{\textit{instalar.sh}}
