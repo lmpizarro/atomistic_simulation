@@ -74,12 +74,13 @@ Ti = rank * Puntos_Por_Nodo
 Tf = (rank + 1)  * Puntos_Por_Nodo
 temps =  Temperatures[Ti: Tf]
 
-print rank,  Ti, Tf
+print ("rank %04d  Ti %04d Tf %04d")%(rank,  Ti, Tf)
 
 if rank == 0:
-    print "nro de iteraciones ", N_run 
+    print "nro de iteraciones %4d PpN %4d" % (N_run, Puntos_Por_Nodo) 
     print "Temperatures: ", Temperatures
-    print Temperatures[0], Temperatures[Temperatures.size -1], Temperatures.size
+    print ("Max T %.0f Min T %.0f cant Ts%3d" ) % (Temperatures[0], Temperatures[Temperatures.size -1], Temperatures.size)
+   
 comm.Barrier()
 
 print "el nodo: ", rank, "calcula las temps", temps

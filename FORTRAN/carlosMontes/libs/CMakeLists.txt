@@ -3,10 +3,11 @@
 ### Process this file with cmake to produce Makefile
 ###
 
-include_directories(${CMAKE_BINARY_DIR}/libs)
+file (GLOB libs_LIBS_SRCS "*.f90")
 
-add_executable(dinmod dinmod.f90)
-target_link_libraries(dinmod libs)
-set_target_properties(dinmod PROPERTIES
+add_library(libs ${libs_LIBS_SRCS})
+
+set_target_properties(libs PROPERTIES
 	COMPILE_FLAGS "${f90flags}"
 	LINK_FLAGS "${ldflags}")
+
