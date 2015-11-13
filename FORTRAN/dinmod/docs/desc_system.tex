@@ -20,56 +20,62 @@ y se obtiene con los permisos adecuados haciendo:
 Una vez cloneado el repositorio, para acceder al código, hacer:
 
 \begin{verbatim}
-  > cd FORTRAN/ising
+  > cd FORTRAN/dinmod
 \end{verbatim}
 
 
 
-El c\'odigo fuente del programa \textbf{\textit{ising.f90}}, se encuentra en la carpeta
+El c\'odigo fuente del programa \textbf{\textit{dinmod.f90}}, se encuentra en la carpeta
 \textbf{src/}, su compilación se hace con el sistema \textbf{cmake} y depende
 de un conjunto de módulos que se encuentra en la carpeta \textbf{libs}.
 
-Para compilarlo hay que crear hacer:
+Para compilarlo hay que corre el script instalar.sh:
 
 \begin{verbatim}
-  > mkdir build/
-  > cd build/
-  > cmake ..
+  > ./instalar.sh 
 \end{verbatim}
 
-esas operaciones crean un directorio \textbf{bin/} donde se encuentran todos
+esas operaciones crean un directorio  \textbf{build/bin/} donde se encuentran todos
 los elementos necesarios para hacer las corridas del programa.
-Para eso hay que parametrizar adecuadamente el sistema en \textbf{\textit{parametros.py}}.
 
+El control de las corridas del código en FORTRAN se hace desde scripts en el lenguaje
+de alto nivel phyton \href{http://www.python.org/}. 
+
+Para eso hay que parametrizar adecuadamente el sistema en \textbf{\textit{parametros_t.py}}
+\textbf{\textit{parametros_rho.py}}, en un caso se parametriza la dependecia en temperaturas
+de las corridas y en el otro la dependencia en la densidad.
+ 
 Los comentarios del módulo explican el fin de cada una de las variables globales python.
 
 \begin{verbatim}
-# -*- coding: utf-8 -*-
 
 ###############################################################################       
-#   PARAMETROS DE ENTRADA
+#   PARAMETROS DE ENTRADA PARA CORRER A DISTINTAS TEMPERATURAS
 ###############################################################################
-# Tamaño de la red de spines
-N_red = 20
-M_red = 20
-# Cada cuántos puntos se quiere grabar el archivo temporal
-# K_grab = 0 especifica que no se grabe ningún archivo temporal
-N_grab = 0     
-# Barrido de temperaturas
+# Número de partículas
+N_part = 200
+# Densidad de partículas
+Rho = 0.3
+#------ Barrido de temperaturas
 # Temperatura mínima
-T_min = 0.5
+Temp_min = 0.7
 # Temperatura máxima
-T_max = 4.0
+Temp_max = 1.4
 # Paso de temperatura
-dT = 0.1
+dTemp = 0.25
 # Agrego el detalle cerca de la temperatura crítica
-T_detail_min = 2.10
-T_detail_max = 2.50
-dT_detail = 0.02
+#T_detail_min = 2.10
+#T_detail_max = 2.50
+#dT_detail = 0.02
+# abs(K_grab) Cada cuántos puntos se quiere grabar el archivo temporal
+# K_grab < 0 especifica que no se grabe ningún archivo temporal
+N_grab = 10
+# Paso temporal de integración
+dt = 0.001
 # Número de pasos para la primer corrida (termalización)
-N_term = '4000'
+N_term = 1000
 # Número de pasos para la segunda corrida (medición)
-N_medi = '10000'
+N_medi = 2000
 # Número de corridas para cada temperatura
 Nrun = 8
 #
