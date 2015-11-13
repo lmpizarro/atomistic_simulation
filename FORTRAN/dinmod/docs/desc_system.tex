@@ -35,14 +35,123 @@ Para compilarlo hay que corre el script \textbf{\textit{instalar.sh}}:
   > ./instalar.sh 
 \end{verbatim}
 
-esas operaciones crean un directorio  \textbf{build/bin/} donde se encuentran todos
+esa operación crea un directorio  \textbf{build/bin/} donde se encuentran todos
 los elementos necesarios para hacer las corridas del programa.
+
+\subsection{Código FORTRAN}
+
+
+\subsubsection{Módulos  utilizados}
+
+La carpeta \textbf{libs/} contiene las librer\'ias usadas por el sistema
+
+\paragraph{\underline{\textit{inic\_fin.f90}}}:
+
+
+Un conjunto de subrutinas para inicializar y finalizar el sistema de cálculo:
+
+\begin{itemize}
+  \item  Inicializa parametros para la g(r)
+  \item  Calcula el radio de corte y el desplazamiento de potencial
+
+  \item Inicializa las velocidades
+
+  \item Inicializa posición aleatoria dentro de la caja
+
+  \item Integración de las ecuaciones de movimiento - minimización energía
+
+  \item Subrutina de finalización  del cálculo
+\end{itemize}
+
+
+\paragraph{\underline{\textit{procesamiento.f90}}}:
+
+
+ Se hace estadistica sobre vectores y se escriben  resultados, se calculan 
+ valores medios y desviacions estándares
+ luego  se escriben los resultados al archivo \textbf{\textit{val\_medios.dat}}
+
+\paragraph{\underline{\textit{types.f90}}}:
+
+En este módulo se encuentran las definiciones de tipos fundamentales que se usan 
+en todo el sistema.
+
+
+
+
+\paragraph{\underline{\textit{integra.f90}}}:
+
+ En este módulo se tiene la rutina que  integra las ecuaciones dinámicas 
+ con el algoritmo de velocity-verlet y otra que aplica las condiciones períodicas 
+ de contorno en forma vectorial.
+
+\paragraph{\underline{\textit{constants.f90}}}:
+
+ En este módulo se definen constantes que se utilizan en otros módulos. 
+
+\paragraph{\underline{\textit{estadistica.f90}}}:
+
+Un conjunto de subrutinas para análisis estad\'istico para 
+\textbf{Calcular los datos para graficar un histograma - de forma vectorial},  
+	  \textbf{calcular los datos para graficar un histograma - punto por punto}.
+
+	  \textbf{Promedio y desviacion estandar de forma iterativa.}
+
+ Se evita cargar en memoria todos los datos a la vez. Se leen de a uno y se 
+ calculan el promedio y la varianza normalizada con \textit{sqrt(1-N)} recursivamente. 
+
+ ADVERTENCIA: El método usado tiene problemas de redondeo para N muy grande.
+ Se tendria que modificar el algoritmo pararealizar el promedio (i.e de a pares)
+ Sin embargo, trabajando con doble precision se mejora bastante sin hacer nada.
+
+
+ \textbf{Promedio y desviacion estandar vectorizado.}
+
+ La desventaja es que debe cargar al archivo completo en memoria. La ventaja es
+ que tiene menos errores de redondeo.
+
+
+ \textbf{Promedio y desviacion estandar vectorizado directo.}
+
+ La desventaja es que debe cargar al archivo completo en memoria. La ventaja es
+ que tiene menos errores de redondeo.
+ Es igual a \textit{vector\_mean\_var()} solo que opera sobre el vector de entrada
+ y no sobre el archivo con los datos
+
+
+
+\paragraph{\underline{\textit{globales.f90}}}:
+
+En este  m\'odulo se encuentran  todas las variables globales del programa.
+	
+\paragraph{\underline{\textit{io\_parametros.f90}}}  
+Un m\'odulo para el manejo de la entrada y las salidas de los datos del programa.
+
+
+\paragraph{\underline{\textit{usozig.f90}}} 
+En este m\'odulo se ecuentran las subrutinas que usan ziggurat y que
+son usadas en el programa principal, ising.
+					
+\paragraph{\underline{\textit{ziggurat.f90}}}
+
+Para la generaci\'on de n\'umeros aleatorios se utilizaron
+las capacidades provistas por la librer\'ia ziggurat. 
+
+\paragraph{\underline{\textit{mediciones.f90}}} 
+En este m\'odulo  se encuentran las principales rutinas de c\'alculo del
+sistema.
+
+\paragraph{\underline{\textit{utils.f90}}}
+
+
+
+\subsection{Código Python}
 
 El control de las corridas del código en FORTRAN se hace desde scripts en el lenguaje
 de alto nivel phyton \href{http://www.python.org/}. 
 
-Para eso hay que parametrizar adecuadamente el sistema en \textbf{\textit{parametros_t.py}}
-\textbf{\textit{parametros_rho.py}}, en un caso se parametriza la dependecia en temperaturas
+Para eso hay que parametrizar adecuadamente el sistema en \textbf{\textit{parametros\_t.py}}
+\textbf{\textit{parametros\_rho.py}}, en un caso se parametriza la dependecia en temperaturas
 de las corridas y en el otro la dependencia en la densidad.
  
 Los comentarios del módulo explican el fin de cada una de las variables globales python.
@@ -102,7 +211,7 @@ el parámetro -\textbf{\textit{Dopenmp=ON}} del comando cmake.
 
 Para correr con MPI se usa 
 el paquete \href{http://mpi4py.scipy.org/} {\textbf{mpi4py}} ,  desarrollado.
-Un script en python distribuye 
+Un script en python distribuye el trabajo entre varios nodos  
 
 
 
@@ -139,12 +248,21 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
     two children at (0.5,-0.65) and (0.5,-1.2)},
     edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
   	\node [root] {bin}
-  	child { node [red] {ising}}
-  	child { node [red] {corridas\_paralelo.py}}
-  	child { node [red] {corridas.py}}
+  	child { node [red] {dinmod}}
+  	child { node [red] {corridas\_paralelo\_t.py}}
+  	child { node [red] {corridas\_paralelo\_rho.py}}
   	child { node {tablas\_temperatura.dat}}
-    child { node [selected] {0.5\_tmpfolder}
+	child { node {energia\_pot\_min.dat }}
+	child { node {energias.dat }}
+	child { node {estados.dat}}
+	child { node {parametros.dat}}
+	child { node {presion.dat}}
+	child { node {seed.dat}}
+	child { node {temperatura.dat}}
+  	child { node {val\_medios.dat}}
+    child { node [selected] {temperatura\_0.7}
       child { node {parametros.dat}}
+      child { node {estados.dat}}
       child { node {runs\_estadistica.dat}}
       child { node [selected] {RUN00}
 	     child { node {val\_medios.dat}}
@@ -155,8 +273,8 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
       child { node at(0,-1.9) [selected] {RUN02}}
       child { node at (0,-2.0) {\dots}}
     }       
-    child { node at (0,-5.5) [selected]{0.6\_tmpfolder}}
-    child { node at (0,-5.8)[selected] {0.7\_tmpfolder}}
+    child { node at (0,-5.5) [selected]{temperatura\_0.75}}
+    child { node at (0,-5.8)[selected] {temperatura\_0.8}}
     child { node at (0,-6.1) {\dots}};
 \end{tikzpicture}
 \end{center}
@@ -268,42 +386,6 @@ Donde:
     \item $<acept>$: Aceptaci\'on media calculada
     \item  $std(acept)$: desviaci\'on standard de la Aceptaci\'on calculada
 \end{itemize}
-
-
-\subsubsection{Librer\'ias utilizadas}
-
-La carpeta \textbf{libs/} contiene las librer\'ias usadas por el sistema
-
-\paragraph{\underline{\textit{estadistica.f90}}}
-
-Un conjunto de subrutinas para c\'alculo estad\'istico. 
-
-\paragraph{\underline{\textit{globales.f90}}}
-Un m\'odulo que contiene las variables globales del programa.
-	
-\paragraph{\underline{\textit{io\_parametros.f90}}}  
-Un m\'odulo para el manejo de la entrada y las salidas de los
-datos del programa.
-
-
-\paragraph{\underline{\textit{isingmods.f90}}} 
-En este m\'odulo  se encuentran las principales rutinas de c\'alculo del
-sistema.
-
-
-\paragraph{\underline{\textit{strings.f90}}}
-Un m\'odulo que contiene subrutinas de manejo de cadena de caracteres.
-
-
-\paragraph{\underline{\textit{usozig.f90}}} 
-En este m\'odulo se ecuentran las subrutinas que usan ziggurat y que
-son usadas en el programa principal, ising.
-					
-					
-\paragraph{\underline{\textit{ziggurat.f90}}}
-
-Para la generaci\'on de n\'umeros aleatorios se utilizaron
-las capacidades provistas por la librer\'ia ziggurat. 
 
 
 \subsection{Corridas en serie}\label{serie}
