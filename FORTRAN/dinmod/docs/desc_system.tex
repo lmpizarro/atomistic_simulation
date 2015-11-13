@@ -124,24 +124,63 @@ Un conjunto de subrutinas para análisis estad\'istico para
 
 En este  m\'odulo se encuentran  todas las variables globales del programa.
 	
-\paragraph{\underline{\textit{io\_parametros.f90}}}  
+\paragraph{\underline{\textit{io\_parametros.f90}}}:
+
 Un m\'odulo para el manejo de la entrada y las salidas de los datos del programa.
 
+Se encuentran  subrutinas para:
+\begin{itemize}
+ \item Leer los datos de entrada del problema.
 
-\paragraph{\underline{\textit{usozig.f90}}} 
+ \item Esbribir posiciones para visualizar trayectorias.
+
+ \item Esbribir un vector 1D a un archivo en columnas.
+
+ \item Esbribir un vector 2D a un archivo en columnas.
+
+ \item Esbribir estados de posicion y velocidad.
+
+ \item Leer estados de posicion y velocidad.
+
+\end{itemize}
+
+\paragraph{\underline{\textit{usozig.f90}}}: 
+
 En este m\'odulo se ecuentran las subrutinas que usan ziggurat y que
-son usadas en el programa principal, ising.
+son usadas en el programa principal, \textbf{\textit{dinmod}}.
 					
-\paragraph{\underline{\textit{ziggurat.f90}}}
+\paragraph{\underline{\textit{ziggurat.f90}}}:
 
-Para la generaci\'on de n\'umeros aleatorios se utilizaron
-las capacidades provistas por la librer\'ia ziggurat. 
+Módulo para la generaci\'on de n\'umeros aleatorios. 
 
-\paragraph{\underline{\textit{mediciones.f90}}} 
-En este m\'odulo  se encuentran las principales rutinas de c\'alculo del
+\paragraph{\underline{\textit{mediciones.f90}}}:
+
+En este m\'odulo  se encuentran rutinas de c\'alculo del
 sistema.
 
-\paragraph{\underline{\textit{utils.f90}}}
+\begin{itemize}
+	\item Calcula la fuerza y la energía potencial del potencial de L-J
+
+	\item Termostato de Langevin. Agrega la parte estocástica a la fuerza de cada partícula
+
+	\item Calcula la presion en base al teorema del virial 
+
+	\item Calcula la anergia cinetica total del sistema
+
+	\item Calcula temperatura instantanea de las partículas dentro de la caja 
+\end{itemize}
+
+
+\paragraph{\underline{\textit{utils.f90}}}:
+
+\begin{itemize}
+   \item Función para medir el wall-time
+
+ \item   Subrutina para inicializar parametros en el caso de haber compilado con OpenMP
+
+ \item   Subrutina para imprimir con formato por pantalla un array 3D en lineal 
+
+\end{itemize}
 
 
 
@@ -303,31 +342,43 @@ se debe correr:
 
 
 
-\subsection{C\'odigo ising}
+\subsection{C\'odigo dinmod}
 
 \subsubsection{Par\'ametros de entrada}
 
-El programa ising lee la configuraci\'on de una corrida del 
+El programa \textbf{\textbf{dinmod}} lee la configuraci\'on de una corrida del 
 archivo \texttt{parametros.dat} que tiene que estar en la carpeta donde se
-corre ising.
+corre \textbf{\textbf{dinmod}}.
 
 El archivo \texttt{parametros.dat} tiene la forma: 
 
 \begin{verbatim}
-     N M T J MCS PE. 
+     T  Npart  L dt Ntime  sigma epsilon masa Nmed
+     gamma
 \end{verbatim}
 
-Donde NxM 
-son las dimensiones de la matriz, T la temperatura de la corrida,
-J el par\'ametro de c\'alculo de energ\'ia de Ising, MCS son los pasos Monte Carlo y PE
-es una cantidad que especifica cada cuantos pasos Monte Carlo se graba la energ\'ia.
+Donde Npart
+Es el número de partículas del sistema, \textit{T} la temperatura de la corrida,
+\textit{L} una de las dimensiones de la caja, \textit{dt} el paso de tiempo de integración,
+\textit{Ntime} la cantidad de pasos de integración,
+\textit{sigma} el parámetro $\sigma$ del potencial de Lennard-Jones,
+\textit{epsilon} el parámetro $\epsilon$ del potencial de Lennard-Jones,
+\textit{masa} la masa de la partícula,
+\textit{Nmed} cada cuentas mediciones se graban datos,
+\textit{gamma} el parámetro $\gamma$ del termostáto de Langevin,
+
+
+
+Un ejemplo de ese archivo es:
 
 \begin{verbatim}
-   20 20 2.22 1 500 100
+   6.0 200 5.5032 0.001 20000 1.0 1.0 1.0 1
+   0.5
 \end{verbatim}
 
 
 \paragraph{Preprocesamiento en python}
+
 En la carpeta \textbf{src/} el archivo \texttt{parametros.py} contiene la 
 parametrizaci\'on de los scripts en python que permiten correr el sistema en 
 serie (ver \eqref{serie}), 
