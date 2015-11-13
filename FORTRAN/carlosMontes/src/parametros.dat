@@ -1,0 +1,24 @@
+6.0 200 5.5032 0.001 20000 1.0 1.0 1.0 1
+0.5
+# De este archivo sólo se leen las dos primeras líneas
+
+# T  Npart  L dt Ntime  sigma epsilon masa Nmed
+293 40 50.0 0.01 20000 1.0 1.0 1.0 1
+# Gamma Para'metro para el termostato de Langevi
+0.5
+
+# posibles parametros para montecarlo (a cambiar)
+
+800 40 50 0.01 1000000 4 0.015 1 1000
+
+# T       - Temperatura
+# Npart   - Número de partículas
+# L       - Longuitud de la caja (Vol=L**3)
+# dt      - Paso de integración temporal
+# Ntime   - Número de pasos para la integración temporal
+# sigma   - Parámetro del potencial de L-J
+# epsilon - Parámetro del potencial de L-J
+# masa    - Masa de la partícula
+# Nmed    - abs(Nmed) es el número de pasos entre mediciones
+#           Si Nmed > 0 , se graban datos en archivos. De lo contrario no.
+# Gamma   - Parámetro gamma para el termostato de Langevin
