@@ -29,7 +29,7 @@ El c\'odigo fuente del programa \textbf{\textit{dinmod.f90}}, se encuentra en la
 \textbf{src/}, su compilación se hace con el sistema \textbf{cmake} y depende
 de un conjunto de módulos que se encuentra en la carpeta \textbf{libs}.
 
-Para compilarlo hay que corre el script instalar.sh:
+Para compilarlo hay que corre el script \textbf{\textit{instalar.sh}}:
 
 \begin{verbatim}
   > ./instalar.sh 
@@ -83,6 +83,27 @@ Nrun = 8
 ###############################################################################
 
 \end{verbatim}
+
+\subsection{Corridas del programa}
+
+El programa se puede correr en serie, o en paralelo usando openMP 
+(paralelización multi-core en memoria compartida) \href{http://openmp.org/}
+o MPI (Message Passing Interface) \href{http://www.open-mpi.org/} .
+
+\subsubsection{Corridas en serie}
+Para correr en serie se debe poner en el script \textbf{\textit{instalar.sh}}
+el parámetro -\textbf{\textit{Dopenmp=OFF}} del comando cmake.
+
+\subsubsection{Corridas con openMP}
+Para correr en serie se debe poner en el script \textbf{\textit{instalar.sh}}
+el parámetro -\textbf{\textit{Dopenmp=ON}} del comando cmake.
+
+\subsubsection{Corridas con MPI}
+
+Para correr con MPI se usa 
+el paquete \href{http://mpi4py.scipy.org/} {\textbf{mpi4py}} ,  desarrollado.
+Un script en python distribuye 
+
 
 
 y luego hacer, para correr la versión serie:
@@ -139,10 +160,12 @@ font={\scriptsize\ttfamily}, inner sep=2.5pt]
     child { node at (0,-6.1) {\dots}};
 \end{tikzpicture}
 \end{center}
+
 \caption{Esquema de carpetas y archivos que se obtienen al realizar una corrida 
 completa haciendo estadísticas en cada temperatura.}
 \label{fig:arboldir}
 \end{figure}
+
 
 Una vez que se terminan los cálculos para todas las temperaturas,  en 
 la carpeta \textbf{bin/}, se corre:
