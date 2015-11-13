@@ -1,5 +1,6 @@
-Solución a los problemas del curso Introducción a la Simulación Computacional  
-[link](http://www.tandar.cnea.gov.ar/~pastorin/cursos/intro_sims/)
+La solución a los problemas del curso Introducción a la Simulación Computacional  
+[link](http://www.tandar.cnea.gov.ar/~pastorin/cursos/intro_sims/) se encuentran en
+la carpeta FORTRAN
 
 
 
