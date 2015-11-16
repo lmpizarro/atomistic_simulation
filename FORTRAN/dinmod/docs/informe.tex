@@ -174,22 +174,45 @@ f (v_i) =
 
 Para implementar esta validación, se eligió arbitrariamente una partícula, y se 
 registró una componente arbitraria de su velocidad a lo largo de toda la 
-simulación. 
+simulación. Se realizó el histograma correspondiente y se ajusaron los datos 
+obtenidos con una función Gaussiana. En la Figura \eqref{fig:termo_histo} se 
+muestran los resultados obtenidos. Se omitió la normalización del histograma ya 
+que no era relevante para el presente análisos.
 
-
-\begin{figure}[H]
+\begin{figure}[H]\label{fig:termo_histo}
   \centering
 \includegraphics[scale=0.6]{termo_histograma.pdf} \\
+\vspace{-2em}
 \caption{Histograma de la componente de velocidad de una partícula con el correspondiente ajuste Gaussiano para $T^*=1.0$.}\label{fig:termo_histo}
 \end{figure}
+
+La distribución de velocidades obtenida concuerda a simple vista con una 
+distribución Gaussiana, y la varianza estimada a partír del ajuste fue de 
+$\sigma^2(v_x^*) = 1.011$. Los resultados encontrados con este análisis 
+permiten indicar que la implementación del termostato de Langevin es correcta.
 	
 
 \subsection{Barrido de temperatura a densidad constante}
 
-Los parámetros utilizados para esta simulación fueron:
+En este punto se muestran los resultados obtenidos al realizar distintas 
+corridas dejando la densidad constante en $\rho^*=0.3$ y cambiando la 
+temperatura en el rango $[0.7\, , \, 1.4]$ con pasos de $dT=0.05$. Los 
+parámetros utilizados para esta simulación fueron $N_{medición} = 5\,10^6$, 
+$N_{run} = 20$, y el resto similares a los descriptos anteriormente.
 
-$N_{medición} = 5\,10^6$, $N_{run} = 20$
+En la Figura \eqref{fig:temp} se muestran los resultados más relevantes de 
+estas simulaciones. En la Figura \eqref{fig:temp_p} se realiza el gráfico de 
+los valores medios de la presión para cada temperatura. Los valores de 
+temperatura graficados fueron los obtenidos a través de las mediciones, con sus 
+respectivos errores.
 
+Se compararon los resultados obtenidos con los valores de referencia en 
+\cite{johnson1993} obteniéndose similares valores (no todos los valores estaban 
+disponibles en las tablas de referencia, se interpolaron puntos cuando fue 
+necesario). Se tuvo la precaución de utilizar el mismo radio de corte ($r_c = 4 
+\sigma$) para que la comparación sea válida, sin embargo la cantidad de 
+particulas utilzada en la referencia fue de $864$ mientras que la del presente 
+trabajo fue de $200$.
 
 \begin{figure}[H]
 	\centering
@@ -205,33 +228,36 @@ $N_{medición} = 5\,10^6$, $N_{run} = 20$
 		\includegraphics[scale=0.47]{{temperatura_sp.vs.T}.pdf} \\
 		\caption{Desviación estándar de la presión}\label{fig:temp_sp}
 	\end{subfigure}
-	
 	\caption{Valores medios y desviación estándar de la presión para distintas temperaturas con $\rho^*=0.3$}\label{fig:temp}
 \end{figure}
+
+En la Figura \eqref{fig:temp_sp} se grafica la desviación estandar de la 
+presión $\sigma(p) = \sqrt{\langle p^2 \rangle - \langle p \rangle^2}$ en 
+función de la temperatura. Se observa que posee un mínimo alrededor de 
+$T^*=1.1$, que corresponde a un punto dentro de la zona de coexistencia de 
+fases líquida y gaseosa.
+
+
 
 \subsubsection*{Visualización}
 
 \begin{figure}[H]
 	\centering
 	\hspace{-4em}
-	\begin{subfigure}{.33\textwidth}
+	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[scale=0.3]{{vmd_t1.1_rho0.001}.png} \\
-		\caption{$T^* = 1.1$   -  $\rho*=0.001$}\label{fig:vmd_temp_1}
+		\includegraphics[scale=0.3]{{vmd_t0.7_rho0.3}.png} \\
+		\caption{$T^* = 0.7$   -  $\rho*=0.3$}\label{fig:vmd_rho_1}
 	\end{subfigure}
-	\hspace{0.9em}
-	\begin{subfigure}{.33\textwidth}
+	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[scale=0.3]{{vmd_t1.1_rho0.8}.png} \\
-		\caption{$T^* = 1.1$   -  $\rho*=0.8$}\label{fig:vmd_temp_2}
+		\includegraphics[scale=0.3]{{vmd_t1.4_rho0.3}.png} \\
+		\caption{$T^* = 1.4$   -  $\rho*=0.3$}\label{fig:vmd_rho_2}
 	\end{subfigure}
-		\begin{subfigure}{.33\textwidth}
-			\centering
-			\includegraphics[scale=0.3]{{vmd_t1.1_rho2.0}.png} \\
-			\caption{$T^* = 1.1$   -  $\rho*=2.0$}\label{fig:vmd_temp_3}
-		\end{subfigure}
-	\caption{Temperaturas bajas}\label{fig:vmd_temp}
+	\caption{Temperaturas bajas}\label{fig:vmd_rho}
 \end{figure}
+
+
 
 \subsection{Barrido de densidad a temperatura constante}
 
@@ -255,22 +281,28 @@ $N_{medición} = 1\,10^7$, $N_{run} = 28$
 	\caption{Valores medios y desviación estándar de la presión para distintas densidades con $T^*=1.1$}\label{fig:rho}
 \end{figure}
 
-\subsubsection*{Visualización}
+
 
 \begin{figure}[H]
 	\centering
 	\hspace{-4em}
-	\begin{subfigure}{.5\textwidth}
+	\begin{subfigure}{.33\textwidth}
 		\centering
-		\includegraphics[scale=0.3]{{vmd_t0.7_rho0.3}.png} \\
-		\caption{$T^* = 0.7$   -  $\rho*=0.3$}\label{fig:vmd_rho_1}
+		\includegraphics[scale=0.3]{{vmd_t1.1_rho0.001}.png} \\
+		\caption{$T^* = 1.1$   -  $\rho*=0.001$}\label{fig:vmd_temp_1}
 	\end{subfigure}
-	\begin{subfigure}{.5\textwidth}
+	\hspace{0.9em}
+	\begin{subfigure}{.33\textwidth}
 		\centering
-		\includegraphics[scale=0.3]{{vmd_t1.4_rho0.3}.png} \\
-		\caption{$T^* = 1.4$   -  $\rho*=0.3$}\label{fig:vmd_rho_2}
+		\includegraphics[scale=0.3]{{vmd_t1.1_rho0.8}.png} \\
+		\caption{$T^* = 1.1$   -  $\rho*=0.8$}\label{fig:vmd_temp_2}
 	\end{subfigure}
-	\caption{Temperaturas bajas}\label{fig:vmd_rho}
+		\begin{subfigure}{.33\textwidth}
+			\centering
+			\includegraphics[scale=0.3]{{vmd_t1.1_rho2.0}.png} \\
+			\caption{$T^* = 1.1$   -  $\rho*=2.0$}\label{fig:vmd_temp_3}
+		\end{subfigure}
+	\caption{Temperaturas bajas}\label{fig:vmd_temp}
 \end{figure}
 
 \subsection{Función de correlación entre pares $g(r)$}
@@ -322,5 +354,12 @@ $N_{medición} = 1\,10^7$, $N_{run} = 28$
    Physical Review
    Vol 184, (1), pg. 151
    1969
+   
+\bibitem{johnson1993}
+   Johnson Karl , Zollweg John, Gubbins Keith  
+   The Lennard-Jones equation of state revisited
+   Molecular Physics
+   Vol 78, (3), pg. 591-618
+   1993
 \end{thebibliography}
 \end{document}
