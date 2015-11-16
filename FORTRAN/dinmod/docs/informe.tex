@@ -197,8 +197,9 @@ permiten indicar que la implementación del termostato de Langevin es correcta.
 En este punto se muestran los resultados obtenidos al realizar distintas 
 corridas dejando la densidad constante en $\rho^*=0.3$ y cambiando la 
 temperatura en el rango $[0.7\, , \, 1.4]$ con pasos de $dT=0.05$. Los 
-parámetros utilizados para esta simulación fueron $N_{medición} = 5\,10^6$, 
-$N_{run} = 20$, y el resto similares a los descriptos anteriormente.
+parámetros utilizados para esta simulación fueron $N_{med} = 5\,10^6$, 
+$N_{run} = 20$ corridas para cada configuración, y el resto similares a los 
+descriptos anteriormente.
 
 En la Figura \eqref{fig:temp} se muestran los resultados más relevantes de 
 estas simulaciones. En la Figura \eqref{fig:temp_p} se realiza el gráfico de 
@@ -280,7 +281,28 @@ agrupadas formando una única zona de fase líquida.
 
 \subsection{Barrido de densidad a temperatura constante}
 
-$N_{medición} = 1\,10^7$, $N_{run} = 28$
+En este análisis se trabajó con una temperatura fija en $T^*=1.1$ y se varió la 
+densidad con los valores $[0.001, 0.01, 0.1, 0.8, 0.9, 1.0]$ y una zona con más 
+detalle en el rango $[0.7\, , \, 1.4]$ con un $d\rho=0.25$. Teniendo en cuenta 
+el diagrama de fases de la Figura \eqref{fig:fases}, estas simulaciones pasan 
+por las fases sólida, líquida y de coexistencia líguia-gaseosa. Los parámetros 
+utilizados para estas simulaciones fueron $N_{med} = 1\,10^7$ y $N_{run} = 
+28$ corridas para cada configuración, el resto similares a los definidos 
+anteriormente.
+
+En la Figura \eqref{fig:rho} se muestran los gráficos correspondientes a estas 
+simulaciones. En la Figura \eqref{fig:rho_p} se observa la variación del valor 
+medio de la presión en función de la densidad. Al igual que en el caso 
+anterior, se cotejaron los valores con los de la referencia \cite{johnson1993} 
+obteniéndose similares resultados.
+
+Comenzando con el análisis a $rho^*=1.0$, el valor decrece significativamente 
+hasta la región con $\rho^*=0.6$. En todo dicho intervalo, se realizó la 
+transición de la zona sólida a líquida. A partir del valor de $\rho^*=0.6$ se 
+entra en la zona de coexistencia líquido-gas, en algunos de estas zonas, la 
+presión tomó valores negativos. Por último, para los valores más chicos de 
+densidad se volvió a entrar en la zona líquida, donde la presión tiende a la 
+que tendría un gas ideal.
 
 \begin{figure}[H]
 	\centering
@@ -300,7 +322,19 @@ $N_{medición} = 1\,10^7$, $N_{run} = 28$
 	\caption{Valores medios y desviación estándar de la presión para distintas densidades con $T^*=1.1$}\label{fig:rho}
 \end{figure}
 
+En la Figura \eqref{fig:rho_sp} se muestran los valores de la desviación 
+estandar de la presión $\sigma(p)$ en función de los distintos valores de 
+densidad simulados. SE observa un salto abrupto entre $\rho^*=1$ y 
+$\rho^*=0.95$. De acuerdo al diagrama de fases de la Figura \eqref{fig:fases}, 
+dicha zona coincide con la transición de fases sólido-líquido.
 
+\subsubsection{Visualización}
+
+Se visualizaron tres configuraciones características de las simuladas en esta 
+serie. Se eligió un estado con baja densidad de partículas ($\rho^*=0.001$), en 
+la fase líquida. Otro también en la fase líquida pero a mayor densidad 
+($\rho^*=0.8$) y finalmente otro en la zona de fase sólida con $\rho^*=2.0$. En 
+las Figuras \eqref{fig:vmd_temp} se muestran los gráficos correspondientes.
 
 \begin{figure}[H]
 	\centering
@@ -321,8 +355,15 @@ $N_{medición} = 1\,10^7$, $N_{run} = 28$
 			\includegraphics[scale=0.3]{{vmd_t1.1_rho2.0}.png} \\
 			\caption{$T^* = 1.1$   -  $\rho*=2.0$}\label{fig:vmd_temp_3}
 		\end{subfigure}
-	\caption{Temperaturas bajas}\label{fig:vmd_temp}
+	\caption{Distintas configuraciones a la mismta temperatura $T^*=1.1$ y 
+	distintos valores de densidad. El tamaño de las partículas es el mismo en 
+	los tres gráficos.}\label{fig:vmd_temp}
 \end{figure}
+
+En la Figura \eqref{fig:vmd_temp_3} se tomó un valor alto de densidad para que 
+se haga evidente la estructura cristalina del sistema. De lo contrario, a 
+agitación térmica presente en la red no permití observar a simple vista su 
+estructura.
 
 \subsection{Función de correlación entre pares $g(r)$}
 
