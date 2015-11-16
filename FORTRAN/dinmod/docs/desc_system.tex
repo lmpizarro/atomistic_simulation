@@ -171,6 +171,169 @@ sistema.
 \end{itemize}
 
 
+\subsubsection{Preprocesamiento y openMP}
+
+El código en Fortran usa para el procesamiento en paralelo openMP y también usa el proprocesador
+para controlar determinadas opciones de compilación.
+
+A continuación se muestra un fragmento de código del módulo \textbf{\textit{mediciones.f90}}, donde
+se muestra la forma en que se usaron estos dos recursos.
+
+\begin{verbatim}
+
+#ifdef CORR_PAR
+!$omp parallel &
+!$omp shared (gNpart, gR, gL, gRc2, gF, cut4, gDbin, gCorr_par ) &
+!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij, r, ind_bin)
+#else /* Si no se calcula la g(r) */
+!$omp parallel &
+!$omp shared (gNpart, gR, gL, gRc2, gF, cut4 ) &
+!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
+#endif /* Fin CORR_PAR */
+!$omp do schedule(static,5) reduction( + : gPot, gVir)
+! El static es casi irrelevante en este loop, porque no hay un desbalance de carga
+! significativo. Serviría si se recorre el loop con i<j
+
+     do i = 1, gNpart
+      do j = 1, gNpart
+        if (i /= j) then
+          rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
+          ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
+          ! Siempre en distancias relativas de sigma
+          rij_vec = rij_vec - gL*nint(rij_vec/gL)
+          r2ij   = dot_product( rij_vec , rij_vec )         ! Cuadrado de la distancia
+          if ( r2ij < gRc2 ) then
+            r2in = 1.0_dp/r2ij                              ! Inversa al cuadrado
+            r6in = r2in**3                                  ! Inversa a la sexta
+            Fij     = r2in * r6in * (r6in - 0.5_dp)         ! Fuerza entre partículas
+            gF(:,i) = gF(:,i) + Fij * rij_vec               ! Contribución a la partícula i
+            gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4 ! Energía potencial
+            gVir    = gVir + Fij * r2ij                     ! Término del virial para la presión
+                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
+          end if  ! Termina if del radio de corte
+#ifdef CORR_PAR
+          ! Calcula la función g(r) -  Ver pg 86 Frenkel
+          r = sqrt(r2ij)
+          if (r < gL/2.0_dp) then                           ! Sólo particulas a menos de gL/2
+            ind_bin            = int(r/gDbin) + 1           ! En dónde cae la partícula
+                                                            ! +1 vva porque definí indices 1:Nh
+
+                                                            ! +1 vva porque definí indices 1:Nh
+            gCorr_par(ind_bin) = gCorr_par(ind_bin) + 1     ! Actualizo contador del bin
+          end if
+#endif /* Fin CORR_PAR */
+        end if   ! Termina if de i /= j
+      end do
+    end do
+
+!$omp end do
+!$omp end parallel
+
+\end{verbatim}
+
+\subsection{Programa principal dinmod}
+
+En la carpeta \textbf{\textit{src/}} está el archivo que contiene el código del programa principal,
+\textbf{\textit{dinmod.f90}}, en este programa se hace referencia a los módulos \textbf{\textit{inic\_fin}}, \textbf{\textit{utils}},
+\textbf{\textit{types}}, \textbf{\textit{integra}} y a la librería externa \textbf{\textit{omp\_lib}} para procesamiento paralelo en sistemas de memoria compartida. 
+Las principales llamadas a subrutinas son:
+\textbf{\textit{call inicializacion()}},  \textbf{\textit{ call integracion()}} y \textbf{\textit{ call finalizacion()}}.
+
+
+
+\subsection{Par\'ametros de entrada}
+
+El programa \textbf{\textbf{dinmod}} lee la configuraci\'on de una corrida del 
+archivo \texttt{parametros.dat} que tiene que estar en la carpeta donde se
+corre \textbf{\textbf{dinmod}}.
+
+El archivo \texttt{parametros.dat} tiene la forma: 
+
+\begin{verbatim}
+     T  Npart  L dt Ntime  sigma epsilon masa Nmed
+     gamma
+\end{verbatim}
+
+Donde Npart
+Es el número de partículas del sistema, \textit{T} la temperatura de la corrida,
+\textit{L} una de las dimensiones de la caja, \textit{dt} el paso de tiempo de integración,
+\textit{Ntime} la cantidad de pasos de integración,
+\textit{sigma} el parámetro $\sigma$ del potencial de Lennard-Jones,
+\textit{epsilon} el parámetro $\epsilon$ del potencial de Lennard-Jones,
+\textit{masa} la masa de la partícula,
+\textit{Nmed} cada cuentas mediciones se graban datos,
+\textit{gamma} el parámetro $\gamma$ del termostáto de Langevin,
+
+Un ejemplo de ese archivo es:
+
+\begin{verbatim}
+   6.0 200 5.5032 0.001 20000 1.0 1.0 1.0 1
+   0.5
+\end{verbatim}
+
+\paragraph{Preprocesamiento en python}
+
+En la carpeta \textbf{src/} el archivo \texttt{parametros.py} contiene la 
+parametrizaci\'on de los scripts en python que permiten correr el sistema.
+
+%inicio comentarios
+\begin{comment}
+en 
+serie (ver \eqref{serie}), 
+o en paralelo (ver \eqref{paralelo}).
+
+El preprocesamiento en python, permite definir una zona de c\'alculo de paso
+de temperatura fino. Es decir se puede parametrizar un paso de temperatura de
+$0.1$ para todo el rango de temperatura y dentro de ese rango definir una zona
+donde el paso de temperatura puede ser menor, ej. $\Delta T = 0.02$. Para 
+lograr una mejor resoluci\'on
+en esa zona.
+
+En particular en este c\'alculo se uso para explorar con m\'as detalle la zona
+cr\'itica.
+
+\end{comment}
+%fin comentarios
+
+El preprocesamiento en python, crea el archivo \texttt{parametros.dat}, 
+corre el programa \texttt{dinmod} a distintas temperaturas y crea una carpeta para 
+ cada temperatura. En cada una de esas carpetas, a su vez, crea Nruns carpetas 
+ para hacer estadística y obtener los valores con sus respectivos errores.
+ 
+  En cada temperatura, se utiliza el valor final de la temperatura anterior.
+  Arbitrariamente, se toma el valor final de RUN00 como el valor inicial de
+  todas las corridas a la siguiente temperatura (menor).
+ 
+
+\subsubsection{Salida del programa}
+
+Los resultados los guarda en el archivo \texttt{tablas\_temperatura.dat}.
+
+Cada fila de \texttt{tablas\_temperatura.dat} representa los resultados a una 
+dada temperatura con sus respectivos errores. Las columnas son:
+
+\begin{verbatim}
+  T <E> std(E) <M> std(M) <c> std(c) <suc> std(suc) <acept> std(acept)
+\end{verbatim}
+
+Donde:
+
+\begin{itemize}
+
+\item $Temp$: temperatura de la corrida.      
+\item $Densidad$: densidad de la corrida.       
+\item $<p>$: valor medio de la presión.      
+\item $std(p)$: desviación standard de la presión.       
+\item $<sp>$: valor medio de la desviación standard de la presión.       
+\item $std(sp)$: desviación standard del valor medio de la desviación standard de la presión.    
+\item $<temp>$: temperatura medida      
+\item $std(temp)$: desviación standard de la temperatura       
+\item $<U>$: valor medio de la energía interna del sistema       
+\item $std(U)$: desviación standard de la energía interna
+\end{itemize}
+
+
+
 \subsection{Código Python}
 
 El control de las corridas del código en FORTRAN se hace desde scripts en el lenguaje
@@ -222,7 +385,7 @@ Nrun = 8
 \subsection{Corridas del programa}
 
 El programa se puede correr en serie, o en paralelo usando  \href{http://openmp.org/}{openMP} 
-(paralelización multi-core en memoria compartida)o  \href{http://www.open-mpi.org/}{MPI} (Message Passing Interface).
+(paralelización multi-core en memoria compartida  \href{http://www.open-mpi.org/}{MPI} (Message Passing Interface).
 
 \subsubsection{Corridas en serie}
 Para correr en serie se debe poner en el script \textbf{\textit{instalar.sh}}
@@ -236,23 +399,25 @@ el parámetro -\textbf{\textit{Dopenmp=ON}} del comando cmake.
 
 Para correr con MPI se usa 
 el paquete \href{http://mpi4py.scipy.org/} {\textbf{mpi4py}} ,  desarrollado.
-Un script en python distribuye el trabajo entre varios nodos  
-
-y luego hacer, para correr la versión serie:
-
-\begin{verbatim}
-  > cd bin/
-  > python corridas.py
-\end{verbatim}
-
-o si se quiere correr la versión paralelo:
+Un script en python distribuye el trabajo entre varios nodos  y en línea de comando
+hay que hacer:
 
 \begin{verbatim}
   > cd bin/
-  > mpirun.mpich -n 8 python corridas_paralelos.py
+  > mpirun.mpich -n 8 python corridas_paralelos_t.py
 \end{verbatim}
 
-Luego de una corrida en una serie de temperaturas, queda una estructura de directorios
+para correr el sistema para distintas temperaturas. Y en la línea
+de comandos hay que hacer, para correr el sistema para distintas densidades:
+
+\begin{verbatim}
+  > cd bin/
+  > mpirun.mpich -n 8 python corridas_paralelos_rho.py
+\end{verbatim}
+
+
+
+Luego de una corrida para distintas  temperaturas, queda una estructura de directorios
 como la que se muestra en \eqref{fig:arboldir}, con la información necesaria 
 para postprocesar
 los resultados y obtener los valores de las mediciones en función de la temperatura.
@@ -322,98 +487,7 @@ se debe correr:
   > python correlaciones.py 
 \end{verbatim}
 
-\subsection{C\'odigo dinmod}
-
-\subsubsection{Par\'ametros de entrada}
-
-El programa \textbf{\textbf{dinmod}} lee la configuraci\'on de una corrida del 
-archivo \texttt{parametros.dat} que tiene que estar en la carpeta donde se
-corre \textbf{\textbf{dinmod}}.
-
-El archivo \texttt{parametros.dat} tiene la forma: 
-
-\begin{verbatim}
-     T  Npart  L dt Ntime  sigma epsilon masa Nmed
-     gamma
-\end{verbatim}
-
-Donde Npart
-Es el número de partículas del sistema, \textit{T} la temperatura de la corrida,
-\textit{L} una de las dimensiones de la caja, \textit{dt} el paso de tiempo de integración,
-\textit{Ntime} la cantidad de pasos de integración,
-\textit{sigma} el parámetro $\sigma$ del potencial de Lennard-Jones,
-\textit{epsilon} el parámetro $\epsilon$ del potencial de Lennard-Jones,
-\textit{masa} la masa de la partícula,
-\textit{Nmed} cada cuentas mediciones se graban datos,
-\textit{gamma} el parámetro $\gamma$ del termostáto de Langevin,
-
-Un ejemplo de ese archivo es:
-
-\begin{verbatim}
-   6.0 200 5.5032 0.001 20000 1.0 1.0 1.0 1
-   0.5
-\end{verbatim}
-
-\paragraph{Preprocesamiento en python}
-
-En la carpeta \textbf{src/} el archivo \texttt{parametros.py} contiene la 
-parametrizaci\'on de los scripts en python que permiten correr el sistema en 
-serie (ver \eqref{serie}), 
-o en paralelo (ver \eqref{paralelo}).
-El preprocesamiento en python, permite definir una zona de c\'alculo de paso
-de temperatura fino. Es decir se puede parametrizar un paso de temperatura de
-$0.1$ para todo el rango de temperatura y dentro de ese rango definir una zona
-donde el paso de temperatura puede ser menor, ej. $\Delta T = 0.02$. Para 
-lograr una mejor resoluci\'on
-en esa zona.
-
-En particular en este c\'alculo se uso para explorar con m\'as detalle la zona
-cr\'itica.
-
-El preprocesamiento en python, crea el archivo \texttt{parametros.dat}, 
- corre el programa de ising a distintas temperaturas y crea una carpeta para 
- cada temperatura. En cada una de esas carpetas, a su vez, crea Nruns carpetas 
- para hacer estadística y obtener los valores con sus respectivos errores.
- 
-  En cada temperatura, se utiliza el valor final de la temperatura anterior.
-  Arbitrariamente, se toma el valor final de RUN00 como el valor inicial de
-  todas las corridas a la siguiente temperatura (menor).
- 
-
-\subsubsection{Salida del programa}
-
-Los resultados los guarda en el archivo \texttt{tablas\_temperatura.dat}.
-
-Cada fila de \texttt{tablas\_temperatura.dat} representa los resultados a una 
-dada temperatura con sus respectivos errores. Las columnas son:
-
-\begin{verbatim}
-  T <E> std(E) <M> std(M) <c> std(c) <suc> std(suc) <acept> std(acept)
-\end{verbatim}
-
-Donde:
-
-\begin{itemize}
-  \item $T$: temperatura de la corrida 
-    \item $<E>$: Energ\'ia media calculada
-    \item  $std(E)$: desviaci\'on standard de la energ\'ia calculada
-
-    \item $<M>$: Magnetizaci\'on media calculada
-    \item  $std(M)$: desviaci\'on standard de la Magnetizaci\'on calculada
-
-
-    \item $<c>$: Capacidad calor\'ifica media calculada
-    \item  $std(c)$: desviaci\'on standard de la Capacidad calor\'ifica calculada
-
-    \item $<suc>$: Susceptibilidad magn\'etica media calculada
-    \item  $std(suc)$: desviaci\'on standard de la Susceptibilidad magn\'etica calculada
-
-
-    \item $<acept>$: Aceptaci\'on media calculada
-    \item  $std(acept)$: desviaci\'on standard de la Aceptaci\'on calculada
-\end{itemize}
-
-
+\begin{comment}
 \subsection{Corridas en serie}\label{serie}
 El módulo python \texttt{corridas.py}, es el que tiene la capacidad de correr
 el código de cálculo en una máquina con un único núcleo. Parametrizando 
@@ -421,11 +495,12 @@ adecuadamente \texttt{parametros.py} se logran tiempos de corrida razonables en
 una máquina con un único procesador. El parámetro que permite acelerar la 
 velocidad de procesamiento, es el que indica cada cuantos pasos Monte Carlo se 
 quieren grabar las energías.
+\end{comment}
 
 \subsection{Corridas en paralelo}\label{paralelo}
 
 El módulo python \texttt{corridas\_paralelos.py}, es el que tiene la capacidad 
-de correr en una máquina con varios núcleos.
+de correr en una máquina con varios procesadores.
 
 El código se paraleliza usando el paquete \href{http://mpi4py.scipy.org/} {\textbf{mpi4py}} ,  desarrollado por Lisandro Dalcin.
 De esa manera lo que se hizo, es paralelizar desde python y no desde Fortran.
