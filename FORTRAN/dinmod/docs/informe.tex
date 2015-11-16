@@ -111,15 +111,32 @@ Termostato Langevin:
 
 \section{Resultados}
 
+En esta sección se muestran los resultados obtenidos durante las distintas 
+corridas del programa. Para facilitzar su análisis se dividieron los resultados 
+en dos partes. En la primera de ellas se realizó un barrido de temperaturas 
+dejando una densidad de partículas fija, mientras que en la segunda se hizo un 
+barrido de densidad a una temperatura fija.
+
+En la Figura \eqref{fig:fases} se muestran esquemáticamente (en rojo) ambos 
+barridos sobre el diagrama de fases del sistema de Lennard-Jones. Esta figura 
+permitirá, a su vez, analizar los resultados obtenidos dependiendo en qué parte 
+del diagrama se realizó cada simulación.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.1]{fases.png} \\
-	\caption{Temperatura instantánea en función del tiempo para $T^*=1.0$ utilizando el termostato de Langevin. Gráfico original extraido de \cite{hansenverlet1969}}\label{fig:fases}
+	\caption{Diagrama de fases del sistema de Lennard-Jones junto conl as 
+	indicaciones sobre los distintos estados simulados (en rojo). Gráfico 
+	original extraido de \cite{hansenverlet1969}}\label{fig:fases}
 \end{figure}
 
 \subsection{Verificación del termostato de Langevin}
 
-Distribución de Maxwell-Boltzman:
+Antes de realizar el estudio sistemático variando los parámetros, se realizó 
+una comprobacióń de que el termostato de Langevin estuviese bien implementado.
+
+Distribución Gaussiana:
+
 
 \begin{equation}
 f (v_i) =
@@ -146,6 +163,11 @@ f (v_i) =
 	
 
 \subsection{Barrido de temperatura a densidad constante}
+
+Los parámetros utilizados para esta simulación fueron:
+
+$N_{medición} = 5\,10^6$, $N_{run} = 20$
+
 
 \begin{figure}[H]
 	\centering
@@ -190,6 +212,9 @@ f (v_i) =
 \end{figure}
 
 \subsection{Barrido de densidad a temperatura constante}
+
+$N_{medición} = 1\,10^7$, $N_{run} = 28$
+
 \begin{figure}[H]
 	\centering
 	\hspace{-4em}
