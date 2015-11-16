@@ -45,19 +45,37 @@ Se implementó el algoritmo de dinámica molecular
 
 \section{Introducción}
 
-Hamiltoniano
+En este trabajo se aplicó el método de dinámica molecular para estudiar el 
+comportamiento termodinámico de un sistema de partículas interactuantes a 
+través de un potencial de Lennard-Jones.
+
+Este sistema de líquido de Lennard-Jonnes es ampliamente utilizado para 
+estudiar el comportamiento de fluidos simples y como base para teorías 
+perturbativas de fluídos más complejos.
+
+El método consistió en resulver las ecuaciones de Newton para un Hamiltoniano 
+de la forma:
 
 \begin{equation}\label{eq:hamiltoniano}
   \mathcal H({\bf r},{\bf p}) = \sum_{i=1}^{N} \frac{p_i^2}{2m} + \sum_{i=1}^N \sum_{j>i} \phi (r_{ij})
 \end{equation}
 
-Potencial de Lennard-Jones:
+\noindent en donde se utilizó un potencial de interacción entre pares de 
+Lennard-Jones:
 
 \begin{equation}\label{eq:pot_LJ}
   \phi (r) = 4\epsilon\left[\left(\frac{\sigma}{r}\right)^{12} -\left(\frac{\sigma}{r}\right)^{6}\right]
 \end{equation}
 
-Potencial truncado y desplazado
+Se estudiaron distintas configuraciones del espacio de fases del sistema. En 
+cada caso, se efectuaron varias corridas para obtener un análisis estadístico 
+adecuado. Se trabajó en el ensamble canónico utilizando el termostato de 
+Langevin para fijar la temperatura. 
+
+\section{Implementación del método}
+
+Para evitar trabajar con interacciones entre todas las partículas, se utilizó 
+el método del potencial truncado y desplazado definido como:
 
 \begin{equation}\label{eq:pot_cs}
   \phi_{cs}(r) = 
@@ -67,12 +85,28 @@ Potencial truncado y desplazado
   \end{cases}
 \end{equation}
 
-Unidades reducidas
+\noindent en donde $r_c$ es el radio de corte más allá del cual se considera 
+que no existe interacción alguna. En este trabajo se utilizó un valor de 
+$r_c=4\sigma$. Dicho valor fue elegido para comparar más adecuadamente los 
+valores de referencia dados por \cite{johnson1993}.
+
+Como es usual, se utilizaron unidades reducidad en donde la dinstancia y la 
+energía se miden en unidades de $\sigma$ y $\epsilon$, del potencial de LJ; y 
+la masa en unidades de la masa de la partícula. El resto de las magnitudes de 
+derivan a partir de estas tres. En el Cuadro \eqref{tb:unidades} se dan las 
+unidades reducidas de las principales magnitudes utilizadas.
+
+El sistema simulado consistió en un cubo de lado $L$ con una cantidad de 
+partículas de $N_{part}=200$. Como se pretendía estudiar el bulk, se tomaron 
+condiciones periódicas de contorno en todas sus caras. Se utilizó el método de 
+mínima imágen para garantizar que se estuviera contando sólo una interacción 
+por cada partícula o imagen. 
 
 \begin{table}
-	\label{tb:unidades}
+
 	\begin{center}
 \begin{tabular}{ccc}
+
 	\hline
 	{\bf Magnitud} & {\bf Símbolo} & {\bf Unidad} \\ \hline
 	 Distancia & $L^*$& $\sigma$ \\ 
@@ -86,6 +120,7 @@ Unidades reducidas
 \end{tabular}
 \end{center} 
 \caption{Unidades reducidas utilizadas en la simulación}
+	\label{tb:unidades}
 \end{table}
 
 Presión instantánea:
