@@ -380,7 +380,11 @@ de encontrar una partícula a una distancia $r$ de otra partícula del sistema.
 
 Se tomaron cuatro configuraciones dadas, escogidas de entre las dos series de 
 simulaciones realizadas con anterioridad. En las Figuras \eqref{fig:gr} se 
-muestran los resultados obtenidos para las cuatro simulaciones escogidas.
+muestran los resultados obtenidos para las cuatro simulaciones escogidas. Como 
+primera observación, en todos los casos se comprueba una zona de exclusión 
+hasta una distancia aproximada a $r^*=1$ (correspondiente a $r=\sigma$) 
+reflejando el caracter altamente repulsivo del potencial de Lennard-Jones para 
+dichas distancias.
 
 \begin{figure}[H]
 	\centering
@@ -397,14 +401,24 @@ muestran los resultados obtenidos para las cuatro simulaciones escogidas.
 		\caption{$g(r)$ para distintas densidades}\label{fig:gr_2}
 	\end{subfigure}
 	
-	\caption{Temperaturas bajas}\label{fig:gr}
+	\caption{Funciones de correlación entre pares}\label{fig:gr}
 \end{figure}
 
 Para facilitar en análisis, se decidió graficar por separado distintas curvas 
 $g(r)$ dependiendo en qué zona del diagrama de fase -Figura \eqref{fig:fases}- 
 se estaba trabajando. En primer lugar, en la Figura \eqref{fig:gr_1} se 
 muestran las curvas obtenidas para dos estados con la misma densidad 
-($\rho^*=0.3$) pero con distinta temperatura.
+($\rho^*=0.3$) pero con distinta temperatura. Se observa que al aumentar la 
+temperatura se reduce tanto el pico principal como el secundario, indicando una 
+pérdida de orden en el sistema.
+
+En la Figura \eqref{fig:gr_2} se muestran las funciones $g(r)$ para tres 
+configuraciones con igual temperatura $T^*=1.1$ y distintas densidades. A 
+medida que la densidad disminuye se aprecia una notoria diminución en la altura 
+de los picos secundarios. En este caso el pico principal mantiene un altura 
+constante en las tres configuraciones. En particual, en la configuración con 
+menor densidad, se pierde por completo la existencia del segundo pico en la 
+función $g(r)$.
 
 
 \section{Conclusiones}
