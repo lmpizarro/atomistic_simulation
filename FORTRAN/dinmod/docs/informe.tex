@@ -96,51 +96,90 @@ la masa en unidades de la masa de la partícula. El resto de las magnitudes de
 derivan a partir de estas tres. En el Cuadro \eqref{tb:unidades} se dan las 
 unidades reducidas de las principales magnitudes utilizadas.
 
+\begin{table}
+	\begin{center}
+		\begin{tabular}{ccc}
+			\hline
+			{\bf Magnitud} & {\bf Símbolo} & {\bf Unidad} \\ \hline
+			Distancia   & $L^*$ & $\sigma$ \\ 
+			Energía     & $E^*$ & $\epsilon$ \\ 
+			Masa        & $m^*$ & $m$ \\ 
+			Tiempo      & $t^*$ & $\sigma\sqrt{m/\epsilon}$ \\ 
+			Temperatura & $T^*$ & $k_b/\epsilon$ \\ 
+			Presión     & $p^*$ & $\epsilon/\sigma^3$ \\ 
+			Fuerza      & $F^*$ & $\epsilon/\sigma$ \\ 
+			\hline 
+		\end{tabular}
+	\end{center} 
+	\caption{Unidades reducidas utilizadas en la simulación}
+	\label{tb:unidades}
+\end{table}
+
 El sistema simulado consistió en un cubo de lado $L$ con una cantidad de 
 partículas de $N_{part}=200$. Como se pretendía estudiar el bulk, se tomaron 
 condiciones periódicas de contorno en todas sus caras. Se utilizó el método de 
 mínima imágen para garantizar que se estuviera contando sólo una interacción 
 por cada partícula o imagen. 
 
-\begin{table}
+La integración de las ecuaciones de Newton se realizó con el algoritmo de 
+Velocity-Verlet, con un paso temporal de integración de $dt=0.001$.
 
-	\begin{center}
-\begin{tabular}{ccc}
+\subsection{Termostato de Langevin}
 
-	\hline
-	{\bf Magnitud} & {\bf Símbolo} & {\bf Unidad} \\ \hline
-	 Distancia & $L^*$& $\sigma$ \\ 
-	Energía &$E^*$& $\epsilon$ \\ 
-	Masa &$m^*$& $m$ \\ 
-	Tiempo &$t^*$& $\sigma\sqrt{m/\epsilon}$ \\ 
-	Temperatura &$T^*$& $k_b/\epsilon$ \\ 
-	Presión &$p^*$& $\epsilon/\sigma^3$ \\ 
-	Fuerza &$F^*$& $\epsilon/\sigma$ \\ 
-	\hline 
-\end{tabular}
-\end{center} 
-\caption{Unidades reducidas utilizadas en la simulación}
-	\label{tb:unidades}
-\end{table}
+Para poder trabajar en el ensamble canónico a una temperatura fija, fue 
+necesario implementar un termostato que obligara al sistema a intercambiar 
+energía. De lo contrario, se estaría trabajando en el ensamble micro-canónico a 
+energía constante.
 
-Presión instantánea:
+El termostato implementado fue el de Langevin, que consiste en aplicarle a cada 
+partícula una fuerza aleatoria dada por la expresión (en unidades reducidas):
 
-\begin{equation}\label{eq:pres}
-p(t) = \rho T  - \frac{1}{3V} \sum_{i=1}^N \sum_{j>i} r_{ij} \frac{\phi(r_{ij})}{dr}
+\begin{equation}\label{eq:termo}
+ F_i^{\it lang} = - \gamma  v_i + \sqrt{\frac{2\gamma T}{\Delta t}} \mathcal 
+ N(0,1)
 \end{equation}
 
-Temperatura instantánea:
+\noindent donde $\mathcal N(0,1)$ es una distribución normal estándar (media 
+nula y desviación estandar unidad). Se utilizó un valor de $\gamma=0.5$ a lo 
+largo de todo el trabajo.
+
+Se mostrará en la parte de resultados el método implementado para corroborar el 
+buen funcionamiento del termostato de Langevin.
+
+\subsection{Mediciones}
+
+Las dos magnitudes de mayor importancia medidas durante la simulación fueron la 
+presión instantánea y la temperatura instantánea. De ambas mediciones, luego 
+fue posible tomar un valor medio y encontrar la presión y temperatura 
+termodinámicas que intervienen en la ecuación de estado.
+
+La temperatura instantánea fue medida utilizando su relación estadística con la 
+energía cinética del sistema. Su definición se expresa como:
 
 \begin{equation}\label{eq:tempe}
  T(t) = \frac{1}{3N-3} \sum_{i=1}^{N} m {\bf v_i}^2
 \end{equation}
 
-Termostato Langevin:
+Por otro lado, la medición de la presión se realizó utilizando el teorema del 
+Virial. En este caso, y por tener un potencial que sólo depende de la distancia 
+entre partículas, la presión puede escribirse como:
 
-\begin{equation}\label{eq:termo}
- F_i^{\it lang} = - \gamma  v_i + \sqrt{\frac{2\gamma T}{\Delta t}} \mathcal N(0,1)
+\begin{equation}\label{eq:pres}
+p(t) = \rho T  - \frac{1}{3V} \sum_{i=1}^N \sum_{j>i} r_{ij} \frac{\phi(r_{ij})}{dr}
 \end{equation}
 
+\noindent en donde $V$ es el volumen del sistma ($L^3$). El primer término 
+corresponde a la presión que tendría un gas ideal y el segundo es que proviene 
+de la interacción entre las partículas.
+
+El término del viarial fue calculado dentro del loop de fuerzas para evitar 
+tener que realizar un segundo doble loop sobre todas las interacciones.
+
+Finalmente, también se registraron los valores de otras magnitudes de interés, 
+como la energía interna del sistema, la energía total y las posiciones de las 
+partículas. Algunas de estas magnitudes por no ser relevantes para todos los 
+análisis, eran activadas o desactivadas con el preprocesador para no lentizar 
+los tiempos de corrida del programa.
 
 
 \input{desc_system.tex}
@@ -215,11 +254,12 @@ obtenidos con una función Gaussiana. En la Figura \eqref{fig:termo_histo} se
 muestran los resultados obtenidos. Se omitió la normalización del histograma ya 
 que no era relevante para el presente análisos.
 
-\begin{figure}[H]\label{fig:termo_histo}
+\begin{figure}[H]
   \centering
 \includegraphics[scale=0.6]{termo_histograma.pdf} \\
 \vspace{-2em}
-\caption{Histograma de la componente de velocidad de una partícula con el correspondiente ajuste Gaussiano para $T^*=1.0$.}\label{fig:termo_histo}
+\caption{Histograma de la componente de velocidad de una partícula con el 
+correspondiente ajuste Gaussiano para $T^*=1.0$.}\label{fig:termo_histo}
 \end{figure}
 
 La distribución de velocidades obtenida concuerda a simple vista con una 
