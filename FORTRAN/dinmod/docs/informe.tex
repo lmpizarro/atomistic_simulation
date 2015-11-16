@@ -44,8 +44,190 @@ Se implementó el algoritmo de dinámica molecular
 
 \section{Introducción}
 
+Hamiltoniano
+
+\begin{equation}\label{eq:hamiltoniano}
+  \mathcal H({\bf r},{\bf p}) = \sum_{i=1}^{N} \frac{p_i^2}{2m} + \sum_{i=1}^N \sum_{j>i} \phi (r_{ij})
+\end{equation}
+
+Potencial de Lennard-Jones:
+
+\begin{equation}\label{eq:pot_LJ}
+  \phi (r) = 4\epsilon\left[\left(\frac{\sigma}{r}\right)^{12} -\left(\frac{\sigma}{r}\right)^{6}\right]
+\end{equation}
+
+Potencial truncado y desplazado
+
+\begin{equation}\label{eq:pot_cs}
+  \phi_{cs}(r) = 
+  \begin{cases}
+	  \phi(r)- \phi(r_c) \quad \text{si } r \leq r_c \\
+	  0 \hspace{2.4cm} \text{si } r > r_c
+  \end{cases}
+\end{equation}
+
+Unidades reducidas
+
+\begin{figure}
+	\label{tb:unidades}
+	\begin{center}
+\begin{tabular}{ccc}
+	\hline
+	{\bf Magnitud} & {\bf Símbolo} & {\bf Unidad} \\ \hline
+	 Distancia & $L^*$& $\sigma$ \\ 
+	Energía &$E^*$& $\epsilon$ \\ 
+	Masa &$m^*$& $m$ \\ 
+	Tiempo &$t^*$& $\sigma\sqrt{m/\epsilon}$ \\ 
+	Temperatura &$T^*$& $k_b/\epsilon$ \\ 
+	Presión &$p^*$& $\epsilon/\sigma^3$ \\ 
+	Fuerza &$F^*$& $\epsilon/\sigma$ \\ 
+	\hline 
+\end{tabular}
+\end{center} 
+\end{figure}
+
+Presión instantánea:
+
+\begin{equation}\label{eq:pres}
+p(t) = \rho T  - \frac{1}{3V} \sum_{i=1}^N \sum_{j>i} r_{ij} \frac{\phi(r_{ij})}{dr}
+\end{equation}
+
+Temperatura instantánea:
+
+\begin{equation}\label{eq:tempe}
+ T(t) = \frac{1}{3N-3} \sum_{i=1}^{N} m {\bf v_i}^2
+\end{equation}
+
+Termostato Langevin:
+
+\begin{equation}\label{eq:termo}
+ F_i^{\it lang} = - \gamma  v_i + \sqrt{\frac{2\gamma T}{\Delta t}} \mathcal N(0,1)
+\end{equation}
+
+
 
 \input{desc_system.tex}
+
+\section{Resultados}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.1]{fases.png} \\
+	\caption{Temperatura instantánea en función del tiempo para $T^*=1.0$ utilizando el termostato de Langevin. Gráfico original extraido de \cite{hansenverlet1969}}\label{fig:fases}
+\end{figure}
+
+\subsection{Verificación del termostato de Langevin}
+
+Distribución de Maxwell-Boltzman:
+
+\begin{equation}
+f (v_i) =
+\sqrt{\frac{m}{2 \pi k_bT}} \exp \left[ \frac{-mv_i^2}{2k_bT} \right]
+\end{equation}
+
+\noindent de donde se deduce que la varianza de dicha distribución será (en unidades reducidas):
+
+\begin{equation}
+\sigma^2(v^*_i) = T^*
+\end{equation}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{termo_tempe.pdf} \\
+	\caption{Temperatura instantánea en función del tiempo para $T^*=1.0$ utilizando el termostato de Langevin}\label{fig:termo_tempe}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+\includegraphics[scale=0.6]{termo_histograma.pdf} \\
+\caption{Histograma de la componente de velocidad de una partícula con el correspondiente ajuste Gaussiano para $T^*=1.0$.}\label{fig:termo_histo}
+\end{figure}
+	
+
+\subsection{Barrido de temperatura a densidad constante}
+
+\begin{figure}[H]
+	\centering
+	\hspace{-4em}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[scale=0.47]{{temperatura_p.vs.T}.pdf} \\
+		\caption{Temperatura 1.3}\label{fig:frame1.3}
+	\end{subfigure}
+	\hspace{0.9em}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[scale=0.47]{{temperatura_sp.vs.T}.pdf} \\
+		\caption{Temperatura 0.5}\label{fig:frame0.5}
+	\end{subfigure}
+	
+	\caption{Temperaturas bajas}\label{fig:Tbaja}
+\end{figure}
+
+\subsubsection*{Visualización}
+
+\begin{figure}[H]
+	\centering
+	\hspace{-4em}
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[scale=0.3]{{vmd_t1.1_rho0.001}.png} \\
+		\caption{Temperatura 1.3}\label{fig:frame1.3}
+	\end{subfigure}
+	\hspace{0.9em}
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[scale=0.3]{{vmd_t1.1_rho0.8}.png} \\
+		\caption{Temperatura 0.5}\label{fig:frame0.5}
+	\end{subfigure}
+		\begin{subfigure}{.33\textwidth}
+			\centering
+			\includegraphics[scale=0.3]{{vmd_t1.1_rho2.0}.png} \\
+			\caption{Temperatura 0.5}\label{fig:frame0.5}
+		\end{subfigure}
+	\caption{Temperaturas bajas}\label{fig:Tbaja}
+\end{figure}
+
+\subsection{Barrido de densidad a temperatura constante}
+\begin{figure}[H]
+	\centering
+	\hspace{-4em}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[scale=0.47]{{densidad_p.vs.rho}.pdf} \\
+		\caption{Temperatura 1.3}\label{fig:frame1.3}
+	\end{subfigure}	
+	\hspace{0.9em}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[scale=0.47]{{densidad_sp.vs.rho}.pdf} \\
+		\caption{Temperatura 0.5}\label{fig:frame0.5}
+	\end{subfigure}
+	
+	\caption{Temperaturas bajas}\label{fig:Tbaja}
+\end{figure}
+
+\subsection{Función de correlación entre pares $g(r)$}
+
+
+
+\begin{figure}[H]
+	\centering
+	\hspace{-4em}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[scale=0.46]{{gr_r0.3}.pdf} \\
+		\caption{Temperatura 1.3}\label{fig:frame1.3}
+	\end{subfigure}
+	\hspace{0.1em}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[scale=0.46]{{gr_t1.1}.pdf} \\
+		\caption{Temperatura 0.5}\label{fig:frame0.5}
+	\end{subfigure}
+	
+	\caption{Temperaturas bajas}\label{fig:Tbaja}
+\end{figure}
 
 \section{Conclusiones}
 
@@ -69,5 +251,12 @@ Se implementó el algoritmo de dinámica molecular
   Understanding Molecular Simulations From Algorithms to Applications
   Academic Press
   2002
+  
+\bibitem{hansenverlet1969}
+   Hansen, Jean-Pierre, Loup Verlet
+   Phase transitions of the Lennard-Jones system
+   Physical Review
+   Vol 184, (1), pg. 151
+   1969
 \end{thebibliography}
 \end{document}
