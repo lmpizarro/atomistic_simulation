@@ -43,8 +43,8 @@ Se implementó el algoritmo de dinámica molecular con el objeto de estudiar un
 sistema de partículas que interactúan a través de un potencial de 
 Lennard-Jones. Se estudió el comportamiento bulk del sistema para distintos 
 puntos del espacio de fases y cómo varian sus propiedades termodinámicas en las 
-zonas de transición. Se trabajó en el ensamble canónico implementando 
-el termostato de Langevin. Se obtuvieron las funciones de correlación entre 
+zonas de transición. Se trabajó en el ensamble canónico por medio del 
+termostato de Langevin. Se obtuvieron las funciones de correlación entre 
 pares para algunas configuraciones típicas.
 \end{abstract}
 
@@ -52,21 +52,21 @@ pares para algunas configuraciones típicas.
 \section{Introducción}
 
 En este trabajo se aplicó el método de dinámica molecular para estudiar el 
-comportamiento termodinámico de un sistema de partículas interactuantes a 
-través de un potencial de Lennard-Jones.
+comportamiento termodinámico de un sistema de partículas interactuantes de a 
+pares por medio de un potencial de Lennard-Jones.
 
 Este sistema de líquido de Lennard-Jonnes es ampliamente utilizado para 
 estudiar el comportamiento de fluidos simples y como base para teorías 
 perturbativas de fluídos más complejos.
 
-El método consistió en resulver las ecuaciones de Newton para un Hamiltoniano 
+El método consistió en resolver las ecuaciones de Newton para un Hamiltoniano 
 de la forma:
 
 \begin{equation}\label{eq:hamiltoniano}
   \mathcal H({\bf r},{\bf p}) = \sum_{i=1}^{N} \frac{p_i^2}{2m} + \sum_{i=1}^N \sum_{j>i} \phi (r_{ij})
 \end{equation}
 
-\noindent en donde se utilizó un potencial de interacción entre pares de 
+\noindent en donde se utilizó el potencial de interacción entre pares de 
 Lennard-Jones:
 
 \begin{equation}\label{eq:pot_LJ}
@@ -98,7 +98,7 @@ valores de referencia dados por \cite{johnson1993}.
 
 Como es usual, se utilizaron unidades reducidad en donde la dinstancia y la 
 energía se miden en unidades de $\sigma$ y $\epsilon$, del potencial de LJ; y 
-la masa en unidades de la masa de la partícula. El resto de las magnitudes de 
+la masa en unidades de masa de partícula. El resto de las magnitudes se 
 derivan a partir de estas tres. En el Cuadro \eqref{tb:unidades} se dan las 
 unidades reducidas de las principales magnitudes utilizadas.
 
@@ -132,10 +132,10 @@ Velocity-Verlet, con un paso temporal de integración de $dt=0.001$.
 
 \subsection{Termostato de Langevin}
 
-Para poder trabajar en el ensamble canónico a una temperatura fija, fue 
+Para poder trabajar en el ensamble canónico a una temperatura fija fue 
 necesario implementar un termostato que obligara al sistema a intercambiar 
-energía. De lo contrario, se estaría trabajando en el ensamble micro-canónico a 
-energía constante.
+energía y de esta manera establecer la temperatura de trabajo. De lo contrario, 
+se estaría trabajando en el ensamble micro-canónico a energía constante.
 
 El termostato implementado fue el de Langevin, que consiste en aplicarle a cada 
 partícula una fuerza aleatoria dada por la expresión (en unidades reducidas):
@@ -149,12 +149,12 @@ partícula una fuerza aleatoria dada por la expresión (en unidades reducidas):
 nula y desviación estandar unidad). Se utilizó un valor de $\gamma=0.5$ a lo 
 largo de todo el trabajo.
 
-Se mostrará en la parte de resultados el método implementado para corroborar el 
-buen funcionamiento del termostato de Langevin.
+Se mostrará en la parte de resultados un método para corroborar el buen 
+funcionamiento del termostato de Langevin.
 
 \subsection{Mediciones}
 
-Las dos magnitudes de mayor importancia medidas durante la simulación fueron la 
+Las dos magnitudes medidas de mayor importancia durante la simulación fueron la 
 presión instantánea y la temperatura instantánea. De ambas mediciones, luego 
 fue posible tomar un valor medio y encontrar la presión y temperatura 
 termodinámicas que intervienen en la ecuación de estado.
@@ -174,19 +174,19 @@ entre partículas, la presión puede escribirse como:
 p(t) = \rho T  - \frac{1}{3V} \sum_{i=1}^N \sum_{j>i} r_{ij} \frac{\phi(r_{ij})}{dr}
 \end{equation}
 
-\noindent en donde $V$ es el volumen del sistma ($L^3$). El primer término 
+\noindent en donde $V=L^3$ es el volumen del sistma. El primer término 
 corresponde a la presión que tendría un gas ideal y el segundo es que proviene 
-de la interacción entre las partículas.
+de la interacción entre las partículas. En el primer término se utilizó la 
+temperatura instantánea medida en vez de la temperatura fija de entrada.
 
-El término del viarial fue calculado dentro del loop de fuerzas para evitar 
+El término del virial fue calculado dentro del loop de fuerzas para evitar 
 tener que realizar un segundo doble loop sobre todas las interacciones.
 
 Finalmente, también se registraron los valores de otras magnitudes de interés, 
 como la energía interna del sistema, la energía total y las posiciones de las 
 partículas. Algunas de estas magnitudes por no ser relevantes para todos los 
-análisis, eran activadas o desactivadas con el preprocesador para no lentizar 
+análisis, fueron activadas o desactivadas con el preprocesador para no lentizar 
 los tiempos de corrida del programa.
-
 
 \input{desc_system.tex}
 
@@ -194,8 +194,8 @@ los tiempos de corrida del programa.
 
 En esta sección se muestran los resultados obtenidos durante las distintas 
 corridas del programa. Para facilitzar su análisis se dividieron los resultados 
-en dos partes. En la primera de ellas se realizó un barrido de temperaturas 
-dejando una densidad de partículas fija, mientras que en la segunda se hizo un 
+en dos partes. En la primer parte se realizó un barrido de temperaturas 
+dejando la densidad de partículas fija, mientras que en la segunda se hizo un 
 barrido de densidad a una temperatura fija.
 
 En la Figura \eqref{fig:fases} se muestran esquemáticamente (en rojo) ambos 
@@ -206,7 +206,7 @@ del diagrama se realizó cada simulación.
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.1]{fases.png} \\
-	\caption{Diagrama de fases del sistema de Lennard-Jones junto conl as 
+	\caption{Diagrama de fases del sistema de Lennard-Jones junto con las 
 	indicaciones sobre los distintos estados simulados (en rojo). Gráfico 
 	original extraido de \cite{hansenverlet1969}}\label{fig:fases}
 \end{figure}
@@ -214,11 +214,12 @@ del diagrama se realizó cada simulación.
 \subsection{Verificación del termostato de Langevin}
 
 Antes de realizar el estudio sistemático variando los parámetros, se realizó 
-una comprobacióń de que el termostato de Langevin estuviese bien implementado.
+una comprobacióń para verificar que el termostato de Langevin estuviese bien 
+implementado.
 
-La primera verificación se realizó analizando el gráfico de la temperatura en 
+La primera validación se realizó analizando el gráfico de la temperatura en 
 función del tiempo para el sistema en equilibrio. Se realizó una corrida con 
-$\rho^*=0.8$ y $T^*=1.0$. En la Figura \eqref{fig:termo_tempe} se muestran el 
+$\rho^*=0.8$ y $T^*=1.0$. En la Figura \eqref{fig:termo_tempe} se muestra el 
 resultado obtenido.
 
 \begin{figure}[H]
@@ -247,7 +248,8 @@ f (v_i) =
 \sqrt{\frac{m}{2 \pi k_bT}} \exp \left[ \frac{-mv_i^2}{2k_bT} \right]
 \end{equation}
 
-\noindent de donde se deduce que la varianza de dicha distribución será (en unidades reducidas):
+\noindent de donde se desprende que la varianza de dicha distribución será (en 
+unidades reducidas):
 
 \begin{equation}\label{eq:termo_sigma}
 \sigma^2(v^*_i) = T^*
@@ -258,7 +260,7 @@ registró una componente arbitraria de su velocidad a lo largo de toda la
 simulación. Se realizó el histograma correspondiente y se ajusaron los datos 
 obtenidos con una función Gaussiana. En la Figura \eqref{fig:termo_histo} se 
 muestran los resultados obtenidos. Se omitió la normalización del histograma ya 
-que no era relevante para el presente análisos.
+que no era relevante para el presente análisis.
 
 \begin{figure}[H]
   \centering
@@ -269,7 +271,7 @@ correspondiente ajuste Gaussiano para $T^*=1.0$.}\label{fig:termo_histo}
 \end{figure}
 
 La distribución de velocidades obtenida concuerda a simple vista con una 
-distribución Gaussiana, y la varianza estimada a partír del ajuste fue de 
+distribución Gaussiana. La varianza estimada a partír del ajuste fue de 
 $\sigma^2(v_x^*) = 1.011$. Los resultados encontrados con este análisis 
 permiten indicar que la implementación del termostato de Langevin es correcta.
 	
@@ -280,17 +282,18 @@ En este punto se muestran los resultados obtenidos al realizar distintas
 corridas dejando la densidad constante en $\rho^*=0.3$ y cambiando la 
 temperatura en el rango $[0.7\, , \, 1.4]$ con pasos de $dT=0.05$. Los 
 parámetros utilizados para esta simulación fueron $N_{med} = 5\,10^6$, 
-$N_{run} = 20$ corridas para cada configuración, y el resto similares a los 
-descriptos anteriormente.
+$N_{run} = 20$ corridas para cada configuración. El resto de los parámetros 
+tuvieron valores similares a los descriptos anteriormente.
 
 En la Figura \eqref{fig:temp} se muestran los resultados más relevantes de 
 estas simulaciones. En la Figura \eqref{fig:temp_p} se realiza el gráfico de 
 los valores medios de la presión para cada temperatura. Los valores de 
-temperatura graficados fueron los obtenidos a través de las mediciones, con sus 
+temperatura graficados fueron los obtenidos a través de las mediciones (no del 
+valor fijado como entrada), con sus 
 respectivos errores.
 
 Se compararon los resultados obtenidos con los valores de referencia en 
-\cite{johnson1993} obteniéndose similares valores (no todos los valores estaban 
+\cite{johnson1993} obteniéndose similares valores (no todos estaban 
 disponibles en las tablas de referencia, se interpolaron puntos cuando fue 
 necesario). Se tuvo la precaución de utilizar el mismo radio de corte ($r_c = 4 
 \sigma$) para que la comparación sea válida, sin embargo la cantidad de 
@@ -320,14 +323,12 @@ función de la temperatura. Se observa que posee un mínimo alrededor de
 $T^*=1.1$, que corresponde a un punto dentro de la zona de coexistencia de 
 fases líquida y gaseosa.
 
-
-
 \subsubsection{Visualización}
 
 Utilizando el programa de visualización VMD se analizaron algunas de las 
 configuraciones características de estas simulaciones. En particular, se 
-eligieron los dos valores extremos de temperatura del intervalo recorrido 
-$T^*=0.7$ y $T^*=1.4$, ambos con $\rho^*=0.3$. Observando el diagrama de fases 
+eligieron los dos valores extremos del intervalo de temperaturas $T^*=0.7$ y 
+$T^*=1.4$, ambos con $\rho^*=0.3$. Observando el diagrama de fases 
 de la Figura \eqref{fig:fases}, el primero de dichos puntos se encuentra en la 
 zona de coexistencia líquido-gas y el segundo en la zona de líquido. En la 
 Figura \eqref{fig:vmd_rho} se muestran los gráficos obtenidos en las dos 
@@ -352,10 +353,10 @@ configuraciones analizadas.
 
 En la Figura \eqref{fig:vmd_rho_1} se manifestó claramente la coexistencia 
 entre las fases líquida y gaseosas. La mayoría de las partículas se mantuvieron 
-agrupadas formando la zona de lúquido (parte inferior del gráfico) mientras que 
+agrupadas formando la zona de líquido (parte inferior del gráfico) mientras que 
 algunas de ellas, al llegar a los bordes 
-podían desprenderse y migrar libremente por el resto de la caja, en la zona 
-gaseosa (parte superior en el gráfico).
+podían desprenderse y migrar libremente por el resto de la caja (parte superior 
+en el gráfico).
 
 En la Figura \eqref{fig:vmd_rho_2} todas las partículas se mantuvieron 
 agrupadas formando una única zona de fase líquida.
@@ -380,11 +381,11 @@ obteniéndose similares resultados.
 
 Comenzando con el análisis a $rho^*=1.0$, el valor decrece significativamente 
 hasta la región con $\rho^*=0.6$. En todo dicho intervalo, se realizó la 
-transición de la zona sólida a líquida. A partir del valor de $\rho^*=0.6$ se 
-entra en la zona de coexistencia líquido-gas, en algunos de estas zonas, la 
+transición de la zona sólida. A partir del valor de $\rho^*=0.6$ se 
+entra en la zona de coexistencia líquido-gas. En algunos de estos puntos, la 
 presión tomó valores negativos. Por último, para los valores más chicos de 
-densidad se volvió a entrar en la zona líquida, donde la presión tiende a la 
-que tendría un gas ideal.
+densidad se volvió a entrar en la zona de una sola fase, donde la presión 
+tiende a la que tendría un gas ideal.
 
 \begin{figure}[H]
 	\centering
@@ -406,7 +407,7 @@ que tendría un gas ideal.
 
 En la Figura \eqref{fig:rho_sp} se muestran los valores de la desviación 
 estandar de la presión $\sigma(p)$ en función de los distintos valores de 
-densidad simulados. SE observa un salto abrupto entre $\rho^*=1$ y 
+densidades simulados. Se observa un salto abrupto entre $\rho^*=1$ y 
 $\rho^*=0.95$. De acuerdo al diagrama de fases de la Figura \eqref{fig:fases}, 
 dicha zona coincide con la transición de fases sólido-líquido.
 
@@ -414,7 +415,7 @@ dicha zona coincide con la transición de fases sólido-líquido.
 
 Se visualizaron tres configuraciones características de las simuladas en esta 
 serie. Se eligió un estado con baja densidad de partículas ($\rho^*=0.001$), en 
-la fase líquida. Otro también en la fase líquida pero a mayor densidad 
+la fase de fluido. Otro también en la fase de fluido pero a mayor densidad 
 ($\rho^*=0.8$) y finalmente otro en la zona de fase sólida con $\rho^*=2.0$. En 
 las Figuras \eqref{fig:vmd_temp} se muestran los gráficos correspondientes.
 
@@ -448,8 +449,8 @@ baja densidad fue necesario aumentar considerablemente el tamaño del a caja
 (manteniendo la cantidad de partículas constante).
 
 En la Figura \eqref{fig:vmd_temp_3} se tomó un valor alto de densidad para que 
-se haga evidente la estructura cristalina del sistema. De lo contrario, a 
-agitación térmica presente en la red no permití observar a simple vista su 
+se haga evidente la estructura cristalina del sistema. De lo contrario, la 
+agitación térmica presente en la red no permitó observar a simple vista su 
 estructura.
 
 \subsection{Función de correlación entre pares $g(r)$}
