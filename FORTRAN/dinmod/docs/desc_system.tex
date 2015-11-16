@@ -313,7 +313,7 @@ Cada fila de \texttt{tablas\_temperatura.dat} representa los resultados a una
 dada temperatura con sus respectivos errores. Las columnas son:
 
 \begin{verbatim}
-  T <E> std(E) <M> std(M) <c> std(c) <suc> std(suc) <acept> std(acept)
+   Temp  Densidad  mean(p)  std(p)  mean(sp)  std(sp)  mean(temp)  std(temp)  mean(U)  std(U)
 \end{verbatim}
 
 Donde:
@@ -339,7 +339,7 @@ Donde:
 El control de las corridas del código en FORTRAN se hace desde scripts en el lenguaje
 de alto nivel  \href{http://www.python.org/}{phyton}. 
 
-Para eso hay que parametrizar adecuadamente el sistema en \textbf{\textit{parametros\_t.py}}
+Para eso hay que parametrizar adecuadamente el sistema en \textbf{\textit{parametros\_t.py}} y 
 \textbf{\textit{parametros\_rho.py}}, en un caso se parametriza la dependecia en temperaturas
 de las corridas y en el otro la dependencia en la densidad.
  
@@ -384,21 +384,25 @@ Nrun = 8
 
 \subsection{Corridas del programa}
 
-El programa se puede correr en serie, o en paralelo usando  \href{http://openmp.org/}{openMP} 
-(paralelización multi-core en memoria compartida  \href{http://www.open-mpi.org/}{MPI} (Message Passing Interface).
+Si bien el programa se puede correr en serie, el mayor esfuerzo de desarrollo se puso en conseguir
+funcionalidad en versiones en paralelo 
+ usando  \href{http://openmp.org/}{openMP} 
+(paralelización multi-core en memoria compartida   o \href{http://www.open-mpi.org/}{MPI} (Message Passing Interface).
 
+\begin{comment}
 \subsubsection{Corridas en serie}
 Para correr en serie se debe poner en el script \textbf{\textit{instalar.sh}}
 el parámetro -\textbf{\textit{Dopenmp=OFF}} del comando cmake.
+\end{comment}
 
 \subsubsection{Corridas con openMP}
-Para correr en serie se debe poner en el script \textbf{\textit{instalar.sh}}
+El código con openMP está construído en FORTRAN y para correr en paralelo se debe poner en el script \textbf{\textit{instalar.sh}}
 el parámetro -\textbf{\textit{Dopenmp=ON}} del comando cmake.
 
 \subsubsection{Corridas con MPI}
 
-Para correr con MPI se usa 
-el paquete \href{http://mpi4py.scipy.org/} {\textbf{mpi4py}} ,  desarrollado.
+El código en MPI se construyó con el lenguaje python. Para correr con MPI se usa 
+el paquete \href{http://mpi4py.scipy.org/} {\textbf{mpi4py}}.
 Un script en python distribuye el trabajo entre varios nodos  y en línea de comando
 hay que hacer:
 
@@ -421,6 +425,9 @@ Luego de una corrida para distintas  temperaturas, queda una estructura de direc
 como la que se muestra en \eqref{fig:arboldir}, con la información necesaria 
 para postprocesar
 los resultados y obtener los valores de las mediciones en función de la temperatura.
+
+
+
 
 \tikzstyle{every node}=[thick,anchor=west, 
 font={\scriptsize\ttfamily}, inner sep=2.5pt]
@@ -472,14 +479,21 @@ completa haciendo estadísticas en cada temperatura.}
 \end{figure}
 
 Una vez que se terminan los cálculos para todas las temperaturas,  en 
-la carpeta \textbf{bin/}, se corre:
+la carpeta \textbf{bin/}, se puden correr distintos scripts en python para obtener
+distintos gráficos que muestran los resultados del cálculo:
 
 \begin{verbatim}
-  > python grafico_tablas.py 
+  > python graficos_tablas_rho.py
+  > python graficos_gr.py   
+  > python graficos_pyt.py  
+  > python graficos_tablas_t.py
 \end{verbatim}
 
-para obtener los gráficos de las medidas fundamentales del sistema.
 
+
+
+% inicio comentado
+\begin{comment}
 Si se quieren obtener los gráficos de las correlaciones a distintas temperaturas, 
 se debe correr:
 
@@ -487,7 +501,6 @@ se debe correr:
   > python correlaciones.py 
 \end{verbatim}
 
-\begin{comment}
 \subsection{Corridas en serie}\label{serie}
 El módulo python \texttt{corridas.py}, es el que tiene la capacidad de correr
 el código de cálculo en una máquina con un único núcleo. Parametrizando 
@@ -495,7 +508,6 @@ adecuadamente \texttt{parametros.py} se logran tiempos de corrida razonables en
 una máquina con un único procesador. El parámetro que permite acelerar la 
 velocidad de procesamiento, es el que indica cada cuantos pasos Monte Carlo se 
 quieren grabar las energías.
-\end{comment}
 
 \subsection{Corridas en paralelo}\label{paralelo}
 
@@ -513,3 +525,5 @@ en la próxima temperatura con el estado final de la temperatura anterior.
 Este diseño permitió hacer cálculos en sistemas de mayor tamaño, lograndose llegar a dimensiones
 de 100x100. De esa manera se obtuvieron las curvas que muestran el comportamiento del sistema en
 tamaños mayores a 20x20.
+\end{comment}
+% fin comentado
