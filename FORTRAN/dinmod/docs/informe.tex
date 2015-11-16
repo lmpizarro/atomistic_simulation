@@ -239,7 +239,16 @@ fases líquida y gaseosa.
 
 
 
-\subsubsection*{Visualización}
+\subsubsection{Visualización}
+
+Utilizando el programa de visualización VMD se analizaron algunas de las 
+configuraciones características de estas simulaciones. En particular, se 
+eligieron los dos valores extremos de temperatura del intervalo recorrido 
+$T^*=0.7$ y $T^*=1.4$, ambos con $\rho^*=0.3$. Observando el diagrama de fases 
+de la Figura \eqref{fig:fases}, el primero de dichos puntos se encuentra en la 
+zona de coexistencia líquido-gas y el segundo en la zona de líquido. En la 
+Figura \eqref{fig:vmd_rho} se muestran los gráficos obtenidos en las dos 
+configuraciones analizadas.
 
 \begin{figure}[H]
 	\centering
@@ -254,9 +263,19 @@ fases líquida y gaseosa.
 		\includegraphics[scale=0.3]{{vmd_t1.4_rho0.3}.png} \\
 		\caption{$T^* = 1.4$   -  $\rho*=0.3$}\label{fig:vmd_rho_2}
 	\end{subfigure}
-	\caption{Temperaturas bajas}\label{fig:vmd_rho}
+	\caption{Configuraciones características para dos temperaturas distintas 
+	con una densidad fija en $\rho^*=0.3$}\label{fig:vmd_rho}
 \end{figure}
 
+En la Figura \eqref{fig:vmd_rho_1} se manifestó claramente la coexistencia 
+entre las fases líquida y gaseosas. La mayoría de las partículas se mantuvieron 
+agrupadas formando la zona de lúquido (parte inferior del gráfico) mientras que 
+algunas de ellas, al llegar a los bordes 
+podían desprenderse y migrar libremente por el resto de la caja, en la zona 
+gaseosa (parte superior en el gráfico).
+
+En la Figura \eqref{fig:vmd_rho_2} todas las partículas se mantuvieron 
+agrupadas formando una única zona de fase líquida.
 
 
 \subsection{Barrido de densidad a temperatura constante}
