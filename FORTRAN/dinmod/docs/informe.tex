@@ -178,13 +178,13 @@ p(t) = \rho T  - \frac{1}{3V} \sum_{i=1}^N \sum_{j>i} r_{ij} \frac{\phi(r_{ij})}
 corresponde a la presión que tendría un gas ideal y el segundo es que proviene 
 de la interacción entre las partículas.
 
-El término del viarial fue calculado dentro del loop de fuerzas para evitar 
+El término del virial fue calculado dentro del loop de fuerzas para evitar 
 tener que realizar un segundo doble loop sobre todas las interacciones.
 
 Finalmente, también se registraron los valores de otras magnitudes de interés, 
 como la energía interna del sistema, la energía total y las posiciones de las 
 partículas. Algunas de estas magnitudes por no ser relevantes para todos los 
-análisis, eran activadas o desactivadas con el preprocesador para no lentizar 
+análisis, eran activadas o desactivadas con el preprocesador para no ralentizar 
 los tiempos de corrida del programa.
 
 
@@ -192,7 +192,7 @@ los tiempos de corrida del programa.
 \section{Resultados}
 
 En esta sección se muestran los resultados obtenidos durante las distintas 
-corridas del programa. Para facilitzar su análisis se dividieron los resultados 
+corridas del programa. Para facilitar su análisis se dividieron los resultados 
 en dos partes. En la primera de ellas se realizó un barrido de temperaturas 
 dejando una densidad de partículas fija, mientras que en la segunda se hizo un 
 barrido de densidad a una temperatura fija.
@@ -257,7 +257,7 @@ registró una componente arbitraria de su velocidad a lo largo de toda la
 simulación. Se realizó el histograma correspondiente y se ajusaron los datos 
 obtenidos con una función Gaussiana. En la Figura \eqref{fig:termo_histo} se 
 muestran los resultados obtenidos. Se omitió la normalización del histograma ya 
-que no era relevante para el presente análisos.
+que no era relevante para el presente análisis.
 
 \begin{figure}[H]
   \centering
@@ -351,7 +351,7 @@ configuraciones analizadas.
 
 En la Figura \eqref{fig:vmd_rho_1} se manifestó claramente la coexistencia 
 entre las fases líquida y gaseosas. La mayoría de las partículas se mantuvieron 
-agrupadas formando la zona de lúquido (parte inferior del gráfico) mientras que 
+agrupadas formando la zona de líquido (parte inferior del gráfico) mientras que 
 algunas de ellas, al llegar a los bordes 
 podían desprenderse y migrar libremente por el resto de la caja, en la zona 
 gaseosa (parte superior en el gráfico).
@@ -366,7 +366,7 @@ En este análisis se trabajó con una temperatura fija en $T^*=1.1$ y se varió 
 densidad con los valores $[0.001, 0.01, 0.1, 0.8, 0.9, 1.0]$ y una zona con más 
 detalle en el rango $[0.7\, , \, 1.4]$ con un $d\rho=0.25$. Teniendo en cuenta 
 el diagrama de fases de la Figura \eqref{fig:fases}, estas simulaciones pasan 
-por las fases sólida, líquida y de coexistencia líguia-gaseosa. Los parámetros 
+por las fases sólida, líquida y de coexistencia líquida-gaseosa. Los parámetros 
 utilizados para estas simulaciones fueron $N_{med} = 1\,10^7$ y $N_{run} = 
 28$ corridas para cada configuración, el resto similares a los definidos 
 anteriormente.
@@ -405,7 +405,7 @@ que tendría un gas ideal.
 
 En la Figura \eqref{fig:rho_sp} se muestran los valores de la desviación 
 estandar de la presión $\sigma(p)$ en función de los distintos valores de 
-densidad simulados. SE observa un salto abrupto entre $\rho^*=1$ y 
+densidad simulados. Se observa un salto abrupto entre $\rho^*=1$ y 
 $\rho^*=0.95$. De acuerdo al diagrama de fases de la Figura \eqref{fig:fases}, 
 dicha zona coincide con la transición de fases sólido-líquido.
 
@@ -443,7 +443,7 @@ las Figuras \eqref{fig:vmd_temp} se muestran los gráficos correspondientes.
 
 En los tres gráficos el tamaño de las partículas fue similar, el hecho de que 
 en la Figura \eqref{fig:vmd_temp_1} parezcan más chicos es que para obtener tan 
-baja densidad fue necesario aumentar considerablemente el tamaño del a caja 
+baja densidad fue necesario aumentar considerablemente el tamaño de la caja 
 (manteniendo la cantidad de partículas constante).
 
 En la Figura \eqref{fig:vmd_temp_3} se tomó un valor alto de densidad para que 
