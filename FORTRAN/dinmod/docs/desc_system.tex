@@ -179,6 +179,8 @@ para controlar determinadas opciones de compilación.
 A continuación se muestra un fragmento de código del módulo \textbf{\textit{mediciones.f90}}, donde
 se muestra la forma en que se usaron estos dos recursos.
 
+\begingroup
+    \fontsize{8pt}{10pt}\selectfont
 \begin{verbatim}
 
 #ifdef CORR_PAR
@@ -230,6 +232,8 @@ se muestra la forma en que se usaron estos dos recursos.
 !$omp end parallel
 
 \end{verbatim}
+\endgroup
+
 
 \subsection{Programa principal dinmod}
 
@@ -345,6 +349,9 @@ de las corridas y en el otro la dependencia en la densidad.
  
 Los comentarios del módulo explican el fin de cada una de las variables globales python.
 
+\begingroup
+    \fontsize{8pt}{10pt}\selectfont
+
 \begin{verbatim}
 
 ###############################################################################       
@@ -381,6 +388,7 @@ Nrun = 8
 ###############################################################################
 
 \end{verbatim}
+\endgroup
 
 \subsection{Corridas del programa}
 
