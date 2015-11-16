@@ -135,25 +135,47 @@ del diagrama se realizó cada simulación.
 Antes de realizar el estudio sistemático variando los parámetros, se realizó 
 una comprobacióń de que el termostato de Langevin estuviese bien implementado.
 
-Distribución Gaussiana:
+La primera verificación se realizó analizando el gráfico de la temperatura en 
+función del tiempo para el sistema en equilibrio. Se realizó una corrida con 
+$\rho^*=0.8$ y $T^*=1.0$. En la Figura \eqref{fig:termo_tempe} se muestran el 
+resultado obtenido.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{termo_tempe.pdf} \\
+	\caption{Temperatura instantánea en función del tiempo para $T^*=1.0$ 
+	utilizando el termostato de Langevin}\label{fig:termo_tempe}
+\end{figure}
 
-\begin{equation}
+El comportamiento de la temperatura es el esperado, con un valor medio 
+alrededor del valor fijado de temperatura y una fluctuación debida a la 
+característica propia del termostato.
+
+Es posible, sin embargo, realizar una validación más detallada analizando si la 
+fluctuaciones obtenidas son las que corresponden con la física del problema. En 
+particular, se analizó la fluctuación de la componente de velocidad de una 
+partícula arbitraria a lo largo de una simulación.
+
+Para un sistema en quilibrio en el ensamble canónico, es posible demostrar que 
+el módulo cuadrado de la velocidad tiene una distribución de Maxwell-Boltzmann, 
+de lo cual se deduce que cada componente de la velocidad posee una distribución 
+Gaussiana dada por:
+
+\begin{equation}\label{eq:dist_gauss}
 f (v_i) =
 \sqrt{\frac{m}{2 \pi k_bT}} \exp \left[ \frac{-mv_i^2}{2k_bT} \right]
 \end{equation}
 
 \noindent de donde se deduce que la varianza de dicha distribución será (en unidades reducidas):
 
-\begin{equation}
+\begin{equation}\label{eq:termo_sigma}
 \sigma^2(v^*_i) = T^*
 \end{equation}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.6]{termo_tempe.pdf} \\
-	\caption{Temperatura instantánea en función del tiempo para $T^*=1.0$ utilizando el termostato de Langevin}\label{fig:termo_tempe}
-\end{figure}
+Para implementar esta validación, se eligió arbitrariamente una partícula, y se 
+registró una componente arbitraria de su velocidad a lo largo de toda la 
+simulación. 
+
 
 \begin{figure}[H]
   \centering
