@@ -253,10 +253,13 @@ corre \textbf{\textbf{dinmod}}.
 
 El archivo \texttt{parametros.dat} tiene la forma: 
 
+\begingroup
+    \fontsize{9pt}{11pt}\selectfont
 \begin{verbatim}
      T  Npart  L dt Ntime  sigma epsilon masa Nmed
      gamma
 \end{verbatim}
+\endgroup
 
 Donde Npart
 Es el número de partículas del sistema, \textit{T} la temperatura de la corrida,
@@ -270,10 +273,13 @@ Es el número de partículas del sistema, \textit{T} la temperatura de la corrid
 
 Un ejemplo de ese archivo es:
 
+\begingroup
+    \fontsize{9pt}{11pt}\selectfont
 \begin{verbatim}
    6.0 200 5.5032 0.001 20000 1.0 1.0 1.0 1
    0.5
 \end{verbatim}
+\endgroup
 
 \paragraph{Preprocesamiento en python}
 
@@ -316,9 +322,12 @@ Los resultados los guarda en el archivo \texttt{tablas\_temperatura.dat}.
 Cada fila de \texttt{tablas\_temperatura.dat} representa los resultados a una 
 dada temperatura con sus respectivos errores. Las columnas son:
 
+\begingroup
+    \fontsize{9pt}{11pt}\selectfont
 \begin{verbatim}
    Temp  Densidad  mean(p)  std(p)  mean(sp)  std(sp)  mean(temp)  std(temp)  mean(U)  std(U)
 \end{verbatim}
+\endgroup
 
 Donde:
 
@@ -490,13 +499,15 @@ Una vez que se terminan los cálculos para todas las temperaturas,  en
 la carpeta \textbf{bin/}, se puden correr distintos scripts en python para obtener
 distintos gráficos que muestran los resultados del cálculo:
 
+\begingroup
+    \fontsize{8pt}{10pt}\selectfont
 \begin{verbatim}
   > python graficos_tablas_rho.py
   > python graficos_gr.py   
   > python graficos_pyt.py  
   > python graficos_tablas_t.py
 \end{verbatim}
-
+\endgroup
 
 
 
