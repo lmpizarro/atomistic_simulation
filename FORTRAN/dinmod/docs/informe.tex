@@ -152,16 +152,16 @@ f (v_i) =
 	\begin{subfigure}{.5\textwidth}
 		\centering
 		\includegraphics[scale=0.47]{{temperatura_p.vs.T}.pdf} \\
-		\caption{Temperatura 1.3}\label{fig:frame1.3}
+		\caption{Presión vs. temperatura}\label{fig:temp_p}
 	\end{subfigure}
 	\hspace{0.9em}
 	\begin{subfigure}{.5\textwidth}
 		\centering
 		\includegraphics[scale=0.47]{{temperatura_sp.vs.T}.pdf} \\
-		\caption{Temperatura 0.5}\label{fig:frame0.5}
+		\caption{Desviación estándar de la presión}\label{fig:temp_sp}
 	\end{subfigure}
 	
-	\caption{Temperaturas bajas}\label{fig:Tbaja}
+	\caption{Valores medios y desviación estándar de la presión para distintas temperaturas con $\rho^*=0.3$}\label{fig:temp}
 \end{figure}
 
 \subsubsection*{Visualización}
@@ -172,20 +172,20 @@ f (v_i) =
 	\begin{subfigure}{.33\textwidth}
 		\centering
 		\includegraphics[scale=0.3]{{vmd_t1.1_rho0.001}.png} \\
-		\caption{Temperatura 1.3}\label{fig:frame1.3}
+		\caption{$T^* = 1.1$   -  $\rho*=0.001$}\label{fig:vmd_temp_1}
 	\end{subfigure}
 	\hspace{0.9em}
 	\begin{subfigure}{.33\textwidth}
 		\centering
 		\includegraphics[scale=0.3]{{vmd_t1.1_rho0.8}.png} \\
-		\caption{Temperatura 0.5}\label{fig:frame0.5}
+		\caption{$T^* = 1.1$   -  $\rho*=0.8$}\label{fig:vmd_temp_2}
 	\end{subfigure}
 		\begin{subfigure}{.33\textwidth}
 			\centering
 			\includegraphics[scale=0.3]{{vmd_t1.1_rho2.0}.png} \\
-			\caption{Temperatura 0.5}\label{fig:frame0.5}
+			\caption{$T^* = 1.1$   -  $\rho*=2.0$}\label{fig:vmd_temp_3}
 		\end{subfigure}
-	\caption{Temperaturas bajas}\label{fig:Tbaja}
+	\caption{Temperaturas bajas}\label{fig:vmd_temp}
 \end{figure}
 
 \subsection{Barrido de densidad a temperatura constante}
@@ -195,21 +195,37 @@ f (v_i) =
 	\begin{subfigure}{.5\textwidth}
 		\centering
 		\includegraphics[scale=0.47]{{densidad_p.vs.rho}.pdf} \\
-		\caption{Temperatura 1.3}\label{fig:frame1.3}
+		\caption{Presión vs. densidad}\label{fig:rho_p}
 	\end{subfigure}	
 	\hspace{0.9em}
 	\begin{subfigure}{.5\textwidth}
 		\centering
 		\includegraphics[scale=0.47]{{densidad_sp.vs.rho}.pdf} \\
-		\caption{Temperatura 0.5}\label{fig:frame0.5}
+		\caption{Desviación estándar de la presión}\label{fig:rho_sp}
 	\end{subfigure}
 	
-	\caption{Temperaturas bajas}\label{fig:Tbaja}
+	\caption{Valores medios y desviación estándar de la presión para distintas densidades con $T^*=1.1$}\label{fig:rho}
+\end{figure}
+
+\subsubsection*{Visualización}
+
+\begin{figure}[H]
+	\centering
+	\hspace{-4em}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[scale=0.3]{{vmd_t0.7_rho0.3}.png} \\
+		\caption{$T^* = 0.7$   -  $\rho*=0.3$}\label{fig:vmd_rho_1}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[scale=0.3]{{vmd_t1.4_rho0.3}.png} \\
+		\caption{$T^* = 1.4$   -  $\rho*=0.3$}\label{fig:vmd_rho_2}
+	\end{subfigure}
+	\caption{Temperaturas bajas}\label{fig:vmd_rho}
 \end{figure}
 
 \subsection{Función de correlación entre pares $g(r)$}
-
-
 
 \begin{figure}[H]
 	\centering
@@ -217,16 +233,16 @@ f (v_i) =
 	\begin{subfigure}{.5\textwidth}
 		\centering
 		\includegraphics[scale=0.46]{{gr_r0.3}.pdf} \\
-		\caption{Temperatura 1.3}\label{fig:frame1.3}
+		\caption{$g(r)$ para distintas temperaturas}\label{fig:gr_1}
 	\end{subfigure}
 	\hspace{0.1em}
 	\begin{subfigure}{.5\textwidth}
 		\centering
 		\includegraphics[scale=0.46]{{gr_t1.1}.pdf} \\
-		\caption{Temperatura 0.5}\label{fig:frame0.5}
+		\caption{$g(r)$ para distintas densidades}\label{fig:gr_2}
 	\end{subfigure}
 	
-	\caption{Temperaturas bajas}\label{fig:Tbaja}
+	\caption{Temperaturas bajas}\label{fig:gr}
 \end{figure}
 
 \section{Conclusiones}
