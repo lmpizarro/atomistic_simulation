@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[16]:
+# In[17]:
 
 import numpy as np
 
@@ -51,39 +51,32 @@ def calc_matriz_sigma(vec_parametros):
             matriz_interaccion[j,i] =  matriz_interaccion[i,j]
     return matriz_interaccion
 
+
+# Cálculo y Transformación a por unidad, 
+# se toma como referencia el átomo de la posición 0
 Epsilon = calc_matriz_epsilon(epsilon) / epsilon[0]
 Sigma =  calc_matriz_sigma(sigma) / sigma[0]
+
 
 print Epsilon
 print Sigma
 
 
-Ma = 1; Eps_a = 1.83592*10E-2; sigma_a = 4.1
-Mb = .8; Eps_b = 1.03413*10E-2; sigma_b = 4.0
-Mc = .7; Eps_c = 1.2E-2; sigma_c = 3.9
-
-# parámetros de la interacción de átomos diferentes
-Eps_ab = np.sqrt(Eps_a * Eps_b); sigma_ab = (sigma_a + sigma_b) / 2
-Eps_ac = np.sqrt(Eps_a * Eps_c); sigma_ac = (sigma_a + sigma_c) / 2
-Eps_bc = np.sqrt(Eps_b * Eps_c); sigma_bc = (sigma_b + sigma_c) / 2
-
-# Transformación a por unidad, se toma como referencia el átomo A
- 
-P = np.asarray([i for i in range((Na + Nb) * 3)]).reshape(Na + Nb, 3)
-
 #inicializa posiciones
-P = np.random.rand((Na + Nb)*3).reshape(Na + Nb, 3) * L
-V = np.random.rand((Na + Nb)*3).reshape(Na + Nb, 3) - 0.5
+P = np.random.rand((Npart)*3).reshape(Npart, 3) * L
+V = np.random.rand((Npart)*3).reshape(Npart, 3) - 0.5
 # el calculo de la velocidad del centro de masa debe tener 
 # en cuenta la masa diferente de cada átomo
 # vcm = (Ma * Sum (vai) + Mb * Sum (vbi) ) / (Na * Ma + Nb * Mb)
-Vcm = (Ma * np.sum(V[:Na], 0) + Mb * np.sum(V[Na:], 0)) /  (Na * Ma + Nb * Mb)
+
+
+#Vcm = (Ma * np.sum(V[:Na], 0) + Mb * np.sum(V[Na:], 0)) /  (Na * Ma + Nb * Mb)
 
 
 #print (V)
 #print (np.sum(V[:Na], 0))
 #print (np.sum(V[Na:], 0))
-print (Vcm)
+#print (Vcm)
 
 
 # In[58]:
