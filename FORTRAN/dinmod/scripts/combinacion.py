@@ -1,34 +1,44 @@
 
 # coding: utf-8
 
-# In[46]:
+# In[62]:
 
 import numpy as np
-
 
 #
 # Calcula la cantidad de partículas de un sistema de Nespecies
 # y la cantidad de partículas por especies dados los porcentajes
 # atómicos de Nespecies - 1
 #
-Rho = .9
+Rho = 1.6
 L = 5 # veces sigma_a
-percent_a = 0.3
-percent_b = 0.5
+percent= np.asarray ([0.3, 0.5])
 
-Npart = np.int(Rho  * L * L * L)
-Na = int(percent_a * Npart)
-Nb = int(percent_b * Npart)
-Nc = Npart - Na - Nb
+#
+# Función que determina la composición de partículas
+# por especie. La cantidad de especies está determinada
+# por el tamaño del array percent
+# percent: array con la composición porcentual
+# de elementos
+# L: tamaño de la caja
+# Rho: densidad del sistema
+#
+def calc_particion(percent, L, Rho):
 
-Np = np.asarray([Na,Nb, Nc])
+    Nespecies = np.size(percent)
+    Npart = np.int(Rho  * L * L * L)
+    Np = np.zeros (Nespecies + 1, dtype=int)
 
-print "cantidad de partículas total %d" % (Npart)
-
-for i in range(np.size(Np)):
-    print "cantidad de partículas del elemento %d: %d" % (i, Np[i])
-
+    Nc = Npart
+    for i in range (Nespecies):
+        Np[i] = int(percent[i] * Npart)
+        Nc = Nc - Np[i]
     
+    Np[Nespecies] = Nc
+    
+    return Np
+
+ 
 #
 # Calcula los parámetros de interacción de un sistema
 # de Nespecies, dados los vectores epsilon y sigma
@@ -66,6 +76,16 @@ def calc_matriz_sigma(vec_parametros):
             matriz_interaccion[j,i] =  matriz_interaccion[i,j]
     return matriz_interaccion
 
+def calc_veloc_cm (V, masa, Np):
+    Vcm = np.zeros(3)
+    inic = 0; fin = 0
+    for i in range(np.size(Np)):
+        fin = inic + Np[i]
+        Vcm = Vcm + masa[i] * np.sum(V[inic:fin],0)
+        inic = Np[i]
+    Vcm = Vcm / np.sum(Np * masa)
+    return Vcm
+
 
 # Cálculo y Transformación a por unidad, 
 # se toma como referencia el átomo de la posición 0
@@ -73,22 +93,28 @@ Epsilon = calc_matriz_epsilon(epsilon) / epsilon[0]
 Sigma =  calc_matriz_sigma(sigma) / sigma[0]
 
 
+#
+# Np es un array que almacena la cantidad
+# de partículas por especie
+#
+Np =  calc_particion(percent, L, Rho)
+# Np alamacena el total de partículas
+Npart = np.sum(Np)
+
+print "cantidad de partículas total %d" % (Npart)
+
+for i in range(np.size(Np)):
+    print "cantidad de partículas del elemento %d: %d" % (i, Np[i])
+
 #inicializa posiciones
 P = np.random.rand((Npart)*3).reshape(Npart, 3) * L
 V = np.random.rand((Npart)*3).reshape(Npart, 3) - 0.5
 # el calculo de la velocidad del centro de masa debe tener 
 # en cuenta la masa diferente de cada átomo
 # vcm = (Ma * Sum (vai) + Mb * Sum (vbi) ) / (Na * Ma + Nb * Mb)
+    
+Vcm = calc_veloc_cm(V, masa, Np)
 
-
-Vcm = np.zeros(3)
-inic = 0; fin = 0
-for i in range(np.size(Np)):
-    fin = inic + Np[i]
-    Vcm = Vcm + masa[i] * np.sum(V[inic:fin],0)
-    inic = Np[i]
-
-Vcm = Vcm / np.sum(Np * masa)
 print "Velocidad del centro de masa: %.3f %.3f %.3f" % (Vcm [0], Vcm[1], Vcm[2])
 
 
