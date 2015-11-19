@@ -7,7 +7,7 @@ module mediciones
   ! Calcula la anergia cinetica total del sistema
   implicit none
 
-  integer :: i, j, ke
+  integer :: i, j, ke, je
   integer :: inic, fin
 contains
 
@@ -32,12 +32,14 @@ contains
     ! calculo de las fuerzas de interacción de  
     ! elementos distintos
     inic = 1
+    ! ke apunta a una especie
     do ke=1, gNespecies - 1
       fin = gNp(ke) + inic - 1
       print *, inic, fin
-      inic_i = fin + 1 
-      do j = ke, gNespecies - 1
-        fin_i = inic_i + gNp(j + 1) - 1
+      inic_i = fin + 1
+      !je apunta a otra especie
+      do je = ke, gNespecies - 1
+        fin_i = inic_i + gNp(je + 1) - 1
         print *, "loop interno:", inic_i, fin_i
         inic_i = fin_i + 1
       enddo
