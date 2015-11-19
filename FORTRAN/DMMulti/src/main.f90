@@ -6,15 +6,14 @@
 program main
   use types
   use globales
-  use read_param
-  use combinacion
+
+  use inic_fin
 
   implicit none
 
-  call leer_parametros()
-  call inicializar_globales()
-  call comb_sigma()
-  call comb_epsilon()
-  call finalizar_globales()
 
+  call inicializacion()
+
+
+  call finalizacion()
 endprogram main
