@@ -6,11 +6,48 @@ module mediciones
   !===============================================================================
   ! Calcula la anergia cinetica total del sistema
   implicit none
+
+  integer :: i, j, ke
+  integer :: inic, fin
 contains
+
+  subroutine calcula_fuerza()
+    integer :: inic_i, fin_i      
+    ! calcula las fuerzas de interacción 
+    ! de elementos iguales
+
+    ! loop sobre los distintos elementos
+    inic = 1
+    do ke=1, gNespecies
+      fin = gNp(i) + inic
+      do i= inic, fin - 1
+        do j= inic + 1, fin
+        !! calcula la fuerza
+        enddo
+      enddo
+      inic = fin + 1
+    enddo
+
+
+    ! calculo de las fuerzas de interacción de  
+    ! elementos distintos
+    inic = 1
+    do ke=1, gNespecies - 1
+      fin = gNp(ke) + inic
+      print *, inic, fin
+      inic_i = fin
+      do j = ke, gNespecies - 1
+        fin_i = inic_i + gNp(j + 1)
+        print *, "loop interno:", inic_i, fin_i
+        inic_i = fin_i
+      enddo
+      inic = fin
+    enddo
+  endsubroutine calcula_fuerza
+
   subroutine calcula_kin()
     
     real(dp), allocatable   :: v2(:)    ! Vector con la velocidad cuadratica
-    integer :: i, inic, fin
     real(dp) :: masa
 
 
@@ -27,6 +64,7 @@ contains
       fin = gNp(i) + inic
       masa = gLj_param(i, 3)
       gKin = gKin + masa * sum(v2(inic:fin))
+      inic = fin + 1
     enddo
 
     gKin = 0.5_dp * gKin

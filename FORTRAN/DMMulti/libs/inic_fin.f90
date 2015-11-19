@@ -27,6 +27,8 @@ contains
 
     write (*,100) "gKin inicial: ", gKin
 
+    call calcula_fuerza()
+
     100 format (a, F15.3)
   endsubroutine inicializacion
 

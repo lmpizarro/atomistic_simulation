@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[62]:
+# In[5]:
 
 import numpy as np
 
@@ -10,7 +10,7 @@ import numpy as np
 # y la cantidad de partículas por especies dados los porcentajes
 # atómicos de Nespecies - 1
 #
-Rho = 1.6
+Rho = .2
 L = 5 # veces sigma_a
 percent= np.asarray ([0.3, 0.5])
 
@@ -19,7 +19,7 @@ percent= np.asarray ([0.3, 0.5])
 # por especie. La cantidad de especies está determinada
 # por el tamaño del array percent
 # percent: array con la composición porcentual
-# de elementos
+# de elementos.
 # L: tamaño de la caja
 # Rho: densidad del sistema
 #
@@ -118,7 +118,7 @@ Vcm = calc_veloc_cm(V, masa, Np)
 print "Velocidad del centro de masa: %.3f %.3f %.3f" % (Vcm [0], Vcm[1], Vcm[2])
 
 
-# In[58]:
+# In[39]:
 
 def calc_energ(P, Np):
     
@@ -133,12 +133,32 @@ def calc_energ(P, Np):
         print inic, fin 
         #print P[inic:fin]
         inic = fin
-        
+    
+    print ""
+    print "calcula interacciones entre distintos"
+    print "cantidad de elementos", cant_atomos
+    inic = 0
+    for i in range(cant_atomos -1 ):
+        fin = inic +  Np[i]
+        print inic, fin
+        inic_i = fin
+        for j in range(i, cant_atomos - 1):
+            fin_i = inic_i + Np[j+1]
+            print "loop interno:", inic_i, fin_i
+            inic_i = fin_i
+        #print P[inic:fin]
+        inic = fin
+    
 
 
-# In[59]:
+# In[40]:
 
 calc_energ(P, Np)
+
+
+# In[32]:
+
+Np
 
 
 # In[ ]:
