@@ -1,10 +1,16 @@
 program read_param
   implicit none
 
-  integer :: Nespecies, i
+  integer :: N_total_part, Nespecies, i
   real :: v1, v2, v3
 
-  REAL, ALLOCATABLE :: lj_param(:,:), percent(:)
+  ! guarda los parámetros del modelo lj de
+  ! cada especie
+  REAL, ALLOCATABLE :: lj_param(:,:) 
+  ! guarda el porcentaje de cada especie
+  REAL, ALLOCATABLE :: percent(:) 
+  ! guarda la cantidad de  partículas de cada especie
+  Integer, ALLOCATABLE :: Np(:)
   real :: Lado_caja, densidad, Temperatura
   real :: v_temp
 
@@ -13,8 +19,11 @@ program read_param
   ! lee la cantidad de especies
   read(10,*) Nespecies
 
+
   ALLOCATE (lj_param(1:Nespecies,1:3))
   allocate(percent(1:Nespecies))
+  allocate(Np(1:Nespecies))
+
 
   ! lee los parámetros de lj de cada especie
   do i=1,Nespecies
@@ -37,8 +46,15 @@ program read_param
   enddo
   percent(Nespecies) = 1 - v_temp
 
+  N_total_part = int (densidad * Lado_caja ** 3)
 
-
+  ! calcula la cantidad de partículas de cada especie
+  do i=1, Nespecies
+    Np(i) = N_total_part * percent(i) 
+  enddo
+  ! Ajuste de la cantidad total de partículas
+  ! La conversión a enteros pierde partículas
+  N_total_part = sum(Np)
 
   print *, "Nespecies", Nespecies
   print *, "epsilon           sigma           masa"
@@ -48,8 +64,9 @@ program read_param
   print *, "Lado_caja: ", Lado_caja, "densidad", densidad, "temperatura: ",&
      Temperatura
 
+  print *, "Cantidad Total de Partículas: ", N_total_part
   do i=1, Nespecies
-     print *, "Especie: ", i, "porcentaje: " , percent(i) 
+     print *, "Especie: ", i, "porcentaje: " , percent(i), "cant de particulas: ", Np(i) 
   enddo
 
 endprogram read_param
