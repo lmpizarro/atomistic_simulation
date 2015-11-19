@@ -28,7 +28,9 @@ contains
          gCombEpsilon(j,i) = gCombEpsilon(i,j) 
       enddo
     enddo
-    
+   
+    gCombEpsilon = gCombEpsilon / gLj_param (1,1)
+
     ! imprime la matriz por pantalla
     print *, "gEpsilon"
     do i = 1, gNespecies
@@ -54,6 +56,8 @@ contains
          gCombSigma(j,i) = gCombSigma(i,j)
       enddo
     enddo
+ 
+    gCombSigma = gCombSigma / gLj_param(1,2)
 
     ! imprime la matriz por pantalla
     print *, "gSigma"
