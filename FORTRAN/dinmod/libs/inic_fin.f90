@@ -201,7 +201,7 @@ contains
   !===============================================================================
   ! INICIALIZA Posicion en Red periódica cúbica simple
   !===============================================================================
-
+  !
   subroutine inicia_posicion_cs()
 
     integer  :: i, j, k, l, nl

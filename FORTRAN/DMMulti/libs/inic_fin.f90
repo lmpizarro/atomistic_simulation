@@ -2,6 +2,7 @@ module inic_fin
   use types,      only: dp
   use globales
   use ziggurat
+  use usozig
   use read_param
   use combinacion
 
@@ -16,6 +17,12 @@ contains
     call inicializar_globales()
     call comb_sigma()
     call comb_epsilon()
+
+    call inic_zig()
+
+    call inicia_posicion_rn()
+    call vel_inic()
+
   endsubroutine inicializacion
 
   !===============================================================================
@@ -57,7 +64,7 @@ contains
 
     do i = 1, gNpart
       do j= 1, 3
-        gR(j, i) = uni() * gL 
+        gR(j, i) = uni() * gLado_caja
       end do
    end do     
 

@@ -42,6 +42,9 @@ module globales
 
   real(dp), allocatable :: gRc2(:) 
   real(dp), allocatable :: gPot_Cut(:) 
+ 
+  real(dp)        :: gKin       ! Energia cinetica del sistema
+
 contains
 
   subroutine print_gvars()
