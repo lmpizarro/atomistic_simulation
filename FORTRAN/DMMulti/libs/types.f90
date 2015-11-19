@@ -1,3 +1,7 @@
+!
+! Definición de tipos 
+!
+!
 module types
 
 

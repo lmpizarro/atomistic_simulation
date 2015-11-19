@@ -1,4 +1,4 @@
-!
+! 
 !
 !
 !
@@ -10,7 +10,9 @@ module read_param
   implicit none
 
 contains
-
+  !
+  ! Subroutina que lee los parámetros del problema
+  !
   subroutine leer_parametros()
     integer :: i
 

@@ -1,5 +1,5 @@
-!
-!
+! subroutinas que calculan los parámetros
+! de interacción de la mezcla
 !
 !
 !
@@ -38,7 +38,6 @@ contains
          gCombSigma(j,i) = gCombSigma(i,j)
       enddo
     enddo
-
   endsubroutine comb_sigma
 
 endmodule combinacion

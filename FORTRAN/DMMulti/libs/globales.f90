@@ -1,5 +1,5 @@
-!
-!
+! definición de variables globales que usa
+! el programa
 !
 !
 !
