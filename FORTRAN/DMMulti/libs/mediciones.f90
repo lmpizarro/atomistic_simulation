@@ -5,6 +5,7 @@ module mediciones
   ! CALCULA ENERGIA CINETICA 
   !===============================================================================
   ! Calcula la anergia cinetica total del sistema
+  implicit none
 contains
   subroutine calcula_kin()
     

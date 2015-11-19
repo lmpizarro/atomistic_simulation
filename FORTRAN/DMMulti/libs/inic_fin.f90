@@ -7,7 +7,7 @@ module inic_fin
   use combinacion
   use mediciones
 
-
+implicit none
 contains
 
   !===============================================================================
@@ -23,11 +23,9 @@ contains
 
     call inicia_posicion_rn()
     call vel_inic()
-
     call calcula_kin ()
 
-
-    write (*,100) "gKin: ", gKin
+    write (*,100) "gKin inicial: ", gKin
 
     100 format (a, F15.3)
   endsubroutine inicializacion
@@ -37,6 +35,7 @@ contains
   !===============================================================================
   subroutine finalizacion()
     call finalizar_globales()
+    call fin_zig()
   endsubroutine finalizacion
 
 
