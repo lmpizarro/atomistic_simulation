@@ -5,6 +5,7 @@ module inic_fin
   use usozig
   use read_param
   use combinacion
+  use mediciones
 
 
 contains
@@ -23,6 +24,12 @@ contains
     call inicia_posicion_rn()
     call vel_inic()
 
+    call calcula_kin ()
+
+
+    write (*,100) "gKin: ", gKin
+
+    100 format (a, F15.3)
   endsubroutine inicializacion
 
   !===============================================================================
@@ -31,8 +38,6 @@ contains
   subroutine finalizacion()
     call finalizar_globales()
   endsubroutine finalizacion
-
-
 
 
   !===============================================================================
@@ -50,7 +55,7 @@ contains
       end do
     end do
     ! Define la desviación estandar sqrt(kT/m) en unidades adimensionales
-    gV = sqrt( gT ) * gV
+    gV = sqrt( gTemperatura ) * gV
 
   end subroutine vel_inic
 
