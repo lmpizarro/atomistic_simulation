@@ -12,5 +12,6 @@ program main
 
   call leer_parametros()
   call inicializar_globales()
+  call finalizar_globales()
 
 endprogram main

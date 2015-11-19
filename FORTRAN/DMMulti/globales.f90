@@ -25,6 +25,10 @@ module globales
 
   integer :: gNespecies
 
+  ! gR:  posicion de la particula
+  ! gF:  fuerza entre particulas particula
+  ! gV:  velocidad de la particula
+  real(dp),  dimension(:,:), allocatable  :: gR, gF, gV
 
 contains
 
@@ -44,6 +48,43 @@ contains
     do i=1, gNespecies
        print *, "Especie: ", i, "porcentaje: " , gpercent(i), "cant de particulas: ", gNp(i) 
     enddo
-  endsubroutine
+  endsubroutine print_gvars
+
+
+  subroutine inicializar_globales()
+    integer :: i
+    real(dp) :: v_temp
+    ! determina el porcentaje de la especie restante
+    v_temp = 0.0
+    do i=1, gNespecies - 1
+      v_temp = v_temp + gpercent(i) 
+    enddo
+    gpercent(gNespecies) = 1 - v_temp
+
+    gNPart = int (gRho * gLado_caja ** 3)
+
+    allocate(gNp(1:gNespecies))
+    ! calcula la cantidad de partículas de cada especie
+    do i=1, gNespecies
+      gNp(i) = gNPart * gpercent(i) 
+    enddo
+    ! Ajuste de la cantidad total de partículas
+    ! La conversión a enteros pierde partículas
+    gNPart = sum(gNp)
+
+
+    allocate(gR(1:3, 1:gNpart))
+    allocate(gF(1:3, 1:gNpart))
+    allocate(gV(1:3, 1:gNpart))
+
+    call print_gvars()
+
+  endsubroutine inicializar_globales
+
+  subroutine finalizar_globales()
+    deallocate(gR,gV,gF, gNp, gLj_param, gPercent)
+  endsubroutine finalizar_globales
+
+
 
 endmodule globales

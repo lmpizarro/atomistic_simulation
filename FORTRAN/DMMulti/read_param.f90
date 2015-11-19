@@ -14,7 +14,6 @@ contains
   subroutine leer_parametros()
     integer :: i
 
-
     OPEN(UNIT=10,FILE='input.par',STATUS='UNKNOWN')
 
     ! lee la cantidad de especies
@@ -22,8 +21,6 @@ contains
 
     ! Alloca memoria de acuerdo a la cantidad de especies
     ALLOCATE (gLj_param(1:gNespecies,1:3))
-    allocate(gPercent(1:gNespecies))
-    allocate(gNp(1:gNespecies))
 
     ! lee los parámetros de lj de cada especie
     do i=1,gNespecies
@@ -34,6 +31,9 @@ contains
     ! paso de tiempo, cantidad de pasos de tiempo
     read(10,*) gLado_caja, gRho, gTemperatura, gDt, gNtime, gNmed
 
+
+    allocate(gPercent(1:gNespecies))
+
     ! lee los porcentajes de Nespecies - 1
     do i=1,gNespecies - 1
       read(10,*) gpercent(i)
@@ -41,30 +41,5 @@ contains
     close(10)
           
   endsubroutine leer_parametros
-
-
-  subroutine inicializar_globales()
-    integer :: i
-    real(dp) :: v_temp
-    ! determina el porcentaje de la especie restante
-    v_temp = 0.0
-    do i=1, gNespecies - 1
-      v_temp = v_temp + gpercent(i) 
-    enddo
-    gpercent(gNespecies) = 1 - v_temp
-
-    gNPart = int (gRho * gLado_caja ** 3)
-
-    ! calcula la cantidad de partículas de cada especie
-    do i=1, gNespecies
-      gNp(i) = gNPart * gpercent(i) 
-    enddo
-    ! Ajuste de la cantidad total de partículas
-    ! La conversión a enteros pierde partículas
-    gNPart = sum(gNp)
-
-    call print_gvars()
-
-  endsubroutine inicializar_globales
 
 endmodule read_param
