@@ -1,3 +1,8 @@
+!
+!
+!
+!
+!
 module globales
     
 
@@ -30,6 +35,10 @@ module globales
   ! gV:  velocidad de la particula
   real(dp),  dimension(:,:), allocatable  :: gR, gF, gV
 
+  !
+  !
+  real(dp),  dimension(:,:), allocatable  :: gCombSigma
+  real(dp),  dimension(:,:), allocatable  :: gCombEpsilon
 contains
 
   subroutine print_gvars()
@@ -83,6 +92,7 @@ contains
 
   subroutine finalizar_globales()
     deallocate(gR,gV,gF, gNp, gLj_param, gPercent)
+    deallocate(gCombSigma,gCombEpsilon)
   endsubroutine finalizar_globales
 
 endmodule globales
