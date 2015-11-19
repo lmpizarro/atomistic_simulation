@@ -50,8 +50,8 @@ contains
     enddo
     print *, "Lado_caja: ", gLado_caja, "densidad", gRho, "temperatura: ",&
         gTemperatura
-    print *, "paso de tiempo: ", gDt, "cantidad de pasos: ", gNtime, "paso de&
-    medida", gNmed
+    print *, "paso de tiempo: ", gDt, "cantidad de pasos: ",&
+            gNtime, "paso de medida", gNmed
 
     print *, "Cantidad Total de Partículas: ", gNPart
     do i=1, gNespecies
