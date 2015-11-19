@@ -85,6 +85,4 @@ contains
     deallocate(gR,gV,gF, gNp, gLj_param, gPercent)
   endsubroutine finalizar_globales
 
-
-
 endmodule globales
