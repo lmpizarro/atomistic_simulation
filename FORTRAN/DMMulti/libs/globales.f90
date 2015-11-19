@@ -43,20 +43,34 @@ contains
 
   subroutine print_gvars()
     integer :: i      
-    print *, "Nespecies", gNespecies
-    print *, "epsilon           sigma           masa"
-    do i=1, gNespecies
-       print *, glj_param(i,1), glj_param(i,2), glj_param(i,3)
-    enddo
-    print *, "Lado_caja: ", gLado_caja, "densidad", gRho, "temperatura: ",&
-        gTemperatura
-    print *, "paso de tiempo: ", gDt, "cantidad de pasos: ",&
-            gNtime, "paso de medida", gNmed
+    write( *,600) "Nespecies", gNespecies
 
-    print *, "Cantidad Total de Partículas: ", gNPart
+    write( *, 500)  "epsilon           sigma           masa"
     do i=1, gNespecies
-       print *, "Especie: ", i, "porcentaje: " , gpercent(i), "cant de particulas: ", gNp(i) 
+       write( *, 800) glj_param(i,1), glj_param(i,2), glj_param(i,3)
     enddo
+
+    write (*,400) "Lado_caja: ", gLado_caja, " densidad", gRho, &
+            " Temperatura: ", gTemperatura
+
+    write (*,300) "paso de tiempo: ", gDt, " cantidad de pasos: ",&
+            gNtime, " paso de medida", gNmed
+
+
+
+    print *, "N Partículas Total: ", gNPart
+    print *, "Especie: porcentaje: N particulas: " 
+
+    do  i = 1, gNespecies
+      write(*,700)  i, gpercent(i), gNp(i) 
+    enddo  
+
+    300 format (a, F10.3, a, I10, a, I10)
+    400 format (a, F10.3, a, F10.3, a, F10.3)
+    500 format (a)
+    600 format (a, I3)
+    700 format (I3, F15.3, I10)
+    800 format (F12.3, F12.3, F12.3)
   endsubroutine print_gvars
 
 
