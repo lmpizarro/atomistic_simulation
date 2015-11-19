@@ -39,6 +39,9 @@ module globales
   !
   real(dp),  dimension(:,:), allocatable  :: gCombSigma
   real(dp),  dimension(:,:), allocatable  :: gCombEpsilon
+
+  real(dp), allocatable :: gRc2(:) 
+  real(dp), allocatable :: gPot_Cut(:) 
 contains
 
   subroutine print_gvars()
@@ -106,7 +109,8 @@ contains
 
   subroutine finalizar_globales()
     deallocate(gR,gV,gF, gNp, gLj_param, gPercent)
-    deallocate(gCombSigma,gCombEpsilon)
+    deallocate(gCombSigma, gCombEpsilon)
+    deallocate(gRc2, gPot_Cut)
   endsubroutine finalizar_globales
 
 endmodule globales

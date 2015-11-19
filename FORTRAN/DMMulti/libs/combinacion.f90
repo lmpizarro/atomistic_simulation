@@ -38,7 +38,6 @@ contains
     enddo
 
     700 format (100g15.5)
-
   endsubroutine comb_epsilon
 
   subroutine comb_sigma()
@@ -65,9 +64,29 @@ contains
       write (*, 700) (gCombSigma (i,j), j = 1,gNespecies)
     enddo
 
+    ! como se calcularon los sigmas
+    ! calculamos los rc y potencial en rc
+    call corta_desplaza_pote()
+
     700 format (100g15.5)
-
-
   endsubroutine comb_sigma
+
+  ! calcula el radio de corte y el potencial
+  ! en ese lugar
+  subroutine corta_desplaza_pote ()
+    allocate (gRc2(1:gNespecies))
+    allocate (gPot_Cut(1:gNespecies))
+
+    ! calcula para cada una de las especies 
+    ! el radio de corte y el potencial de corte
+    ! de acuerdo al cálculo en dinmod
+    print *, "Rc**2       V(Rc)"
+    do i = 1, gNespecies
+       gRc2(i) = (4 * gCombSigma(i,i) ) ** 2
+       gPot_Cut(i) = 4.0_dp * ( 1.0_dp / (gRc2(i)**6) - 1.0_dp / (gRc2(i)**3) ) 
+       write (*, 700) gRc2(i), gPot_Cut(i)
+    enddo
+    700 format (F10.3, E15.3)
+  endsubroutine corta_desplaza_pote
 
 endmodule combinacion
