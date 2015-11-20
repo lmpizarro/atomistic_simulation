@@ -20,34 +20,30 @@ contains
     real(dp)                :: cut4      ! Cuarta parte del potencial en r_c
     real(dp)                :: gRc2      ! Cuarta parte del potencial en r_c
 
-         rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
-        ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
-        ! Siempre en distancias relativas de sigma
-        rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
-        r2ij   = dot_product( rij_vec , rij_vec )          ! Cuadrado de la distancia
-        ! el radio de corte depende de la especie
-        ! y la interacción
-        if ( r2ij < gRc2) then                
-          r2in = 1.0_dp/r2ij                               ! Inversa al cuadrado
-          r6in = r2in**3                                   ! Inversa a la sexta
-          Fij     = r2in * r6in * (r6in - 0.5_dp)          ! Fuerza entre partículas
-          gF(:,i) = gF(:,i) + Fij * rij_vec                ! Contribución a la partícula i
-          gF(:,j) = gF(:,j) - Fij * rij_vec                ! Contribucion a la partícula j
-          ! el potencial de corte depende de la especie
-          ! y la interacción
-          gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4  ! Energía potencial
-          gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
+    rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
+    ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
+    ! Siempre en distancias relativas de sigma
+    rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
+    r2ij   = dot_product( rij_vec , rij_vec )          ! Cuadrado de la distancia
+    ! el radio de corte depende de la especie
+    ! y la interacción
+    if ( r2ij < gRc2) then                
+      r2in = 1.0_dp/r2ij                               ! Inversa al cuadrado
+      r6in = r2in**3                                   ! Inversa a la sexta
+      Fij     = r2in * r6in * (r6in - 0.5_dp)          ! Fuerza entre partículas
+      gF(:,i) = gF(:,i) + Fij * rij_vec                ! Contribución a la partícula i
+      gF(:,j) = gF(:,j) - Fij * rij_vec                ! Contribucion a la partícula j
+      ! el potencial de corte depende de la especie
+      ! y la interacción
+      gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4  ! Energía potencial
+      gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
-        end if  ! Termina if del radio de corte
+    end if  ! Termina if del radio de corte
 
   endsubroutine kernel_fuerza
 
   subroutine calcula_fuerza()
-    real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
-    real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
-    real(dp)                :: Fij       ! Módulo fuerza entre partículas i y j
-    real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
-    real(dp)                :: cut4      ! Cuarta parte del potencial en r_c
+      real(dp)                :: cut4      ! Cuarta parte del potencial en r_c
          
     integer :: inic_i, fin_i      
     ! calcula las fuerzas de interacción 

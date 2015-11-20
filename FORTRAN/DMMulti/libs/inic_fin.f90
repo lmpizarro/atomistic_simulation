@@ -19,6 +19,11 @@ contains
     call comb_sigma()
     call comb_epsilon()
 
+    ! como se calcularon los sigmas
+    ! calculamos los rc y potencial en rc
+    call corta_desplaza_pote()
+
+
     call inic_zig()
 
     call inicia_posicion_rn()
