@@ -17,7 +17,7 @@ contains
     
     ! Lo escribo de esta forma porque de lo contrario da error de compilación
     ! en el cluster (dice ser un bug de gfortran)
-    temp = gL*floor(gR/gL)
+    temp = gLado_caja*floor(gR/gLado_caja)
     gR = gR - temp
 
   end subroutine

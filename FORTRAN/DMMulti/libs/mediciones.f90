@@ -108,9 +108,57 @@ contains
     ! Se agregan las constantes que faltan para el término del virial
     gVir = 48.0_dp*gVir / 3.0_dp
 
+! Si se utiliza el termostato de Langevin
+#if THERM == 1
+    call fuerza_langevin()
+#endif
+
+
 
   endsubroutine calcula_fuerza
 
+
+#if THERM == 1
+  !===============================================================================
+  ! TERMOSTATO DE LANGEVIN
+  !===============================================================================
+  ! Agrega la parte estocástica al a fuerza de cada partícula
+
+  subroutine fuerza_langevin()
+
+  integer  :: i, j
+
+  do i = 1, gNpart
+    do j = 1, 3
+      gF(j,i) = gF(j,i) - gGamma * gV(j,i) + sqrt(2.0_dp*gT*gGamma/gDt) * rnor()
+    end do
+  end do
+
+  end subroutine fuerza_langevin
+#endif
+ 
+  !===============================================================================
+  ! CALCULA  PRESION 
+  !===============================================================================
+  ! Calcula la presion en base al teorema del virial (Ver 2.4 del Allen)
+
+  subroutine calcula_pres(presion)
+
+    real(dp), intent(out)    :: presion
+    real(dp)                 :: tempe
+
+   ! Calcula la temperatura instantánea
+   call calcula_temp(tempe)
+   ! Calcula la presión con la temperatura instantánea
+   presion = gRho * tempe + gVir / gVol 
+
+  end subroutine calcula_pres
+
+
+  !===============================================================================
+  ! CALCULA ENERGIA CINETICA 
+  !===============================================================================
+  ! Calcula la anergia cinetica total del sistema
   subroutine calcula_kin()
     
     real(dp), allocatable   :: v2(:)    ! Vector con la velocidad cuadratica
@@ -136,5 +184,18 @@ contains
     gKin = 0.5_dp * gKin
 
   endsubroutine calcula_kin
+  !===============================================================================
+  ! CALCULA TEMPERATURA INSTANTANEA 
+  !===============================================================================
+  ! Calcula la anergia cinetica total del sistema
+
+  subroutine calcula_temp(Temp_ins)
+    
+    real(dp), intent(out)         :: Temp_ins ! Temperatura instantánea
+
+    Temp_ins = 2.0_dp * gKin / (3*gNpart-3)
+
+  end subroutine calcula_temp
+
 
 end module mediciones

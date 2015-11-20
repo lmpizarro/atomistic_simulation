@@ -14,7 +14,7 @@ module globales
   ! gDt: Paso de tiempo de la corrida
   ! gL: longitud de un lado del cubo
   !real(dp) :: gT, gDt, gL
-  real(dp) :: gLado_caja, gRho, gTemperatura, gDt
+  real(dp) :: gLado_caja, gTemperatura, gDt
   ! gNpart: cantidad de partículas del sistema
   ! gNtime: cantidad de pasos de  tiempo
   ! gNmed : cantidad de pasos entre mediciones
@@ -40,8 +40,10 @@ module globales
   real(dp),  dimension(:,:), allocatable  :: gCombSigma
   real(dp),  dimension(:,:), allocatable  :: gCombEpsilon
 
-  real(dp), allocatable :: gRc2(:,:) 
-  real(dp), allocatable :: gPot_Cut(:,:) 
+  real(dp), allocatable :: gRc2(:,:)  ! Cuadrado del radio de corte
+  real(dp), allocatable :: gPot_Cut(:,:)  ! Potencial L-J en el radio de corte
+  real(dp) :: gVol       ! Volumen del cubo
+  real(dp) :: gRho       ! Densidad numero de particulas N/V
  
   real(dp)        :: gPot       ! Energía potencial del sistema
   real(dp)        :: gKin       ! Energia cinetica del sistema
