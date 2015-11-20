@@ -7,7 +7,7 @@ epsilon_2 sigma_2 masa_2
 .
 .
 epsilon_n sigma_n masa_n
-Lcaja densidad temperatura
+Lcaja densidad temperatura delta_t  total pasos pasos_medicion gamma
 pc1
 pc2
 .
@@ -20,7 +20,7 @@ pc_n-1
 1.2E-2 4.2 1.2
 1.3E-2 4.3 1.3
 1.4E-2 4.4 1.4
-50 .3  1.2
+5 .3  1.2 0.001 10000 100 0.5
 .2
 .3
 .4

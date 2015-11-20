@@ -9,6 +9,8 @@ program main
 
   use inic_fin
 
+  use mediciones
+
   implicit none
 
 

@@ -31,8 +31,7 @@ contains
  
     ! lee el tamaño de la caja, la densidad, temperatura, 
     ! paso de tiempo, cantidad de pasos de tiempo
-    read(10,*) gLado_caja, gRho, gTemperatura, gDt, gNtime, gNmed
-
+    read(10,*) gLado_caja, gRho, gTemperatura, gDt, gNtime, gNmed, gGamma
 
     allocate(gPercent(1:gNespecies))
 

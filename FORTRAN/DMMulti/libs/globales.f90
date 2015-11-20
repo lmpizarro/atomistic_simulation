@@ -49,6 +49,7 @@ module globales
   real(dp)        :: gKin       ! Energia cinetica del sistema
   real(dp)        :: gVir       ! Cálculo del virial para la presión 
 
+  real(dp)        :: gGamma     ! Parámetro para el termostato de Langevin  
 contains
 
   subroutine print_gvars()
@@ -64,9 +65,7 @@ contains
             " Temperatura: ", gTemperatura
 
     write (*,300) "paso de tiempo: ", gDt, " cantidad de pasos: ",&
-            gNtime, " paso de medida", gNmed
-
-
+            gNtime, " paso de medida ", gNmed, "gamma langevin: ", gGamma
 
     print *, "N Partículas Total: ", gNPart
     print *, "Especie: porcentaje: N particulas: " 
@@ -75,7 +74,7 @@ contains
       write(*,700)  i, gpercent(i), gNp(i) 
     enddo  
 
-    300 format (a, F10.3, a, I10, a, I10)
+    300 format (a, F10.3, a, I10, a, I10, a, F10.3)
     400 format (a, F10.3, a, F10.3, a, F10.3)
     500 format (a)
     600 format (a, I3)

@@ -1,10 +1,10 @@
 module mediciones
+#include "control.h"
   use types,      only: dp
   use globales
-  !===============================================================================
-  ! CALCULA ENERGIA CINETICA 
-  !===============================================================================
-  ! Calcula la anergia cinetica total del sistema
+  
+  use ziggurat
+
   implicit none
 
   integer :: i, j, ke, je
@@ -126,13 +126,13 @@ contains
 
   subroutine fuerza_langevin()
 
-  integer  :: i, j
+    integer  :: i, j
 
-  do i = 1, gNpart
-    do j = 1, 3
-      gF(j,i) = gF(j,i) - gGamma * gV(j,i) + sqrt(2.0_dp*gT*gGamma/gDt) * rnor()
+    do i = 1, gNpart
+      do j = 1, 3
+        gF(j,i) = gF(j,i) - gGamma * gV(j,i) + sqrt(2.0_dp*gTemperatura*gGamma/gDt) * rnor()
+      end do
     end do
-  end do
 
   end subroutine fuerza_langevin
 #endif
