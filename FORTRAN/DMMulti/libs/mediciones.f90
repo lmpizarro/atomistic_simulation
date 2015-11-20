@@ -19,10 +19,12 @@ contains
     ! loop sobre los distintos elementos
     inic = 1
     do ke=1, gNespecies
-      fin = gNp(i) + inic
+      fin = gNp(ke) + inic - 1
+      print *, "calculo sobre los puros", inic, fin
       do i= inic, fin - 1
-        do j= inic + 1, fin
+        do j= i + 1, fin
         !! calcula la fuerza
+        print *, "calculo puro ", ke, "i j ", i, j
         enddo
       enddo
       inic = fin + 1
@@ -37,12 +39,22 @@ contains
       fin = gNp(ke) + inic - 1
       print *, inic, fin
       inic_i = fin + 1
-      !je apunta a otra especie
-      do je = ke, gNespecies - 1
-        fin_i = inic_i + gNp(je + 1) - 1
-        print *, "loop interno:", inic_i, fin_i
-        inic_i = fin_i + 1
+
+      ! para cada uno de los elementos
+      ! calcular la interacción con los
+      ! otros elementos
+      do i=inic, fin 
+
+        !je apunta a otra especie
+        do je = ke, gNespecies - 1
+          fin_i = inic_i + gNp(je + 1) - 1
+            do j=inic_i, fin_i
+              !print *, "loop interno:", i, j
+            enddo 
+          !inic_i = fin_i + 1
+        enddo
       enddo
+
       inic = fin + 1
     enddo
   endsubroutine calcula_fuerza
