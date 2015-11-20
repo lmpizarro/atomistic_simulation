@@ -73,20 +73,42 @@ contains
 
   ! calcula el radio de corte y el potencial
   ! en ese lugar
+  ! TODO: tiene un error hay que armar una matriz
   subroutine corta_desplaza_pote ()
-    allocate (gRc2(1:gNespecies))
-    allocate (gPot_Cut(1:gNespecies))
+    allocate (gRc2(1:gNespecies, 1:gNespecies))
+    allocate (gPot_Cut(1:gNespecies, 1:gNespecies))
 
     ! calcula para cada una de las especies 
     ! el radio de corte y el potencial de corte
     ! de acuerdo al cálculo en dinmod
     print *, "Rc**2       V(Rc)"
+    ! elementos de la diagonal
     do i = 1, gNespecies
-       gRc2(i) = (4 * gCombSigma(i,i) ) ** 2
-       gPot_Cut(i) = 4.0_dp * ( 1.0_dp / (gRc2(i)**6) - 1.0_dp / (gRc2(i)**3) ) 
-       write (*, 700) gRc2(i), gPot_Cut(i)
+       gRc2(i,i) = (4 * gCombSigma(i,i) ) ** 2
+       gPot_Cut(i,i) = 4.0_dp * ( 1.0_dp / (gRc2(i,i)**6) - 1.0_dp / (gRc2(i,i)**3) ) 
+       write (*, 700) gRc2(i,i), gPot_Cut(i,i)
     enddo
-    700 format (F10.3, E15.3)
+
+    ! calcula los elementos fuera de la diagonal
+    do i =1, gNespecies
+      do j=i+1, gNespecies
+         gRc2(i,j) =  (4 * gCombSigma(i,j) ) ** 2
+         gRc2(j,i) = gCombSigma(i,j)
+
+         gPot_Cut(i,j) = 4.0_dp * ( 1.0_dp / (gRc2(i,j)**6) - 1.0_dp / (gRc2(i,j)**3) ) 
+         gPot_Cut(j,i) = gPot_Cut(i,j) 
+      enddo
+    enddo
+
+    ! imprime la matriz de gRc2por pantalla
+    print *, "gRc2"
+    do i = 1, gNespecies
+      write (*, 700) (gRc2 (i,j), j = 1,gNespecies)
+    enddo
+
+
+    700 format (100g15.5)
+
   endsubroutine corta_desplaza_pote
 
 endmodule combinacion

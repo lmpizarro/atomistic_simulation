@@ -40,10 +40,12 @@ module globales
   real(dp),  dimension(:,:), allocatable  :: gCombSigma
   real(dp),  dimension(:,:), allocatable  :: gCombEpsilon
 
-  real(dp), allocatable :: gRc2(:) 
-  real(dp), allocatable :: gPot_Cut(:) 
+  real(dp), allocatable :: gRc2(:,:) 
+  real(dp), allocatable :: gPot_Cut(:,:) 
  
+  real(dp)        :: gPot       ! Energía potencial del sistema
   real(dp)        :: gKin       ! Energia cinetica del sistema
+  real(dp)        :: gVir       ! Cálculo del virial para la presión 
 
 contains
 
