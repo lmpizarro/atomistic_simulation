@@ -53,7 +53,11 @@ contains
     inic = 1
     do ke=1, gNespecies
       fin = gNp(ke) + inic - 1
+
+#if DEBUG == 1
       print *, "calculo sobre los puros", inic, fin
+#endif
+
       ! Por cuestiones de eficiencia. Se evita hacer una multiplicación dentro
       ! del loop anidado
       cut4 = gPot_cut(ke, ke) / 4.0_dp 
@@ -61,7 +65,10 @@ contains
       do i= inic, fin - 1
         do j= i + 1, fin
         !! calcula la fuerza
+
+#if DEBUG == 1
         print *, "calculo puro ", ke, "i j ", i, j
+#endif
 
         call kernel_fuerza (cut4, gRc2(ke,ke))
 
@@ -77,7 +84,11 @@ contains
     ! ke apunta a una especie
     do ke=1, gNespecies - 1
       fin = gNp(ke) + inic - 1
+
+#if DEBUG == 1
       print *, inic, fin
+#endif
+
       inic_i = fin + 1
 
       ! para cada uno de los elementos
@@ -91,7 +102,9 @@ contains
 
           fin_i = inic_i + gNp(je + 1) - 1
             do j=inic_i, fin_i
-              !print *, "loop interno:", i, j
+#if DEBUG == 1
+              print *, "loop interno:", i, j
+#endif              
               call kernel_fuerza (cut4, gRc2(ke, je))
             enddo 
           !inic_i = fin_i + 1
@@ -113,7 +126,11 @@ contains
     call fuerza_langevin()
 #endif
 
-
+#if DEBUG == 1
+    do j=1,gNpart 
+      print *, gF(1,j) , gF(2,j), gF(3,j)
+    enddo  
+#endif
 
   endsubroutine calcula_fuerza
 
