@@ -16,6 +16,8 @@ contains
   !===============================================================================
   subroutine inicializacion()
     integer :: j 
+    real(dp)  :: insPres   ! Presión instantánea
+    real(dp)  :: insTemp   ! Temperatura instantánea
 
     call inic_zig()
     call leer_parametros()
@@ -34,6 +36,9 @@ contains
       print *, gR(1,j) , gR(2,j), gR(3,j)
     enddo  
 
+    call calcula_fuerza()
+
+    print *, "energia potencial inicial: ", gPot
 
     call integracion_min()
 
@@ -42,6 +47,7 @@ contains
       print *, gR(1,j) , gR(2,j), gR(3,j)
     enddo  
 
+    print *, "energia potencial after min: ", gPot
 
     call vel_inic()
 
@@ -50,6 +56,14 @@ contains
     write (*,100) "gKin inicial: ", gKin
 
     call calcula_fuerza()
+
+
+    ! Calcula la presión inicial
+    call calcula_pres(insPres)
+    ! Calcula la temperatura inicial
+    call calcula_temp(insTemp)
+    write (*,100) "insTemp inicial: ", insTemp
+    write (*,100) "insPres inicial: ", insPres
 
 
     100 format (a, F20.3)

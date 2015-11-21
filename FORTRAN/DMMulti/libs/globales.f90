@@ -87,6 +87,9 @@ contains
   subroutine inicializar_globales()
     integer :: i
     real(dp) :: v_temp
+
+    gVol = gLado_caja ** 3
+
     ! determina el porcentaje de la especie restante
     v_temp = 0.0
     do i=1, gNespecies - 1
