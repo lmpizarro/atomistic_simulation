@@ -22,6 +22,7 @@ module globales
 
   ! guarda los parámetros del modelo lj de
   ! cada especie
+  ! epsilon_2 sigma_2 masa_2
   REAL(dp), ALLOCATABLE :: gLj_param(:,:) 
   ! guarda el porcentaje de cada especie
   REAL(dp), ALLOCATABLE :: gPercent(:) 
