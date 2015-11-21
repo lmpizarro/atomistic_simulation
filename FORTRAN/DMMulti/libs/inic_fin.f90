@@ -37,6 +37,12 @@ contains
 
     call integracion_min()
 
+    print *, "pos final after min"
+    do j=1,gNpart 
+      print *, gR(1,j) , gR(2,j), gR(3,j)
+    enddo  
+
+
     call vel_inic()
 
     call calcula_kin ()
@@ -44,10 +50,6 @@ contains
     write (*,100) "gKin inicial: ", gKin
 
     call calcula_fuerza()
-
-    do j=1,gNpart 
-      print *, gF(1,j) , gF(2,j), gF(3,j)
-    enddo  
 
 
     100 format (a, F20.3)

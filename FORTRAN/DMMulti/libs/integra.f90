@@ -58,10 +58,6 @@ contains
     ! en el cluster (dice ser un bug de gfortran)
     tmp = gLado_caja*floor(gR/gLado_caja)
 
-    do j=1,gNpart 
-      print *, tmp(1,j) , tmp(2,j), tmp(3,j)
-    enddo  
-
 
     gR = gR - tmp
 
@@ -71,6 +67,6 @@ contains
 
     gR = abs(mod(gR, gLado_caja))
   
-  end subroutine cpc_vec
+  end subroutine cpc_vec_
 
 end module integra

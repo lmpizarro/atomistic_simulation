@@ -30,8 +30,6 @@ contains
       Fij     = r2in * r6in * (r6in - 0.5_dp)          ! Fuerza entre partículas
       gF(:,i) = gF(:,i) + Fij * rij_vec                ! Contribución a la partícula i
       gF(:,j) = gF(:,j) - Fij * rij_vec                ! Contribucion a la partícula j
-      ! el potencial de corte depende de la especie
-      ! y la interacción
       gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4  ! Energía potencial
       gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
@@ -40,13 +38,17 @@ contains
   endsubroutine kernel_fuerza
 
   subroutine calcula_fuerza()
-      real(dp)                :: cut4      ! Cuarta parte del potencial en r_c
-      integer :: i, j, ke, je
-      integer :: inic, fin
+    real(dp):: cut4      ! Cuarta parte del potencial en r_c
+    integer :: i, j, ke, je
+    integer :: inic, fin
          
     integer :: inic_i, fin_i      
     ! calcula las fuerzas de interacción 
     ! de elementos iguales
+
+    gF    = 0.0_dp
+    gPot  = 0.0_dp
+    gVir  = 0.0_dp
 
     ! loop sobre los distintas particulas
     inic = 1
@@ -69,7 +71,7 @@ contains
         print *, "calculo puro ", ke, "i j ", i, j
 #endif
 
-        call kernel_fuerza (i, j, cut4, gRc2(ke,ke))
+       call kernel_fuerza (i, j, cut4, gRc2(ke,ke))
 
         enddo
       enddo
@@ -81,7 +83,7 @@ contains
     ! particulas distintas
     inic = 1
     ! ke apunta a una especie
-    do ke=1, gNespecies - 1
+    do ke=1, gNespecies - 1  ! para todos los elementos menos la última
       fin = gNp(ke) + inic - 1
 
 #if DEBUG == 1
@@ -93,14 +95,14 @@ contains
       ! para cada uno de los elementos
       ! calcular la interacción con los
       ! otros elementos
-      do i=inic, fin 
+      do i=inic, fin   ! para todas las partículas de esa especie
 
         !je apunta a otra especie
-        do je = ke, gNespecies - 1
+        do je = ke + 1, gNespecies 
           cut4 = gPot_cut(ke, je) / 4.0_dp 
 
-          fin_i = inic_i + gNp(je + 1) - 1
-            do j=inic_i, fin_i
+          fin_i = inic_i + gNp(je) - 1
+            do j=inic_i, fin_i ! para todas las partículas de la otra especie
 #if DEBUG == 1
               print *, "loop interno:", i, j
 #endif              
