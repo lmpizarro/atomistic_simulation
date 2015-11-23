@@ -4,7 +4,8 @@ module mediciones
   use globales
   
   use ziggurat
-
+!#include  "mpif.h"
+  use mpi
   implicit none
 
 
@@ -38,6 +39,10 @@ contains
   endsubroutine kernel_fuerza
 
   subroutine calcula_fuerza()
+
+    !      
+    ! elemento = especie, cada especie i tiene Npi partículas
+    !
     real(dp):: cut4      ! Cuarta parte del potencial en r_c
     integer :: i, j, ke, je
     integer :: inic, fin
@@ -50,9 +55,10 @@ contains
     gPot  = 0.0_dp
     gVir  = 0.0_dp
 
-    ! loop sobre los distintas particulas
+    ! calcula la fuerza para particulas de iguales elementos
+    !
     inic = 1
-    do ke=1, gNespecies
+    do ke=1, gNespecies  ! loop sobre los distintas elementos
       fin = gNp(ke) + inic - 1
 
 #if DEBUG == 1
@@ -63,15 +69,15 @@ contains
       ! del loop anidado
       cut4 = gPot_cut(ke, ke) / 4.0_dp 
 
-      do i= inic, fin - 1
-        do j= i + 1, fin
+      do i= inic, fin - 1  ! para cada una de las partículas
+        do j= i + 1, fin   ! se calcula la interaccion con la otra partícula
         !! calcula la fuerza
 
 #if DEBUG == 1
-        print *, "calculo puro ", ke, "i j ", i, j
+          print *, "calculo puro ", ke, "i j ", i, j
 #endif
 
-       call kernel_fuerza (i, j, cut4, gRc2(ke,ke))
+          call kernel_fuerza (i, j, cut4, gRc2(ke,ke))
 
         enddo
       enddo

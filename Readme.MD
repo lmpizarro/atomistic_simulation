@@ -3,6 +3,13 @@ La solución a los problemas del curso Introducción a la Simulación Computacio
 la carpeta FORTRAN
 
 
+# MPI
+
+* [mpitutorial](http://mpitutorial.com/)
+* Introdución a MPI [Cornell Virtual Workshop](https://cvw.cac.cornell.edu/MPI/)
+* High Performance Computing [CPS343](http://www.math-cs.gordon.edu/courses/cps343/presentations.html)
+* Examples [MPI](http://geco.mines.edu/workshop/class2/examples/mpi/index.html)
+
 
 Para actualizar github
 
