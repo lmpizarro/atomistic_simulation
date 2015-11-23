@@ -13,9 +13,10 @@ program main
 
   implicit none
 
-
   call inicializacion()
 
+  call integracion()
 
+  print *, "llama fin"
   call finalizacion()
 endprogram main

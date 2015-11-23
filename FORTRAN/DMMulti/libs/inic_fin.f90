@@ -57,14 +57,12 @@ contains
 
     call calcula_fuerza()
 
-
     ! Calcula la presión inicial
     call calcula_pres(insPres)
     ! Calcula la temperatura inicial
     call calcula_temp(insTemp)
     write (*,100) "insTemp inicial: ", insTemp
     write (*,100) "insPres inicial: ", insPres
-
 
     100 format (a, F20.3)
   endsubroutine inicializacion
