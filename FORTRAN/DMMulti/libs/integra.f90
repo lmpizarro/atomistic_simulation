@@ -34,7 +34,7 @@ contains
       do j=1, gNespecies
         fin = inic + gNp(j)
         gR(:,inic:fin) = gR(:,inic:fin) + gDt * gV(:,inic:fin) + 0.5_dp * &
-                         gF(:,inic:fin) * gDt**2 / gLj_param(j,3)   ! gR(t+dt)
+                         gF(:,inic:fin) * gDt ** 2 / gLj_param(j,3)   ! gR(t+dt)
         call cpc_vec()
         gV(:,inic:fin) = gV(:,inic:fin) + 0.5_dp * gF(:,inic:fin) * gDt / gLj_param(j,3)     ! gV(t+0.5dt) 
         inic = fin + 1
