@@ -5,7 +5,7 @@ module mediciones
   
   use ziggurat
 !#include  "mpif.h"
-  use mpi
+  !use mpi
   implicit none
 
 

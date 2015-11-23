@@ -7,6 +7,80 @@ module integra
 contains 
 
   !===============================================================================
+  ! integración de las ecuaciones de movimiento - velocity verlet
+  !===============================================================================
+  ! integra las ecuaciones dinámicas con el algoritmo de velocity-verlet
+
+  subroutine integracion()
+    real(dp)                                :: pres    ! presión instantánea
+    real(dp)                                :: temp    ! presión instantánea
+    integer                                 :: i, j, inic, fin
+    integer                                 :: Kmed    ! Cantidad de puntos medidos
+    real(dp), dimension(:,:), allocatable   :: eng_t   ! energía en función del tiempo
+    real(dp), dimension(:), allocatable     :: pres_t  ! presión en función del tiempo
+    real(dp), dimension(:), allocatable     :: temp_t  ! temperatura en función del tiempo
+
+    ! Se define la cantidad de puntos que se van a medir
+    Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
+    allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed) )
+
+    ! -------------------------------------------------------------------------------------------
+    ! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
+    ! ------------------------------------------------------------------------------------------
+    j = 2                                              ! Contador para el loop de mediciones
+                                                       ! (j=1 lo usé para el valor inicial)
+    do i = 1, gNtime 
+
+
+      inic = 1
+      do j=1, gNespecies
+        fin = inic + gNp(j)
+
+        gR = gR + gDt*gV + 0.5_dp * gF * gDt**2 / gLj_param(j,3)   ! gR(t+dt)
+        ! Aplica condiciones peródicas de contorno
+        call cpc_vec()
+        gV = gV + 0.5_dp * gF * gDt / gLj_param(j,3)     ! gV(t+0.5dt) 
+        call calcula_fuerza()                            ! Calcula fuerzas y potencial
+        gV = gV + 0.5_dp * gF * gDt / gLj_param(j,3)     ! gV(t+dt)
+
+        inic = fin + 1
+      enddo
+
+
+      ! Se realizan las mediciones
+      if (mod(i,gNmed) == 0) then
+        ! Energia cinetica
+        call calcula_kin()
+        ! Temperatura
+        call calcula_temp(Temp)
+        ! Presión
+        call calcula_pres(Pres)
+        ! Guarda magnitudes
+        Eng_t(:,j) = (/gPot, gKin, gPot + gKin/) 
+        Pres_t(j)  = Pres
+        Temp_t(j)  = Temp
+
+#ifdef CONTROL_TEMP
+        ! Guardo las velocidades de una partícula arbitraria
+        !Vel_t(:,j) = gV(:,15)
+#endif
+#ifdef GRABA_TRAYECTORIA
+        !call escribe_trayectoria(gR,.FALSE.)
+#endif
+        ! Escribe posiciones de las partículas
+        !call escribe_trayectoria(gR,i)
+        j = j + 1                                      ! Actualiza contador mediciones
+      end if
+    end do
+! -------------------------------------------------------------------------------------------
+! FIN DEL LOOP PRINCIPAL DE INTEGRACION
+! -------------------------------------------------------------------------------------------
+
+  endsubroutine integracion
+
+
+
+  !===============================================================================
   ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - MINIMIZACIÓN ENERGÍA
   !===============================================================================
   ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
