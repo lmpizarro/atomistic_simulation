@@ -28,6 +28,8 @@ module globales
   REAL(dp), ALLOCATABLE :: gPercent(:) 
   ! guarda la cantidad de  partículas de cada especie
   Integer, ALLOCATABLE :: gNp(:)
+  ! guarda un indice de particula
+  Integer, ALLOCATABLE :: gIndice_elemento(:)
 
   integer :: gNespecies
 
@@ -73,7 +75,8 @@ contains
 
     do  i = 1, gNespecies
       write(*,700)  i, gpercent(i), gNp(i) 
-    enddo  
+    enddo 
+
 
     300 format (a, F10.3, a, I10, a, I10, a, F10.3)
     400 format (a, F10.3, a, F10.3, a, F10.3)
@@ -85,7 +88,7 @@ contains
 
 
   subroutine inicializar_globales()
-    integer :: i
+    integer :: i,j, inic, fin
     real(dp) :: v_temp
 
     gVol = gLado_caja ** 3
@@ -95,9 +98,10 @@ contains
     do i=1, gNespecies - 1
       v_temp = v_temp + gpercent(i) 
     enddo
+
     gpercent(gNespecies) = 1 - v_temp
 
-    gNPart = int (gRho * gLado_caja ** 3)
+    gNPart = int ( gLado_caja ** 3 / gRho)
 
     allocate(gNp(1:gNespecies))
     ! calcula la cantidad de partículas de cada especie
@@ -106,8 +110,21 @@ contains
     enddo
     ! Ajuste de la cantidad total de partículas
     ! La conversión a enteros pierde partículas
-    gNPart = sum(gNp)
 
+
+    gNPart = sum(gNp)
+    ALLOCATE(gIndice_elemento(1:gNPart))
+
+    gIndice_elemento = 2
+    
+    inic = 1
+    do i=1, gNespecies
+      fin = gNp(i) + inic - 1
+      do j=inic, fin 
+        gIndice_elemento(j) = i
+      enddo
+      inic = fin + 1
+    enddo  
 
     allocate(gR(1:3, 1:gNpart))
     allocate(gF(1:3, 1:gNpart))
