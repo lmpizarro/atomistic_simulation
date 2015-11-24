@@ -40,7 +40,5 @@ contains
       read(10,*) gpercent(i)
     enddo
     close(10)
-          
   endsubroutine leer_parametros
-
 endmodule read_param

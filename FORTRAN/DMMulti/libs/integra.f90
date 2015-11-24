@@ -28,11 +28,10 @@ contains
     ! ------------------------------------------------------------------------------------------
     k = 1                                              ! Contador para el loop de mediciones
     do i = 1, gNtime 
-
-
       inic = 1
       do j=1, gNespecies
-        fin = inic + gNp(j)
+        fin = inic + gNp(j) - 1
+        !print *, "integracion ", inic, fin, j
         gR(:,inic:fin) = gR(:,inic:fin) + gDt * gV(:,inic:fin) + 0.5_dp * &
                          gF(:,inic:fin) * gDt ** 2 / gLj_param(j,3)   ! gR(t+dt)
         call cpc_vec()
@@ -44,7 +43,7 @@ contains
 
       inic = 1
       do j=1, gNespecies
-        fin = inic + gNp(j)
+        fin = inic + gNp(j) - 1
         gV(:,inic:fin) = gV(:,inic:fin) + 0.5_dp * gF(:,inic:fin) * gDt / gLj_param(j,3)     ! gV(t+dt)
         inic = fin + 1
       enddo
@@ -95,11 +94,11 @@ contains
     do i = 1, gNtime 
       inic = 1
       do j=1, gNespecies
-        fin = inic + gNp(j)
+        fin = inic + gNp(j) - 1
+        !print *, "integracion ", inic, fin, j
         gR(:,inic:fin) = gR(:,inic:fin) + 0.5_dp * gF(:,inic:fin) * (gDt**2) / gLj_param(j,3)
         inic = fin + 1
       enddo
-
 
       ! Aplica condiciones periódicas de contorno
       call cpc_vec()   

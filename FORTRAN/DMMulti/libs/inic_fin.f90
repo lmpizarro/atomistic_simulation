@@ -21,6 +21,7 @@ contains
 
     call inic_zig()
     call leer_parametros()
+
     call inicializar_globales()
     call comb_sigma()
     call comb_epsilon()
