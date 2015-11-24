@@ -62,7 +62,7 @@ contains
         Pres_t(k)  = Pres
         Temp_t(k)  = Temp
 
-        print *, "-----------------", k, i, gPot, gKin, gPot + gKin
+        print *, "med", k, i, gPot, gKin, gPot + gKin
 
         k = k + 1                                      ! Actualiza contador mediciones
       end if
@@ -86,6 +86,7 @@ contains
     real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
     integer    :: i, j, inic, fin
 
+    call calcula_fuerza()
     ! Escribe encabezado y primer punto de la trayectoria
     ! call escribe_trayectoria(gR,.FALSE.) 
     ! El primer punto es la energía inicial
@@ -125,7 +126,7 @@ contains
     
     ! Lo escribo de esta forma porque de lo contrario da error de compilación
     ! en el cluster (dice ser un bug de gfortran)
-    tmp = gLado_caja*floor(gR/gLado_caja)
+    tmp = gLado_caja*nint(gR/gLado_caja)
 
 
     gR = gR - tmp

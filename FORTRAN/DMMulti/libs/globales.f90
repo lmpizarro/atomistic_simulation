@@ -91,6 +91,7 @@ contains
     integer :: i,j, inic, fin
     real(dp) :: v_temp
 
+    ! determina el volumen de la caja
     gVol = gLado_caja ** 3
 
     ! determina el porcentaje de la especie restante
@@ -101,7 +102,7 @@ contains
 
     gpercent(gNespecies) = 1 - v_temp
 
-    gNPart = int ( gLado_caja ** 3 / gRho)
+    gNPart = int ( gLado_caja ** 3 * gRho)
 
     allocate(gNp(1:gNespecies))
     ! calcula la cantidad de partículas de cada especie

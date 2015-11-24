@@ -56,7 +56,7 @@ contains
           i_inter = gIndice_elemento(i)
           j_inter = gIndice_elemento(j)
           !print *, "---->", i, j, i_inter, j_inter 
-          !call kernel_fuerza (i, j, i_inter, j_inter)
+          call kernel_fuerza (i, j, i_inter, j_inter)
        enddo
     enddo
 
