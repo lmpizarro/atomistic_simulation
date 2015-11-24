@@ -112,4 +112,29 @@ contains
 
   end subroutine inicia_posicion_rn
 
+  !===============================================================================
+  ! INICIALIZA Posicion fcc dentro de la caga 
+  !===============================================================================
+  ! param_red: parametro de red, la caja es cubica(todos los lados iguales) 
+  ! n_pred: indica la cantidad de veces que se repite el cubo primitivo
+  ! tanto en z como en x y la variable y
+  !
+  subroutine inicia_posicion_fcc(param_red, n_pred)
+ 
+    integer :: i, j, k
+    print "inicia posicion red fcc"
+    do i = 1, n_pred 
+      do j= 1,  n_pred
+        do k= 1,  n_pred
+           print *, i, j, k 
+        enddo
+      enddo
+   enddo     
+
+  end subroutine inicia_posicion_fcc
+
+
+
+
+
 end module inic_fin 
