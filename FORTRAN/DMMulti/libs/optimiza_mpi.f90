@@ -16,9 +16,20 @@ program main
 
   allocate (delta_x(1:size_))
 
+  ! una posibilidad de calculo
   do i=1, size_
      num = i
      delta_x(i) =  (num ** coef2 ) + coef1
+  enddo
+
+
+  do i=1, size_
+    do j = 1, gNpart
+      do k =j +1 , gNpart
+        if ((k -j) * gNpart - (k -j) * (k + j) / 2 .lt. gNpart * gNpart / &
+                (2 * size_)
+      enddo
+    enddo
   enddo
 
   sum_ = sum(delta_x)
