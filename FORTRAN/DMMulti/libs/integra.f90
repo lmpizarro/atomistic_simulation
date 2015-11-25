@@ -117,7 +117,7 @@ contains
   ! Condiciones períodicas de contorno
   !===============================================================================
 
-  subroutine cpc_vec()
+  subroutine cpc_vec_()
 
     real(dp), dimension(3,gNpart) :: tmp     ! Variable temporal
     integer :: j
@@ -131,12 +131,12 @@ contains
 
     gR = gR - tmp
 
-  end subroutine cpc_vec
+  end subroutine cpc_vec_
 
-  subroutine cpc_vec_()
+  subroutine cpc_vec()
 
     gR = abs(mod(gR, gLado_caja))
   
-  end subroutine cpc_vec_
+  end subroutine cpc_vec
 
 end module integra

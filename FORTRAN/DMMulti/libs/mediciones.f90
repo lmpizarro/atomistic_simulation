@@ -32,12 +32,13 @@ contains
     rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
     r2ij   = dot_product( rij_vec , rij_vec )          ! Cuadrado de la distancia
     if ( r2ij < rc2) then                
-      r2in = 1.0_dp/r2ij                               ! Inversa al cuadrado
+      r2in = (gCombSigma(i_inter,j_inter) **2)/r2ij                               ! Inversa al cuadrado
       r6in = r2in**3                                   ! Inversa a la sexta
       Fij     = r2in * r6in * (r6in - 0.5_dp)          ! Fuerza entre partículas
       gF(:,i) = gF(:,i) + Fij * rij_vec                ! Contribución a la partícula i
       gF(:,j) = gF(:,j) - Fij * rij_vec                ! Contribucion a la partícula j
-      gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4  ! Energía potencial
+      gPot    = gPot + gCombEpsilon(i_inter, j_inter) * r6in * &
+                 ( r6in - 1.0_dp) - cut4  ! Energía potencial
       gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
     end if  ! Termina if del radio de corte
