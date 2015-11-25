@@ -1,6 +1,6 @@
 Formato del archivo input.par
 
-cant_especies
+cant_especies liqsol
 epsilon_1 sigma_1 masa_1
 epsilon_2 sigma_2 masa_2
 .
@@ -24,6 +24,9 @@ pc_n-1
 .2
 .3
 .4
+
+liqsol 0   posiciones aleatorias
+liqsol 1   posiciones cristalinas
 
 <!-- fortran program examples -->
 Ejemplos [Fortran](http://www.personal.psu.edu/jhm/f90/progref.html)

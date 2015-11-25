@@ -31,7 +31,16 @@ module globales
   ! guarda un indice de particula
   Integer, ALLOCATABLE :: gIndice_elemento(:)
 
-  integer :: gNespecies
+  integer :: gNespecies, gLiqSol
+
+  ! define la cantidad de veces que se repite el cubo basico
+  ! aplica a z, y, x
+  integer :: gPeriodos
+  ! define el tipo de estrucura cubica 
+  ! 0: simple, 
+  ! 1: centrada en el cuerpo, 
+  ! 2: centrada en las caras
+  integer :: gCubicStructure
 
   ! gR:  posicion de la particula
   ! gF:  fuerza entre particulas particula
@@ -87,7 +96,7 @@ contains
   endsubroutine print_gvars
 
 
-  subroutine inicializar_globales()
+  subroutine inicializar_globales_random()
     integer :: i,j, inic, fin
     real(dp) :: v_temp
 
@@ -133,7 +142,33 @@ contains
 
     call print_gvars()
 
-  endsubroutine inicializar_globales
+  endsubroutine inicializar_globales_random
+
+  subroutine inicializar_globales_fcc()
+    ! define la cantidad de veces que se repite el cubo basico
+    ! aplica a z, y, x
+    !!  gPeriodos
+    ! define el tipo de estrucura cubica 
+    ! 0: simple, 
+    ! 1: centrada en el cuerpo, 
+    ! 2: centrada en las caras
+    !! gCubicStructure
+   
+    ! para calcular la cantidad de particulas
+    ! se considera un cubo de lado iguales
+    ! 4 es la cantidad de atomos por primitiva fcc
+    gNpart = 4 * gPeriodos ** 3
+
+    allocate(gR(1:3, 1:gNpart))
+    allocate(gF(1:3, 1:gNpart))
+    allocate(gV(1:3, 1:gNpart))
+
+    ! calcula la densidad
+    gRho = gNpart / (gLado_caja ** 3)
+
+    print *, "fcc ", gNpart, gLado_caja, gRho
+
+  endsubroutine inicializar_globales_fcc
 
   subroutine finalizar_globales()
     deallocate(gR,gV,gF, gNp, gLj_param, gPercent)

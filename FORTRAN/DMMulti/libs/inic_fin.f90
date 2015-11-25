@@ -22,7 +22,7 @@ contains
     call inic_zig()
     call leer_parametros()
 
-    call inicializar_globales()
+
     call comb_sigma()
     call comb_epsilon()
 
@@ -30,7 +30,31 @@ contains
     ! calculamos los rc y potencial en rc
     call corta_desplaza_pote()
 
-    call inicia_posicion_rn()
+    if (gLiqSol .eq. 0) then 
+       call inicializar_globales_random()
+       call inicia_posicion_rn()
+    else if ( gLiqSol .eq. 1) then
+      print *, "llama a posiciones en  cubica"
+      print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
+      if (gCubicStructure .eq. 0) then
+        print *, "llama a cubica simple"
+        print *, "no implementado"
+        stop 212121212
+
+      else if (gCubicStructure .eq. 1) then 
+        print *, "llama a cubica centrada en el cuerpo"
+        print *, "no implementado"
+        stop 212121212
+      else if (gCubicStructure .eq. 2) then 
+        print *, "llama a cubica centrada en las caras"
+        call inicializar_globales_fcc()
+        call inicia_posicion_fcc(gPeriodos)
+      endif
+        stop 212121212
+    else
+      print *, "no implementado"
+      stop 212121212
+    endif        
 
     print *, "pos inic"
     do j=1,gNpart 
@@ -119,22 +143,44 @@ contains
   ! n_pred: indica la cantidad de veces que se repite el cubo primitivo
   ! tanto en z como en x y la variable y
   !
-  subroutine inicia_posicion_fcc(param_red, n_pred)
+  subroutine inicia_posicion_fcc(n_pred)
  
-    integer :: i, j, k
-    print "inicia posicion red fcc"
+    integer :: i, j, k, n_pred, i_gr
+    print *, "inicia posicion red fcc"
+    i_gr = 1
     do i = 1, n_pred 
       do j= 1,  n_pred
         do k= 1,  n_pred
-           print *, i, j, k 
+           gR(1, i_gr) = i - 1 
+           gR(2, i_gr) = j - 1
+           gR(3, i_gr) = k - 1
+           i_gr = i_gr + 1
+           gR(1, i_gr) = i - 1 
+           gR(2, i_gr) = j - 0.5
+           gR(3, i_gr) = k - 0.5
+           i_gr = i_gr + 1
+           gR(1, i_gr) = i - 0.5 
+           gR(2, i_gr) = j - 1 
+           gR(3, i_gr) = k - 0.5
+           i_gr = i_gr + 1
+           gR(1, i_gr) = i - 0.5 
+           gR(2, i_gr) = j - 0.5 
+           gR(3, i_gr) = k - 1 
+           i_gr = i_gr + 1
+           ! dividir por 4
+           ! colocar dentro de la caja
+           !  gLado_caja * gPeriodos / (gPeriodos + 1)
         enddo
       enddo
-   enddo     
+   enddo
+
+   gR = gLado_caja * gR / 4.0_dp * gPeriodos / (gPeriodos + 1)
+
+   do i=1, gNpart
+      print *, "punto ", gR(1, i), gR(2, i), gR(3, i)
+   enddo
 
   end subroutine inicia_posicion_fcc
-
-
-
 
 
 end module inic_fin 
