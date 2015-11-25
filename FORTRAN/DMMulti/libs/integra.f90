@@ -83,8 +83,8 @@ contains
 
   subroutine integracion_min()
 
-    real(dp), dimension(gNtime+1)   :: Eng_t   ! Energía en función del tiempo
-    integer    :: i, j, inic, fin
+    real(dp), dimension(gNtime+1) :: Eng_t   ! Energía en función del tiempo
+    integer :: i, j, inic, fin
 
     call calcula_fuerza()
     ! Escribe encabezado y primer punto de la trayectoria

@@ -1,4 +1,5 @@
 module inic_fin 
+#include "control.h"
   use types,      only: dp
   use globales
   use ziggurat
@@ -40,7 +41,6 @@ contains
         print *, "llama a cubica simple"
         print *, "no implementado"
         stop 212121212
-
       else if (gCubicStructure .eq. 1) then 
         print *, "llama a cubica centrada en el cuerpo"
         print *, "no implementado"
@@ -50,7 +50,6 @@ contains
         call inicializar_globales_fcc()
         call inicia_posicion_fcc(gPeriodos)
       endif
-        stop 212121212
     else
       print *, "no implementado"
       stop 212121212
@@ -147,6 +146,15 @@ contains
  
     integer :: i, j, k, n_pred, i_gr
     print *, "inicia posicion red fcc"
+
+    if (gPercent(1).ne. 0.5 ) then
+      stop 1212121212
+    endif
+
+    print *, "cincuenta"
+
+    ! inicia para un binario
+    gIndice_elemento = 2
     i_gr = 1
     do i = 1, n_pred 
       do j= 1,  n_pred
@@ -158,10 +166,12 @@ contains
            gR(1, i_gr) = i - 1 
            gR(2, i_gr) = j - 0.5
            gR(3, i_gr) = k - 0.5
+           gIndice_elemento(i_gr) = 1
            i_gr = i_gr + 1
            gR(1, i_gr) = i - 0.5 
            gR(2, i_gr) = j - 1 
            gR(3, i_gr) = k - 0.5
+           gIndice_elemento(i_gr) = 1
            i_gr = i_gr + 1
            gR(1, i_gr) = i - 0.5 
            gR(2, i_gr) = j - 0.5 
@@ -176,9 +186,11 @@ contains
 
    gR = gLado_caja * gR / 4.0_dp * gPeriodos / (gPeriodos + 1)
 
+#if DEBUG == 1
    do i=1, gNpart
-      print *, "punto ", gR(1, i), gR(2, i), gR(3, i)
+      print *, "punto ", gR(1, i), gR(2, i), gR(3, i), gIndice_elemento(i)
    enddo
+#endif
 
   end subroutine inicia_posicion_fcc
 

@@ -4,8 +4,6 @@
 !
 !
 module globales
-    
-
   use types, only: dp
 
   implicit none
@@ -118,13 +116,14 @@ contains
     do i=1, gNespecies
       gNp(i) = gNPart * gpercent(i) 
     enddo
+
     ! Ajuste de la cantidad total de partículas
     ! La conversión a enteros pierde partículas
-
-
     gNPart = sum(gNp)
     ALLOCATE(gIndice_elemento(1:gNPart))
 
+    !! esto vale para sistema binario
+    !! TODO: revisar para sistema multielemento
     gIndice_elemento = 2
     
     inic = 1
@@ -145,6 +144,8 @@ contains
   endsubroutine inicializar_globales_random
 
   subroutine inicializar_globales_fcc()
+    integer :: i
+    real(dp) :: v_temp
     ! define la cantidad de veces que se repite el cubo basico
     ! aplica a z, y, x
     !!  gPeriodos
@@ -159,6 +160,7 @@ contains
     ! 4 es la cantidad de atomos por primitiva fcc
     gNpart = 4 * gPeriodos ** 3
 
+    allocate(gIndice_elemento(1:gNPart))
     allocate(gR(1:3, 1:gNpart))
     allocate(gF(1:3, 1:gNpart))
     allocate(gV(1:3, 1:gNpart))
@@ -166,7 +168,24 @@ contains
     ! calcula la densidad
     gRho = gNpart / (gLado_caja ** 3)
 
-    print *, "fcc ", gNpart, gLado_caja, gRho
+    ! determina el volumen de la caja
+    gVol = gLado_caja ** 3
+
+    ! determina el porcentaje de la especie restante
+    v_temp = 0.0
+    do i=1, gNespecies - 1
+      v_temp = v_temp + gpercent(i) 
+    enddo
+
+    gpercent(gNespecies) = 1 - v_temp
+
+    allocate(gNp(1:gNespecies))
+    ! calcula la cantidad de partículas de cada especie
+    do i=1, gNespecies
+      gNp(i) = gNPart * gpercent(i) 
+    enddo
+
+    print *, "fcc ", gNpart, gLado_caja, gRho, gVol
 
   endsubroutine inicializar_globales_fcc
 
