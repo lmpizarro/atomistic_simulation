@@ -7,7 +7,8 @@ epsilon_2 sigma_2 masa_2
 .
 .
 epsilon_n sigma_n masa_n
-Lcaja densidad temperatura delta_t  total pasos pasos_medicion gamma
+Si es gas -> Lcaja densidad temperatura delta_t  total pasos pasos_medicion gamma
+Si es solido -> Lcaja cantidad_celdas tipo_cubica temperatura delta_t  total pasos pasos_medicion gamma
 pc1
 pc2
 .
@@ -27,6 +28,9 @@ pc_n-1
 
 liqsol 0   posiciones aleatorias
 liqsol 1   posiciones cristalinas
+
+cantidad_celdas en x, y, z
+tipo_cubica 0: simple, 1: centrada en cuerpo, 2: centrada en caras
 
 <!-- fortran program examples -->
 Ejemplos [Fortran](http://www.personal.psu.edu/jhm/f90/progref.html)
