@@ -1,66 +1,92 @@
-program main
+!
+! modulo que tiene como fin 
+! crear funciones para balancear
+! carga entre procesadores
+!
+module optimiza_mpi
 
   implicit none
 
-  integer :: gNpart, inic, fin
-  integer :: i, j, size_, rank, k
-  integer, allocatable:: delta_x (:)
-  real :: coef1, coef2
-  real :: num, sum_
-  integer, allocatable:: cantidadCuentas (:)
 
-  size_ = 10
-  coef2 = 0.9
-  coef1 = 2.0
-  gNpart = 256
+contains
+  ! recibe un array de tamaño size + 1, donde
+  ! size es la cantidad de procesadores 
+  ! recibe la cantidad de partículas sobre la
+  ! que se hace la DM
+  ! para 256 o mas particulas
+  subroutine optimiza_para(pasos_r, gNpart)
+    integer, intent(inout), dimension(:) :: pasos_r
+    integer :: size_, i, j, gNpart
+    real :: area, tmp
+    
+    size_ = size(pasos_r) ! la cantidad de procesadores + 1
+    area =  (gNpart * gNpart) / (2*(size_ - 1))
 
-  allocate (delta_x(1:size_))
-
-  ! una posibilidad de calculo
-  do i=1, size_
-     num = i
-     delta_x(i) =  (num ** coef2 ) + coef1
-  enddo
-
-
-  do i=1, size_
-    do j = 1, gNpart
-      do k =j +1 , gNpart
-        if ((k -j) * gNpart - (k -j) * (k + j) / 2 .lt. gNpart * gNpart / &
-                (2 * size_)
+    pasos_r(1) = 1
+    do j = 1, size_ - 1
+      do i = 1, gNpart
+        tmp = (i - pasos_r(j))*((i -pasos_r(j)) / 2 - i + gNpart)
+        if (tmp .ge. area) then
+          pasos_r(j + 1) = i
+          print *, "mmmmmmmmmm", i
+          !inic = i
+          exit
+        endif   
       enddo
     enddo
-  enddo
 
-  sum_ = sum(delta_x)
+    pasos_r(size_ ) = gNpart
 
-  print *, "suma ", sum_
+  endsubroutine optimiza_para
 
-  delta_x = int(gNpart * delta_x / sum_)
+  ! call test()
+  subroutine test()
+    integer :: gNpart
+    integer :: inic, fin
 
-  do i = 1, size_
-    print *, "delta x", delta_x(i)
-  enddo
+    integer :: i, j 
+    integer :: size_, rank, k
 
-  fin= 0
-  inic = 1
-  do k=1, size_
-    fin = fin + delta_x(k)
-    if (k.eq.size_) then
-      if (fin.lt.gNpart) then
-        fin = gNpart
+    integer, allocatable:: limites_procesador (:)
+
+    integer, allocatable:: cantidadCuentas (:)
+
+    size_ = 10
+
+    gNpart = 500
+
+    allocate (limites_procesador(1:size_ + 1))
+
+
+    call optimiza_para(limites_procesador, gNpart)
+
+    print *, "despues de optimiza"
+    do i=1, size_  + 1
+      print *, limites_procesador(i), size(limites_procesador)
+    enddo
+
+
+    fin= 0
+    inic = limites_procesador(1)
+    do k=1, size_
+      fin = limites_procesador(k + 1)
+      if (k.eq.size_) then
+        if (fin.lt.gNpart) then
+          fin = gNpart
+        endif
       endif
-    endif
-    !print *, inic, fin, int(delta_x(k))
+      !print *, inic, fin, int(delta_x(k))
      
-    rank = 0
-    do i=inic, fin - 1
-      do j = i + 1 , gNpart 
-        rank = rank + 1
-        !print *, i, j
+      rank = 0
+      do i=inic, fin - 1
+        do j = i + 1 , gNpart 
+          rank = rank + 1
+          !print *, i, j
+        enddo
       enddo
-    enddo
-    print * , "total del cuentas: ", rank
-    inic = fin
-  enddo   
-endprogram main
+      print * , "total del cuentas: ", rank
+      inic = fin
+    enddo  
+  endsubroutine test
+          
+endmodule optimiza_mpi
