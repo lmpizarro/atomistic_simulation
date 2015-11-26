@@ -11,16 +11,19 @@ module mediciones
 
 contains
 
-  subroutine radial_distribution (switch, nhis, elemento)
+  subroutine radial_distribution (switch, nhis)
     real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
     real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
     integer :: i, j, switch, ig, i_el, j_el
     integer :: nhis ! numero total de bines
-    integer :: elemento ! 0: total, 1: elemento tipo 1, 2: elemento tipo 2
 
     if (switch.eq.0) then !inicio
       gNgr = 0
       gDbin = gLado_caja / (2*nhis)
+      ! alloca una matriz con espacio suficiente para
+      ! alojar todas las correlaciones espaciales
+      ! en las filas de la matriz estan las relaciones
+      ! 11 12 13 14 .. 22 23 24 .. 33 34 .. 44
       allocate (gCorr_par(1:gNespecies * (gNespecies - 1) / 2 + gNespecies , 1:nhis))
       do i=1, nhis
         gCorr_par = 0
@@ -28,20 +31,22 @@ contains
     else if (switch.eq.1) then ! muestreo       
       do i = 1, gNpart -1
         do j = 1, gNpart
-          
-          i_el = gIndice_elemento(i)
-          j_el = gIndice_elemento(j)
-
+         
           rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
           rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
           r2ij   = sqrt(dot_product( rij_vec , rij_vec ))          ! Cuadrado de la distancia
           if (r2ij .lt. gLado_caja / 2) then
+
+            ! determina sobre que elementos se toma
+            ! la distancia
+            i_el = gIndice_elemento(i)
+            j_el = gIndice_elemento(j)
+
             ig = int(r2ij/gDbin)
-            if (i_el .eq. 1) then
-              gCorr_par(i_el + j_el -1 , ig) = gCorr_par(i_el + j_el - 1, ig) + 2
-            else
-              gCorr_par(2 * i_el + j_el -1 , ig) = gCorr_par(2 * i_el + j_el - 1, ig) + 2
+            if (i_el .ne. 1) then
+                i_el = 2 * i_el
             endif        
+            gCorr_par(i_el + j_el -1 , ig) = gCorr_par(i_el + j_el - 1, ig) + 2
           endif 
         enddo
       enddo

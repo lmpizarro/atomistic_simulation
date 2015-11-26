@@ -184,7 +184,7 @@ contains
       enddo
    enddo
 
-   gR = gLado_caja * gR / 4.0_dp * gPeriodos / (gPeriodos + 1)
+   gR = gLado_caja * gR / gPeriodos
 
 #if DEBUG == 1
    do i=1, gNpart
