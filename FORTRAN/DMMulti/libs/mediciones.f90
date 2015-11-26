@@ -14,7 +14,7 @@ contains
   subroutine radial_distribution (switch, nhis, elemento)
     real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
     real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
-    integer :: i, j, switch, ig, i_elemento, j_elemento
+    integer :: i, j, switch, ig, i_el, j_el
     integer :: nhis ! numero total de bines
     integer :: elemento ! 0: total, 1: elemento tipo 1, 2: elemento tipo 2
 
@@ -29,15 +29,19 @@ contains
       do i = 1, gNpart -1
         do j = 1, gNpart
           
-          i_elemento = gIndice_elemento(i)
-          j_elemento = gIndice_elemento(j)
+          i_el = gIndice_elemento(i)
+          j_el = gIndice_elemento(j)
 
           rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
           rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
           r2ij   = sqrt(dot_product( rij_vec , rij_vec ))          ! Cuadrado de la distancia
           if (r2ij .lt. gLado_caja / 2) then
             ig = int(r2ij/gDbin)
-            gCorr_par(i_elemento, ig) = gCorr_par(i_elemento, ig) + 2
+            if (i_el .eq. 1) then
+              gCorr_par(i_el + j_el -1 , ig) = gCorr_par(i_el + j_el - 1, ig) + 2
+            else
+              gCorr_par(2 * i_el + j_el -1 , ig) = gCorr_par(2 * i_el + j_el - 1, ig) + 2
+            endif        
           endif 
         enddo
       enddo
