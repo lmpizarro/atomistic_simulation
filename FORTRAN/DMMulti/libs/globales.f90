@@ -23,12 +23,9 @@ module globales
   ! epsilon_2 sigma_2 masa_2
   REAL(dp), ALLOCATABLE :: gLj_param(:,:) 
   ! guarda el porcentaje de cada especie
-  REAL(dp), ALLOCATABLE :: gPercent(:) 
+  real(dp), allocatable :: gPercent(:) 
   ! guarda la cantidad de  partículas de cada especie
-  Integer, ALLOCATABLE :: gNp(:)
-  ! guarda un indice de particula
-  Integer, ALLOCATABLE :: gIndice_elemento(:)
-
+  integer, allocatable :: gNp(:)
   integer :: gNespecies, gLiqSol
 
   ! define la cantidad de veces que se repite el cubo basico
@@ -44,6 +41,9 @@ module globales
   ! gF:  fuerza entre particulas particula
   ! gV:  velocidad de la particula
   real(dp),  dimension(:,:), allocatable  :: gR, gF, gV
+  ! guarda un indice de particula
+  integer, allocatable :: gIndice_elemento(:)
+
 
   !
   !
@@ -60,6 +60,13 @@ module globales
   real(dp)        :: gVir       ! Cálculo del virial para la presión 
 
   real(dp)        :: gGamma     ! Parámetro para el termostato de Langevin  
+
+  ! variables para la funcion de distribucion radial
+  integer, dimension(:,:), allocatable   :: gCorr_par 
+  integer                 :: gNhist     ! Cantidad de bines de la g(r)
+  integer                 :: gNgr       ! Contador para saber cuántas veces se acumuló la g(r)
+  real(dp)                :: gDbin      ! Ancho del bin de la g(r)    
+ 
 contains
 
   subroutine print_gvars()

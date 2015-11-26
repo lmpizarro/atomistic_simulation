@@ -11,6 +11,43 @@ module mediciones
 
 contains
 
+  subroutine radial_distribution (switch, nhis, elemento)
+    real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
+    real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
+    integer :: i, j, switch, ig, i_elemento, j_elemento
+    integer :: nhis ! numero total de bines
+    integer :: elemento ! 0: total, 1: elemento tipo 1, 2: elemento tipo 2
+
+    if (switch.eq.0) then !inicio
+      gNgr = 0
+      gDbin = gLado_caja / (2*nhis)
+      allocate (gCorr_par(1:gNespecies * (gNespecies - 1) / 2 + gNespecies , 1:nhis))
+      do i=1, nhis
+        gCorr_par = 0
+      enddo  
+    else if (switch.eq.1) then ! muestreo       
+      do i = 1, gNpart -1
+        do j = 1, gNpart
+          
+          i_elemento = gIndice_elemento(i)
+          j_elemento = gIndice_elemento(j)
+
+          rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
+          rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
+          r2ij   = sqrt(dot_product( rij_vec , rij_vec ))          ! Cuadrado de la distancia
+          if (r2ij .lt. gLado_caja / 2) then
+            ig = int(r2ij/gDbin)
+            gCorr_par(i_elemento, ig) = gCorr_par(i_elemento, ig) + 2
+          endif 
+        enddo
+      enddo
+    else if (switch.eq.2) then ! resultados
+     ! normalizacion de la gdr       
+     gCorr_par = gCorr_par / maxval(gCorr_par)
+    endif        
+  endsubroutine radial_distribution
+
+
   subroutine kernel_fuerza(i, j, i_inter, j_inter)
     real(dp), dimension(3)  :: rij_vec   ! Distancia vectorial entre i y j
     real(dp)                :: r2ij      ! Módulo cuadrado de la distancia rij
