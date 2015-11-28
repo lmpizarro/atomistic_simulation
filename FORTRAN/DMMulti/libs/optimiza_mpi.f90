@@ -28,7 +28,7 @@ contains
         tmp = (i - pasos_r(j))*((i -pasos_r(j)) / 2 - i + gNpart)
         if (tmp .ge. area) then
           pasos_r(j + 1) = i
-          print *, "mmmmmmmmmm", i
+          !print *, "mmmmmmmmmm", i
           !inic = i
           exit
         endif   
