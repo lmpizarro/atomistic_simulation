@@ -80,6 +80,7 @@ contains
   ! TODO AGREGAR DESCRIPCION DE LO QUE HACE 
   ! ¿por qué se pone acá esto?
   !=============================================================================
+
   subroutine print_gvars()
 
     integer :: i      
@@ -117,6 +118,7 @@ contains
   !=============================================================================
   ! TODO AGREGAR DESCRIPCION DE LO QUE HACE 
   !=============================================================================
+  
   subroutine inicializar_globales_random()
     
     integer  :: i,j, inic, fin
@@ -170,6 +172,7 @@ contains
   !=============================================================================
   ! TODO AGREGAR DESCRIPCION DE LO QUE HACE 
   !=============================================================================
+
   subroutine inicializar_globales_fcc()
 
     integer  :: i
@@ -221,6 +224,7 @@ contains
   !=============================================================================
   ! LIBERA MEMORIA DE LAS VARIABLES GLOBALES 
   !=============================================================================
+
   subroutine finalizar_globales()
    
     deallocate(gR,gV,gF, gNp, gLj_param, gPercent)

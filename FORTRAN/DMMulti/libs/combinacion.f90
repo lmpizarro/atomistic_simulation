@@ -1,19 +1,29 @@
-! subroutinas que calculan los parámetros
-! de interacción de la mezcla
-!
-!
+!===============================================================================
+! CALCULO DE PARAMETROS DE INTERACCIÓN PARA LA MEZCLA DE PARTÍCULAS 
+!===============================================================================
 !
 module combinacion
-  use types, only: dp
+
+  use types,       only: dp
   use globales
 
   implicit none
+
+  private
+  
+  public    :: comb_epsilon, comb_sigma, corta_desplaza_pote
 
   integer :: i, j
 
 contains
 
+  !=============================================================================
+  ! DEFINE EL EPSILON (DE L-J) ENTRE DISTINTAS ESPECIES 
+  !=============================================================================
+
   subroutine comb_epsilon()
+    
+    ! TODO convendría que vaya en la parte de inicialización
     allocate (gCombEpsilon(1:gNespecies,1:gNespecies))
 
     ! asigna la diagonal
@@ -38,9 +48,15 @@ contains
     enddo
 
     700 format (100g15.5)
+
   endsubroutine comb_epsilon
+ 
+  !=============================================================================
+  ! DEFINE EL SIGMA (DE L-J) ENTRE DISTINTAS ESPECIES 
+  !=============================================================================
 
   subroutine comb_sigma()
+
     allocate (gCombSigma(1:gNespecies,1:gNespecies))
 
     ! asigna la diagonal
@@ -65,12 +81,16 @@ contains
     enddo
 
     700 format (100g15.5)
+
   endsubroutine comb_sigma
 
-  ! calcula el radio de corte y el potencial
-  ! en ese lugar
+  !=============================================================================
+  ! DEFINE EL RADIO DE CORTE Y SE EVALUA EL POTENCIA 
+  !=============================================================================
   ! TODO: tiene un error hay que armar una matriz
+
   subroutine corta_desplaza_pote ()
+
     allocate (gRc2(1:gNespecies, 1:gNespecies))
     allocate (gPot_Cut(1:gNespecies, 1:gNespecies))
 
@@ -105,7 +125,6 @@ contains
     do i = 1, gNespecies
       write (*, 700) (gPot_Cut (i,j), j = 1,gNespecies)
     enddo
-
 
     700 format (100g15.5)
 

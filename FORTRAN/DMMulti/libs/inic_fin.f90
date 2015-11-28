@@ -26,6 +26,7 @@ contains
   !===============================================================================
   ! INICIALIZA SISTEMA de CALCULO
   !===============================================================================
+
   subroutine inicializacion()
 
     integer   :: j 
@@ -106,6 +107,7 @@ contains
   !===============================================================================
   ! FINALIZA SISTEMA de CALCULO
   !===============================================================================
+
   subroutine finalizacion()
     call finalizar_globales()
     call fin_zig()
@@ -115,6 +117,7 @@ contains
   ! VELOCIDADES INICIALES 
   !===============================================================================
   ! Subrutina para inicializar las velocidades del problema 
+
   subroutine vel_inic()   
 
     integer    :: i, j
@@ -133,6 +136,7 @@ contains
   !===============================================================================
   ! INICIALIZA Posicion aleatoria dentro de la caga 
   !===============================================================================
+
   subroutine inicia_posicion_rn()
  
     integer :: i, j
