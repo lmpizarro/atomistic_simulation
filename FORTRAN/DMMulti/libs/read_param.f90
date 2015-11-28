@@ -1,28 +1,26 @@
-! 
-!
-!
-!
-!
 module read_param
+
   use types
   use globales
 
   implicit none
 
 contains
-  !
-  ! Subroutina que lee los parámetros del problema
-  !
+  !===============================================================================
+  ! LEE LOS DATOS DEL PROBLEMA EN EL ARCHIVO DE ENTRADA 
+  !===============================================================================
+  ! Se lee el archivo 'input.par' que continene todos los datos del problema
   subroutine leer_parametros()
+
     integer :: i
 
-    OPEN(UNIT=10,FILE='input.par',STATUS='UNKNOWN')
+    open(unit=10,file='input.par',status='UNKNOWN')
 
     ! lee la cantidad de especies
     read(10,*) gNespecies, gLiqSol
 
     ! Alloca memoria de acuerdo a la cantidad de especies
-    ALLOCATE (gLj_param(1:gNespecies,1:3))
+    allocate(gLj_param(1:gNespecies,1:3))
 
     ! lee los parámetros de lj de cada especie
     do i=1,gNespecies
@@ -48,7 +46,8 @@ contains
       read(10,*) gpercent(i)
     enddo
 
-
     close(10)
+
   endsubroutine leer_parametros
+
 endmodule read_param

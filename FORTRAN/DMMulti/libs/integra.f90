@@ -80,7 +80,6 @@ contains
   !===============================================================================
   ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
   ! Es el Problema 3 de la Guia_2a
-
   subroutine integracion_min()
 
     real(dp), dimension(gNtime+1) :: Eng_t   ! Energía en función del tiempo
@@ -116,7 +115,6 @@ contains
   !===============================================================================
   ! Condiciones períodicas de contorno
   !===============================================================================
-
   subroutine cpc_vec_()
 
     real(dp), dimension(3,gNpart) :: tmp     ! Variable temporal

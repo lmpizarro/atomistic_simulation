@@ -1,28 +1,39 @@
+!===============================================================================
+! INICIALIZACION Y FINALIZACION DEL PROGRAMA 
+!===============================================================================
+!
 module inic_fin 
+
 #include "control.h"
-  use types,      only: dp
+
+  use types,            only: dp
   use globales
   use ziggurat
-  use usozig
+  use usozig,           only: inic_zig, fin_zig
   use read_param
   use combinacion
   use mediciones
   use integra
 
-implicit none
+  implicit none
+  
+  private
+
+  public  :: inicializacion, finalizacion
+
 contains
 
   !===============================================================================
   ! INICIALIZA SISTEMA de CALCULO
   !===============================================================================
   subroutine inicializacion()
-    integer :: j 
+
+    integer   :: j 
     real(dp)  :: insPres   ! Presión instantánea
     real(dp)  :: insTemp   ! Temperatura instantánea
 
     call inic_zig()
     call leer_parametros()
-
 
     call comb_sigma()
     call comb_epsilon()
@@ -32,8 +43,8 @@ contains
     call corta_desplaza_pote()
 
     if (gLiqSol .eq. 0) then 
-       call inicializar_globales_random()
-       call inicia_posicion_rn()
+      call inicializar_globales_random()
+      call inicia_posicion_rn()
     else if ( gLiqSol .eq. 1) then
       print *, "llama a posiciones en  cubica"
       print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
@@ -89,6 +100,7 @@ contains
     write (*,100) "insPres inicial: ", insPres
 
     100 format (a, F20.3)
+
   endsubroutine inicializacion
 
   !===============================================================================
@@ -98,7 +110,6 @@ contains
     call finalizar_globales()
     call fin_zig()
   endsubroutine finalizacion
-
 
   !===============================================================================
   ! VELOCIDADES INICIALES 
@@ -118,7 +129,6 @@ contains
     gV = sqrt( gTemperatura ) * gV
 
   end subroutine vel_inic
-
 
   !===============================================================================
   ! INICIALIZA Posicion aleatoria dentro de la caga 
@@ -193,6 +203,5 @@ contains
 #endif
 
   end subroutine inicia_posicion_fcc
-
 
 end module inic_fin 
