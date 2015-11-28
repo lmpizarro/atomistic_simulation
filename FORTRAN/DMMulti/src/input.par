@@ -6,3 +6,12 @@
 
 
 5 .3  1.2 0.001 10000 100 .5
+
+# Los parametros leidos son:
+gNespecies gLiqSol
+epsilon(1) sigma(1) masa(1)
+...
+epsilon(N) sigma(N) masa(N)  -> N =gNespecies
+# si gLiqSol = 1 (es un sólido) entonces lee
+gLado_caja, gPeriodos, gCubicStructure, gTemperatura, gDt, gNtime, gNmed, gGamma
+gPercent
