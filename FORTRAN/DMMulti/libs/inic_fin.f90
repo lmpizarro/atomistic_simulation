@@ -10,7 +10,7 @@ module inic_fin
   use globales
   use ziggurat
   use usozig,           only: inic_zig, fin_zig
-  use read_param
+  use read_param,       only: leer_parametros
   use combinacion
   use mediciones
   use integra

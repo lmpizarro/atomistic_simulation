@@ -1,6 +1,10 @@
+!===============================================================================
+! MODULO PARA LECTURA DE PARAMETROS DEL PROBLEMA 
+!===============================================================================
+!
 module read_param
 
-  use types
+  use types,           only: dp
   use globales
 
   implicit none
@@ -14,15 +18,17 @@ contains
 
     integer :: i
 
-    open(unit=10,file='input.par',status='UNKNOWN')
+    open(unit=10,file='input.par',status='unknown')
 
     ! lee la cantidad de especies
     read(10,*) gNespecies, gLiqSol
 
     ! Alloca memoria de acuerdo a la cantidad de especies
+    ! TODO tal vez esto vaya en la inicialización
     allocate(gLj_param(1:gNespecies,1:3))
 
     ! lee los parámetros de lj de cada especie
+    ! epsilon, sigma, masa
     do i=1,gNespecies
       read(10,*) glj_param(i,1), glj_param(i,2), glj_param(i,3)
     enddo
@@ -39,11 +45,13 @@ contains
       stop 212121212
     endif
 
+    !TODO No entiendo para qué esto
+    ! ¿Por qué no se define directamente con el N de cada una?
     allocate(gPercent(1:gNespecies))
 
     ! lee los porcentajes de Nespecies - 1
     do i=1,gNespecies - 1
-      read(10,*) gpercent(i)
+      read(10,*) gPercent(i)
     enddo
 
     close(10)
