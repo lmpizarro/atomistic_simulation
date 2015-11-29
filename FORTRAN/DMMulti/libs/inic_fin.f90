@@ -12,7 +12,7 @@ module inic_fin
   use usozig,           only: inic_zig, fin_zig
   use read_param,       only: leer_parametros
   use combinacion,      only: comb_sigma, comb_epsilon, corta_desplaza_pote
-  use mediciones
+  use mediciones,       only: calcula_fuerza, calcula_kin, calcula_pres, calcula_temp
   use integra
 
   implicit none
@@ -79,6 +79,13 @@ contains
     call calcula_fuerza()
 
     print *, "energia potencial inicial: ", gPot
+    
+    print *, "Posiciones luego de calcular la fuerza"
+    print *, "Buscando dónde está el error que pone posiciones negativas"
+    do j=1,gNpart 
+      print *, gR(1,j) , gR(2,j), gR(3,j)
+    enddo 
+    ! Hasta acá parece que no hay error. Intuyo que está en la rutina integracion_min
 
     call integracion_min()
 

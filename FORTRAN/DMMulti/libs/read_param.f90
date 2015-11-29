@@ -26,11 +26,12 @@ contains
     ! Alloca memoria de acuerdo a la cantidad de especies
     ! TODO tal vez esto vaya en la inicialización
     allocate(gLj_param(1:gNespecies,1:3))
-
+    allocate(gMasa(1:gNespecies))
     ! lee los parámetros de lj de cada especie
     ! epsilon, sigma, masa
     do i=1,gNespecies
       read(10,*) glj_param(i,1), glj_param(i,2), glj_param(i,3)
+      gMasa(i) = glj_param(i,3)
     enddo
 
     if (gLiqSol .eq. 0) then

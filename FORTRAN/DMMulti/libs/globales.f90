@@ -58,9 +58,10 @@ module globales
  
   integer, allocatable :: gIndice_elemento(:)      ! Indice de partícula
 
-  !TODO No sé qué son estas cosas
-  real(dp),  dimension(:,:), allocatable  :: gCombSigma
-  real(dp),  dimension(:,:), allocatable  :: gCombEpsilon
+  ! Magnitudes utilizadas para describir muchas especies
+  real(dp),  dimension(:,:), allocatable  :: gCombSigma    ! Matriz con sigma
+  real(dp),  dimension(:,:), allocatable  :: gCombEpsilon  ! Matriz con epsilon
+  real(dp),  dimension(:), allocatable    :: gMasa         ! Vector de masas
 
   !TODO ¿la g(r) se calcula siempre? ¿No se controla con el preprocesador?
   ! Variables para la funcion de distribucion radial
