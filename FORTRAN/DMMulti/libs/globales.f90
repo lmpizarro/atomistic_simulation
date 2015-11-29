@@ -21,27 +21,25 @@ module globales
   integer  :: gNmed          ! Cantidad de pasos entre mediciones
   real(dp) :: gGamma         ! Parámetro para el termostato de Langevin  
   
-  ! Parámetros derivados
+  ! --- Parámetros derivados
   real(dp) :: gVol       ! Volumen del cubo
   real(dp) :: gRho       ! Densidad numero de particulas N/V
   
-  ! Parametros asociados al radio de corte
+  ! --- Parametros asociados al radio de corte
   real(dp), allocatable :: gRc2(:,:)      ! Cuadrado del radio de corte
   real(dp), allocatable :: gPot_Cut(:,:)  ! Potencial L-J en el radio de corte
   
-  ! Parámetros asociados la cantidad de especies
+  ! --- Parámetros asociados la cantidad de especies
   real(dp), allocatable :: gLj_param(:,:)  ! Parámetros del modelo lj de cada especie
   real(dp), allocatable :: gPercent(:)     ! Porcentaje de cada especie
   integer, allocatable  :: gNp(:)          ! Cantidad de partículas de cada especie
-  
-  ! TODO ¿Qué son?
-  integer :: gNespecies, gLiqSol
+  integer               :: gNespecies      ! Cantidad de especies en el sistema
+  integer               :: gLiqSol         ! =1 si es un sólido. =0 otra cosa 
 
-  !TODO ¿Hace falta definir esto como global? ¿no se usa sólo en la inicialización?
-  ! define la cantidad de veces que se repite el cubo basico
+  ! Define la cantidad de veces que se repite el cubo basico
   ! aplica a z, y, x
   integer :: gPeriodos
-  ! define el tipo de estrucura cubica 
+  ! Define el tipo de estrucura cubica 
   ! 0: simple, 
   ! 1: centrada en el cuerpo, 
   ! 2: centrada en las caras
@@ -116,7 +114,7 @@ contains
   endsubroutine print_gvars
 
   !=============================================================================
-  ! TODO AGREGAR DESCRIPCION DE LO QUE HACE 
+  ! INICIALIZA VARIABLES GLOBALES SI SE TRABAJA CON POSICIONES ALEATORIAS 
   !=============================================================================
   
   subroutine inicializar_globales_random()
@@ -170,7 +168,7 @@ contains
   endsubroutine inicializar_globales_random
 
   !=============================================================================
-  ! TODO AGREGAR DESCRIPCION DE LO QUE HACE 
+  ! INICIALIZA VARIABLES GLOBALES SI SE TRABAJA CON UNA RED FCC 
   !=============================================================================
 
   subroutine inicializar_globales_fcc()
