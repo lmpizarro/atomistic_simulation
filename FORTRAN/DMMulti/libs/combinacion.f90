@@ -91,6 +91,8 @@ contains
 
   subroutine corta_desplaza_pote ()
 
+    real(dp), parameter :: rc = 2.5_dp   ! Radio de corte en unidades de sigma
+
     allocate (gRc2(1:gNespecies, 1:gNespecies))
     allocate (gPot_Cut(1:gNespecies, 1:gNespecies))
 
@@ -99,14 +101,14 @@ contains
     ! de acuerdo al cálculo en dinmod
     ! elementos de la diagonal
     do i = 1, gNespecies
-       gRc2(i,i) = (4 * gCombSigma(i,i) ) ** 2
+       gRc2(i,i) = (rc * gCombSigma(i,i) ) ** 2
        gPot_Cut(i,i) = 4.0_dp * ( 1.0_dp / (gRc2(i,i)**6) - 1.0_dp / (gRc2(i,i)**3) ) 
     enddo
 
     ! calcula los elementos fuera de la diagonal
     do i =1, gNespecies
       do j=i+1, gNespecies
-         gRc2(i,j) =  (4 * gCombSigma(i,j) ) ** 2
+         gRc2(i,j) =  (rc * gCombSigma(i,j) ) ** 2
          gRc2(j,i) = gRc2(i,j)
 
          gPot_Cut(i,j) = 4.0_dp * ( 1.0_dp / (gRc2(i,j)**6) - 1.0_dp / (gRc2(i,j)**3) ) 
