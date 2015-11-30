@@ -82,7 +82,6 @@ contains
     do j=1,gNpart 
       print *, gF(1,j) , gF(2,j), gF(3,j)
     enddo
-    !TODO La fuerza es nula. Revisar la subrutina.
 
     print *, "energia potencial inicial: ", gPot
 

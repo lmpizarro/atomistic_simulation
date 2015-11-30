@@ -24,11 +24,17 @@ contains
     real(dp), dimension(:,:), allocatable :: Eng_t   ! energía en función del tiempo
     real(dp), dimension(:), allocatable :: Pres_t  ! presión en función del tiempo
     real(dp), dimension(:), allocatable :: Temp_t  ! temperatura en función del tiempo
+    character(50), parameter   :: nombre='trayectoria.vtf' ! Nombre archivo para guardar trayectorias
     integer :: i, j, k, inic, fin
 
     ! Se define la cantidad de puntos que se van a medir
     Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
     allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed) )
+
+#ifdef GRABA_TRAYECTORIA
+    call escribe_trayectoria(gR,nombre,.TRUE.)
+#endif
+
 
     ! -------------------------------------------------------------------------------------------
     ! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
@@ -68,6 +74,10 @@ contains
         Eng_t(:,k) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(k)  = Pres
         Temp_t(k)  = Temp
+       
+#ifdef GRABA_TRAYECTORIA
+    call escribe_trayectoria(gR,nombre,.FALSE.)
+#endif
 
         print *, "med", k, i, gPot, gKin, gPot + gKin
 
@@ -90,9 +100,11 @@ contains
 
     real(dp), dimension(gNtime+1) :: Eng_t   ! Energía en función del tiempo
     integer :: i, j
-
+    ! Nombre del archivo para guardar la trayectoria
+    character(50), parameter   :: nombre='trayectoria_minimiza.vtf'
+     
     ! Escribe encabezado y primer punto de la trayectoria
-    call escribe_trayectoria(gR,.TRUE.) 
+    call escribe_trayectoria(gR,nombre,.TRUE.) 
     ! El primer punto es la energía inicial
     Eng_t(1) = gPot
 
@@ -104,7 +116,7 @@ contains
       call cpc_vec()   
 
       ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      call escribe_trayectoria(gR,.FALSE.)    
+      call escribe_trayectoria(gR,nombre,.FALSE.)    
       ! Calcula fuerza y energía
       call calcula_fuerza()
       ! Escribe energía potencial en vector
