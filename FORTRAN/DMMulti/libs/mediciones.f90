@@ -219,38 +219,53 @@ contains
   ! calcula la correlacion de velocidad de un vector temporal 1D
   ! con fftw3
   ! el tamaño de vel es del tipo 2 ** n, n entero
-  subroutine calcula_corr_vel (r, c)
-    real(dp), dimension(:) :: r, c
+  subroutine calcula_corr_vel (in, c)
+    real(dp), dimension(:) :: in, c
     integer :: n, nc
     complex (dp), allocatable :: out(:)
-    !real ( dp ), allocatable :: modulo_(:) 
     integer ( kind = 8 ) plan_forward
+    integer ( kind = 8 ) plan_backward
+    real (dp), allocatable :: v2(:)
+    real (dp), allocatable :: in2(:)
 
-    n = size(r)
+    n = size(in)
     nc = n / 2 + 1
 
     allocate (out(1:nc))
-    !allocate (modulo_(1:nc))
 
-    call dfftw_plan_dft_r2c_1d_ ( plan_forward, n, r, out, FFTW_ESTIMATE )
+    ! out tiene tamaño nc
+    call dfftw_plan_dft_r2c_1d_ ( plan_forward, n, in, out, FFTW_ESTIMATE )
     call dfftw_execute_ ( plan_forward )
 
-    c = REAL(out) ** 2 + AIMAG(out) ** 2 
+    ! paso c) página 190 del Allen
+    out = REAL(out) ** 2 + AIMAG(out) ** 2
+
+    ! paso d) aplicar una fft inversa  a c
+    call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, out, c, FFTW_ESTIMATE )
+    call dfftw_execute_ ( plan_backward )
+
+    ! paso e) aplicar la normalizacion
+    c = c / n
 
   endsubroutine calcula_corr_vel
 
 
   ! calcula la correlacion de velocidad de un vector temporal 3D
   subroutine calcula_corr_vel_3D (v)
-
     real(dp), dimension(:,:) :: v
     real(dp), allocatable :: corr(:,:)
+    real(dp), allocatable :: v2(:,:)
 
-    allocate (corr(1:3, 1:size(v)))
+    ! viene el resultado de la operacion
+    allocate (corr(1:3, 1: 2 * size(v)))
+    allocate (v2(1:3, 1: 2 * size(v)))
+    v2 = 0
+    corr = 0
+    v2 (:,1:size(v)) = v
 
-    call calcula_corr_vel (v(1,:), corr(1,:))
-    call calcula_corr_vel (v(2,:), corr(2,:))
-    call calcula_corr_vel (v(3,:), corr(3,:))
+    call calcula_corr_vel (v2(1,:), corr(1,:))
+    call calcula_corr_vel (v2(2,:), corr(2,:))
+    call calcula_corr_vel (v2(3,:), corr(3,:))
 
 
   endsubroutine calcula_corr_vel_3D 
