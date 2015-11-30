@@ -1,8 +1,22 @@
+module FFTW3
+  use, intrinsic :: iso_c_binding
+  include '/usr/include/fftw3.f03'
+end module
+
 module mediciones
 #include "control.h"
   use types,      only: dp
   use globales
-  
+  use FFTW3      
+
+  ! forma de llamar fftw3
+  ! ver: http://fftw.org/doc/Calling-FFTW-from-Modern-Fortran.html
+  !type(C_PTR) :: plan
+  !complex(C_DOUBLE_COMPLEX), dimension(1024,1000) :: in, out
+  !plan = fftw_plan_dft_2d(1000,1024, in,out, FFTW_FORWARD,FFTW_ESTIMATE)
+
+  call fftw_execute_dft(plan, in, out)
+
   use ziggurat
 !#include  "mpif.h"
   !use mpi
