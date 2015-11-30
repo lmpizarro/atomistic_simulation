@@ -15,7 +15,7 @@ module mediciones
   !complex(C_DOUBLE_COMPLEX), dimension(1024,1000) :: in, out
   !plan = fftw_plan_dft_2d(1000,1024, in,out, FFTW_FORWARD,FFTW_ESTIMATE)
 
-  call fftw_execute_dft(plan, in, out)
+  !call fftw_execute_dft(plan, in, out)
 
   use ziggurat
 !#include  "mpif.h"
@@ -202,11 +202,11 @@ contains
     gKin = 0.5_dp * gKin
 
   endsubroutine calcula_kin
+
   !===============================================================================
   ! CALCULA TEMPERATURA INSTANTANEA 
   !===============================================================================
   ! Calcula la anergia cinetica total del sistema
-
   subroutine calcula_temp(Temp_ins)
     
     real(dp), intent(inout)         :: Temp_ins ! Temperatura instantánea
@@ -215,5 +215,28 @@ contains
 
   end subroutine calcula_temp
 
+  !
+  ! calcula la correlacion de velocidad de un vector temporal 1D
+  ! con fftw3
+  ! el tamaño de vel es del tipo 2 ** n, n entero
+  subroutine calcula_corr_vel (vel)
+    real(dp), dimension(:) :: vel
+    integer :: n, nc
+    complex (dp), allocatable :: out(:)
+    real ( dp ), allocatable :: modulo_(:) 
+    integer ( kind = 8 ) plan_forward
+
+    n = size(vel)
+    nc = n / 2 + 1
+
+    allocate (out(1:nc))
+    allocate (modulo_(1:nc))
+
+    call dfftw_plan_dft_r2c_1d_ ( plan_forward, n, vel, out, FFTW_ESTIMATE )
+    call dfftw_execute_ ( plan_forward )
+
+    modulo_ = REAL(out) ** 2 + AIMAG(out) ** 2 
+
+  endsubroutine calcula_corr_vel
 
 end module mediciones

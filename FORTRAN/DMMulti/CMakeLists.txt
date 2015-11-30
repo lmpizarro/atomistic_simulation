@@ -1,4 +1,4 @@
-# Top-level CMakeLists.txt for example
+#Top-level CMakeLists.txt for example
 ###
 ### Process this file with cmake to produce Makefile
 ###
@@ -48,6 +48,7 @@ message("-- Compilador utilizado: ${CMAKE_Fortran_COMPILER}")
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   # GNU Fortran compiler options
   set(f90flags  "-cpp -std=f2003 -fbacktrace")
+  set(ldflags   "-lfftw3")
   if(debug)
     set(f90flags  "-g -Wall -pedantic -fbounds-check -ffpe-trap=invalid,overflow,underflow ${f90flags}")
     set(ldflags   "-g")
