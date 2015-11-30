@@ -1,8 +1,9 @@
 module integra
 
-  use types,          only: dp
+  use types,             only: dp
   use globales
   use mediciones
+  use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 
   implicit none
 
@@ -88,33 +89,30 @@ contains
   subroutine integracion_min()
 
     real(dp), dimension(gNtime+1) :: Eng_t   ! Energía en función del tiempo
-    integer :: i, j, inic, fin
+    integer :: i, j
 
-    call calcula_fuerza()
     ! Escribe encabezado y primer punto de la trayectoria
-    ! call escribe_trayectoria(gR,.FALSE.) 
+    call escribe_trayectoria(gR,.TRUE.) 
     ! El primer punto es la energía inicial
     Eng_t(1) = gPot
 
     do i = 1, gNtime 
-      inic = 1
-      do j=1, gNespecies
-        fin = inic + gNp(j) - 1
-        !print *, "integracion ", inic, fin, j
-        gR(:,inic:fin) = gR(:,inic:fin) + 0.5_dp * gF(:,inic:fin) * (gDt**2) / gLj_param(j,3)
-        inic = fin + 1
-      enddo
-
+      do j = 1, gNpart
+        gR(:,j) = gR(:,j) + 0.5_dp * gF(:,j) * (gDt**2) / gMasa(gIndice_elemento(j))
+      end do
       ! Aplica condiciones periódicas de contorno
       call cpc_vec()   
 
       ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
-      ! call escribe_trayectoria(gR,.FALSE.)    
+      call escribe_trayectoria(gR,.FALSE.)    
       ! Calcula fuerza y energía
       call calcula_fuerza()
       ! Escribe energía potencial en vector
       Eng_t(i+1) = gPot
     end do
+
+    call escribe_en_columnas(Eng_t/gNpart,'energia_pot_minimizada.dat',gDt)
+
   end subroutine integracion_min
 
   subroutine integracion_min_original()
@@ -161,17 +159,10 @@ contains
     
     ! Lo escribo de esta forma porque de lo contrario da error de compilación
     ! en el cluster (dice ser un bug de gfortran)
-    tmp = gLado_caja*nint(gR/gLado_caja)
+    tmp = gLado_caja*floor(gR/gLado_caja)
 
     gR = gR - tmp
 
   end subroutine cpc_vec
-
-  ! Modificación
-  subroutine cpc_vec_()
-
-    gR = abs(mod(gR, gLado_caja))
-  
-  end subroutine cpc_vec_
 
 end module integra
