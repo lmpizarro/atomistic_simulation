@@ -77,15 +77,14 @@ contains
     enddo  
 
     call calcula_fuerza()
+    
+    print *, "Fuerza inicial"
+    do j=1,gNpart 
+      print *, gF(1,j) , gF(2,j), gF(3,j)
+    enddo
+    !TODO La fuerza es nula. Revisar la subrutina.
 
     print *, "energia potencial inicial: ", gPot
-    
-    print *, "Posiciones luego de calcular la fuerza"
-    print *, "Buscando dónde está el error que pone posiciones negativas"
-    do j=1,gNpart 
-      print *, gR(1,j) , gR(2,j), gR(3,j)
-    enddo 
-    ! Hasta acá parece que no hay error. Intuyo que está en la rutina integracion_min
 
     call integracion_min()
 
