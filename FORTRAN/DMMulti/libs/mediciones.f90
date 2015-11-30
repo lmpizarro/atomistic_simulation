@@ -219,24 +219,40 @@ contains
   ! calcula la correlacion de velocidad de un vector temporal 1D
   ! con fftw3
   ! el tamaño de vel es del tipo 2 ** n, n entero
-  subroutine calcula_corr_vel (vel)
-    real(dp), dimension(:) :: vel
+  subroutine calcula_corr_vel (r, c)
+    real(dp), dimension(:) :: r, c
     integer :: n, nc
     complex (dp), allocatable :: out(:)
-    real ( dp ), allocatable :: modulo_(:) 
+    !real ( dp ), allocatable :: modulo_(:) 
     integer ( kind = 8 ) plan_forward
 
-    n = size(vel)
+    n = size(r)
     nc = n / 2 + 1
 
     allocate (out(1:nc))
-    allocate (modulo_(1:nc))
+    !allocate (modulo_(1:nc))
 
-    call dfftw_plan_dft_r2c_1d_ ( plan_forward, n, vel, out, FFTW_ESTIMATE )
+    call dfftw_plan_dft_r2c_1d_ ( plan_forward, n, r, out, FFTW_ESTIMATE )
     call dfftw_execute_ ( plan_forward )
 
-    modulo_ = REAL(out) ** 2 + AIMAG(out) ** 2 
+    c = REAL(out) ** 2 + AIMAG(out) ** 2 
 
   endsubroutine calcula_corr_vel
+
+
+  ! calcula la correlacion de velocidad de un vector temporal 3D
+  subroutine calcula_corr_vel_3D (v)
+
+    real(dp), dimension(:,:) :: v
+    real(dp), allocatable :: corr(:,:)
+
+    allocate (corr(1:3, 1:size(v)))
+
+    call calcula_corr_vel (v(1,:), corr(1,:))
+    call calcula_corr_vel (v(2,:), corr(2,:))
+    call calcula_corr_vel (v(3,:), corr(3,:))
+
+
+  endsubroutine calcula_corr_vel_3D 
 
 end module mediciones
