@@ -21,14 +21,6 @@ module globales
   integer  :: gNmed          ! Cantidad de pasos entre mediciones
   real(dp) :: gGamma         ! Parámetro para el termostato de Langevin  
   
-  ! --- Parámetros derivados
-  real(dp) :: gVol       ! Volumen del cubo
-  real(dp) :: gRho       ! Densidad numero de particulas N/V
-  
-  ! --- Parametros asociados al radio de corte
-  real(dp), allocatable :: gRc2(:,:)      ! Cuadrado del radio de corte
-  real(dp), allocatable :: gPot_Cut(:,:)  ! Potencial L-J en el radio de corte
-  
   ! --- Parámetros asociados la cantidad de especies
   real(dp), allocatable :: gLj_param(:,:)  ! Parámetros del modelo lj de cada especie
   real(dp), allocatable :: gPercent(:)     ! Porcentaje de cada especie
@@ -45,21 +37,11 @@ module globales
   ! 2: centrada en las caras
   integer :: gCubicStructure
 
-  ! gR:  posicion de la particula
-  ! gF:  fuerza entre particulas particula
-  ! gV:  velocidad de la particula
-  real(dp),  dimension(:,:), allocatable  :: gR, gF, gV, gCorrV
-  ! guarda un indice de particula
-  integer, allocatable :: gIndice_elemento(:)
 
-
-  !
-  !
-  real(dp),  dimension(:,:), allocatable  :: gCombSigma
-  real(dp),  dimension(:,:), allocatable  :: gCombEpsilon
-
+  ! --- Parametros asociados al radio de corte
   real(dp), allocatable :: gRc2(:,:)  ! Cuadrado del radio de corte
   real(dp), allocatable :: gPot_Cut(:,:)  ! Potencial L-J en el radio de corte
+  ! --- Parámetros derivados
   real(dp) :: gVol       ! Volumen del cubo
   real(dp) :: gRho       ! Densidad numero de particulas N/V
  
@@ -70,6 +52,7 @@ module globales
   real(dp),  dimension(:,:), allocatable  :: gR    ! Posicion de las partículas
   real(dp),  dimension(:,:), allocatable  :: gV    ! Velocidades de las partículas
   real(dp),  dimension(:,:), allocatable  :: gF    ! Fuerza sobre las partículas
+  real(dp),  dimension(:,:), allocatable  :: gCorrV 
   real(dp)                                :: gPot  ! Energía potencial del sistema
   real(dp)                                :: gKin  ! Energia cinetica del sistema
   real(dp)                                :: gVir  ! Cálculo termino del virial

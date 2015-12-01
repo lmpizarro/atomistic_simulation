@@ -270,7 +270,7 @@ contains
       enddo
    enddo
 
-   gR = gLado_caja * gR / gPeriodos
+   gR = gLado_caja * gR / n_pred
 
 #if DEBUG == 1
    do i=1, gNpart
