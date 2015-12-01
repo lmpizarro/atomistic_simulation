@@ -44,18 +44,23 @@ contains
     ! Escribe el encabezado del archivo
     if (primera .eqv. .TRUE.) then
       write(20,*) '### Trayectorias ###'
-      write(20,*) 'atom default   radius 0.1 name P'
-      write(20,'(A,I0)') ' atom 0:',gNpart-1 
-      write(20,*) 'timstep'
+      ! Para escribir una sola especie, es más compacto esto:
+      !write(20,*) 'atom default   radius 0.1 name P'
+      ! write(20,'(A,I0)') ' atom 0:',gNpart-1 
+      ! Para escribir más de una especie:
+      do i = 1, gNpart
+        write(20,100) ' atom ', i-1, ' radius ', gCombSigma(gIndice_elemento(i),gIndice_elemento(i)), ' type ', gIndice_elemento(i) 
+      end do
+      100 format (A,I0,A,F5.2,A,I0)
       write(20,'(A,1X,3(F4.1,1X))') 'pbc', gLado_caja, gLado_caja, gLado_caja
       write(20,*) ''
     end if
     ! Escribe las coordenadas de cada partícula a un dado tiempo
+    write(20,*) 'timestep'    
     do j = 1, gNpart
       write(20,200) (r(i,j), i=1,3)
       200 format (3(F10.5))
     end do
-    write(20,*) 'timestep'    
     write(20,*) ''
 
     close(20)
