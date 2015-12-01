@@ -23,6 +23,46 @@ module io_parametros
 
 contains
 
+  subroutine escribe_multiple_atom_vtf(r,nombre,primera)
+    ! Se puede optimizar abriendo y cerrando el archivo en el momento de usarla
+
+    real(dp), dimension(3,gNpart), intent(in)    :: r    ! Posición
+    character(*), intent(in)                     :: nombre  ! Nombre del archivo
+    logical, intent(in)                          :: primera
+    integer                                      :: i,j
+
+    if ( primera .eqv. .TRUE. ) then
+      open(unit=20, file=nombre, status='unknown')
+    else
+      open(unit=20, file=nombre, status='unknown',position='append')
+    end if
+
+    ! Escribe el encabezado del archivo
+    if (primera .eqv. .TRUE.) then
+      write(20,*) '### Trayectorias ###'
+      ! Atomo tipo 1 el default
+      write(20,*) 'atom default   radius 1.0 name P'
+      !
+      ! aca hay que declarar al o los otros atomos de la estructura
+      !
+      
+      ! buscar en el arreglo de atomos todos los atomos
+      ! que no son de tipo 1
+      write(20,"(a)", advance='no') 'atom '
+      do i=1, gNpart
+        if (gIndice_elemento(i) .eq. 2) then
+           write (20, "(i4, a)", advance='no') i - 1, ", "
+        endif 
+      enddo
+      write(20,"(a)", advance='no') 'radius 1.1 name S'
+
+      write(20,*) 'timestep'
+      write(20,'(A,1X,3(F4.1,1X))') 'pbc', gLado_caja, gLado_caja, gLado_caja
+      write(20,*) ''
+    end if
+
+  endsubroutine escribe_multiple_atom_vtf
+
 !===============================================================================
 ! ESBRIBE POSICIONES PARA VISUALIZAR TRAYECTORIAS 
 !===============================================================================
@@ -46,7 +86,7 @@ contains
       write(20,*) '### Trayectorias ###'
       write(20,*) 'atom default   radius 0.1 name P'
       write(20,'(A,I0)') ' atom 0:',gNpart-1 
-      write(20,*) 'timstep'
+      write(20,*) 'timestep'
       write(20,'(A,1X,3(F4.1,1X))') 'pbc', gLado_caja, gLado_caja, gLado_caja
       write(20,*) ''
     end if
