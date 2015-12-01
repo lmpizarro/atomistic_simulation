@@ -296,7 +296,7 @@ contains
   ! CALCULA  PRESION 
   !===============================================================================
   ! Calcula la presion en base al teorema del virial (Ver 2.4 del Allen)
-
+  ! TODO: Revisar si está bien
   subroutine calcula_pres(presion)
 
     real(dp), intent(inout)    :: presion
@@ -314,6 +314,7 @@ contains
   ! CALCULA ENERGIA CINETICA 
   !===============================================================================
   ! Calcula la anergia cinetica total del sistema
+
   subroutine calcula_kin()
     
     real(dp), dimension(gNpart)   :: mv2    ! Vector con la masa* velocidad cuadratica
@@ -331,6 +332,7 @@ contains
   ! CALCULA TEMPERATURA INSTANTANEA 
   !===============================================================================
   ! Calcula la anergia cinetica total del sistema
+
   subroutine calcula_temp(Temp_ins)
     
     real(dp), intent(inout)         :: Temp_ins ! Temperatura instantánea
