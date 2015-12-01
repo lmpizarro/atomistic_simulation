@@ -6,6 +6,6 @@
 #define THERM 0 /*0=NVE, no thermostat 1=langevin thermostat */
 #define DEBUG 1
 /* Defino variable para indicar si se graban las trayectorias de las partículas */
-#undef GRABA_TRAYECTORIA
+#define GRABA_TRAYECTORIA
 #undef CORR_PAR
 #define PABLO 0 /* 0=no se consideran agregados hechos por pablo */
