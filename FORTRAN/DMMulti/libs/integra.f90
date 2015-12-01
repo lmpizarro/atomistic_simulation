@@ -29,7 +29,14 @@ contains
 
     ! Se define la cantidad de puntos que se van a medir
     Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
-    allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed), gCorrV(1:3, 1:Kmed) )
+    allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed))
+
+    ! para acumular velcidades en función del tiempo para el calculo 
+    ! de correlaciones
+    allocate (gCorrVfac_1(1:3, 1:Kmed))
+    allocate (gCorrVfac_2(1:3, 1:Kmed))
+    allocate (gCorrVver_1(1:3, 1:Kmed))
+    allocate (gCorrVver_2(1:3, 1:Kmed))
 
 #ifdef GRABA_TRAYECTORIA
     call escribe_trayectoria(gR,nombre,.TRUE.)

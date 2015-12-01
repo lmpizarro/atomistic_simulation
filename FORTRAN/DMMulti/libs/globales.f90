@@ -52,12 +52,25 @@ module globales
   real(dp),  dimension(:,:), allocatable  :: gR    ! Posicion de las partículas
   real(dp),  dimension(:,:), allocatable  :: gV    ! Velocidades de las partículas
   real(dp),  dimension(:,:), allocatable  :: gF    ! Fuerza sobre las partículas
-  real(dp),  dimension(:,:), allocatable  :: gCorrV 
   real(dp)                                :: gPot  ! Energía potencial del sistema
   real(dp)                                :: gKin  ! Energia cinetica del sistema
   real(dp)                                :: gVir  ! Cálculo termino del virial
- 
   integer, allocatable :: gIndice_elemento(:)      ! Indice de partícula
+
+  !============================================================================
+  ! Para la medicion de correlaciones de velocidad
+  !============================================================================
+  ! Se hace sobre posiciones equivalentes por simetría por especie
+  !
+  real(dp),  dimension(:,:), allocatable  :: gCorrVfac_1 
+  real(dp),  dimension(:,:), allocatable  :: gCorrVfac_2 
+  real(dp),  dimension(:,:), allocatable  :: gCorrVver_1 
+  real(dp),  dimension(:,:), allocatable  :: gCorrVver_2 
+  
+  integer :: gNCorrVfac_1 ! cantidad de particula tipo 1 en las caras 
+  integer :: gNCorrVfac_2 ! idem tipo 2 
+  integer :: gNCorrVver_1 ! cantidad  de particula tipo 1 en los vertices 
+  integer :: gNCorrVver_2 ! idem tipo 2
 
   ! Magnitudes utilizadas para describir muchas especies
   real(dp),  dimension(:,:), allocatable  :: gCombSigma    ! Matriz con sigma
