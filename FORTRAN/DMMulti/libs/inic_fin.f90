@@ -30,8 +30,8 @@ contains
   subroutine inicializacion()
 
     integer   :: j 
-    real(dp)  :: insPres   ! Presión instantánea
-    real(dp)  :: insTemp   ! Temperatura instantánea
+    real(dp)  :: Pres   ! Presión instantánea
+    real(dp)  :: Temp   ! Temperatura instantánea
 
     call inic_zig()
     call leer_parametros()
@@ -71,47 +71,55 @@ contains
       stop 212121212
     endif        
 
-    print *, "pos inic"
-    do j=1,gNpart 
-      print *, gR(1,j) , gR(2,j), gR(3,j)
-    enddo  
+   ! print *, "pos inic"
+   ! do j=1,gNpart 
+   !   print *, gR(1,j) , gR(2,j), gR(3,j)
+   ! enddo  
 
     call calcula_fuerza()
     
-    print *, "Fuerza inicial"
-    do j=1,gNpart 
-      print *, gF(1,j) , gF(2,j), gF(3,j)
-    enddo
-
     print *, "energia potencial inicial: ", gPot
+    write(*,*) '***************************************'
 
-    call integracion_min()
+   !call integracion_min()
 
-    print *, "pos final after min"
-    do j=1,gNpart 
-      print *, gR(1,j) , gR(2,j), gR(3,j)
-    enddo  
+   ! print *, "pos final after min"
+   ! do j=1,gNpart 
+   !   print *, gR(1,j) , gR(2,j), gR(3,j)
+   ! enddo  
 
-    print *, "energia potencial after min: ", gPot
-
+  !print *, "energia potencial after min: ", gPot
+  !
+  ! Inicializa las velocidades de todas las partículas
     call vel_inic()
 
-    call calcula_kin ()
+    call calcula_kin()
 
-    write (*,100) "gKin inicial: ", gKin
+ !   write (*,100) "gKin inicial: ", gKin
 
     call calcula_fuerza()
 
     ! Calcula la presión inicial
-    call calcula_pres(insPres)
+    call calcula_pres(Pres)
     ! Calcula la temperatura inicial
-    call calcula_temp(insTemp)
-    write (*,100) "insTemp inicial: ", insTemp
-    write (*,100) "insPres inicial: ", insPres
+    call calcula_temp(Temp)
+!    write (*,100) "insTemp inicial: ", Temp
+!    write (*,100) "insPres inicial: ", Pres
 
-    100 format (a, F20.3)
+!    100 format (a, F20.3)
 
-  endsubroutine inicializacion
+    write(*,*) '* Valores iniciales por partícula'
+    write(*,100) gPot/gNpart, gKin/gNpart, (gPot+gKin)/gNpart
+    100 format(1X,'Potencial = ', E14.7, 5X, 'Cinética = ', E14.7, 5X, 'Total = ', E14.7) 
+    write(*,*)
+    write(*,200)  Pres, Temp 
+    200 format(1X,'Presion = ' ,E14.7,5X,'Temperatura = ',E14.7)
+
+   
+    write(*,*) '* Finaliza subrutina de inicializacións'
+    write(*,*) '***************************************'
+
+  end subroutine inicializacion
 
   !===============================================================================
   ! FINALIZA SISTEMA de CALCULO
@@ -126,7 +134,7 @@ contains
   ! VELOCIDADES INICIALES 
   !===============================================================================
   ! Subrutina para inicializar las velocidades del problema 
-
+  ! TODO: Está mal, hay que cambiarlo
   subroutine vel_inic()   
 
     integer    :: i, j
@@ -134,7 +142,7 @@ contains
     ! Asigna a cada componente de la velocidad una distribución gaussiana N(0,1)
     do i = 1, gNpart
       do j = 1, 3
-        gV(j,i) = rnor()
+        gV(j,i) = 0.0_dp !rnor()
       end do
     end do
     ! Define la desviación estandar sqrt(kT/m) en unidades adimensionales

@@ -299,7 +299,7 @@ contains
   ! TODO: Revisar si está bien
   subroutine calcula_pres(presion)
 
-    real(dp), intent(inout)    :: presion
+    real(dp), intent(out)    :: presion
     real(dp)                 :: tempe
 
    ! Calcula la temperatura instantánea
@@ -335,7 +335,7 @@ contains
 
   subroutine calcula_temp(Temp_ins)
     
-    real(dp), intent(inout)         :: Temp_ins ! Temperatura instantánea
+    real(dp), intent(out)      :: Temp_ins ! Temperatura instantánea
 
     Temp_ins = 2.0_dp * gKin / (3*gNpart-3)
 

@@ -30,12 +30,11 @@ contains
     real(dp), dimension(:), allocatable   :: Temp_t  ! temperatura en función del tiempo
 
     character(50), parameter :: nombre='trayectoria.vtf' ! Nombre archivo para guardar trayectorias
-    integer :: i, j
+    integer :: i, j, k
 
     ! Se define la cantidad de puntos que se van a medir
     Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
     allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed))
-
     ! para acumular velcidades en función del tiempo para el calculo 
     ! de correlaciones
     allocate (gCorrVfac_1(1:3, 1:Kmed))
@@ -49,22 +48,28 @@ contains
 
     ! El primer punto son los valores iniciales
     Eng_t(:,1) = (/ gPot, gKin, gPot + gKin/) 
-    call calcula_pres(Pres)
-    Pres_t(1) = Pres
-    call calcula_temp(Temp)
-    Temp_t(1) = Temp
+    call calcula_pres(pres)
+    Pres_t(1) = pres
+    call calcula_temp(temp)
+    Temp_t(1) = temp
 
     ! -------------------------------------------------------------------------------------------
     ! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
     ! ------------------------------------------------------------------------------------------
     j = 2                                              ! Contador para el loop de mediciones
     do i = 1, gNtime 
-      gR = gR + gDt * gV + 0.5_dp *  gF * gDt ** 2 / gMasa(gIndice_elemento(j))   ! gR(t+dt)
-      ! Aplica condiciones peródicas de contorno
+      do k = 1, gNpart
+        gR(:,k) = gR(:,k) + gDt * gV(:,k) + 0.5_dp *  gF(:,k) * gDt ** 2 / gMasa(gIndice_elemento(k))   ! gR(t+dt)
+      end do 
+     ! Aplica condiciones peródicas de contorno
       call cpc_vec()
-      gV = gV + 0.5_dp * gF * gDt / gMasa(gIndice_elemento(j))     ! gV(t+0.5dt) 
+      do k = 1, gNpart
+        gV(:,k) = gV(:,k) + 0.5_dp * gF(:,k) * gDt / gMasa(gIndice_elemento(k))     ! gV(t+0.5dt) 
+      end do
       call calcula_fuerza()                            ! Calcula fuerzas y potencial
-      gV = gV + 0.5_dp * gF * gDt / gMasa(gIndice_elemento(j))     ! gV(t+dt)
+      do k = 1, gNpart
+        gV(:,k) = gV(:,k) + 0.5_dp * gF(:,k) * gDt / gMasa(gIndice_elemento(k))     ! gV(t+dt)
+      end do
       !
       ! Agregar en un array velocidades (t) para calcular correlaciones
       ! El calculo va sobre una posición equivalente en la red cristalina
@@ -82,8 +87,8 @@ contains
         call calcula_pres(Pres)
         ! Guarda magnitudes
         Eng_t(:,j) = (/gPot, gKin, gPot + gKin/) 
-        Pres_t(j)  = Pres
-        Temp_t(j)  = Temp
+        Pres_t(j)  = pres
+        Temp_t(j)  = temp
        
 #ifdef GRABA_TRAYECTORIA
     call escribe_trayectoria(gR,nombre,.FALSE.)
