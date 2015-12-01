@@ -21,7 +21,7 @@ contains
 
     ! Se define la cantidad de puntos que se van a medir
     Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
-    allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed) )
+    allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed), gCorrV(1:3, 1:Kmed) )
 
     ! -------------------------------------------------------------------------------------------
     ! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
@@ -48,6 +48,11 @@ contains
         inic = fin + 1
       enddo
 
+      ! Agregar en un array velocidades (t) para calcular correlaciones
+      ! El calculo va sobre una posición equivalente en la red cristalina
+      ! En la red fcc la posición 1 mod 4 en gR son equivalentes
+      ! Otra posición equivalente es 2 mod 4, 3 mod 4 y 4 mod 4  
+      !
 
       ! Se realizan las mediciones
       if (mod(i,gNmed) == 0) then

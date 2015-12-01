@@ -251,8 +251,9 @@ contains
 
 
   ! calcula la correlacion de velocidad de un vector temporal 3D
-  subroutine calcula_corr_vel_3D (v)
+  subroutine calcula_corr_vel_3D (v, c)
     real(dp), dimension(:,:) :: v
+    real(dp), dimension(:) :: c
     real(dp), allocatable :: corr(:,:)
     real(dp), allocatable :: v2(:,:)
 
@@ -266,7 +267,9 @@ contains
     call calcula_corr_vel (v2(1,:), corr(1,:))
     call calcula_corr_vel (v2(2,:), corr(2,:))
     call calcula_corr_vel (v2(3,:), corr(3,:))
-
+    
+    ! acumula las 3 dimensiones del vector velocidad
+    c = corr(1,:) + corr(2,:) + corr(3,:)
 
   endsubroutine calcula_corr_vel_3D 
 

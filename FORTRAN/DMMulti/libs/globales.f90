@@ -40,7 +40,7 @@ module globales
   ! gR:  posicion de la particula
   ! gF:  fuerza entre particulas particula
   ! gV:  velocidad de la particula
-  real(dp),  dimension(:,:), allocatable  :: gR, gF, gV
+  real(dp),  dimension(:,:), allocatable  :: gR, gF, gV, gCorrV
   ! guarda un indice de particula
   integer, allocatable :: gIndice_elemento(:)
 
