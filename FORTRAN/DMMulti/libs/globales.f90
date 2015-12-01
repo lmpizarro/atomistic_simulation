@@ -1,37 +1,45 @@
-! definición de variables globales que usa
-! el programa
-!
-!
+!===============================================================================
+! DEFINICION DE VARIABLES GLOBALES Y SUBRUTINAS ASOCIADAS 
+!===============================================================================
 !
 module globales
-  use types, only: dp
+
+  use types,       only: dp
 
   implicit none
 
-  ! gT: Temperatura de la corrida
-  ! gDt: Paso de tiempo de la corrida
-  ! gL: longitud de un lado del cubo
-  !real(dp) :: gT, gDt, gL
-  real(dp) :: gLado_caja, gTemperatura, gDt
-  ! gNpart: cantidad de partículas del sistema
-  ! gNtime: cantidad de pasos de  tiempo
-  ! gNmed : cantidad de pasos entre mediciones
-  integer :: gNpart, gNtime, gNmed
+  !=============================================================================
+  ! PARAMETROS FIJOS DEL SISTEMA 
+  !=============================================================================
+  ! Se definen a través del archivo de entrada 'input.par'. Luego no cambian 
 
-  ! guarda los parámetros del modelo lj de
-  ! cada especie
-  ! epsilon_2 sigma_2 masa_2
-  REAL(dp), ALLOCATABLE :: gLj_param(:,:) 
-  ! guarda el porcentaje de cada especie
-  real(dp), allocatable :: gPercent(:) 
-  ! guarda la cantidad de  partículas de cada especie
-  integer, allocatable :: gNp(:)
-  integer :: gNespecies, gLiqSol
+  real(dp) :: gTemperatura   ! Temperatura del sistema
+  real(dp) :: gDt            ! Paso de tiempo de la corrida
+  real(dp) :: gLado_caja     ! Longitud de un lado del cubo
+  integer  :: gNpart         ! Cantidad de partículas del sistema
+  integer  :: gNtime         ! Cantidad de pasos de tiempo
+  integer  :: gNmed          ! Cantidad de pasos entre mediciones
+  real(dp) :: gGamma         ! Parámetro para el termostato de Langevin  
+  
+  ! --- Parámetros derivados
+  real(dp) :: gVol       ! Volumen del cubo
+  real(dp) :: gRho       ! Densidad numero de particulas N/V
+  
+  ! --- Parametros asociados al radio de corte
+  real(dp), allocatable :: gRc2(:,:)      ! Cuadrado del radio de corte
+  real(dp), allocatable :: gPot_Cut(:,:)  ! Potencial L-J en el radio de corte
+  
+  ! --- Parámetros asociados la cantidad de especies
+  real(dp), allocatable :: gLj_param(:,:)  ! Parámetros del modelo lj de cada especie
+  real(dp), allocatable :: gPercent(:)     ! Porcentaje de cada especie
+  integer, allocatable  :: gNp(:)          ! Cantidad de partículas de cada especie
+  integer               :: gNespecies      ! Cantidad de especies en el sistema
+  integer               :: gLiqSol         ! =1 si es un sólido. =0 otra cosa 
 
-  ! define la cantidad de veces que se repite el cubo basico
+  ! Define la cantidad de veces que se repite el cubo basico
   ! aplica a z, y, x
   integer :: gPeriodos
-  ! define el tipo de estrucura cubica 
+  ! Define el tipo de estrucura cubica 
   ! 0: simple, 
   ! 1: centrada en el cuerpo, 
   ! 2: centrada en las caras
@@ -55,22 +63,45 @@ module globales
   real(dp) :: gVol       ! Volumen del cubo
   real(dp) :: gRho       ! Densidad numero de particulas N/V
  
-  real(dp)        :: gPot       ! Energía potencial del sistema
-  real(dp)        :: gKin       ! Energia cinetica del sistema
-  real(dp)        :: gVir       ! Cálculo del virial para la presión 
+  !=============================================================================
+  ! VARIABLES DEL SISTEMA 
+  !=============================================================================
 
-  real(dp)        :: gGamma     ! Parámetro para el termostato de Langevin  
-
-  ! variables para la funcion de distribucion radial
-  integer, dimension(:,:), allocatable   :: gCorr_par 
-  integer                 :: gNhist     ! Cantidad de bines de la g(r)
-  integer                 :: gNgr       ! Contador para saber cuántas veces se acumuló la g(r)
-  real(dp)                :: gDbin      ! Ancho del bin de la g(r)    
+  real(dp),  dimension(:,:), allocatable  :: gR    ! Posicion de las partículas
+  real(dp),  dimension(:,:), allocatable  :: gV    ! Velocidades de las partículas
+  real(dp),  dimension(:,:), allocatable  :: gF    ! Fuerza sobre las partículas
+  real(dp)                                :: gPot  ! Energía potencial del sistema
+  real(dp)                                :: gKin  ! Energia cinetica del sistema
+  real(dp)                                :: gVir  ! Cálculo termino del virial
  
+  integer, allocatable :: gIndice_elemento(:)      ! Indice de partícula
+
+  ! Magnitudes utilizadas para describir muchas especies
+  real(dp),  dimension(:,:), allocatable  :: gCombSigma    ! Matriz con sigma
+  real(dp),  dimension(:,:), allocatable  :: gCombEpsilon  ! Matriz con epsilon
+  real(dp),  dimension(:), allocatable    :: gMasa         ! Vector de masas
+
+  !TODO ¿la g(r) se calcula siempre? ¿No se controla con el preprocesador?
+  ! Variables para la funcion de distribucion radial
+  
+  ! g(r) sin normalizar (por eso definida como entera)  
+  ! TODO Aclarar qué es cada elemento de la matriz
+  integer, dimension(:,:), allocatable   :: gCorr_par    
+  integer           :: gNhist   ! Cantidad de bines de la g(r)
+  integer           :: gNgr     ! Contador para saber cuántas veces se acumuló la g(r)
+  real(dp)          :: gDbin    ! Ancho del bin de la g(r)    
+
 contains
+  
+  !=============================================================================
+  ! TODO AGREGAR DESCRIPCION DE LO QUE HACE 
+  ! ¿por qué se pone acá esto?
+  !=============================================================================
 
   subroutine print_gvars()
+
     integer :: i      
+    
     write( *,600) "Nespecies", gNespecies
 
     write( *, 500)  "epsilon           sigma           masa"
@@ -98,11 +129,16 @@ contains
     600 format (a, I3)
     700 format (I3, F15.3, I10)
     800 format (F12.3, F12.3, F12.3)
+
   endsubroutine print_gvars
 
-
+  !=============================================================================
+  ! INICIALIZA VARIABLES GLOBALES SI SE TRABAJA CON POSICIONES ALEATORIAS 
+  !=============================================================================
+  
   subroutine inicializar_globales_random()
-    integer :: i,j, inic, fin
+    
+    integer  :: i,j, inic, fin
     real(dp) :: v_temp
 
     ! determina el volumen de la caja
@@ -150,9 +186,15 @@ contains
 
   endsubroutine inicializar_globales_random
 
+  !=============================================================================
+  ! INICIALIZA VARIABLES GLOBALES SI SE TRABAJA CON UNA RED FCC 
+  !=============================================================================
+
   subroutine inicializar_globales_fcc()
-    integer :: i
+
+    integer  :: i
     real(dp) :: v_temp
+
     ! define la cantidad de veces que se repite el cubo basico
     ! aplica a z, y, x
     !!  gPeriodos
@@ -196,10 +238,16 @@ contains
 
   endsubroutine inicializar_globales_fcc
 
+  !=============================================================================
+  ! LIBERA MEMORIA DE LAS VARIABLES GLOBALES 
+  !=============================================================================
+
   subroutine finalizar_globales()
+   
     deallocate(gR,gV,gF, gNp, gLj_param, gPercent)
     deallocate(gCombSigma, gCombEpsilon)
     deallocate(gRc2, gPot_Cut)
+
   endsubroutine finalizar_globales
 
 endmodule globales

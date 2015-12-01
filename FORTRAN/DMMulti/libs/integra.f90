@@ -1,9 +1,16 @@
 module integra
-  use types,          only: dp
+
+  use types,             only: dp
   use globales
   use mediciones
+  use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 
   implicit none
+
+  private
+
+  public       :: integracion, integracion_min, cpc_vec
+
 contains 
 
   !===============================================================================
@@ -17,11 +24,17 @@ contains
     real(dp), dimension(:,:), allocatable :: Eng_t   ! energía en función del tiempo
     real(dp), dimension(:), allocatable :: Pres_t  ! presión en función del tiempo
     real(dp), dimension(:), allocatable :: Temp_t  ! temperatura en función del tiempo
+    character(50), parameter   :: nombre='trayectoria.vtf' ! Nombre archivo para guardar trayectorias
     integer :: i, j, k, inic, fin
 
     ! Se define la cantidad de puntos que se van a medir
     Kmed = int(gNtime/abs(gNmed)) + 1              ! Se agrega +1 para poner el inicial
     allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed), gCorrV(1:3, 1:Kmed) )
+
+#ifdef GRABA_TRAYECTORIA
+    call escribe_trayectoria(gR,nombre,.TRUE.)
+#endif
+
 
     ! -------------------------------------------------------------------------------------------
     ! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
@@ -66,6 +79,10 @@ contains
         Eng_t(:,k) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(k)  = Pres
         Temp_t(k)  = Temp
+       
+#ifdef GRABA_TRAYECTORIA
+    call escribe_trayectoria(gR,nombre,.FALSE.)
+#endif
 
         print *, "med", k, i, gPot, gKin, gPot + gKin
 
@@ -79,14 +96,43 @@ contains
     deallocate( Eng_t, Pres_t, Temp_t)
   endsubroutine integracion
 
-
   !===============================================================================
   ! INTEGRACIÓN DE LAS ECUACIONES DE MOVIMIENTO - MINIMIZACIÓN ENERGÍA
   !===============================================================================
   ! Subrutina de integración de las ecuaciones de movimiento para minimizar energía
   ! Es el Problema 3 de la Guia_2a
-
   subroutine integracion_min()
+
+    real(dp), dimension(gNtime+1) :: Eng_t   ! Energía en función del tiempo
+    integer :: i, j
+    ! Nombre del archivo para guardar la trayectoria
+    character(50), parameter   :: nombre='trayectoria_minimiza.vtf'
+     
+    ! Escribe encabezado y primer punto de la trayectoria
+    call escribe_trayectoria(gR,nombre,.TRUE.) 
+    ! El primer punto es la energía inicial
+    Eng_t(1) = gPot
+
+    do i = 1, gNtime 
+      do j = 1, gNpart
+        gR(:,j) = gR(:,j) + 0.5_dp * gF(:,j) * (gDt**2) / gMasa(gIndice_elemento(j))
+      end do
+      ! Aplica condiciones periódicas de contorno
+      call cpc_vec()   
+
+      ! Esta subrutine abre y cierra un archivo. Se puede optimizar haciéndolo acá.
+      call escribe_trayectoria(gR,nombre,.FALSE.)    
+      ! Calcula fuerza y energía
+      call calcula_fuerza()
+      ! Escribe energía potencial en vector
+      Eng_t(i+1) = gPot
+    end do
+
+    call escribe_en_columnas(Eng_t/gNpart,'energia_pot_minimizada.dat',gDt)
+
+  end subroutine integracion_min
+
+  subroutine integracion_min_original()
 
     real(dp), dimension(gNtime+1) :: Eng_t   ! Energía en función del tiempo
     integer :: i, j, inic, fin
@@ -116,13 +162,12 @@ contains
       ! Escribe energía potencial en vector
       Eng_t(i+1) = gPot
     end do
-  end subroutine integracion_min
+  end subroutine integracion_min_original
 
   !===============================================================================
   ! Condiciones períodicas de contorno
   !===============================================================================
-
-  subroutine cpc_vec_()
+  subroutine cpc_vec()
 
     real(dp), dimension(3,gNpart) :: tmp     ! Variable temporal
     integer :: j
@@ -131,17 +176,10 @@ contains
     
     ! Lo escribo de esta forma porque de lo contrario da error de compilación
     ! en el cluster (dice ser un bug de gfortran)
-    tmp = gLado_caja*nint(gR/gLado_caja)
-
+    tmp = gLado_caja*floor(gR/gLado_caja)
 
     gR = gR - tmp
 
-  end subroutine cpc_vec_
-
-  subroutine cpc_vec()
-
-    gR = abs(mod(gR, gLado_caja))
-  
   end subroutine cpc_vec
 
 end module integra

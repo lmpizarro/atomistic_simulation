@@ -1,8 +1,24 @@
 2 1
 1.0 1.0 1.0
-1.11 1.5 8.82
-10 4 2 1.2 0.001 10000 100 0.5
+1.11 1.5 2.0
+6 4 2 1.2 0.001 100 100 0.5
 .5
 
 
 5 .3  1.2 0.001 10000 100 .5
+
+# Los parametros leidos son:
+gNespecies gLiqSol
+epsilon(1) sigma(1) masa(1)
+...
+epsilon(N) sigma(N) masa(N)  -> N =gNespecies
+# si gLiqSol = 1 (es un sólido) entonces lee
+gLado_caja, gPeriodos, gCubicStructure, gTemperatura, gDt, gNtime, gNmed, gGamma
+gPercent
+
+Sirve para probar minimización de energía
+2 1
+1.0 1.0 1.0
+1.11 1.5 2.0
+6 4 2 1.2 0.001 30000 100 0.5
+.5
