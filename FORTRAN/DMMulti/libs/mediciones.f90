@@ -418,9 +418,7 @@ contains
     ! y asigna al array de velocidades 
     ! equivalentes
     do i=1,gNpart / 4
-
        j = 4 * (i - 1)
-       
        ! analiza un vertice 
        if (gIndice_elemento(j + 1) .eq. 1) then 
          gCorrVver_1(:, gNCorrVver_1) = gV(:, j + 1)
@@ -430,7 +428,7 @@ contains
          gNCorrVver_2 = gNCorrVver_2 + 1 
        endif  
              
-       ! analizo para cara
+       ! analizo para cara 1
        if (gIndice_elemento(j + 2) .eq. 1) then 
          gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
          gNCorrVfac_1 = gNCorrVfac_1  + 1 
@@ -439,7 +437,7 @@ contains
          gNCorrVfac_2 = gNCorrVfac_2 + 1 
        endif 
 
-       ! analizo para cara
+       ! analizo para cara 2
        if (gIndice_elemento(j + 3) .eq. 1) then 
          gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
          gNCorrVfac_1 = gNCorrVfac_1  + 1 
@@ -448,7 +446,7 @@ contains
          gNCorrVfac_2 = gNCorrVfac_2 + 1 
        endif 
 
-       ! analizo para cara
+       ! analizo para cara 3
        if (gIndice_elemento(j + 3) .eq. 1) then 
          gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
          gNCorrVfac_1 = gNCorrVfac_1  + 1 
@@ -456,9 +454,6 @@ contains
          gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 1)
          gNCorrVfac_2 = gNCorrVfac_2 + 1 
        endif 
-
-
- 
     enddo
   endsubroutine acumula_velocidades_equivalentes
 
