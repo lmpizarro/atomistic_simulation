@@ -186,8 +186,6 @@ contains
     if (gPercent(1).ne. 0.5 ) then
       stop 1212121212
     endif
-
-    print *, "cincuenta"
     ! --- Fin debug
 
     ! Se inicializa con todos los elementos de especie 1
@@ -226,20 +224,23 @@ contains
 
   end subroutine inicia_posicion_fcc
 
-  subroutine inicia_posicion_fcc_original(n_pred)
+  subroutine inicia_posicion_fcc_random(n_pred)
  
     integer, intent(in)    :: n_pred     ! Periodicidad de la red, # veces que se
                                         ! repite la red en las direcciones x, y e z
     integer :: i, j, k, i_gr
+
+    real (dp) :: tmp
+
     print *, "inicia posicion red fcc"
 
     if (gPercent(1).ne. 0.5 ) then
       stop 1212121212
     endif
 
-    print *, "cincuenta"
-
-    ! inicia para un binario
+    tmp = uni()
+    ! inicia para un binario el arreglo de indice
+    ! de elementos a 2
     gIndice_elemento = 2
     i_gr = 1
     do i = 1, n_pred 
@@ -272,12 +273,19 @@ contains
 
    gR = gLado_caja * gR / n_pred
 
+   ! para un sistema binario cambio la naturaleza de la 
+   ! partícula para la mitad de los elementos en forma aleatoria
+   do i=1, gNpart / 2
+      gIndice_elemento(int(gNpart * uni())) = 1
+   enddo
+   ! En una futura vesión debería ser una rutina independiente
+
 #if DEBUG == 1
    do i=1, gNpart
       print *, "punto ", gR(1, i), gR(2, i), gR(3, i), gIndice_elemento(i)
    enddo
 #endif
 
-  end subroutine inicia_posicion_fcc_original
+  end subroutine inicia_posicion_fcc_random
 
 end module inic_fin 
