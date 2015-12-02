@@ -345,10 +345,64 @@ contains
 
   end subroutine calcula_temp
 
+
+  !############################################################################!
+  ! calculo de autocorrelaciones 
+  ! valido para sistemas binarios
+  !############################################################################!
+  ! se llama  cuando se tiene un estado de velocidades a analizar
+  ! antes de llamar hay que inicializar gNCorr* y gCorr* a cero
+  subroutine acumula_velocidades_equivalentes ()
+    integer :: i, j
+    ! recorrer el array de velocidades
+    ! y asigna al array de velocidades 
+    ! equivalentes
+    do i=1,gNpart / 4
+       j = 4 * (i - 1)
+       ! vertice 
+       if (gIndice_elemento(j + 1) .eq. 1) then 
+         gCorrVver_1(:, gNCorrVver_1) = gV(:, j + 1)
+         gNCorrVver_1 = gNCorrVver_1 + 1 
+       else 
+         gCorrVver_2(:, gNCorrVver_2) = gV(:, j + 1)
+         gNCorrVver_2 = gNCorrVver_2 + 1 
+       endif  
+             
+       ! cara 1
+       if (gIndice_elemento(j + 2) .eq. 1) then 
+         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
+         gNCorrVfac_1 = gNCorrVfac_1  + 1 
+       else 
+         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 1)
+         gNCorrVfac_2 = gNCorrVfac_2 + 1 
+       endif 
+
+       ! cara 2
+       if (gIndice_elemento(j + 3) .eq. 1) then 
+         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
+         gNCorrVfac_1 = gNCorrVfac_1 + 1 
+       else 
+         gCorrVfac_2(:, gNCorrVfac_2) =  gV(:, j + 1)
+         gNCorrVfac_2 = gNCorrVfac_2 + 1 
+       endif 
+
+       ! cara 3
+       if (gIndice_elemento(j + 4) .eq. 1) then 
+         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
+         gNCorrVfac_1 = gNCorrVfac_1 + 1 
+       else 
+         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 1)
+         gNCorrVfac_2 = gNCorrVfac_2 + 1 
+       endif 
+    enddo
+  endsubroutine acumula_velocidades_equivalentes
+
   !
-  ! calcula la correlacion de velocidad de un vector temporal 1D
+  ! calcula la auto_correlacion de un vector 1D
   ! con fftw3
   ! el tamaño de vel es del tipo 2 ** n, n entero
+  ! los ultimos n elementos en 0
+  ! de acuerdo a Allen
   subroutine calcula_corr_vel (in, c)
     real(dp), dimension(:) :: in, c
     integer :: n, nc
@@ -399,54 +453,28 @@ contains
     call calcula_corr_vel (v2(3,:), corr(3,:))
     
     ! acumula las 3 dimensiones del vector velocidad
-    c = corr(1,:) + corr(2,:) + corr(3,:)
+    c = (corr(1,:) + corr(2,:) + corr(3,:)) / 3
 
   endsubroutine calcula_corr_vel_3D 
 
-  ! valido para sistemas binarios
-  subroutine acumula_velocidades_equivalentes ()
-    integer :: i, j
-    ! recorrer el array de velocidades
-    ! y asigna al array de velocidades 
-    ! equivalentes
-    do i=1,gNpart / 4
-       j = 4 * (i - 1)
-       ! analiza un vertice 
-       if (gIndice_elemento(j + 1) .eq. 1) then 
-         gCorrVver_1(:, gNCorrVver_1) = gV(:, j + 1)
-         gNCorrVver_1 = gNCorrVver_1  + 1 
-       else 
-         gCorrVver_2(:, gNCorrVver_2) = gV(:, j + 1)
-         gNCorrVver_2 = gNCorrVver_2 + 1 
-       endif  
-             
-       ! analizo para cara 1
-       if (gIndice_elemento(j + 2) .eq. 1) then 
-         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
-         gNCorrVfac_1 = gNCorrVfac_1  + 1 
-       else 
-         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 1)
-         gNCorrVfac_2 = gNCorrVfac_2 + 1 
-       endif 
+  subroutine calcula_corr_vel_3D_b (v, c)
+    ! Se puede pensar de otra manera
+    ! acumular en un vector 1D cada una de las 3dimensiones
+    ! del array de velocidades
+    real(dp), dimension(:,:) :: v
+    real(dp), dimension(:) :: c
+    real(dp), allocatable :: corr(:)
+    real(dp), allocatable :: v2(:)
 
-       ! analizo para cara 2
-       if (gIndice_elemento(j + 3) .eq. 1) then 
-         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
-         gNCorrVfac_1 = gNCorrVfac_1  + 1 
-       else 
-         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 1)
-         gNCorrVfac_2 = gNCorrVfac_2 + 1 
-       endif 
+    ! viene el resultado de la operacion
+    allocate (corr(2 * size(v)))
+    allocate (v2(2 * size(v)))
+    v2 = 0
+    corr = 0
 
-       ! analizo para cara 3
-       if (gIndice_elemento(j + 3) .eq. 1) then 
-         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
-         gNCorrVfac_1 = gNCorrVfac_1  + 1 
-       else 
-         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 1)
-         gNCorrVfac_2 = gNCorrVfac_2 + 1 
-       endif 
-    enddo
-  endsubroutine acumula_velocidades_equivalentes
+    v2(1:size(v)) = (v(1,:) + v(2,:) + v(3,:)) / 3
+    call calcula_corr_vel (v2(:), corr(:))
+
+  endsubroutine calcula_corr_vel_3D_b 
 
 end module mediciones
