@@ -4,8 +4,10 @@ module integra
 
   use types,             only: dp
   use globales
-  use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza,&
-          acumula_velocidades_equivalentes, calcula_corr_vel_3D_b
+  use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza
+#ifdef LUIS
+  use mediciones,        only: acumula_velocidades_equivalentes, calcula_corr_vel_3D_b
+#endif
   use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 
   implicit none
@@ -93,7 +95,9 @@ contains
         Eng_t(:,j) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(j)  = pres
         Temp_t(j)  = temp
+#ifdef LUIS
         call acumula_velocidades_equivalentes()
+#endif
        
 #ifdef GRABA_TRAYECTORIA
     call escribe_trayectoria(gR,nombre,.FALSE.)
@@ -104,7 +108,7 @@ contains
   ! ----------------------------------------------------------------------------
   ! FIN DEL LOOP PRINCIPAL DE INTEGRACION
   ! ----------------------------------------------------------------------------
-  
+#ifdef LUIS  
   !#############################################################################
   !               Calculo de las auto_correlaciones de velocidad
   !#############################################################################
@@ -137,7 +141,7 @@ contains
   ! grabar resultados que estan en Corr_tr
   deallocate (Corr_tr)
 
-
+#endif
 
   ! Escritura de las magnitudes en funci..n del tiempo
   if (gNmed > 0) then

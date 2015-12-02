@@ -28,8 +28,10 @@ module mediciones
 
   private
 
-  public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp,&
-    acumula_velocidades_equivalentes, calcula_corr_vel_3D_b
+  public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
+#ifdef LUIS
+  public   ::   acumula_velocidades_equivalentes, calcula_corr_vel_3D_b
+#endif
 
 contains
  
@@ -348,7 +350,7 @@ contains
 
   end subroutine calcula_temp
 
-
+#ifdef LUIS
   !############################################################################!
   ! calculo de autocorrelaciones 
   ! valido para sistemas binarios
@@ -479,5 +481,7 @@ contains
     call calcula_corr_vel (v2(:), corr(:))
 
   endsubroutine calcula_corr_vel_3D_b 
+
+#endif
 
 end module mediciones
