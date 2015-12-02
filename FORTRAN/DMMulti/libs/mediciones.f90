@@ -286,7 +286,7 @@ contains
     integer  :: i, j
 
     do i = 1, gNpart
-      ma = gMasa(gIndice_elemento(i))
+      ma = gMasa(gIndice_elemento(i))/gCombEpsilon(gIndice_elemento(i),gIndice_elemento(i))
       do j = 1, 3
         gF(j,i) = gF(j,i) - gGamma * gV(j,i) + &
                   sqrt(2.0_dp*gTemperatura*gGamma*ma/gDt) * rnor()
@@ -324,10 +324,11 @@ contains
     integer ::  i
 
     do i = 1, gNpart
-      mv2(i) =  gMasa(gIndice_elemento(i))*dot_product(gV(:,i),gV(:,i))  
+      mv2(i) =  gMasa(gIndice_elemento(i))*dot_product(gV(:,i),gV(:,i))/ &
+                gCombEpsilon(gIndice_elemento(i), gIndice_elemento(i)) 
     end do
 
-    gKin = 0.5_dp * sum(mv2)
+    gKin = 0.5_dp * sum(mv2) 
 
   endsubroutine calcula_kin
 

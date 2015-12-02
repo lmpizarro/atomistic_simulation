@@ -14,6 +14,7 @@ module inic_fin
   use combinacion,      only: comb_sigma, comb_epsilon, corta_desplaza_pote
   use mediciones,       only: calcula_fuerza, calcula_kin, calcula_pres, calcula_temp
   use integra
+  use io_parametros,    only: lee_estados, escribe_estados
 
   implicit none
   
@@ -32,6 +33,7 @@ contains
     integer   :: j 
     real(dp)  :: Pres   ! Presión instantánea
     real(dp)  :: Temp   ! Temperatura instantánea
+    logical   :: leido  ! Flag para saber si se leyó el archivo de estados
 
     call inic_zig()
     call leer_parametros()
@@ -47,20 +49,8 @@ contains
     ! calculamos los rc y potencial en rc
     call corta_desplaza_pote()
 
-    ! Trata de leer el archivo con la configuración inicial
-    !call lee_estados(gR,gV,gIndice_elemento,leido)
-
-    !
-    ! Si no se leyó el archivo de estados, lo define
-    !
-    !if (leido .eqv. .FALSE. ) then
-    !  write(*,*) '* Se generan posiciones y velocidades'
-    ! Bloque para inicializar algunas variables globales
-    ! y posiciones dependiendo de los datos de entrada
-    !
       if (gLiqSol .eq. 0) then 
         call inicializar_globales_random()
-        call inicia_posicion_rn()
       else if ( gLiqSol .eq. 1) then
         print *, "llama a posiciones en  cubica"
         print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
@@ -75,16 +65,48 @@ contains
         else if (gCubicStructure .eq. 2) then 
           print *, "llama a cubica centrada en las caras"
           call inicializar_globales_fcc()
+        endif
+      else
+        print *, "no implementado"
+        stop 212121212
+      endif  
+    ! Trata de leer el archivo con la configuración inicial
+    call lee_estados(gR,gV,gIndice_elemento,leido)
+
+    !
+    ! Si no se leyó el archivo de estados, lo define
+    !
+    if (leido .eqv. .FALSE. ) then
+    !  write(*,*) '* Se generan posiciones y velocidades'
+    ! Bloque para inicializar algunas variables globales
+    ! y posiciones dependiendo de los datos de entrada
+    !
+    if (gLiqSol .eq. 0) then 
+        ! call inicializar_globales_random()
+        call inicia_posicion_rn()
+      else if ( gLiqSol .eq. 1) then
+        print *, "llama a posiciones en  cubica"
+        print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
+        if (gCubicStructure .eq. 0) then
+          print *, "llama a cubica simple"
+          print *, "no implementado"
+          stop 212121212
+        else if (gCubicStructure .eq. 1) then 
+          print *, "llama a cubica centrada en el cuerpo"
+          print *, "no implementado"
+          stop 212121212
+        else if (gCubicStructure .eq. 2) then 
+          print *, "llama a cubica centrada en las caras"
+        !  call inicializar_globales_fcc()
           call inicia_posicion_fcc(gPeriodos)
         endif
       else
         print *, "no implementado"
         stop 212121212
       endif        
-    
       ! Inicializa las velocidades 
       call vel_inic()
-    !end if
+    end if
 
     !
     !--- En este punto, todas las variables y parámetros quedan definidos 
@@ -124,8 +146,13 @@ contains
   !===============================================================================
 
   subroutine finalizacion()
+
+    ! Escribe la última configuración de x, v e indice de elemento en el
+    ! archivo 'estado.dat'
+    call escribe_estados(gR,gV,gIndice_elemento)
     call finalizar_globales()
     call fin_zig()
+
   endsubroutine finalizacion
 
   !===============================================================================
@@ -154,7 +181,7 @@ contains
 
   subroutine inicia_posicion_rn()
  
-    integer :: i, j
+    integer :: i, j, inic, fin
 
     do i = 1, gNpart
       do j= 1, 3
@@ -162,7 +189,20 @@ contains
       end do
    end do     
 
-  end subroutine inicia_posicion_rn
+    !! esto vale para sistema binario
+    !! TODO: revisar para sistema multielemento
+    gIndice_elemento = 2
+    
+    inic = 1
+    do i=1, gNespecies
+      fin = gNp(i) + inic - 1
+      do j=inic, fin 
+        gIndice_elemento(j) = i
+      enddo
+      inic = fin + 1
+    enddo
+  
+end subroutine inicia_posicion_rn
 
   !===============================================================================
   ! INICIALIZA POSICIONES EN UNA RED FCC  
@@ -259,20 +299,15 @@ contains
            gR(1, i_gr) = i - 1 
            gR(2, i_gr) = j - 0.5
            gR(3, i_gr) = k - 0.5
-           gIndice_elemento(i_gr) = 1
            i_gr = i_gr + 1
            gR(1, i_gr) = i - 0.5 
            gR(2, i_gr) = j - 1 
            gR(3, i_gr) = k - 0.5
-           gIndice_elemento(i_gr) = 1
            i_gr = i_gr + 1
            gR(1, i_gr) = i - 0.5 
            gR(2, i_gr) = j - 0.5 
            gR(3, i_gr) = k - 1 
            i_gr = i_gr + 1
-           ! dividir por 4
-           ! colocar dentro de la caja
-           !  gLado_caja * gPeriodos / (gPeriodos + 1)
         enddo
       enddo
    enddo

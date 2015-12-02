@@ -195,7 +195,7 @@ contains
     write(30,'(I8)')  gNpart
     ! Escribe posiciones y velocidades de las partículas
     do i = 1, gNpart
-     write(30,100) (r(j,i),j=1,3) , (v(j,i),j=1,3, tipo(i))
+     write(30,100) (r(j,i),j=1,3) , (v(j,i),j=1,3) , tipo(i)
      100 format (6(E24.17,3X),I3)
     end do 
 
@@ -212,9 +212,9 @@ contains
 
   subroutine lee_estados(r,v,tipo,exito)
 
-    real(dp), intent(out), dimension(:,:),allocatable :: r, v  ! Vectores pos. y vel.
+    real(dp), intent(out), dimension(3,gNpart) :: r, v  ! Vectores pos. y vel.
     logical, intent(out)                       :: exito ! Controla si se leyo bien
-    integer, intent(out), dimension(:), allocatable  :: tipo  ! Tipo de partícula
+    integer, intent(out), dimension(gNpart)    :: tipo  ! Tipo de partícula
     integer          :: N     ! Número de partículas leidas    
     integer          :: i, j
     logical          :: es
@@ -230,10 +230,9 @@ contains
       if ( N==gNpart ) then
         ! Lee el resto del archivo
         ! Quedan definidos los tamaños de los vectores
-        allocate( r(1:3,1:gNpart), v(1:3,1:gNpart), tipo(1:gNpart) )
         do i = 1, gNpart
-            read(20,100) (r(j,i),j=1,3) , (v(j,i),j=1,3), tipo(j)
-            100 format (6(E24.117,3X))
+            read(20,100) (r(j,i),j=1,3) , (v(j,i),j=1,3), tipo(i)
+            100 format (6(E24.17,3X),I3)
         end do 
         write(*,*) '* Archivo de configuracion inicial leido correctamente'
         exito = .TRUE.

@@ -134,7 +134,7 @@ contains
   
   subroutine inicializar_globales_random()
     
-    integer  :: i,j, inic, fin
+    integer  :: i,j
     real(dp) :: v_temp
 
     ! determina el volumen de la caja
@@ -159,20 +159,7 @@ contains
     ! Ajuste de la cantidad total de partículas
     ! La conversión a enteros pierde partículas
     gNPart = sum(gNp)
-    ALLOCATE(gIndice_elemento(1:gNPart))
-
-    !! esto vale para sistema binario
-    !! TODO: revisar para sistema multielemento
-    gIndice_elemento = 2
-    
-    inic = 1
-    do i=1, gNespecies
-      fin = gNp(i) + inic - 1
-      do j=inic, fin 
-        gIndice_elemento(j) = i
-      enddo
-      inic = fin + 1
-    enddo  
+    allocate(gIndice_elemento(1:gNPart))
 
     allocate(gR(1:3, 1:gNpart))
     allocate(gF(1:3, 1:gNpart))
