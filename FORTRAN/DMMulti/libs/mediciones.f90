@@ -28,7 +28,8 @@ module mediciones
 
   private
 
-  public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
+  public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp,&
+    acumula_velocidades_equivalentes, calcula_corr_vel_3D_b
 
 contains
  
