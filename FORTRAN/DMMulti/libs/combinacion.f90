@@ -121,12 +121,12 @@ contains
 
     ! Multiplico por el sgima en cada caso para tener el radio de corte correcto
     ! En lo anterior no hacía falta porque se simplificaba al evaluar en el potencial
-    do i=1, gNespecies
-     do j=i, gNespecies
-       gRc2(i,j) = gRc2(i,j) * gCombSigma(i,j)**2
-       gRc2(j,i) = gRc2(i,j)
-     end do
-    end do
+   ! do i=1, gNespecies
+   !  do j=i, gNespecies
+   !    gRc2(i,j) = gRc2(i,j) * gCombSigma(i,j)**2
+   !    gRc2(j,i) = gRc2(i,j)
+   !  end do
+   ! end do
 
     ! imprime la matriz de gRc2 por pantalla
     print *, "gRc2"
