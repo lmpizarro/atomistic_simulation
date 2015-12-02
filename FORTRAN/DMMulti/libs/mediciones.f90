@@ -1,6 +1,7 @@
 module FFTW3
   use, intrinsic :: iso_c_binding
   include '/usr/include/fftw3.f03'
+  ! También podría estar en '/usr/local/include/fftw3.f03
 end module
 
 module mediciones
@@ -278,14 +279,17 @@ contains
   ! TERMOSTATO DE LANGEVIN
   !===============================================================================
   ! Agrega la parte estocástica al a fuerza de cada partícula
-
+  ! TODO No está andando bien
   subroutine fuerza_langevin()
 
+    real(dp) :: ma    ! Masa de la partícula
     integer  :: i, j
 
     do i = 1, gNpart
+      ma = gMasa(gIndice_elemento(i))
       do j = 1, 3
-        gF(j,i) = gF(j,i) - gGamma * gV(j,i) + sqrt(2.0_dp*gTemperatura*gGamma/gDt) * rnor()
+        gF(j,i) = gF(j,i) - gGamma * gV(j,i) + &
+                  sqrt(2.0_dp*gTemperatura*gGamma*ma/gDt) * rnor()
       end do
     end do
 
@@ -308,7 +312,6 @@ contains
    presion = gRho * tempe + gVir / gVol 
 
   end subroutine calcula_pres
-
 
   !===============================================================================
   ! CALCULA ENERGIA CINETICA 
