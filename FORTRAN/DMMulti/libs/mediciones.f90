@@ -111,9 +111,10 @@ contains
     ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
     ! Siempre en distancias relativas de sigma
     rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
-    r2ij   = dot_product( rij_vec , rij_vec )          ! Cuadrado de la distancia
+    r2ij   = dot_product( rij_vec , rij_vec ) / (gCombSigma(i_inter,j_inter) **2) ! Cuadrado de la distancia
     if ( r2ij < rc2) then                
-      r2in = (gCombSigma(i_inter,j_inter) **2)/r2ij                               ! Inversa al cuadrado
+      r2in = 1.0_dp / r2ij                               ! Inversa al cuadrado
+      !r2in = (gCombSigma(i_inter,j_inter) **2)/r2ij                               ! Inversa al cuadrado
       r6in = r2in**3                                   ! Inversa a la sexta
       Fij     = r2in * r6in * (r6in - 0.5_dp)          ! Fuerza entre partículas
       gF(:,i) = gF(:,i) + Fij * rij_vec                ! Contribución a la partícula i
@@ -286,7 +287,7 @@ contains
     integer  :: i, j
 
     do i = 1, gNpart
-      ma = gMasa(gIndice_elemento(i))/gCombEpsilon(gIndice_elemento(i),gIndice_elemento(i))
+      ma = gMasa(gIndice_elemento(i))
       do j = 1, 3
         gF(j,i) = gF(j,i) - gGamma * gV(j,i) + &
                   sqrt(2.0_dp*gTemperatura*gGamma*ma/gDt) * rnor()
@@ -301,6 +302,7 @@ contains
   !===============================================================================
   ! Calcula la presion en base al teorema del virial (Ver 2.4 del Allen)
   ! TODO: Revisar si está bien
+
   subroutine calcula_pres(presion)
 
     real(dp), intent(out)    :: presion
@@ -324,8 +326,7 @@ contains
     integer ::  i
 
     do i = 1, gNpart
-      mv2(i) =  gMasa(gIndice_elemento(i))*dot_product(gV(:,i),gV(:,i))/ &
-                gCombEpsilon(gIndice_elemento(i), gIndice_elemento(i)) 
+      mv2(i) =  gMasa(gIndice_elemento(i))*dot_product(gV(:,i),gV(:,i))
     end do
 
     gKin = 0.5_dp * sum(mv2) 

@@ -167,8 +167,10 @@ contains
     ! Asigna a cada componente de la velocidad una distribución gaussiana N(0,1)
     do i = 1, gNpart
       do j = 1, 3
-        gV(j,i) = 0.0_dp !rnor()
+        gV(j,i) = rnor()
       end do
+      ! Multiplico por la masa de cada especie
+      gV(:,i) = gV(:,i)*sqrt(1/gMasa(gIndice_elemento(i)))
     end do
     ! Define la desviación estandar sqrt(kT/m) en unidades adimensionales
     gV = sqrt( gTemperatura ) * gV
