@@ -176,26 +176,27 @@ contains
 !===============================================================================
 ! ESBRIBE ESTADOS DE POSICION Y VELOCIDAD
 !===============================================================================
-! Graba los vectores posición y velocidad en un archivo
+! Graba los vectores posición, velocidad y tipo de partícula en un archivo
 ! Se pretende utilizar esta información para inicializar una nueva corrida
 ! Se escribe el archivo 'estado.dat' y el contenido tiene el formato
 ! N    (Número total de partículas)
-! x(1)  y(1)  z(1)  v_x(1)  v_y(1)  v_z(1)
-!                ......
-! x(N)  y(N)  z(N)  v_x(N)  v_y(N)  v_z(N)
+! x(1)  y(1)  z(1)  v_x(1)  v_y(1)  v_z(1) tipo_particula(i)
+!                       .................
+! x(N)  y(N)  z(N)  v_x(N)  v_y(N)  v_z(N  tipo_particula(N))
 
-  subroutine escribe_estados(r,v)
+  subroutine escribe_estados(r,v,tipo)
 
-    real(dp), dimension(3,gNpart)    :: r, v
-    integer                          :: i, j
+    real(dp), intent(in), dimension(3,gNpart)    :: r, v  ! Posición y velocidad
+    integer,  intent(in), dimension(gNpart)      :: tipo  ! Tipo de partícula
+    integer   :: i, j
 
     open(unit=30, file='./estados.dat', status='replace')
     ! Escribe la cantidad de partículas en la primer línea
     write(30,'(I8)')  gNpart
     ! Escribe posiciones y velocidades de las partículas
     do i = 1, gNpart
-     write(30,100) (r(j,i),j=1,3) , (v(j,i),j=1,3)
-     100 format (6(E24.17,3X))
+     write(30,100) (r(j,i),j=1,3) , (v(j,i),j=1,3, tipo(i))
+     100 format (6(E24.17,3X),I3)
     end do 
 
     close(30)
@@ -203,16 +204,17 @@ contains
   end subroutine escribe_estados 
 
 !===============================================================================
-! LEE ESTADOS DE POSICION Y VELOCIDAD
+! LEE ESTADOS DE POSICION, VELOCIDAD Y TIPO DE PARTICULA
 !===============================================================================
-! Lee los vectores posición y velocidad 
+! Lee los vectores posición, velocidad y tipo de partícula
 ! Primero lee la primera lína para ver si coinciden el número de partículas del
 ! archivo con las del problema que se está corriendo 
 
-  subroutine lee_estados(r,v,exito)
+  subroutine lee_estados(r,v,tipo,exito)
 
-    real(dp), dimension(3,gNpart),intent(out)   :: r, v  ! Vectores pos. y vel.
-    logical, intent(out)                        :: exito ! Controla si se leyo bien
+    real(dp), intent(out), dimension(:,:),allocatable :: r, v  ! Vectores pos. y vel.
+    logical, intent(out)                       :: exito ! Controla si se leyo bien
+    integer, intent(out), dimension(:), allocatable  :: tipo  ! Tipo de partícula
     integer          :: N     ! Número de partículas leidas    
     integer          :: i, j
     logical          :: es
@@ -227,8 +229,10 @@ contains
       read(20,'(I8)') N
       if ( N==gNpart ) then
         ! Lee el resto del archivo
+        ! Quedan definidos los tamaños de los vectores
+        allocate( r(1:3,1:gNpart), v(1:3,1:gNpart), tipo(1:gNpart) )
         do i = 1, gNpart
-            read(20,100) (r(j,i),j=1,3) , (v(j,i),j=1,3)
+            read(20,100) (r(j,i),j=1,3) , (v(j,i),j=1,3), tipo(j)
             100 format (6(E24.117,3X))
         end do 
         write(*,*) '* Archivo de configuracion inicial leido correctamente'

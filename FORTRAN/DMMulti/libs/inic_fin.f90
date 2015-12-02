@@ -47,34 +47,48 @@ contains
     ! calculamos los rc y potencial en rc
     call corta_desplaza_pote()
 
-    if (gLiqSol .eq. 0) then 
-      call inicializar_globales_random()
-      call inicia_posicion_rn()
-    else if ( gLiqSol .eq. 1) then
-      print *, "llama a posiciones en  cubica"
-      print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
-      if (gCubicStructure .eq. 0) then
-        print *, "llama a cubica simple"
-        print *, "no implementado"
-        stop 212121212
-      else if (gCubicStructure .eq. 1) then 
-        print *, "llama a cubica centrada en el cuerpo"
-        print *, "no implementado"
-        stop 212121212
-      else if (gCubicStructure .eq. 2) then 
-        print *, "llama a cubica centrada en las caras"
-        call inicializar_globales_fcc()
-        call inicia_posicion_fcc(gPeriodos)
-      endif
-    else
-      print *, "no implementado"
-      stop 212121212
-    endif        
+    ! Trata de leer el archivo con la configuración inicial
+    !call lee_estados(gR,gV,gIndice_elemento,leido)
 
-   ! print *, "pos inic"
-   ! do j=1,gNpart 
-   !   print *, gR(1,j) , gR(2,j), gR(3,j)
-   ! enddo  
+    !
+    ! Si no se leyó el archivo de estados, lo define
+    !
+    !if (leido .eqv. .FALSE. ) then
+    !  write(*,*) '* Se generan posiciones y velocidades'
+    ! Bloque para inicializar algunas variables globales
+    ! y posiciones dependiendo de los datos de entrada
+    !
+      if (gLiqSol .eq. 0) then 
+        call inicializar_globales_random()
+        call inicia_posicion_rn()
+      else if ( gLiqSol .eq. 1) then
+        print *, "llama a posiciones en  cubica"
+        print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
+        if (gCubicStructure .eq. 0) then
+          print *, "llama a cubica simple"
+          print *, "no implementado"
+          stop 212121212
+        else if (gCubicStructure .eq. 1) then 
+          print *, "llama a cubica centrada en el cuerpo"
+          print *, "no implementado"
+          stop 212121212
+        else if (gCubicStructure .eq. 2) then 
+          print *, "llama a cubica centrada en las caras"
+          call inicializar_globales_fcc()
+          call inicia_posicion_fcc(gPeriodos)
+        endif
+      else
+        print *, "no implementado"
+        stop 212121212
+      endif        
+    
+      ! Inicializa las velocidades 
+      call vel_inic()
+    !end if
+
+    !
+    !--- En este punto, todas las variables y parámetros quedan definidos 
+    !
 
     call calcula_fuerza()
     
@@ -82,32 +96,16 @@ contains
     write(*,*) '***************************************'
 
    !call integracion_min()
-
-   ! print *, "pos final after min"
-   ! do j=1,gNpart 
-   !   print *, gR(1,j) , gR(2,j), gR(3,j)
-   ! enddo  
-
-  !print *, "energia potencial after min: ", gPot
-  !
-  ! Inicializa las velocidades de todas las partículas
-    call vel_inic()
-
+    ! Calcula energía cinética
     call calcula_kin()
-
- !   write (*,100) "gKin inicial: ", gKin
-
+    ! Calcula fuerza
     call calcula_fuerza()
-
     ! Calcula la presión inicial
     call calcula_pres(Pres)
     ! Calcula la temperatura inicial
     call calcula_temp(Temp)
-!    write (*,100) "insTemp inicial: ", Temp
-!    write (*,100) "insPres inicial: ", Pres
 
-!    100 format (a, F20.3)
-
+    ! Escribe información en pantalla
     write(*,*) '* Valores iniciales por partícula'
     write(*,100) gPot/gNpart, gKin/gNpart, (gPot+gKin)/gNpart
     100 format(1X,'Potencial = ', E14.7, 5X, 'Cinética = ', E14.7, 5X, 'Total = ', E14.7) 

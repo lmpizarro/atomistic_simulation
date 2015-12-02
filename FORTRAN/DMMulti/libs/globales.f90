@@ -230,7 +230,7 @@ contains
       gNp(i) = gNPart * gpercent(i) 
     enddo
 
-    print *, "fcc ", gNpart, gLado_caja, gRho, gVol
+    !print *, "fcc ", gNpart, gLado_caja, gRho, gVol
 
   endsubroutine inicializar_globales_fcc
 
