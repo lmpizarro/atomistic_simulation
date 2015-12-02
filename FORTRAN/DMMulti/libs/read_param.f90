@@ -37,14 +37,19 @@ contains
     if (gLiqSol .eq. 0) then
       ! lee el tamaño de la caja, la densidad, temperatura, 
       ! paso de tiempo, cantidad de pasos de tiempo
-      read(10,*) gLado_caja, gRho, gTemperatura, gDt, gNtime, gNmed, gGamma
+      !read(10,*) gLado_caja, gRho, gTemperatura, gDt, gNtime, gNmed, gGamma
+      read(10,*) gLado_caja, gRho
 
     else if ( gLiqSol .eq. 1) then
-      read(10,*) gLado_caja, gPeriodos, gCubicStructure, gTemperatura, gDt, gNtime, gNmed, gGamma
+      !read(10,*) gLado_caja, gPeriodos, gCubicStructure, gTemperatura, gDt, gNtime, gNmed, gGamma
+      read(10,*) gLado_caja, gPeriodos, gCubicStructure
     else
       print *, "no implementado"
       stop 212121212
     endif
+
+
+    read(10,*) gTemperatura, gDt, gNtime, gNmed, gGamma
 
     !TODO No entiendo para qué esto
     ! ¿Por qué no se define directamente con el N de cada una?
