@@ -4,7 +4,8 @@ module integra
 
   use types,             only: dp
   use globales
-  use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza 
+  use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza,&
+          acumula_velocidades_equivalentes, calcula_corr_vel_3D_b
   use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 
   implicit none
@@ -28,6 +29,9 @@ contains
     real(dp), dimension(:,:), allocatable :: Eng_t   ! energía en función del tiempo
     real(dp), dimension(:), allocatable   :: Pres_t  ! presión en función del tiempo
     real(dp), dimension(:), allocatable   :: Temp_t  ! temperatura en función del tiempo
+    real(dp), dimension(:), allocatable   :: Corr_tr ! array de &
+                                                     ! autocorrelaciones
+
 
     character(50), parameter :: nombre='trayectoria.vtf' ! Nombre archivo para guardar trayectorias
     integer :: i, j, k
@@ -61,7 +65,7 @@ contains
       do k = 1, gNpart
         gR(:,k) = gR(:,k) + gDt * gV(:,k) + 0.5_dp *  gF(:,k) * gDt ** 2 / gMasa(gIndice_elemento(k))   ! gR(t+dt)
       end do 
-     ! Aplica condiciones peródicas de contorno
+     ! Aplica condiciones periódicas de contorno
       call cpc_vec()
       do k = 1, gNpart
         gV(:,k) = gV(:,k) + 0.5_dp * gF(:,k) * gDt / gMasa(gIndice_elemento(k))     ! gV(t+0.5dt) 
@@ -89,6 +93,7 @@ contains
         Eng_t(:,j) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(j)  = pres
         Temp_t(j)  = temp
+        call acumula_velocidades_equivalentes()
        
 #ifdef GRABA_TRAYECTORIA
     call escribe_trayectoria(gR,nombre,.FALSE.)
@@ -96,27 +101,61 @@ contains
         j = j + 1                                      ! Actualiza contador mediciones
       end if
     end do
-! -------------------------------------------------------------------------------------------
-! FIN DEL LOOP PRINCIPAL DE INTEGRACION
-! -------------------------------------------------------------------------------------------
-   
-    ! Escritura de las magnitudes en funci..n del tiempo
-    if (gNmed > 0) then
-      ! Guarda las energ..as por part..cula  en un archivo [Potencial, Cin..tica, Total]
-      call escribe_en_columnas(Eng_t/gNpart,'energias.dat',gNmed*gDt)
+  ! ----------------------------------------------------------------------------
+  ! FIN DEL LOOP PRINCIPAL DE INTEGRACION
+  ! ----------------------------------------------------------------------------
+  
+  !#############################################################################
+  !               Calculo de las auto_correlaciones de velocidad
+  !#############################################################################
 
-      ! Guarda la presion en un archivo
-      call escribe_en_columnas(Pres_t,'presion.dat',gNmed*gDt)
-      
-      ! Guarda la temperatura en un archivo
-      call escribe_en_columnas(Temp_t,'temperatura.dat',gNmed*gDt)
-    end if
+  ! calcular autocorrelacion para particula tipo 1 en vertice
+  ! gNCorrVver_2 
+  allocate (Corr_tr(1:gNCorrVver_2))
+  call calcula_corr_vel_3D_b (gCorrVver_2(:,1:gNCorrVver_2), Corr_tr)
+  ! grabar resultados que estan en Corr_tr
+  deallocate (Corr_tr)
+  ! calcular autocorrelacion para particula tipo 2 en vertice
+  ! gNCorrVver_1 
+  allocate (Corr_tr(1:gNCorrVver_1))
+  call calcula_corr_vel_3D_b (gCorrVver_1(:,1:gNCorrVver_1), Corr_tr)
+  ! grabar resultados que estan en Corr_tr
+  deallocate (Corr_tr)
 
-    ! Se imprime en pantalla los resultados finales
-    write(*,*) '* Energias por partícula al final de la integración'
-    call print_info(Pres,Temp)
+  ! calcular autocorrelacion para particula tipo 1 en cara
+  ! gNCorrVfac_1
+  allocate (Corr_tr(1:gNCorrVfac_1))
+  call calcula_corr_vel_3D_b (gCorrVfac_1(:,1:gNCorrVfac_1), Corr_tr)
+  ! grabar resultados que estan en Corr_tr
+  deallocate (Corr_tr)
 
-    deallocate( Eng_t, Pres_t, Temp_t)
+
+  ! calcular autocorrelacion para particula tipo 2 en cara
+  ! gNCorrVfac_2
+  allocate (Corr_tr(1:gNCorrVfac_2))
+  call calcula_corr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2), Corr_tr)
+  ! grabar resultados que estan en Corr_tr
+  deallocate (Corr_tr)
+
+
+
+  ! Escritura de las magnitudes en funci..n del tiempo
+  if (gNmed > 0) then
+    ! Guarda las energ..as por part..cula  en un archivo [Potencial, Cin..tica, Total]
+    call escribe_en_columnas(Eng_t/gNpart,'energias.dat',gNmed*gDt)
+
+    ! Guarda la presion en un archivo
+    call escribe_en_columnas(Pres_t,'presion.dat',gNmed*gDt)
+    
+    ! Guarda la temperatura en un archivo
+    call escribe_en_columnas(Temp_t,'temperatura.dat',gNmed*gDt)
+  end if
+
+  ! Se imprime en pantalla los resultados finales
+  write(*,*) '* Energias por partícula al final de la integración'
+  call print_info(Pres,Temp)
+
+  deallocate( Eng_t, Pres_t, Temp_t)
 
   contains
 
