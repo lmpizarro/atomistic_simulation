@@ -105,7 +105,7 @@ contains
     integer, intent(in) :: i, j, i_inter, j_inter
 
     cut4 = gPot_cut(i_inter, j_inter) / 4.0_dp
-    rc2 = gRc2(i_inter, j_inter)*gCombSigma(i_inter,j_inter)**2
+    rc2 = gRc2(i_inter, j_inter)
 
     ! aca hay que traer los parametros de sigma 
     ! y epsilon para calcular el potencial
@@ -125,10 +125,9 @@ contains
       gF(:,j) = gF(:,j) - Fij * rij_vec/gCombSigma(i_inter,j_inter)   ! Contribucion a la partícula j
       gPot    = gPot +  r6in * ( r6in - 1.0_dp) *  &
                 gCombEpsilon(i_inter, j_inter) - cut4  ! Energía potencial
-      gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
+      gVir    = gVir + Fij * r2ij        ! Término del virial para la presión
                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
     end if  ! Termina if del radio de corte
-
   endsubroutine kernel_fuerza
 
   !===============================================================================
