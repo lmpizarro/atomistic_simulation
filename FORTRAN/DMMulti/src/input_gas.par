@@ -1,7 +1,8 @@
 2 0
 1.0 1.0 1.0
 1.11 1.5 8.82
-5 .3  1.2 0.001 10000 100 .5
+5 .3  
+1.2 0.001 10000 100 .5
 .5
 
 #formato de archivo para gases/liquidos
@@ -11,7 +12,8 @@ epsilon(1) sigma(1) masa(1)
 ...
 epsilon(N) sigma(N) masa(N)  -> N =gNespecies
 # si gLiqSol = 1 (es un sólido) entonces lee
-gLado_caja, gRho, gTemperatura, gDt, gNtime, gNmed, gGamma
+gLado_caja, gRho
+gTemperatura, gDt, gNtime, gNmed, gGamma
 gPercent(1)
 ...
 gPercent(N-1) -> N =gNespecies
