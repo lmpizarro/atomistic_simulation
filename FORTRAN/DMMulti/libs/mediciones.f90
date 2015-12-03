@@ -105,33 +105,35 @@ contains
     real(dp) :: cut4      ! Cuarta parte del potencial en r_c
     integer, intent(in) :: i, j, i_inter, j_inter
 
+    ! Cuarta parte del potencial evaluado en el radio de corte
     cut4 = gPot_cut(i_inter, j_inter) / 4.0_dp
     ! El radio de corte es siempore 2.5 por el sigma de cada interacción
+    ! Lo comparo luego con la distancia dividida por el sigma de cada interacción
     rc2  = gRc2(i_inter, j_inter) 
 
-    ! aca hay que traer los parametros de sigma 
-    ! y epsilon para calcular el potencial
 
     rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
     ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
     ! Siempre en distancias relativas de sigma
     rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
     ! Divido por el sigma de cada interacción
+    ! Después sólo lo utilizo para calcular fuerza y potencial, siempre
+    ! aparece la distancia dividida por el sigma.
     rij_vec = rij_vec / gCombSigma(i_inter,j_inter) 
 
     r2ij   = dot_product( rij_vec , rij_vec )  ! Cuadrado de la distancia
     if ( r2ij < rc2) then                
       r2in = 1.0_dp / r2ij                            ! Inversa al cuadrado
       r6in = r2in**3                                  ! Inversa a la sexta
-      ! Ojo acá
+      ! Se debe dividir por el sigma que proviene de la derivación del potencial
       Fij     = r2in * r6in * gCombEpsilon(i_inter, j_inter) * &
                 (r6in - 0.5_dp) / gCombSigma(i_inter,j_inter)     ! Fuerza entre partículas
-      gF(:,i) = gF(:,i) + Fij * rij_vec   ! Contribución a la partícula i
-      gF(:,j) = gF(:,j) - Fij * rij_vec   ! Contribucion a la partícula j
+      gF(:,i) = gF(:,i) + Fij * rij_vec               ! Contribución a la partícula i
+      gF(:,j) = gF(:,j) - Fij * rij_vec               ! Contribucion a la partícula j
       gPot    = gPot +  r6in * ( r6in - 1.0_dp) *  &
-                gCombEpsilon(i_inter, j_inter) - cut4  ! Energía potencial
-      gVir    = gVir + Fij * r2ij        ! Término del virial para la presión
-                                                           ! pg 48 de Allen W=-1/3 sum(r dv/dr)
+                gCombEpsilon(i_inter, j_inter) - cut4 ! Energía potencial
+      gVir    = gVir + Fij * r2ij                     ! Término del virial para la presión
+                                                      ! pg 48 de Allen W=-1/3 sum(r dv/dr)
     end if  ! Termina if del radio de corte
   endsubroutine kernel_fuerza
 
