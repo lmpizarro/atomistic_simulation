@@ -30,8 +30,8 @@ module mediciones
 
   public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
 #ifdef LUIS
-  public   ::   acumula_velocidades_equivalentes, calcula_corr_vel_3D_b,&
-                calcula_corr_vel_3D
+  public   ::   acumula_velocidades_equivalentes, calcula_autocorr_vel_3D_b,&
+                calcula_autocorr_vel_3D
 #endif
 
 contains
@@ -406,18 +406,10 @@ contains
          gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 4)
          gNCorrVfac_2 = gNCorrVfac_2 + 1 
        endif 
-       !print *, "kkkk", i, j, gNCorrVver_1, gNCorrVver_2, gNCorrVfac_1,&
-       !     gNCorrVfac_2, gNpart, gNmed
     enddo
   endsubroutine acumula_velocidades_equivalentes
 
-  !
-  ! calcula la auto_correlacion de un vector 1D
-  ! con fftw3
-  ! el tamaño de vel es del tipo 2 ** n, n entero
-  ! los ultimos n elementos en 0
-  ! de acuerdo a Allen
-  subroutine calcula_corr_vel (in, c)
+  subroutine calcula_modos_vibracion (in, c)
     real(dp), dimension(:), intent(in) :: in
     real(dp), dimension(:), intent(inout) :: c
     integer :: n, nc
@@ -426,6 +418,34 @@ contains
     integer ( kind = 8 ) plan_backward
     real (dp), allocatable :: v2(:)
     real (dp), allocatable :: in2(:)
+
+    n = size(in)
+    nc = n / 2 + 1
+
+    allocate (out(1:nc))
+
+    print *, "calcula_autocorr_fft n nc", n, nc, size(in), size(c), size(out)
+
+    ! out tiene tamaño nc
+    call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
+    call dfftw_execute_ (plan_forward)
+ 
+    deallocate (out)
+  endsubroutine calcula_modos_vibracion
+
+  !
+  ! calcula la auto_correlacion de un vector 1D
+  ! con fftw3
+  ! el tamaño de vel es del tipo 2 ** n, n entero
+  ! los ultimos n elementos en 0
+  ! de acuerdo a Allen
+  subroutine calcula_autocorr (in, c)
+    real(dp), dimension(:), intent(in) :: in
+    real(dp), dimension(:), intent(inout) :: c
+    integer :: n, nc
+    complex (dp), allocatable :: out(:)
+    integer ( kind = 8 ) plan_forward
+    integer ( kind = 8 ) plan_backward
 
     n = size(in)
     nc = n / 2 + 1
@@ -452,11 +472,11 @@ contains
 
     deallocate (out)
 
-  endsubroutine calcula_corr_vel
+  endsubroutine calcula_autocorr
 
 
   ! calcula la correlacion de velocidad de un vector temporal 3D
-  subroutine calcula_corr_vel_3D (v, c)
+  subroutine calcula_autocorr_vel_3D (v, c)
     real(dp), dimension(:,:), intent(in) :: v
     real(dp), dimension(:), intent(inout) :: c
     real(dp), allocatable :: corr(:,:)
@@ -469,18 +489,18 @@ contains
     corr = 0
     v2 (:,1:size(v)) = v
 
-    call calcula_corr_vel (v2(1,:), corr(1,:))
-    call calcula_corr_vel (v2(2,:), corr(2,:))
-    call calcula_corr_vel (v2(3,:), corr(3,:))
+    call calcula_autocorr (v2(1,:), corr(1,:))
+    call calcula_autocorr (v2(2,:), corr(2,:))
+    call calcula_autocorr (v2(3,:), corr(3,:))
     
     ! acumula las 3 dimensiones del vector velocidad
     c = (corr(1,:) + corr(2,:) + corr(3,:)) / 3
  
     deallocate (corr)
     deallocate (v2)
-  endsubroutine calcula_corr_vel_3D 
+  endsubroutine calcula_autocorr_vel_3D 
 
-  subroutine calcula_corr_vel_3D_b (v, c)
+  subroutine calcula_autocorr_vel_3D_b (v, c)
     ! Se puede pensar de otra manera
     ! acumular en un vector 1D cada una de las 3dimensiones
     ! del array de velocidades
@@ -496,12 +516,12 @@ contains
     corr = 0
 
     v2(1:size(v)) = (v(1,:) + v(2,:) + v(3,:)) / 3
-    call calcula_corr_vel (v2(:), corr(:))
+    call calcula_autocorr (v2(:), corr(:))
 
     deallocate (corr)
     deallocate (v2)
 
-  endsubroutine calcula_corr_vel_3D_b 
+  endsubroutine calcula_autocorr_vel_3D_b 
 
 #endif
 

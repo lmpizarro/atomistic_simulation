@@ -6,8 +6,8 @@ module integra
   use globales
   use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza
 #ifdef LUIS
-  use mediciones,        only: acumula_velocidades_equivalentes, calcula_corr_vel_3D_b,&
-                               calcula_corr_vel_3D 
+  use mediciones,        only: acumula_velocidades_equivalentes, calcula_autocorr_vel_3D_b,&
+                               calcula_autocorr_vel_3D 
 #endif
   use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 
@@ -120,7 +120,7 @@ contains
   if (gNCorrVver_2 .gt. 0) then
     allocate (Corr_tr(1:2*(gNCorrVver_2-1)))
     print *, "Calcula auto corre v particula tipo 2 en vertice"
-    call calcula_corr_vel_3D_b (gCorrVver_2(:,1:(gNCorrVver_2-1)), Corr_tr)
+    call calcula_autocorr_vel_3D_b (gCorrVver_2(:,1:(gNCorrVver_2-1)), Corr_tr)
     ! grabar resultados que estan en Corr_tr
     print *, "corr_tr", Corr_tr
 
@@ -133,7 +133,7 @@ contains
     ! gNCorrVver_1 
     allocate (Corr_tr(1:2*(gNCorrVver_1-1)))
     print *, "Calcula auto corre v particula tipo 1 en vertice"
-    call calcula_corr_vel_3D_b (gCorrVver_1(:,1:gNCorrVver_1 - 1), Corr_tr)
+    call calcula_autocorr_vel_3D_b (gCorrVver_1(:,1:gNCorrVver_1 - 1), Corr_tr)
     call escribe_en_columnas(Corr_tr,'corr_vver_1.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
     deallocate (Corr_tr)
@@ -144,7 +144,7 @@ contains
     ! gNCorrVfac_1
     print *, "Calcula auto corre v particula tipo 1 en cara"
     allocate (Corr_tr(1:2*(gNCorrVfac_1-1)))
-    call calcula_corr_vel_3D_b (gCorrVfac_1(:,1:(gNCorrVfac_1 - 1)), Corr_tr)
+    call calcula_autocorr_vel_3D_b (gCorrVfac_1(:,1:(gNCorrVfac_1 - 1)), Corr_tr)
     call escribe_en_columnas(Corr_tr,'corr_vfac_1.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
     deallocate (Corr_tr)
@@ -156,7 +156,7 @@ contains
     ! gNCorrVfac_2
     print *, "Calcula auto corre v particula tipo 2 en cara"
     allocate (Corr_tr(1:2*(gNCorrVfac_2 - 1)))
-    call calcula_corr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2 - 1), Corr_tr)
+    call calcula_autocorr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2 - 1), Corr_tr)
     call escribe_en_columnas(Corr_tr,'corr_vfac_2.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
     deallocate (Corr_tr)
