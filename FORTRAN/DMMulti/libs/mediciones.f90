@@ -299,7 +299,7 @@ contains
     do i = 1, gNpart
       ma = gMasa(gIndice_elemento(i))
       do j = 1, 3
-        gF(j,i) = gF(j,i) - gGamma * gV(j,i) + &
+        gF(j,i) = gF(j,i) - ma*gGamma * gV(j,i) + &
                   sqrt(2.0_dp*gTemperatura*gGamma*ma/gDt) * rnor()
       end do
     end do
