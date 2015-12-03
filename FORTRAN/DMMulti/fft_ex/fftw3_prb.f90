@@ -167,8 +167,8 @@ subroutine test02 ( )
 !
   implicit none
 
-  integer ( kind = 4 ), parameter :: n = 100
-  integer ( kind = 4 ), parameter :: nc = 51
+  integer ( kind = 4 ), parameter :: n = 19200
+  integer ( kind = 4 ), parameter :: nc = 9601
 
 
   real ( kind = 8 ) r8_uniform_01

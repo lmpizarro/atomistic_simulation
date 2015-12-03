@@ -6,7 +6,8 @@ module integra
   use globales
   use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza
 #ifdef LUIS
-  use mediciones,        only: acumula_velocidades_equivalentes, calcula_corr_vel_3D_b
+  use mediciones,        only: acumula_velocidades_equivalentes, calcula_corr_vel_3D_b,&
+                               calcula_corr_vel_3D 
 #endif
   use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 
@@ -43,10 +44,10 @@ contains
     allocate( Eng_t(1:3,1:Kmed), Pres_t(1:Kmed), Temp_t(1:Kmed))
     ! para acumular velcidades en función del tiempo para el calculo 
     ! de correlaciones
-    allocate (gCorrVfac_1(1:3, 1:Kmed))
-    allocate (gCorrVfac_2(1:3, 1:Kmed))
-    allocate (gCorrVver_1(1:3, 1:Kmed))
-    allocate (gCorrVver_2(1:3, 1:Kmed))
+    allocate (gCorrVfac_1(1:3, 1:Kmed * gNpart))
+    allocate (gCorrVfac_2(1:3, 1:Kmed * gNpart))
+    allocate (gCorrVver_1(1:3, 1:Kmed * gNpart))
+    allocate (gCorrVver_2(1:3, 1:Kmed * gNpart))
 
 #ifdef GRABA_TRAYECTORIA
     call escribe_trayectoria(gR,nombre,.TRUE.)
@@ -115,31 +116,46 @@ contains
 
   ! calcular autocorrelacion para particula tipo 1 en vertice
   ! gNCorrVver_2 
-  allocate (Corr_tr(1:gNCorrVver_2))
-  call calcula_corr_vel_3D_b (gCorrVver_2(:,1:gNCorrVver_2), Corr_tr)
-  ! grabar resultados que estan en Corr_tr
-  deallocate (Corr_tr)
-  ! calcular autocorrelacion para particula tipo 2 en vertice
-  ! gNCorrVver_1 
-  allocate (Corr_tr(1:gNCorrVver_1))
-  call calcula_corr_vel_3D_b (gCorrVver_1(:,1:gNCorrVver_1), Corr_tr)
-  ! grabar resultados que estan en Corr_tr
-  deallocate (Corr_tr)
+  print *, "gNcorr*", gNCorrVver_1, gNCorrVver_2, gNCorrVfac_1, gNCorrVfac_2 
+  if (gNCorrVver_2 .gt. 0) then
+    allocate (Corr_tr(1:2*gNCorrVver_2))
+    print *, "Calcula auto corre v particula tipo 2 en vertice"
+    call calcula_corr_vel_3D (gCorrVver_2(:,1:gNCorrVver_2), Corr_tr)
+    ! grabar resultados que estan en Corr_tr
+    print *, "corr_tr", Corr_tr
+    deallocate (Corr_tr)
+  endif 
 
-  ! calcular autocorrelacion para particula tipo 1 en cara
-  ! gNCorrVfac_1
-  allocate (Corr_tr(1:gNCorrVfac_1))
-  call calcula_corr_vel_3D_b (gCorrVfac_1(:,1:gNCorrVfac_1), Corr_tr)
-  ! grabar resultados que estan en Corr_tr
-  deallocate (Corr_tr)
+  if (gNCorrVver_1 .gt. 0) then
+    ! calcular autocorrelacion para particula tipo 2 en vertice
+    ! gNCorrVver_1 
+    allocate (Corr_tr(1:2*gNCorrVver_1))
+    print *, "Calcula auto corre v particula tipo 1 en vertice"
+    call calcula_corr_vel_3D (gCorrVver_1(:,1:gNCorrVver_1), Corr_tr)
+    ! grabar resultados que estan en Corr_tr
+    deallocate (Corr_tr)
+  endif
 
+  if (gNCorrVfac_1 .gt. 0) then
+    ! calcular autocorrelacion para particula tipo 1 en cara
+    ! gNCorrVfac_1
+    print *, "Calcula auto corre v particula tipo 1 en cara"
+    allocate (Corr_tr(1:2*gNCorrVfac_1))
+    !call calcula_corr_vel_3D_b (gCorrVfac_1(:,1:gNCorrVfac_1), Corr_tr)
+    ! grabar resultados que estan en Corr_tr
+    deallocate (Corr_tr)
+  endif
 
-  ! calcular autocorrelacion para particula tipo 2 en cara
-  ! gNCorrVfac_2
-  allocate (Corr_tr(1:gNCorrVfac_2))
-  call calcula_corr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2), Corr_tr)
-  ! grabar resultados que estan en Corr_tr
-  deallocate (Corr_tr)
+  if (gNCorrVfac_2 .gt. 0) then
+    ! calcular autocorrelacion para particula tipo 1 en cara
+    ! calcular autocorrelacion para particula tipo 2 en cara
+    ! gNCorrVfac_2
+    print *, "Calcula auto corre v particula tipo 2 en cara"
+    allocate (Corr_tr(1:2*gNCorrVfac_2))
+    !call calcula_corr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2), Corr_tr)
+    ! grabar resultados que estan en Corr_tr
+    deallocate (Corr_tr)
+  endif  
 
 #endif
 

@@ -30,7 +30,8 @@ module mediciones
 
   public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
 #ifdef LUIS
-  public   ::   acumula_velocidades_equivalentes, calcula_corr_vel_3D_b
+  public   ::   acumula_velocidades_equivalentes, calcula_corr_vel_3D_b,&
+                calcula_corr_vel_3D
 #endif
 
 contains
@@ -381,30 +382,32 @@ contains
              
        ! cara 1
        if (gIndice_elemento(j + 2) .eq. 1) then 
-         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
+         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 2)
          gNCorrVfac_1 = gNCorrVfac_1  + 1 
        else 
-         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 1)
+         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 2)
          gNCorrVfac_2 = gNCorrVfac_2 + 1 
        endif 
 
        ! cara 2
        if (gIndice_elemento(j + 3) .eq. 1) then 
-         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
+         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 3)
          gNCorrVfac_1 = gNCorrVfac_1 + 1 
        else 
-         gCorrVfac_2(:, gNCorrVfac_2) =  gV(:, j + 1)
+         gCorrVfac_2(:, gNCorrVfac_2) =  gV(:, j + 3)
          gNCorrVfac_2 = gNCorrVfac_2 + 1 
        endif 
 
        ! cara 3
        if (gIndice_elemento(j + 4) .eq. 1) then 
-         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 1)
+         gCorrVfac_1(:, gNCorrVfac_1) = gV(:, j + 4)
          gNCorrVfac_1 = gNCorrVfac_1 + 1 
        else 
-         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 1)
+         gCorrVfac_2(:, gNCorrVfac_2) = gV(:, j + 4)
          gNCorrVfac_2 = gNCorrVfac_2 + 1 
        endif 
+       !print *, "kkkk", i, j, gNCorrVver_1, gNCorrVver_2, gNCorrVfac_1,&
+       !     gNCorrVfac_2, gNpart, gNmed
     enddo
   endsubroutine acumula_velocidades_equivalentes
 
@@ -415,7 +418,8 @@ contains
   ! los ultimos n elementos en 0
   ! de acuerdo a Allen
   subroutine calcula_corr_vel (in, c)
-    real(dp), dimension(:) :: in, c
+    real(dp), dimension(:), intent(in) :: in
+    real(dp), dimension(:), intent(inout) :: c
     integer :: n, nc
     complex (dp), allocatable :: out(:)
     integer ( kind = 8 ) plan_forward
@@ -428,27 +432,33 @@ contains
 
     allocate (out(1:nc))
 
+    print *, "calcula_autocorr_fft n nc", n, nc, size(in), size(c), size(out)
+
     ! out tiene tamaño nc
-    call dfftw_plan_dft_r2c_1d_ ( plan_forward, n, in, out, FFTW_ESTIMATE )
-    call dfftw_execute_ ( plan_forward )
+    call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
+    call dfftw_execute_ (plan_forward)
+    
+    print *, "luego de fft3w"
 
     ! paso c) página 190 del Allen
     out = REAL(out) ** 2 + AIMAG(out) ** 2
 
     ! paso d) aplicar una fft inversa  a c
-    call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, out, c, FFTW_ESTIMATE )
-    call dfftw_execute_ ( plan_backward )
+    !call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, out, c, FFTW_ESTIMATE )
+    !call dfftw_execute_ ( plan_backward )
 
     ! paso e) aplicar la normalizacion
     c = c / n
+
+    deallocate (out)
 
   endsubroutine calcula_corr_vel
 
 
   ! calcula la correlacion de velocidad de un vector temporal 3D
   subroutine calcula_corr_vel_3D (v, c)
-    real(dp), dimension(:,:) :: v
-    real(dp), dimension(:) :: c
+    real(dp), dimension(:,:), intent(in) :: v
+    real(dp), dimension(:), intent(inout) :: c
     real(dp), allocatable :: corr(:,:)
     real(dp), allocatable :: v2(:,:)
 
@@ -465,7 +475,9 @@ contains
     
     ! acumula las 3 dimensiones del vector velocidad
     c = (corr(1,:) + corr(2,:) + corr(3,:)) / 3
-
+ 
+    deallocate (corr)
+    deallocate (v2)
   endsubroutine calcula_corr_vel_3D 
 
   subroutine calcula_corr_vel_3D_b (v, c)
@@ -484,7 +496,10 @@ contains
     corr = 0
 
     v2(1:size(v)) = (v(1,:) + v(2,:) + v(3,:)) / 3
-    call calcula_corr_vel (v2(:), corr(:))
+    !call calcula_corr_vel (v2(:), corr(:))
+
+    deallocate (corr)
+    deallocate (v2)
 
   endsubroutine calcula_corr_vel_3D_b 
 
