@@ -31,7 +31,7 @@ module mediciones
   public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
 #ifdef LUIS
   public   ::   acumula_velocidades_equivalentes, calcula_autocorr_vel_3D_b,&
-                calcula_autocorr_vel_3D
+                calcula_autocorr_vel_3D, calcula_modos_vibracion_vel
 #endif
 
 contains
@@ -409,28 +409,46 @@ contains
     enddo
   endsubroutine acumula_velocidades_equivalentes
 
-  subroutine calcula_modos_vibracion (in, c)
+  !
+  ! Viene un vector 3D de N, devuelve un vector c de N/2 + 1
+  !
+  subroutine calcula_modos_vibracion_vel (v, c)
+    real(dp), dimension(:,:), intent(in) :: v
+    real(dp), dimension(:,:), intent(inout) :: c
+    complex(dp), dimension(:), allocatable :: tmp
+
+    allocate(tmp(size(c)))
+
+    print *,  "size 1 ", size(v), size(c)
+    call calcula_modos_vibracion (v(1,:), tmp)
+    c(1,:) = REAL(tmp) ** 2 + AIMAG(tmp) ** 2
+    call calcula_modos_vibracion (v(2,:), tmp)
+    c(2,:) = REAL(tmp) ** 2 + AIMAG(tmp) ** 2
+    call calcula_modos_vibracion (v(3,:), tmp)
+    c(3,:) = REAL(tmp) ** 2 + AIMAG(tmp) ** 2
+
+  endsubroutine calcula_modos_vibracion_vel 
+
+  !
+  ! Viene un vector 1 D (in) de N, 
+  ! devuelve un vector 1D (c) de N/2 + 1
+  !
+  subroutine calcula_modos_vibracion (in, out)
     real(dp), dimension(:), intent(in) :: in
-    real(dp), dimension(:), intent(inout) :: c
+    complex(dp), dimension(:), intent(inout) :: out
     integer :: n, nc
-    complex (dp), allocatable :: out(:)
     integer ( kind = 8 ) plan_forward
-    integer ( kind = 8 ) plan_backward
     real (dp), allocatable :: v2(:)
     real (dp), allocatable :: in2(:)
 
     n = size(in)
-    nc = n / 2 + 1
-
-    allocate (out(1:nc))
-
-    print *, "calcula_autocorr_fft n nc", n, nc, size(in), size(c), size(out)
+ 
+    print *,  "size ", size(in), size(out)
 
     ! out tiene tamaño nc
     call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
     call dfftw_execute_ (plan_forward)
  
-    deallocate (out)
   endsubroutine calcula_modos_vibracion
 
   !
@@ -473,7 +491,6 @@ contains
     deallocate (out)
 
   endsubroutine calcula_autocorr
-
 
   ! calcula la correlacion de velocidad de un vector temporal 3D
   subroutine calcula_autocorr_vel_3D (v, c)
