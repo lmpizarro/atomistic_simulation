@@ -444,8 +444,8 @@ contains
     out = REAL(out) ** 2 + AIMAG(out) ** 2
 
     ! paso d) aplicar una fft inversa  a c
-    !call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, out, c, FFTW_ESTIMATE )
-    !call dfftw_execute_ ( plan_backward )
+    call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, out, c, FFTW_ESTIMATE )
+    call dfftw_execute_ ( plan_backward )
 
     ! paso e) aplicar la normalizacion
     c = c / n
@@ -484,8 +484,8 @@ contains
     ! Se puede pensar de otra manera
     ! acumular en un vector 1D cada una de las 3dimensiones
     ! del array de velocidades
-    real(dp), dimension(:,:) :: v
-    real(dp), dimension(:) :: c
+    real(dp), dimension(:,:), intent(in) :: v
+    real(dp), dimension(:), intent(inout) :: c
     real(dp), allocatable :: corr(:)
     real(dp), allocatable :: v2(:)
 
@@ -496,7 +496,7 @@ contains
     corr = 0
 
     v2(1:size(v)) = (v(1,:) + v(2,:) + v(3,:)) / 3
-    !call calcula_corr_vel (v2(:), corr(:))
+    call calcula_corr_vel (v2(:), corr(:))
 
     deallocate (corr)
     deallocate (v2)

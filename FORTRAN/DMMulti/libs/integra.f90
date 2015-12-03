@@ -118,20 +118,23 @@ contains
   ! gNCorrVver_2 
   print *, "gNcorr*", gNCorrVver_1, gNCorrVver_2, gNCorrVfac_1, gNCorrVfac_2 
   if (gNCorrVver_2 .gt. 0) then
-    allocate (Corr_tr(1:2*gNCorrVver_2))
+    allocate (Corr_tr(1:2*(gNCorrVver_2-1)))
     print *, "Calcula auto corre v particula tipo 2 en vertice"
-    call calcula_corr_vel_3D (gCorrVver_2(:,1:gNCorrVver_2), Corr_tr)
+    call calcula_corr_vel_3D_b (gCorrVver_2(:,1:(gNCorrVver_2-1)), Corr_tr)
     ! grabar resultados que estan en Corr_tr
     print *, "corr_tr", Corr_tr
+
+    call escribe_en_columnas(Corr_tr,'corr_vver_2.dat',gNmed*gDt)
     deallocate (Corr_tr)
   endif 
 
   if (gNCorrVver_1 .gt. 0) then
     ! calcular autocorrelacion para particula tipo 2 en vertice
     ! gNCorrVver_1 
-    allocate (Corr_tr(1:2*gNCorrVver_1))
+    allocate (Corr_tr(1:2*(gNCorrVver_1-1)))
     print *, "Calcula auto corre v particula tipo 1 en vertice"
-    call calcula_corr_vel_3D (gCorrVver_1(:,1:gNCorrVver_1), Corr_tr)
+    call calcula_corr_vel_3D_b (gCorrVver_1(:,1:gNCorrVver_1 - 1), Corr_tr)
+    call escribe_en_columnas(Corr_tr,'corr_vver_1.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
     deallocate (Corr_tr)
   endif
@@ -140,8 +143,9 @@ contains
     ! calcular autocorrelacion para particula tipo 1 en cara
     ! gNCorrVfac_1
     print *, "Calcula auto corre v particula tipo 1 en cara"
-    allocate (Corr_tr(1:2*gNCorrVfac_1))
-    !call calcula_corr_vel_3D_b (gCorrVfac_1(:,1:gNCorrVfac_1), Corr_tr)
+    allocate (Corr_tr(1:2*(gNCorrVfac_1-1)))
+    call calcula_corr_vel_3D_b (gCorrVfac_1(:,1:(gNCorrVfac_1 - 1)), Corr_tr)
+    call escribe_en_columnas(Corr_tr,'corr_vfac_1.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
     deallocate (Corr_tr)
   endif
@@ -151,8 +155,9 @@ contains
     ! calcular autocorrelacion para particula tipo 2 en cara
     ! gNCorrVfac_2
     print *, "Calcula auto corre v particula tipo 2 en cara"
-    allocate (Corr_tr(1:2*gNCorrVfac_2))
-    !call calcula_corr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2), Corr_tr)
+    allocate (Corr_tr(1:2*(gNCorrVfac_2 - 1)))
+    call calcula_corr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2 - 1), Corr_tr)
+    call escribe_en_columnas(Corr_tr,'corr_vfac_2.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
     deallocate (Corr_tr)
   endif  
