@@ -115,7 +115,7 @@ contains
   ! ----------------------------------------------------------------------------
 #ifdef LUIS  
   !#############################################################################
-  !               Calculo de las auto_correlaciones de velocidad
+  !               Calculo de los modos de vibracion de velocidad
   !#############################################################################
 
   ! calcular autocorrelacion para particula tipo 1 en vertice
@@ -127,7 +127,7 @@ contains
     allocate (Modos_vibra(1:3, 1:(gNCorrVver_2-1)))
     print *, "Calcula auto corre v particula tipo 2 en vertice"
     !call calcula_autocorr_vel_3D_b (gCorrVver_2(:,1:(gNCorrVver_2-1)), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVver_2(:,1:(gNCorrVver_2-1)),&
+    call calcula_modos_vibracion_vel(gCorrVver_2(:,1:(gNCorrVver_2-1) / (gNCorrVver_2-1)),&
       Modos_vibra)
     ! grabar resultados que estan en Corr_tr
     print *, "corr_tr", Corr_tr
@@ -141,7 +141,7 @@ contains
     allocate (Modos_vibra(1:3, 1:(gNCorrVver_1-1)))
     print *, "Calcula auto corre v particula tipo 1 en vertice"
     !call calcula_autocorr_vel_3D_b (gCorrVver_1(:,1:gNCorrVver_1 - 1), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVver_1(:,1:(gNCorrVver_1 - 1)),&
+    call calcula_modos_vibracion_vel(gCorrVver_1(:,1:(gNCorrVver_1 - 1) / (gNCorrVver_1 - 1)),&
       Modos_vibra)
     call escribe_en_columnas(Modos_vibra,'corr_vver_1.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
@@ -154,7 +154,7 @@ contains
     print *, "Calcula auto corre v particula tipo 1 en cara"
     allocate (Modos_vibra(1:3, 1:(gNCorrVfac_1-1)))
     !call calcula_autocorr_vel_3D_b (gCorrVfac_1(:,1:(gNCorrVfac_1 - 1)), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVfac_1(:,1:(gNCorrVfac_1 - 1)),&
+    call calcula_modos_vibracion_vel(gCorrVfac_1(:,1:(gNCorrVfac_1 - 1) / (gNCorrVfac_1 - 1)),&
       Modos_vibra)
     call escribe_en_columnas(Modos_vibra,'corr_vfac_1.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
@@ -168,7 +168,7 @@ contains
     print *, "Calcula auto corre v particula tipo 2 en cara"
     allocate (Modos_vibra(1:3, 1:(gNCorrVfac_2 - 1)))
     !call calcula_autocorr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2 - 1), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVfac_2(:,1:(gNCorrVfac_2 - 1)),&
+    call calcula_modos_vibracion_vel(gCorrVfac_2(:,1:(gNCorrVfac_2 - 1) / (gNCorrVfac_2 - 1)),&
       Modos_vibra)
     call escribe_en_columnas(Modos_vibra,'corr_vfac_2.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
