@@ -159,7 +159,7 @@ contains
   ! VELOCIDADES INICIALES 
   !===============================================================================
   ! Subrutina para inicializar las velocidades del problema 
-  ! TODO: Está mal, hay que cambiarlo
+
   subroutine vel_inic()   
 
     integer    :: i, j
@@ -169,7 +169,7 @@ contains
       do j = 1, 3
         gV(j,i) = rnor()
       end do
-      ! Multiplico por la masa de cada especie
+      ! Se tiene en cuenta la masa, pues sigma=sqrt(kt/m) 
       gV(:,i) = gV(:,i)*sqrt(1/gMasa(gIndice_elemento(i)))
     end do
     ! Define la desviación estandar sqrt(kT/m) en unidades adimensionales
