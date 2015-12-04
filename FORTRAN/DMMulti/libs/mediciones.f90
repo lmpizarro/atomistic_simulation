@@ -36,7 +36,7 @@ module mediciones
   private
 
   public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
-#ifdef LUIS
+#ifdef MODOS_VIB
   public   ::   acumula_velocidades_posicion, acumula_velocidades_equivalentes,&
                 calcula_autocorr_vel_3D_b, calcula_autocorr_vel_3D, &
                 calcula_modos_vibracion_vel
@@ -365,14 +365,13 @@ contains
 
   end subroutine calcula_temp
 
-#ifdef LUIS
+#ifdef  MODOS_VIB
 
   subroutine acumula_velocidades_posicion ()
     integer :: i, j
-    ! recorrer el array de velocidades
-    ! y asigna al array de velocidades 
-    ! equivalentes
+    ! si todavia no se llegó al fin
     if (gNmodosVibra .lt. gKmed * gNpart) then
+      !inicializo la velocidad de esa posicion a cero      
       gCorrVver_1(:, gNmodosVibra) = 0
       gCorrVfac_1(:, gNmodosVibra) = 0
       gCorrVfac_2(:, gNmodosVibra) = 0
@@ -453,7 +452,7 @@ contains
     real(dp), dimension(:,:), intent(inout) :: c
     complex(dp), dimension(:), allocatable :: tmp
 
-    allocate(tmp(size(c)))
+    allocate( tmp(1 + size(v) / 2 ))
 
     print *,  "size 1 ", size(v), size(c)
     call calcula_modos_vibracion (v(1,:), tmp)
