@@ -451,17 +451,23 @@ contains
     real(dp), dimension(:,:), intent(in) :: v
     real(dp), dimension(:,:), intent(inout) :: c
     complex(dp), dimension(:), allocatable :: tmp
+    integer :: n, nc
 
-    allocate( tmp(1 + size(v) / 2 ))
+    n = size(c(1,:))
+    nc = size(v(1,:))
 
-    print *,  "size 1 ", size(v), size(c)
-    call calcula_modos_vibracion (v(1,:), tmp)
-    c(1,:) = REAL(tmp) ** 2 + AIMAG(tmp) ** 2
-    call calcula_modos_vibracion (v(2,:), tmp)
-    c(2,:) = REAL(tmp) ** 2 + AIMAG(tmp) ** 2
-    call calcula_modos_vibracion (v(3,:), tmp)
-    c(3,:) = REAL(tmp) ** 2 + AIMAG(tmp) ** 2
 
+    allocate( tmp(1:n ))
+
+    print *,  "size 1 ", size(v(1,:)), size(c(1,:))
+    call calcula_modos_vibracion (v(1,1:nc), tmp(1:n))
+    c(1,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
+    call calcula_modos_vibracion (v(2,1:nc), tmp(1:n))
+    c(2,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
+    call calcula_modos_vibracion (v(3,1:nc), tmp(1:n))
+    c(3,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
+
+    deallocate (tmp)
   endsubroutine calcula_modos_vibracion_vel 
 
   !
@@ -473,17 +479,17 @@ contains
     complex(dp), dimension(:), intent(inout) :: out
     integer :: n, nc
     integer ( kind = 8 ) plan_forward
-    real (dp), allocatable :: v2(:)
-    real (dp), allocatable :: in2(:)
 
     n = size(in)
- 
-    print *,  "size ", size(in), size(out)
+    nc = size(out)
+    write (*,'(a)') " calculo de modos de vibracion 1D " 
+    write (*,'(a , I8, a, I8)') "size in ", n, "size out ", nc
 
     ! out tiene tamaño nc
     call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
     call dfftw_execute_ (plan_forward)
  
+    !write (*,*) (in(nc), nc=1,n ) 
   endsubroutine calcula_modos_vibracion
 
   !
