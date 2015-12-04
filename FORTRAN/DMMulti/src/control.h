@@ -9,4 +9,4 @@
 #define GRABA_TRAYECTORIA
 #undef CORR_PAR
 #define PABLO 0 /* 0=no se consideran agregados hechos por pablo */
-#undef LUIS /*para el bloque de correlaciones porque no me compila*/
+#define LUIS /*para el bloque de correlaciones porque no me compila*/
