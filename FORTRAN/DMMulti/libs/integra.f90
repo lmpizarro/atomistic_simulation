@@ -193,8 +193,8 @@ contains
 #ifdef MODOS_VIB
 
   print *, "calculo de modos de vibracion ", gNmodosVibra
-    allocate (Modos_vibra(1:3, 1:1 + gNmodosVibra / 2))
-    call calcula_modos_vibracion_vel(gCorrVver_1(:,1:(gNmodosVibra)),&
+    allocate (Modos_vibra(1:3, 1:1 + (gNmodosVibra - 1) / 2))
+    call calcula_modos_vibracion_vel(gCorrVver_1(:,1:gNmodosVibra -1 ),&
       Modos_vibra)
     call escribe_en_columnas(Modos_vibra,'modos_vver_1.dat',gNmed*gDt)
     ! grabar resultados que estan en Corr_tr
