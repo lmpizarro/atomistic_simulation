@@ -64,14 +64,17 @@ module globales
   !
   real(dp),  dimension(:,:), allocatable  :: gCorrVfac_1 
   real(dp),  dimension(:,:), allocatable  :: gCorrVfac_2 
+  real(dp),  dimension(:,:), allocatable  :: gCorrVfac_3 
   real(dp),  dimension(:,:), allocatable  :: gCorrVver_1 
-  real(dp),  dimension(:,:), allocatable  :: gCorrVver_2 
-  
-  integer :: gNCorrVfac_1 ! cantidad de particula tipo 1 en las caras 
-  integer :: gNCorrVfac_2 ! idem tipo 2 
-  integer :: gNCorrVver_1 ! cantidad  de particula tipo 1 en los vertices 
-  integer :: gNCorrVver_2 ! idem tipo 2
+    
+  integer :: gNmodosVibra ! cantidad de velocidades acumuladas para modos de
+                          ! vibracion 
+  integer :: gNCorrVfac_1 ! cantidad de particula en las caras 1
+  integer :: gNCorrVfac_2 ! idem cara 2 
+  integer :: gNCorrVfac_3 ! idem cara 3
+  integer :: gNCorrVver_1 ! cantidad  de particula en los vertices 
 
+  integer ::   gKmed   ! Se define la cantidad de puntos que se van a medir
   ! Magnitudes utilizadas para describir muchas especies
   real(dp),  dimension(:,:), allocatable  :: gCombSigma    ! Matriz con sigma
   real(dp),  dimension(:,:), allocatable  :: gCombEpsilon  ! Matriz con epsilon

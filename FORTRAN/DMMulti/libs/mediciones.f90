@@ -9,7 +9,14 @@ module mediciones
 #include "control.h"
 
   use types,      only: dp
-  use globales
+  use globales,   only: gKmed, gV, gF, gR, gNpart, gKin, gNespecies,&
+                        gCorrVfac_1, gCorrVfac_2, gCorrVfac_3, gCorrVver_1,&
+                        gNCorrVfac_1, gNCorrVfac_2, gNCorrVfac_3, gNCorrVver_1,&
+                        gNmodosVibra, gCorr_par, gRho, gVir, gVol, gGamma, gDt,&
+                        gPot, gTemperatura, gLado_caja, gDbin, gNgr, &
+                        gIndice_elemento, gMasa, gPot_cut, gRc2, gCombSigma,&
+                        gCombEpsilon
+  !use globales
   use FFTW3      
 
   ! forma de llamar fftw3
@@ -30,8 +37,9 @@ module mediciones
 
   public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
 #ifdef LUIS
-  public   ::   acumula_velocidades_equivalentes, calcula_autocorr_vel_3D_b,&
-                calcula_autocorr_vel_3D, calcula_modos_vibracion_vel
+  public   ::   acumula_velocidades_posicion, acumula_velocidades_equivalentes,&
+                calcula_autocorr_vel_3D_b, calcula_autocorr_vel_3D, &
+                calcula_modos_vibracion_vel
 #endif
 
 contains
@@ -358,6 +366,34 @@ contains
   end subroutine calcula_temp
 
 #ifdef LUIS
+
+  subroutine acumula_velocidades_posicion ()
+    integer :: i, j
+    ! recorrer el array de velocidades
+    ! y asigna al array de velocidades 
+    ! equivalentes
+    if (gNmodosVibra .lt. gKmed * gNpart) then
+      gCorrVver_1(:, gNmodosVibra) = 0
+      gCorrVfac_1(:, gNmodosVibra) = 0
+      gCorrVfac_2(:, gNmodosVibra) = 0
+      gCorrVfac_3(:, gNmodosVibra) = 0
+      do i=1,gNpart / 4
+        j = 4 * (i - 1)
+
+        gCorrVver_1(:, gNmodosVibra) = gCorrVver_1(:, gNmodosVibra) + gV(:, j + 1)
+        gCorrVfac_1(:, gNmodosVibra) = gCorrVfac_1(:, gNmodosVibra) + gV(:, j + 2)
+        gCorrVfac_2(:, gNmodosVibra) = gCorrVfac_2(:, gNmodosVibra) + gV(:, j + 3)
+        gCorrVfac_3(:, gNmodosVibra) = gCorrVfac_3(:, gNmodosVibra) + gV(:, j + 4)
+  
+      enddo
+      gCorrVver_1(:, gNmodosVibra) = 4 * gCorrVver_1(:, gNmodosVibra) / gNpart
+      gCorrVfac_1(:, gNmodosVibra) = 4 * gCorrVfac_1(:, gNmodosVibra) / gNpart
+      gCorrVfac_2(:, gNmodosVibra) = 4 * gCorrVfac_2(:, gNmodosVibra) / gNpart
+      gCorrVfac_3(:, gNmodosVibra) = 4 * gCorrVfac_3(:, gNmodosVibra) / gNpart
+      gNmodosVibra = gNmodosVibra + 1
+    endif  
+  endsubroutine acumula_velocidades_posicion
+  
   !############################################################################!
   ! calculo de autocorrelaciones 
   ! valido para sistemas binarios
@@ -376,8 +412,8 @@ contains
          gCorrVver_1(:, gNCorrVver_1) = gV(:, j + 1)
          gNCorrVver_1 = gNCorrVver_1 + 1 
        else 
-         gCorrVver_2(:, gNCorrVver_2) = gV(:, j + 1)
-         gNCorrVver_2 = gNCorrVver_2 + 1 
+         gCorrVfac_3(:, gNCorrVfac_3) = gV(:, j + 1)
+         gNCorrVfac_3 = gNCorrVfac_3 + 1 
        endif  
              
        ! cara 1
