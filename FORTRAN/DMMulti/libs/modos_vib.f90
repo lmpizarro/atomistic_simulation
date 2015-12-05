@@ -21,8 +21,8 @@ module modos_vib
   use globales,   only: gKmed, gV, gF, gR, gNpart, gKin, gNespecies,&
                         gCorrVfac_1, gCorrVfac_2, gCorrVfac_3, gCorrVver_1,&
                         gNCorrVfac_1, gNCorrVfac_2, gNCorrVfac_3, gNCorrVver_1,&
-                        gNmodosVibra, gCorr_par, gRho, gVir, gVol, gGamma, gDt,&
-                        gPot, gTemperatura, gLado_caja, gDbin, gNgr, &
+                        gNmodosVibra, gRho, gVir, gVol, gGamma, gDt,&
+                        gPot, gTemperatura, gLado_caja, &
                         gIndice_elemento, gMasa, gPot_cut, gRc2, gCombSigma,&
                         gCombEpsilon
 

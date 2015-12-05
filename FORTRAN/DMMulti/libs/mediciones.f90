@@ -6,16 +6,21 @@ module mediciones
   use globales,   only: gKmed, gV, gF, gR, gNpart, gKin, gNespecies,&
                         gCorrVfac_1, gCorrVfac_2, gCorrVfac_3, gCorrVver_1,&
                         gNCorrVfac_1, gNCorrVfac_2, gNCorrVfac_3, gNCorrVver_1,&
-                        gNmodosVibra, gCorr_par, gRho, gVir, gVol, gGamma, gDt,&
-                        gPot, gTemperatura, gLado_caja, gDbin, gNgr, &
+                        gNmodosVibra, gRho, gVir, gVol, gGamma, gDt,&
+                        gPot, gTemperatura, gLado_caja, gCombEpsilon, &
                         gIndice_elemento, gMasa, gPot_cut, gRc2, gCombSigma
                          
-  use globales
+  !use globales
   use ziggurat
 
 ! Si se utiliza openmp
 #ifdef _OPENMP
   use omp_lib
+#endif
+
+! Si se calcula la función g(r)
+#ifdef CORR_PAR
+  use globales,      only: gCorr_par, gNhist, gNgr, gDbin 
 #endif
 
   !#include  "mpif.h"
@@ -31,7 +36,11 @@ module mediciones
 #endif
 
 contains
- 
+
+#ifdef LUIS 
+  ! TODO: Esta se podría poner como subrutina aparte para que la calcule leyendo
+  ! las configuraciones guardas en algún archivo. Ahí creo que se justifica volver
+  ! a poner el doble loop de interacciones por separado.
   !===============================================================================
   ! CALCULA g(r)
   !===============================================================================
@@ -80,6 +89,7 @@ contains
      gCorr_par = gCorr_par / maxval(gCorr_par)
     endif        
   endsubroutine radial_distribution
+#endif
 
 !
 ! Se puso la subrutina de fuerza igual a la de dinmod
@@ -189,8 +199,12 @@ contains
 #ifdef CORR_PAR
     real(dp)                :: r         ! Distancia entre partículas
     integer                 :: ind_bin   ! Indice de cada bin de la g(r)
+    integer, dimension(2:2) :: igr       ! Matriz para ubicar la columna en g(r)
        
     gNgr = gNgr + 1    ! Cuenta las veces que es llamada 
+    ! Creo una matriz para ubicar cada interacción ij en la clumna correcta
+    ! de g(r) = [ g_11  , g12, g22]
+    igr  = reshape( (/ 1, 2, 2, 3/), (/2,2/) ) 
 #endif
 
 !$omp parallel workshare
@@ -264,7 +278,7 @@ contains
           if (r < gLado_caja/2.0_dp) then                     ! Sólo particulas a menos de gL/2
             ind_bin            = int(r/gDbin) + 1     ! En dónde cae la partícula
                                                       ! Va +1 porque definí indices 1:Nh
-            gCorr_par(ind_bin) = gCorr_par(ind_bin) + 1  ! Actualizo contador del bin
+            gCorr_par(igr, ind_bin) = gCorr_par(igr, ind_bin) + 1  ! Actualizo contador del bin
           end if
 #endif /* Fin CORR_PAR */
         end if   ! Termina if de i /= j
