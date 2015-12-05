@@ -186,6 +186,12 @@ contains
     integer                 :: ei, ej    ! Tipo de elemento (especie i ó j)
     real(dp)                :: epsil     ! epsilon de la interacción ei-ej
     real(dp)                :: sigma     ! sigma de la interacción ei-ej
+#ifdef CORR_PAR
+    real(dp)                :: r         ! Distancia entre partículas
+    integer                 :: ind_bin   ! Indice de cada bin de la g(r)
+       
+    gNgr = gNgr + 1    ! Cuenta las veces que es llamada 
+#endif
 
 !$omp parallel workshare
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
@@ -203,9 +209,17 @@ contains
 ! Se usa un loop corriendo sobre todas los ij. Se calcula la fuerza sólo una vez y se
 ! divide el potencial por 1/2 para cada partícula
 
+! En OpenMP se deben definir las variables que se utilizan para calcular la g(r)
+! Debo distinguir los dos casos:
+#ifdef CORR_PAR /* Si se calcula la g(r) */
 !$omp parallel &
-!$omp shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma  ) &
+!shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma,gCorr_par) &
+!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij,ei,ej,cut4,rc2,epsil,sigma,r,ind_bin)
+#else /* Si no se calcula la g(r) */
+!$omp parallel &
+!shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij,ei,ej,cut4,rc2,epsil,sigma)
+#endif /* Fin CORR_PAR */
 
 !$omp do reduction( + : gPot, gVir)
 ! do schedule(static,5) reduction( + : gPot, gVir)
@@ -244,6 +258,16 @@ contains
             gVir  = gVir + Fij * r2ij                       ! Término del virial para la presión
                                                             ! pg 48 de Allen W=-1/3 sum(r dv/dr)
           end if  ! Termina if del radio de corte
+#ifdef CORR_PAR
+          ! Calcula la función g(r) -  Ver pg 86 Frenkel
+          ! Se debe a unidades absolutas (antes estaba r2ij dividiendo por el sigma)
+          r = sqrt(r2ij) * sigma
+          if (r < gL/2.0_dp) then                     ! Sólo particulas a menos de gL/2
+            ind_bin            = int(r/gDbin) + 1     ! En dónde cae la partícula
+                                                      ! Va +1 porque definí indices 1:Nh
+            gCorr_par(ind_bin) +  1     ! Actualizo contador del bin
+          end if
+#endif /* Fin CORR_PAR
         end if   ! Termina if de i /= j
       end do
     end do
