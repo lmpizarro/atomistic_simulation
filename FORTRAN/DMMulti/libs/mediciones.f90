@@ -213,14 +213,13 @@ contains
 ! Debo distinguir los dos casos:
 #ifdef CORR_PAR /* Si se calcula la g(r) */
 !$omp parallel &
-!shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma,gCorr_par) &
+!$omp shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma,gCorr_par) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij,ei,ej,cut4,rc2,epsil,sigma,r,ind_bin)
 #else /* Si no se calcula la g(r) */
 !$omp parallel &
-!shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma) &
+!$omp shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma) &
 !$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij,ei,ej,cut4,rc2,epsil,sigma)
 #endif /* Fin CORR_PAR */
-
 !$omp do reduction( + : gPot, gVir)
 ! do schedule(static,5) reduction( + : gPot, gVir)
 ! El static es casi irrelevante en este loop, porque no hay un desbalance de carga
@@ -262,23 +261,24 @@ contains
           ! Calcula la función g(r) -  Ver pg 86 Frenkel
           ! Se debe a unidades absolutas (antes estaba r2ij dividiendo por el sigma)
           r = sqrt(r2ij) * sigma
-          if (r < gL/2.0_dp) then                     ! Sólo particulas a menos de gL/2
+          if (r < gLado_caja/2.0_dp) then                     ! Sólo particulas a menos de gL/2
             ind_bin            = int(r/gDbin) + 1     ! En dónde cae la partícula
                                                       ! Va +1 porque definí indices 1:Nh
-            gCorr_par(ind_bin) +  1     ! Actualizo contador del bin
+            gCorr_par(ind_bin) = gCorr_par(ind_bin) + 1  ! Actualizo contador del bin
           end if
-#endif /* Fin CORR_PAR
+#endif /* Fin CORR_PAR */
         end if   ! Termina if de i /= j
       end do
     end do
 
 !$omp end do
 !$omp end parallel
+
     gPot = 0.5_dp * gPot   ! En este loop se cuentan dos veces las interacciones
     gVir = 0.5_dp * gVir    ! En este loop se cuentan dos veces las interacciones
 
 #else /* Si no se compila con OPENMP */
-! Si no se compila con OPENMP
+
 ! Se usa un loop corriendo sólo sobre los j<i. Se asigna la fuerza a dos partículas
 ! con signo contrario. Se calcula el potencial por cada interacción (sin repetir)
 
