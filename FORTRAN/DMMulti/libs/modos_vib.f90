@@ -33,7 +33,8 @@ module modos_vib
 
   private
 
-  public :: modos_equivalentes, lee_velocidades, modos_posicion 
+  public :: modos_equivalentes, lee_velocidades, modos_posicion,&
+            calcula_modos_vibracion, calcula_modos_vibracion_vel
 
 
 contains
@@ -163,22 +164,28 @@ contains
     real(dp), dimension(:,:), intent(inout) :: c
     complex(dp), dimension(:), allocatable :: tmp
     integer :: n, nc
+    real(kind=8), dimension(:), allocatable :: in
 
     n = size(c(1,:))
     nc = size(v(1,:))
 
 
     allocate( tmp(1:n ))
+    allocate(in(1:nc))
 
     print *,  "size 1 ", size(v(1,:)), size(c(1,:))
-    call calcula_modos_vibracion (v(1,1:nc), tmp(1:n))
+    in = v(1,:)
+    call calcula_modos_vibracion (in, tmp(1:n))
     c(1,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
-    call calcula_modos_vibracion (v(2,1:nc), tmp(1:n))
+    in = v(2,:)
+    call calcula_modos_vibracion (in, tmp(1:n))
     c(2,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
-    call calcula_modos_vibracion (v(3,1:nc), tmp(1:n))
+    in = v(3,:)
+    call calcula_modos_vibracion (in, tmp(1:n))
     c(3,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
 
     deallocate (tmp)
+    deallocate(in)
   endsubroutine calcula_modos_vibracion_vel 
 
   !
@@ -192,7 +199,7 @@ contains
     integer ( kind = 8 ) plan_forward
 
     n = size(in)
-    nc = size(out)
+    nc = n / 2  + 1 
     write (*,'(a)') " calculo de modos de vibracion 1D " 
     write (*,'(a , I8, a, I8)') "size in ", n, "size out ", nc
 
@@ -200,7 +207,6 @@ contains
     call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
     call dfftw_execute_ (plan_forward)
  
-    !write (*,*) (in(nc), nc=1,n ) 
   endsubroutine calcula_modos_vibracion
 
 #ifdef MODOS_VIB_EQUIVALENTES   
