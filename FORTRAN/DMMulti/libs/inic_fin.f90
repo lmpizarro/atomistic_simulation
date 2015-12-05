@@ -15,6 +15,13 @@ module inic_fin
   use mediciones,       only: calcula_fuerza, calcula_kin, calcula_pres, calcula_temp
   use integra
   use io_parametros,    only: lee_estados, escribe_estados
+  use utils,            only: write_array3D_lin ! No se usa. Se pone para que cmake procese dependencias
+
+! Si se utiliza openmp
+#ifdef _OPENMP
+  use omp_lib
+  use utils,      only: init_openmp
+#endif
 
   implicit none
   
@@ -34,6 +41,12 @@ contains
     real(dp)  :: Pres   ! Presión instantánea
     real(dp)  :: Temp   ! Temperatura instantánea
     logical   :: leido  ! Flag para saber si se leyó el archivo de estados
+
+  ! Inicializa parametros para el calculo en paralelo con OpenMP
+  ! Por ahora nada en particular.
+#ifdef _OPENMP
+  call init_openmp()
+#endif
 
     call inic_zig()
     call leer_parametros()
