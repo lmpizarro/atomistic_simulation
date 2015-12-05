@@ -42,14 +42,14 @@ contains
     gCombEpsilon = gCombEpsilon / gLj_param (1,1)
 
     ! imprime la matriz por pantalla
-    print *, "gEpsilon"
+    write(*,'(a)')   '***** Epsilon:' 
     do i = 1, gNespecies
       write (*, 700) (gCombEpsilon (i,j), j = 1,gNespecies)
     enddo
-
     700 format (100g15.5)
 
-  endsubroutine comb_epsilon
+
+  end subroutine comb_epsilon
  
   !=============================================================================
   ! DEFINE EL SIGMA (DE L-J) ENTRE DISTINTAS ESPECIES 
@@ -75,7 +75,9 @@ contains
     gCombSigma = gCombSigma / gLj_param(1,2)
 
     ! imprime la matriz por pantalla
-    print *, "gSigma"
+    write(*,'(a)') ''
+    write(*,'(a)')   '********** PARAMETROS INTERACCIÓN ***********'
+    write(*,'(a)')   '***** Sigma:' 
     do i = 1, gNespecies
       write (*, 700) (gCombSigma (i,j), j = 1,gNespecies)
     enddo
@@ -129,19 +131,18 @@ contains
    ! end do
 
     ! imprime la matriz de gRc2 por pantalla
-    print *, "gRc2"
+    write(*,'(a)')   '***** Radio de corte:'
     do i = 1, gNespecies
-      write (*, 700) (gRc2(i,j), j = 1,gNespecies)
+      write (*, 700) (sqrt(gRc2(i,j))*gCombSigma(i,j), j = 1,gNespecies)
     enddo
 
     ! imprime la matriz de gPot_Cut por pantalla
-    print *, "gPot_Cut"
+    write(*,'(a)')   '***** Potencial desplazado:' 
     do i = 1, gNespecies
-      write (*, 700) (gPot_Cut (i,j), j = 1,gNespecies)
+      write (*, 700) (gPot_Cut (i,j)*gCombSigma(i,j), j = 1,gNespecies)
     enddo
-
     700 format (100g15.5)
-
+    write(*,'(a)')      '*********************************************'
   endsubroutine corta_desplaza_pote
 
 endmodule combinacion
