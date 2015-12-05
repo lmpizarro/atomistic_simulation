@@ -51,13 +51,13 @@ contains
     call inic_zig()
     call leer_parametros()
 
+    
     ! Combina los sigma de cada especie ii
     ! para obtener el de interacción entre especies ij
     call comb_sigma()
     ! Combina los epsilon de cada especie ii
     ! para obtener el de interacción entre especies ij
     call comb_epsilon()
-
     ! como se calcularon los sigmas
     ! calculamos los rc y potencial en rc
     call corta_desplaza_pote()
