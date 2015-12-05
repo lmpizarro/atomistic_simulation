@@ -17,8 +17,9 @@ program freq_vib
 
   nombre = "./modo_ver_1.dat"
   nombre = trim(nombre)
+#ifdef MODOS_VIB
   call modos_posicion(v, nombre)
-
+#endif
 
   deallocate(v)
 

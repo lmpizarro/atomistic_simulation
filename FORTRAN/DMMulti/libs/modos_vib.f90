@@ -33,9 +33,12 @@ module modos_vib
 
   private
 
-  public :: modos_equivalentes, lee_velocidades, modos_posicion,&
+  public :: modos_equivalentes, lee_velocidades, &
             calcula_modos_vibracion, calcula_modos_vibracion_vel
 
+#ifdef MODOS_VIB
+  public :: modos_posicion
+#endif
 
 contains
 

@@ -10,5 +10,5 @@
 #undef CORR_PAR
 #define PABLO 0 /* 0=no se consideran agregados hechos por pablo */
 #undef LUIS /*para el bloque de correlaciones porque no me compila*/
-#define MODOS_VIB
+#undef MODOS_VIB
 #undef MODOS_VIB_EQUIVALENTES
