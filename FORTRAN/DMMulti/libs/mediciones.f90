@@ -351,8 +351,10 @@ contains
 
 #ifdef  MODOS_VIB
 
-  subroutine acumula_velocidades_posicion ()
+  subroutine acumula_velocidades_posicion (VV)
     integer :: i, j
+    real(dp), dimension(:,:) :: VV
+
     ! si todavia no se llegó al fin
     if (gNmodosVibra .lt. gKmed * gNpart) then
       !inicializo la velocidad de esa posicion a cero      
@@ -363,10 +365,10 @@ contains
       do i=1,gNpart / 4
         j = 4 * (i - 1)
 
-        gCorrVver_1(:, gNmodosVibra) = gCorrVver_1(:, gNmodosVibra) + gV(:, j + 1)
-        gCorrVfac_1(:, gNmodosVibra) = gCorrVfac_1(:, gNmodosVibra) + gV(:, j + 2)
-        gCorrVfac_2(:, gNmodosVibra) = gCorrVfac_2(:, gNmodosVibra) + gV(:, j + 3)
-        gCorrVfac_3(:, gNmodosVibra) = gCorrVfac_3(:, gNmodosVibra) + gV(:, j + 4)
+        gCorrVver_1(:, gNmodosVibra) = gCorrVver_1(:, gNmodosVibra) + VV(:, j + 1)
+        gCorrVfac_1(:, gNmodosVibra) = gCorrVfac_1(:, gNmodosVibra) + VV(:, j + 2)
+        gCorrVfac_2(:, gNmodosVibra) = gCorrVfac_2(:, gNmodosVibra) + VV(:, j + 3)
+        gCorrVfac_3(:, gNmodosVibra) = gCorrVfac_3(:, gNmodosVibra) + VV(:, j + 4)
   
       enddo
       gCorrVver_1(:, gNmodosVibra) = 4 * gCorrVver_1(:, gNmodosVibra) / gNpart

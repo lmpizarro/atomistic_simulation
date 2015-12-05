@@ -97,7 +97,7 @@ contains
       !
 
 #ifdef MODOS_VIB
-      call acumula_velocidades_posicion ()
+      call acumula_velocidades_posicion (gV)
 #endif
 
       ! Se realizan las mediciones

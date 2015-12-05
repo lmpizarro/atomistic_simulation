@@ -34,7 +34,8 @@ module modos_vib
   private
 
   public :: modos_equivalentes, lee_velocidades, modos_posicion,&
-            calcula_modos_vibracion, calcula_modos_vibracion_vel
+            calcula_modos_vibracion, calcula_modos_vibracion_vel, &
+            calcula_autocorr_vel_3D
 
 
 contains
@@ -209,25 +210,29 @@ contains
  
   endsubroutine calcula_modos_vibracion
 
-#ifdef MODOS_VIB_EQUIVALENTES   
   !
   ! calcula la auto_correlacion de un vector 1D
   ! con fftw3
   ! el tamaño de vel es del tipo 2 ** n, n entero
   ! los ultimos n elementos en 0
   ! de acuerdo a Allen
-  subroutine calcula_autocorr (in, c)
-    real(dp), dimension(:), intent(in) :: in
+  subroutine calcula_autocorr (v, c)
+    real(dp), dimension(:), intent(in) :: v
     real(dp), dimension(:), intent(inout) :: c
     integer :: n, nc
-    complex (dp), allocatable :: out(:)
+    complex (dp), allocatable :: out(:), tmp(:)
     integer ( kind = 8 ) plan_forward
     integer ( kind = 8 ) plan_backward
+    real(kind = 8), allocatable :: in(:)
 
-    n = size(in)
+    n = size(v)
     nc = n / 2 + 1
 
     allocate (out(1:nc))
+    allocate (tmp(1:nc))
+    allocate(in(1:n))
+
+    in(1:n) = v(1:n)
 
     print *, "calcula_autocorr_fft n nc", n, nc, size(in), size(c), size(out)
 
@@ -235,47 +240,48 @@ contains
     call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
     call dfftw_execute_ (plan_forward)
     
-    print *, "luego de fft3w"
 
     ! paso c) página 190 del Allen
-    out = REAL(out) ** 2 + AIMAG(out) ** 2
+    tmp = REAL(out) ** 2 + AIMAG(out) ** 2
 
+    print *, "luego de fft3w"
     ! paso d) aplicar una fft inversa  a c
-    call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, out, c, FFTW_ESTIMATE )
+    call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, tmp, c, FFTW_ESTIMATE )
     call dfftw_execute_ ( plan_backward )
 
-    ! paso e) aplicar la normalizacion
-    c = c / n
+    print *, c
 
     deallocate (out)
+    deallocate (tmp)
 
   endsubroutine calcula_autocorr
 
   ! calcula la correlacion de velocidad de un vector temporal 3D
-  subroutine calcula_autocorr_vel_3D (v, c)
+  subroutine calcula_autocorr_vel_3D (v, corr)
     real(dp), dimension(:,:), intent(in) :: v
-    real(dp), dimension(:), intent(inout) :: c
-    real(dp), allocatable :: corr(:,:)
-    real(dp), allocatable :: v2(:,:)
+    real(dp), allocatable, intent(inout) :: corr(:,:)
+    real(dp), allocatable :: v2(:)
+    integer :: n
 
     ! viene el resultado de la operacion
-    allocate (corr(1:3, 1: 2 * size(v)))
-    allocate (v2(1:3, 1: 2 * size(v)))
+    n =  size(v(1,:))
+    allocate (v2(1: 2 * n))
     v2 = 0
     corr = 0
-    v2 (:,1:size(v)) = v
 
-    call calcula_autocorr (v2(1,:), corr(1,:))
-    call calcula_autocorr (v2(2,:), corr(2,:))
-    call calcula_autocorr (v2(3,:), corr(3,:))
+    v2(1:n) = v(1,:)
+    call calcula_autocorr (v2, corr(1,:))
+    v2(1:n) = v(2,:)
+    call calcula_autocorr (v2, corr(2,:))
+    v2(1:n) = v(3,:)
+    call calcula_autocorr (v2, corr(3,:))
     
-    ! acumula las 3 dimensiones del vector velocidad
-    c = (corr(1,:) + corr(2,:) + corr(3,:)) / 3
  
-    deallocate (corr)
     deallocate (v2)
   endsubroutine calcula_autocorr_vel_3D 
 
+
+#ifdef MODOS_VIB_EQUIVALENTES   
   subroutine calcula_autocorr_vel_3D_b (v, c)
     ! Se puede pensar de otra manera
     ! acumular en un vector 1D cada una de las 3dimensiones
