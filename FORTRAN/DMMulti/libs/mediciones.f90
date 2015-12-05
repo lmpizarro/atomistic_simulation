@@ -328,6 +328,16 @@ contains
           gVir    = gVir + Fij * r2ij                      ! Término del virial para la presión
                                                            ! pg 48 de Allen W=-1/3 sum(r dv/dr)
         end if  ! Termina if del radio de corte
+#ifdef CORR_PAR
+          ! Calcula la función g(r) -  Ver pg 86 Frenkel
+          ! Se debe a unidades absolutas (antes estaba r2ij dividiendo por el sigma)
+          r = sqrt(r2ij) * sigma
+          if (r < gLado_caja/2.0_dp) then                     ! Sólo particulas a menos de gL/2
+            ind_bin            = int(r/gDbin) + 1     ! En dónde cae la partícula
+                                                      ! Va +1 porque definí indices 1:Nh
+            gCorr_par(igr, ind_bin) = gCorr_par(igr, ind_bin) + 2  ! Actualizo contador del bin
+          end if
+#endif /* Fin CORR_PAR */
       end do
     end do
 
