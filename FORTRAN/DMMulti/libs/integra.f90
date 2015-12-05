@@ -6,9 +6,7 @@ module integra
   use globales
   use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza
 #ifdef MODOS_VIB
-  use mediciones,        only: acumula_velocidades_equivalentes, calcula_autocorr_vel_3D_b,&
-                               calcula_autocorr_vel_3D, calcula_modos_vibracion_vel,&
-                               acumula_velocidades_posicion
+  use mediciones,        only: acumula_velocidades_equivalentes,  acumula_velocidades_posicion
 #endif
   use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 
@@ -52,10 +50,10 @@ contains
 #ifdef MODOS_VIB
     ! para acumular velcidades en función del tiempo para el calculo 
     ! de correlaciones
-    allocate (gCorrVfac_1(1:3, 1:Kmed * gNpart))
-    allocate (gCorrVfac_2(1:3, 1:Kmed * gNpart))
-    allocate (gCorrVver_1(1:3, 1:Kmed * gNpart))
-    allocate (gCorrVfac_3(1:3, 1:Kmed * gNpart))
+    allocate (gCorrVfac_1(1:3, 1: gNtime))
+    allocate (gCorrVfac_2(1:3, 1: gNtime))
+    allocate (gCorrVver_1(1:3, 1: gNtime))
+    allocate (gCorrVfac_3(1:3, 1: gNtime))
     ! inicializacion para modos vibracion pos indep
     gNmodosVibra = 1 
     ! inicializacion para modos vibracion pos equiv
@@ -127,80 +125,13 @@ contains
   ! ----------------------------------------------------------------------------
   ! FIN DEL LOOP PRINCIPAL DE INTEGRACION
   ! ----------------------------------------------------------------------------
-#ifdef MODOS_VIB_EQUIVALENTES   
-  !#############################################################################
-  !               Calculo de los modos de vibracion de velocidad
-  !#############################################################################
-
-  ! calcular autocorrelacion para particula tipo 1 en vertice
-  ! gNCorrVver_2 
-  print *, "gNcorr*", gNCorrVver_1, gNCorrVfac_3, gNCorrVfac_1, gNCorrVfac_2 
-  if (gNCorrVfac_3 .gt. 1) then
-    ! para la autocorrelacion hay que allocar 2 * (gNCorrVver_2-1)
-    ! para los modos de vibracion hay que allocar gNCorrVver_2 - 1
-    allocate (Modos_vibra(1:3, 1:(gNCorrVfac_3)))
-    print *, "Calcula auto corre v particula tipo 2 en vertice"
-    !call calcula_autocorr_vel_3D_b (gCorrVver_2(:,1:(gNCorrVver_2 - 1)), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVfac_3(:,1:(gNCorrVfac_3)),&
-      Modos_vibra)
-    ! grabar resultados que estan en Corr_tr
-    print *, "corr_tr", Corr_tr
-    call escribe_en_columnas(Modos_vibra,'corr_vver_2.dat',gNmed*gDt)
-    deallocate (Modos_vibra)
-  endif 
-
-  if (gNCorrVver_1 .gt. 1) then
-    ! calcular autocorrelacion para particula tipo 2 en vertice
-    ! gNCorrVver_1 
-    allocate (Modos_vibra(1:3, 1:(gNCorrVver_1)))
-    print *, "Calcula auto corre v particula tipo 1 en vertice"
-    !call calcula_autocorr_vel_3D_b (gCorrVver_1(:,1:gNCorrVver_1 - 1), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVver_1(:,1:(gNCorrVver_1)),&
-      Modos_vibra)
-    call escribe_en_columnas(Modos_vibra,'corr_vver_1.dat',gNmed*gDt)
-    ! grabar resultados que estan en Corr_tr
-    deallocate (Modos_vibra)
-  endif
-
-  if (gNCorrVfac_1 .gt. 1) then
-    ! calcular autocorrelacion para particula tipo 1 en cara
-    ! gNCorrVfac_1
-    print *, "Calcula auto corre v particula tipo 1 en cara"
-    allocate (Modos_vibra(1:3, 1:(gNCorrVfac_1)))
-    !call calcula_autocorr_vel_3D_b (gCorrVfac_1(:,1:(gNCorrVfac_1 - 1)), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVfac_1(:,1:(gNCorrVfac_1)),&
-      Modos_vibra)
-    call escribe_en_columnas(Modos_vibra,'corr_vfac_1.dat',gNmed*gDt)
-    ! grabar resultados que estan en Corr_tr
-    deallocate (Modos_vibra)
-  endif
-
-  if (gNCorrVfac_2 .gt. 1) then
-    ! calcular autocorrelacion para particula tipo 1 en cara
-    ! calcular autocorrelacion para particula tipo 2 en cara
-    ! gNCorrVfac_2
-    print *, "Calcula auto corre v particula tipo 2 en cara"
-    allocate (Modos_vibra(1:3, 1:(gNCorrVfac_2)))
-    !call calcula_autocorr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2 - 1), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVfac_2(:,1:(gNCorrVfac_2)),&
-      Modos_vibra)
-    call escribe_en_columnas(Modos_vibra,'corr_vfac_2.dat',gNmed*gDt)
-    ! grabar resultados que estan en Corr_tr
-    deallocate (Modos_vibra)
-  endif  
+#ifdef MODOS_VIB
+    call escribe_en_columnas(gCorrVfac_1,'modos_vfac_1.dat',gNmed*gDt)
+    call escribe_en_columnas(gCorrVfac_2,'modos_vfac_2.dat',gNmed*gDt)
+    call escribe_en_columnas(gCorrVfac_3,'modos_vfac_3.dat',gNmed*gDt)
+    call escribe_en_columnas(gCorrVver_1,'modos_vver_1.dat',gNmed*gDt)
 #endif
 
-#ifdef MODOS_VIB
-
-  print *, "calculo de modos de vibracion ", gNmodosVibra
-    allocate (Modos_vibra(1:3, 1:((gNmodosVibra - 1) / 2) + 1 ))
-    call calcula_modos_vibracion_vel(gCorrVver_1(:,1:gNmodosVibra -1 ),&
-      Modos_vibra(:,:))
-    call escribe_en_columnas(Modos_vibra,'modos_vver_1.dat',gNmed*gDt)
-    ! grabar resultados que estan en Corr_tr
-    deallocate (Modos_vibra)
-
-#endif 
 
   ! Escritura de las magnitudes en funci..n del tiempo
   if (gNmed > 0) then
