@@ -126,10 +126,10 @@ contains
   ! FIN DEL LOOP PRINCIPAL DE INTEGRACION
   ! ----------------------------------------------------------------------------
 #ifdef MODOS_VIB
-    call escribe_en_columnas(gCorrVfac_1,'modos_vfac_1.dat',gNmed*gDt)
-    call escribe_en_columnas(gCorrVfac_2,'modos_vfac_2.dat',gNmed*gDt)
-    call escribe_en_columnas(gCorrVfac_3,'modos_vfac_3.dat',gNmed*gDt)
-    call escribe_en_columnas(gCorrVver_1,'modos_vver_1.dat',gNmed*gDt)
+    call escribe_en_columnas(gCorrVfac_1,'veloc_fac_1.dat',gNmed*gDt)
+    call escribe_en_columnas(gCorrVfac_2,'veloc_fac_2.dat',gNmed*gDt)
+    call escribe_en_columnas(gCorrVfac_3,'veloc_fac_3.dat',gNmed*gDt)
+    call escribe_en_columnas(gCorrVver_1,'veloc_ver_1.dat',gNmed*gDt)
 #endif
 
 

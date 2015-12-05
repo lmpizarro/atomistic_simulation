@@ -1,9 +1,3 @@
-module FFTW3
-  use, intrinsic :: iso_c_binding
-  include '/usr/include/fftw3.f03'
-  ! También podría estar en '/usr/local/include/fftw3.f03
-end module
-
 module mediciones
 
 #include "control.h"
@@ -17,15 +11,6 @@ module mediciones
                         gIndice_elemento, gMasa, gPot_cut, gRc2, gCombSigma,&
                         gCombEpsilon
   !use globales
-  use FFTW3      
-
-  ! forma de llamar fftw3
-  ! ver: http://fftw.org/doc/Calling-FFTW-from-Modern-Fortran.html
-  !type(C_PTR) :: plan
-  !complex(C_DOUBLE_COMPLEX), dimension(1024,1000) :: in, out
-  !plan = fftw_plan_dft_2d(1000,1024, in,out, FFTW_FORWARD,FFTW_ESTIMATE)
-
-  !call fftw_execute_dft(plan, in, out)
 
   use ziggurat
 !#include  "mpif.h"
@@ -37,9 +22,8 @@ module mediciones
 
   public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
 #ifdef MODOS_VIB
-  public   ::   acumula_velocidades_posicion, acumula_velocidades_equivalentes,&
-                calcula_autocorr_vel_3D_b, calcula_autocorr_vel_3D, &
-                calcula_modos_vibracion_vel
+  public   ::   acumula_velocidades_posicion, acumula_velocidades_equivalentes
+  
 #endif
 
 contains
@@ -443,144 +427,7 @@ contains
        endif 
     enddo
   endsubroutine acumula_velocidades_equivalentes
-
-  !
-  ! Viene un vector 3D de N, devuelve un vector c de N/2 + 1
-  !
-  subroutine calcula_modos_vibracion_vel (v, c)
-    real(dp), dimension(:,:), intent(in) :: v
-    real(dp), dimension(:,:), intent(inout) :: c
-    complex(dp), dimension(:), allocatable :: tmp
-    integer :: n, nc
-
-    n = size(c(1,:))
-    nc = size(v(1,:))
-
-
-    allocate( tmp(1:n ))
-
-    print *,  "size 1 ", size(v(1,:)), size(c(1,:))
-    call calcula_modos_vibracion (v(1,1:nc), tmp(1:n))
-    c(1,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
-    call calcula_modos_vibracion (v(2,1:nc), tmp(1:n))
-    c(2,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
-    call calcula_modos_vibracion (v(3,1:nc), tmp(1:n))
-    c(3,1:n) = REAL(tmp(1:n)) ** 2 + AIMAG(tmp(1:n)) ** 2
-
-    deallocate (tmp)
-  endsubroutine calcula_modos_vibracion_vel 
-
-  !
-  ! Viene un vector 1 D (in) de N, 
-  ! devuelve un vector 1D (c) de N/2 + 1
-  !
-  subroutine calcula_modos_vibracion (in, out)
-    real(dp), dimension(:), intent(in) :: in
-    complex(dp), dimension(:), intent(inout) :: out
-    integer :: n, nc
-    integer ( kind = 8 ) plan_forward
-
-    n = size(in)
-    nc = size(out)
-    write (*,'(a)') " calculo de modos de vibracion 1D " 
-    write (*,'(a , I8, a, I8)') "size in ", n, "size out ", nc
-
-    ! out tiene tamaño nc
-    call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
-    call dfftw_execute_ (plan_forward)
- 
-    !write (*,*) (in(nc), nc=1,n ) 
-  endsubroutine calcula_modos_vibracion
-
-  !
-  ! calcula la auto_correlacion de un vector 1D
-  ! con fftw3
-  ! el tamaño de vel es del tipo 2 ** n, n entero
-  ! los ultimos n elementos en 0
-  ! de acuerdo a Allen
-  subroutine calcula_autocorr (in, c)
-    real(dp), dimension(:), intent(in) :: in
-    real(dp), dimension(:), intent(inout) :: c
-    integer :: n, nc
-    complex (dp), allocatable :: out(:)
-    integer ( kind = 8 ) plan_forward
-    integer ( kind = 8 ) plan_backward
-
-    n = size(in)
-    nc = n / 2 + 1
-
-    allocate (out(1:nc))
-
-    print *, "calcula_autocorr_fft n nc", n, nc, size(in), size(c), size(out)
-
-    ! out tiene tamaño nc
-    call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
-    call dfftw_execute_ (plan_forward)
-    
-    print *, "luego de fft3w"
-
-    ! paso c) página 190 del Allen
-    out = REAL(out) ** 2 + AIMAG(out) ** 2
-
-    ! paso d) aplicar una fft inversa  a c
-    call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, out, c, FFTW_ESTIMATE )
-    call dfftw_execute_ ( plan_backward )
-
-    ! paso e) aplicar la normalizacion
-    c = c / n
-
-    deallocate (out)
-
-  endsubroutine calcula_autocorr
-
-  ! calcula la correlacion de velocidad de un vector temporal 3D
-  subroutine calcula_autocorr_vel_3D (v, c)
-    real(dp), dimension(:,:), intent(in) :: v
-    real(dp), dimension(:), intent(inout) :: c
-    real(dp), allocatable :: corr(:,:)
-    real(dp), allocatable :: v2(:,:)
-
-    ! viene el resultado de la operacion
-    allocate (corr(1:3, 1: 2 * size(v)))
-    allocate (v2(1:3, 1: 2 * size(v)))
-    v2 = 0
-    corr = 0
-    v2 (:,1:size(v)) = v
-
-    call calcula_autocorr (v2(1,:), corr(1,:))
-    call calcula_autocorr (v2(2,:), corr(2,:))
-    call calcula_autocorr (v2(3,:), corr(3,:))
-    
-    ! acumula las 3 dimensiones del vector velocidad
-    c = (corr(1,:) + corr(2,:) + corr(3,:)) / 3
- 
-    deallocate (corr)
-    deallocate (v2)
-  endsubroutine calcula_autocorr_vel_3D 
-
-  subroutine calcula_autocorr_vel_3D_b (v, c)
-    ! Se puede pensar de otra manera
-    ! acumular en un vector 1D cada una de las 3dimensiones
-    ! del array de velocidades
-    real(dp), dimension(:,:), intent(in) :: v
-    real(dp), dimension(:), intent(inout) :: c
-    real(dp), allocatable :: corr(:)
-    real(dp), allocatable :: v2(:)
-
-    ! viene el resultado de la operacion
-    allocate (corr(2 * size(v)))
-    allocate (v2(2 * size(v)))
-    v2 = 0
-    corr = 0
-
-    v2(1:size(v)) = (v(1,:) + v(2,:) + v(3,:)) / 3
-    call calcula_autocorr (v2(:), corr(:))
-
-    deallocate (corr)
-    deallocate (v2)
-
-  endsubroutine calcula_autocorr_vel_3D_b 
-
 #endif
+
 
 end module mediciones
