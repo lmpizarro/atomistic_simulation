@@ -65,7 +65,6 @@ contains
       if (gLiqSol .eq. 0) then 
         call inicializar_globales_random()
       else if ( gLiqSol .eq. 1) then
-        print *, "llama a posiciones en  cubica"
         print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
         if (gCubicStructure .eq. 0) then
           print *, "llama a cubica simple"
@@ -99,7 +98,6 @@ contains
         call inicia_posicion_rn()
       else if ( gLiqSol .eq. 1) then
         print *, "llama a posiciones en  cubica"
-        print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
         if (gCubicStructure .eq. 0) then
           print *, "llama a cubica simple"
           print *, "no implementado"
@@ -128,7 +126,7 @@ contains
     call calcula_fuerza()
     
     print *, "energia potencial inicial: ", gPot
-    write(*,*) '***************************************'
+    write(*,*) '********************************************'
 
    !call integracion_min()
     ! Calcula energía cinética
@@ -149,8 +147,8 @@ contains
     200 format(1X,'Presion = ' ,E14.7,5X,'Temperatura = ',E14.7)
 
    
-    write(*,*) '* Finaliza subrutina de inicializacións'
-    write(*,*) '***************************************'
+    write(*,*) '* Finaliza subrutina de inicialización'
+    write(*,*) '********************************************'
 
   end subroutine inicializacion
 
