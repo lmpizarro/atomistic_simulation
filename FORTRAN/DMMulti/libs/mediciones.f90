@@ -8,12 +8,17 @@ module mediciones
                         gNCorrVfac_1, gNCorrVfac_2, gNCorrVfac_3, gNCorrVver_1,&
                         gNmodosVibra, gCorr_par, gRho, gVir, gVol, gGamma, gDt,&
                         gPot, gTemperatura, gLado_caja, gDbin, gNgr, &
-                        gIndice_elemento, gMasa, gPot_cut, gRc2, gCombSigma,&
-                        gCombEpsilon
-  !use globales
-
+                        gIndice_elemento, gMasa, gPot_cut, gRc2, gCombSigma
+                         
+  use globales
   use ziggurat
-!#include  "mpif.h"
+
+! Si se utiliza openmp
+#ifdef _OPENMP
+  use omp_lib
+#endif
+
+  !#include  "mpif.h"
   !use mpi
 
   implicit none
@@ -23,7 +28,6 @@ module mediciones
   public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
 #ifdef MODOS_VIB
   public   ::   acumula_velocidades_posicion, acumula_velocidades_equivalentes
-  
 #endif
 
 contains
@@ -177,11 +181,11 @@ contains
     real(dp)                :: Fij       ! Módulo fuerza entre partículas i y j
     real(dp)                :: r2in,r6in ! Inversa distancia rij a la 2 y 6
     integer                 :: i,j
-    real(dp)                :: cut4      ! Cuarta parte del potencial en r_c
-
-    ! Por cuestiones de eficiencia. Se evita hacer una multiplicación dentro
-    ! del loop anidado
-    cut4 = gPot_cut / 4.0_dp
+    real(dp)                :: rc2       ! Cuadrado del radio de corte (ij)
+    real(dp)                :: cut4      ! Cuarta parte del potencial en r_c (ij)
+    integer                 :: ei, ej    ! Tipo de elemento (especie i ó j)
+    real(dp)                :: epsil     ! epsilon de la interacción ei-ej
+    real(dp)                :: sigma     ! sigma de la interacción ei-ej
 
 !$omp parallel workshare
     ! Se van a acumular las fuerzas. Se comienza poniendo todas a cero.
@@ -200,8 +204,8 @@ contains
 ! divide el potencial por 1/2 para cada partícula
 
 !$omp parallel &
-!$omp shared (gNpart, gR, gL, gRc2, gF, cut4 ) &
-!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij)
+!$omp shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma  ) &
+!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij,ei,ej,cut4,rc2,epsil,sigma)
 
 !$omp do schedule(static,5) reduction( + : gPot, gVir)
 ! El static es casi irrelevante en este loop, porque no hay un desbalance de carga
@@ -210,18 +214,33 @@ contains
      do i = 1, gNpart
       do j = 1, gNpart
         if (i /= j) then
+          ei = gIndice_elemento(i)
+          ej = gIndice_elemento(j)
+          ! Cuarta parte del potencial evaluado en el radio de corte
+          ! Para no hacer una multiplicación el el doble loop
+          cut4 = gPot_cut(ei, ej) / 4.0_dp
+          ! El radio de corte es siempore 2.5 por el sigma de cada interacción
+          ! Lo comparo luego con la distancia dividida por el sigma de cada interacción
+          rc2   = gRc2( ei, ej) 
+          epsil = gCombEpsilon(ei,ej)
+          sigma = gCombSigma(ei,ej)
+
           rij_vec = gR(:,i) - gR(:,j)               ! Distancia vectorial
           ! Si las partícula está a más de gL/2, la traslado a r' = r +/- L
           ! Siempre en distancias relativas de sigma
-          rij_vec = rij_vec - gL*nint(rij_vec/gL)
+          rij_vec = rij_vec - gLado_caja*nint(rij_vec/gLado_caja)
+          ! Divido por el sigma de cada interacción
+          ! Después sólo lo utilizo para calcular fuerza y potencial, siempre
+          ! aparece la distancia dividida por el sigma.
+          rij_vec = rij_vec / sigma
           r2ij   = dot_product( rij_vec , rij_vec )         ! Cuadrado de la distancia
-          if ( r2ij < gRc2 ) then
+          if ( r2ij < rc2 ) then
             r2in = 1.0_dp/r2ij                              ! Inversa al cuadrado
             r6in = r2in**3                                  ! Inversa a la sexta
-            Fij     = r2in * r6in * (r6in - 0.5_dp)         ! Fuerza entre partículas
+            Fij  = r2in * r6in * epsil * (r6in - 0.5_dp)/sigma   ! Fuerza entre partículas
             gF(:,i) = gF(:,i) + Fij * rij_vec               ! Contribución a la partícula i
-            gPot    = gPot + r6in * ( r6in - 1.0_dp) - cut4 ! Energía potencial
-            gVir    = gVir + Fij * r2ij                     ! Término del virial para la presión
+            gPot  = gPot + r6in * epsil * ( r6in - 1.0_dp) - cut4 ! Energía potencial
+            gVir  = gVir + Fij * r2ij                       ! Término del virial para la presión
                                                             ! pg 48 de Allen W=-1/3 sum(r dv/dr)
           end if  ! Termina if del radio de corte
         end if   ! Termina if de i /= j
