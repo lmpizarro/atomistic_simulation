@@ -40,3 +40,13 @@ Referencia [Fortran](http://www.obliquity.com/computer/fortran/)
 
 programing python jpbs from home
 [Python Jobs](https://www.python.org/jobs/)
+
+---------------------------------------------------------------------
+- EJECUTAR CON OPENMP
+---------------------------------------------------------------------
+
+Si se compiló el programa con la opción 'cmake -Dopenmp=ON' se ejecuta el programa
+especificando primero la cantidad de threads que se quieren utilizar
+
+ > export OMP_NUM_THREADS=4 && ./dinmod
+
