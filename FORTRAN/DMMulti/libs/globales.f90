@@ -80,11 +80,8 @@ module globales
   real(dp),  dimension(:,:), allocatable  :: gCombEpsilon  ! Matriz con epsilon
   real(dp),  dimension(:), allocatable    :: gMasa         ! Vector de masas
 
-  !TODO ¿la g(r) se calcula siempre? ¿No se controla con el preprocesador?
-  ! Variables para la funcion de distribucion radial
-  
   ! g(r) sin normalizar (por eso definida como entera)  
-  ! TODO Aclarar qué es cada elemento de la matriz
+  ! TODO  Poner con el prepro, hace falta ver la subrutina distribucion_radial
   integer, dimension(:,:), allocatable   :: gCorr_par    
   integer           :: gNhist   ! Cantidad de bines de la g(r)
   integer           :: gNgr     ! Contador para saber cuántas veces se acumuló la g(r)
