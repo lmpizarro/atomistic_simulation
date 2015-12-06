@@ -61,8 +61,12 @@ contains
     ! como se calcularon los sigmas
     ! calculamos los rc y potencial en rc
     call corta_desplaza_pote()
-
-      if (gLiqSol .eq. 0) then 
+#ifdef CORR_PAR
+    ! Inicializa las variables asociadas para el cálculo de la g(r)
+    call inic_gr()
+#endif  
+ 
+     if (gLiqSol .eq. 0) then 
         call inicializar_globales_random()
       else if ( gLiqSol .eq. 1) then
         print *, "parametros cubica periodos: ", gPeriodos, "tipo: ", gCubicStructure
@@ -138,6 +142,13 @@ contains
     ! Calcula la temperatura inicial
     call calcula_temp(Temp)
 
+#ifdef CORR_PAR
+    ! Se vuelve a llamar la inicialización para resetear el contador. Como la g(r)
+    ! está implementada en el loop de fuerzas, cada vez que esa subrutina es llamada
+    ! actualiza los valores aunque no sean de interés. Ver en la subrutina inic_gr()
+    ! que hace cosas distintas dependiendo si gCorr_par() está alocada o no.
+    call inic_gr()
+#endif
     ! Escribe información en pantalla
     write(*,*) '* Valores iniciales por partícula'
     write(*,100) gPot/gNpart, gKin/gNpart, (gPot+gKin)/gNpart
@@ -341,5 +352,42 @@ end subroutine inicia_posicion_rn
 #endif
 
   end subroutine inicia_posicion_fcc_random
+
+#ifdef CORR_PAR
+  !===============================================================================
+  ! INICIALIZA PARAMETROS PARA LA g(r) 
+  !===============================================================================
+  ! Inicialización de variables para galcular la g(r)
+
+  subroutine inic_gr()
+   
+    ! Este if es porque la rutina de inicialización llama a la de fuerza para minimizar energía
+    ! Se están haciendo los cálculos de forma repetida, pero es mejor que modificar y agregar
+    ! parámetros de entrada al loop de fuerza. Esto sucede sólo si se inicializan las partículas
+    ! de forma aleatoria, de lo contrario no se llama a la rutina de minimización de energía. 
+    if ( .not. allocated(gCorr_par) ) then
+      gNhist = 400                   ! Número de bines
+      allocate(gCorr_par(1:3,1:gNhist))
+
+      gNgr      = 0                  ! Contador para saber cuántas veces se acumuló la g(r)
+      gDbin     = gL / (2 * gNhist)  ! Ancho del bin
+      gCorr_par = 0                  ! Inicializo la g(r) sin normalizar
+   
+      ! Imprime en pantalla
+      write(*,'(a)')      ''
+      write(*,'(a)')      '************* CALCULO DE LA g(r) ************'
+      write(*,'(a,I0)') '************ Nhist    = ' , gNhist
+      write(*,'(a)')      '*********************************************'
+      write(*,*)
+    else
+      ! Vuelvo a inicializar. Los datos guardados correspondían a la minimización de energía y no
+      ! tienen ningún significado físico.
+      gNgr      = 0 
+      gCorr_par = 0
+    end if
+
+  end subroutine inic_gr
+#endif
+
 
 end module inic_fin 
