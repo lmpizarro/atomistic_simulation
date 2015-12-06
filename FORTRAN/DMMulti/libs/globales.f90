@@ -4,6 +4,8 @@
 !
 module globales
 
+#include "control.h"
+
   use types,       only: dp
 
   implicit none
