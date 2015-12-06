@@ -9,6 +9,9 @@ module integra
   use mediciones,        only: acumula_velocidades_equivalentes,  acumula_velocidades_posicion
 #endif
   use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
+#ifdef CORR_PAR
+  use mediciones,        only: normaliza_gr
+#endif
 
   implicit none
 
@@ -31,13 +34,11 @@ contains
     real(dp), dimension(:,:), allocatable :: Eng_t   ! energía en función del tiempo
     real(dp), dimension(:), allocatable   :: Pres_t  ! presión en función del tiempo
     real(dp), dimension(:), allocatable   :: Temp_t  ! temperatura en función del tiempo
-    real(dp), dimension(:), allocatable   :: Corr_tr ! array de &
-                                                     ! autocorrelaciones
-
-    real(dp), dimension(:,:), allocatable   :: Modos_vibra ! array de &
-                                                     ! autocorrelaciones
-
-
+    real(dp), dimension(:), allocatable   :: Corr_tr ! array de autocorrelaciones
+    real(dp), dimension(:,:), allocatable   :: Modos_vibra ! array de autocorrelaciones
+#ifdef CORR_PAR
+    real(dp), dimension(4,gNhist)         :: cor_par ! Función de correlación de pares    
+#endif
 
     character(50), parameter :: nombre='trayectoria.vtf' ! Nombre archivo para guardar trayectorias
     integer :: i, j, k
@@ -144,6 +145,14 @@ contains
     ! Guarda la temperatura en un archivo
     call escribe_en_columnas(Temp_t,'temperatura.dat',gNmed*gDt)
   end if
+
+#ifdef CORR_PAR
+    ! Calcula y guarda la función de correlación de pares g(r)
+    call calcula_gr(cor_par)
+    ! Como se escribe también r, el dr no es necesario. Se pasa 0.0 para evitar errores
+    call escribe_en_columnas(cor_par,'gr.dat',0.0_dp)
+#endif
+
 
   ! Se imprime en pantalla los resultados finales
   write(*,*) '* Energias por partícula al final de la integración'
