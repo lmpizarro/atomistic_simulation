@@ -161,6 +161,12 @@ contains
       fmt1 = '(2(E16.9,2X))'
     else if (ncompo==3) then
       fmt1 = '(3(E16.9,2X))'
+    else if (ncompo==4) then
+      fmt1 = '(4(E16.9,2X))'
+    else if (ncompo==5) then
+      fmt1 = '(5(E16.9,2X))'
+    else if (ncompo==6) then
+      fmt1 = '(6(E16.9,2X))'
     end if
 
     write(20, *) npuntos, dt          ! Primer linea con # puntos y dt
