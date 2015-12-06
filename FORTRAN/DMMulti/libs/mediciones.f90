@@ -34,6 +34,9 @@ module mediciones
 #ifdef MODOS_VIB
   public   ::   acumula_velocidades_posicion, acumula_velocidades_equivalentes
 #endif
+#ifdef CORR_PAR
+  public   :: normaliza_gr
+#endif
 
 contains
 
@@ -359,6 +362,39 @@ contains
 
   end subroutine calcula_fuerza
 
+#ifdef CORR_PAR
+  !===============================================================================
+  ! NORMALIZACIÓN Y ESCRITURA DE LA g(r)
+  !===============================================================================
+  ! Esta subrutina normaliza e imprime la función g(r) ya calculada
+  ! Agrega una cuarta columna con la g(r)_total, que es la correlación de pares
+  ! sin importar la especie de partícula.
+
+  subroutine normaliza_gr(grnor)
+  ! Subrutina para normalizar y calcular la función g(r)     
+  ! ver pg. 86 del Frenkel
+
+    real(dp), dimension(:,:),intent(out) :: grnor  ! Función g(r)
+    real(dp)                             :: dvol   ! Diferencie de volumen entre bines
+    real(dp)                             :: nid    ! Parte de gas ideal en dvol
+    integer                              :: i
+    real(dp), parameter                  :: PI = 3.1415926535898_dp  ! pi
+             
+
+    do i = 1, gNhist
+      grnor(1,i) = gDbin * (i + 0.5)                ! Posición centrada de cada bin
+      dvol  = ( (i+1)**3 - i**3 ) * gDbin**3        ! Diferencia de vol entre los bin (i+1) e i
+      nid   = (4.0_dp/3.0_dp) * PI * dvol * gRho    ! Parte del gas ideal en dvol 
+      do j = 2, 4
+        grnor(j,i) = real(gCorr_par(i),kind=dp) / (gNgr*gNpart*nid)      ! Función g(r) normalizada
+      end do
+    end do
+
+  end subroutine normaliza_gr 
+
+#endif
+
+  
 #endif /* Fin PABLO */
 
 #if THERM == 1
