@@ -3,7 +3,7 @@ module mediciones
 #include "control.h"
 
   use types,      only: dp
-  use globales,   only: gKmed, gV, gF, gR, gNpart, gKin, gNespecies,&
+  use globales,   only: gKmed, gV, gF, gR, gNpart, gKin, gNespecies, gNp, &
                         gCorrVfac_1, gCorrVfac_2, gCorrVfac_3, gCorrVver_1,&
                         gNCorrVfac_1, gNCorrVfac_2, gNCorrVfac_3, gNCorrVver_1,&
                         gNmodosVibra, gRho, gVir, gVol, gGamma, gDt,&
@@ -232,7 +232,7 @@ contains
 #ifdef CORR_PAR /* Si se calcula la g(r) */
 !$omp parallel &
 !$omp shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma,gCorr_par) &
-!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij,ei,ej,cut4,rc2,epsil,sigma,r,ind_bin)
+!$omp private (i, j, rij_vec, r2ij, r2in, r6in, Fij,ei,ej,cut4,rc2,epsil,sigma,r,ind_bin,ingr)
 #else /* Si no se calcula la g(r) */
 !$omp parallel &
 !$omp shared (gNpart, gR, gLado_caja, gRc2, gF, gIndice_elemento, gCombEpsilon, gCombSigma) &
@@ -280,9 +280,8 @@ contains
           ! Se debe a unidades absolutas (antes estaba r2ij dividiendo por el sigma)
           ingr = igr(ei,ej)                           ! Averigua en cuál g(r) se va a acumular 
           r = sqrt(r2ij) * sigma
-          if (r < gLado_caja/2.0_dp) then             ! Sólo particulas a menos de gL/2
-            ind_bin            = int(r/gDbin) + 1     ! En dónde cae la partícula
-                                                      ! Va +1 porque definí indices 1:Nh
+          if (r < gLado_caja/2.0_dp) then  ! Sólo particulas a menos de gL/2
+            ind_bin = int(r/gDbin) + 1     ! En dónde cae la partícula. +1 porque definí indices 1:Nh
             gCorr_par(ingr, ind_bin) = gCorr_par(ingr, ind_bin) + 1  ! Actualizo contador del bin
           end if
 #endif /* Fin CORR_PAR */
@@ -337,9 +336,8 @@ contains
           ! Calcula la función g(r) -  Ver pg 86 Frenkel
           ! Se debe a unidades absolutas (antes estaba r2ij dividiendo por el sigma)
           r = sqrt(r2ij) * sigma
-          if (r < gLado_caja/2.0_dp) then                     ! Sólo particulas a menos de gL/2
-            ind_bin            = int(r/gDbin) + 1     ! En dónde cae la partícula
-                                                      ! Va +1 porque definí indices 1:Nh
+          if (r < gLado_caja/2.0_dp) then  ! Sólo particulas a menos de gL/2
+            ind_bin  = int(r/gDbin) + 1    ! En dónde cae la partícula. +1 porque definí indices 1:Nh
             gCorr_par(igr, ind_bin) = gCorr_par(igr, ind_bin) + 2  ! Actualizo contador del bin
           end if
 #endif /* Fin CORR_PAR */
@@ -371,6 +369,10 @@ contains
   ! Esta subrutina normaliza e imprime la función g(r) ya calculada
   ! Agrega una cuarta columna con la g(r)_total, que es la correlación de pares
   ! sin importar la especie de partícula.
+  ! TODO: La normalización da bien para igual cantidad de partículas de cada especie
+  ! Se puso un poco a mano, habría que probar si es generalizable (problema con g_12)
+  ! Controlar también si no se está contando el doble al construir la gCorr_par dentro
+  ! del loop de fuerzas.
 
   subroutine normaliza_gr(grnor)
   ! Subrutina para normalizar y calcular la función g(r)     
@@ -378,19 +380,24 @@ contains
 
     real(dp), dimension(:,:),intent(out) :: grnor  ! Función g(r)
     real(dp)                             :: dvol   ! Diferencie de volumen entre bines
-    real(dp)                             :: nid    ! Parte de gas ideal en dvol
+    real(dp), dimension(1:4)             :: nid    ! Parte de gas ideal en dvol
     integer                              :: i,j
     real(dp), parameter                  :: PI = 3.1415926535898_dp  ! pi
-             
+    integer, dimension(1:4)              :: nor    ! Partículas de cada especie 
+    real, dimension(1:4)                 :: dens   ! Densidad de cada especie
 
+    nor  = (/gNp(1),gNpart,gNp(2),gNpart/)  ! Cantidad de partículas de cada especie
+    dens = nor / gVol                       ! La densidad para calcular gas ideal
+    dens(2) = nor(2) / gVol / 2    ! Quizá esto indique que se calculó mal la g12
+     
     do i = 1, gNhist
-      grnor(1,i) = gDbin * (i + 0.5)                ! Posición centrada de cada bin
-      dvol  = ( (i+1)**3 - i**3 ) * gDbin**3        ! Diferencia de vol entre los bin (i+1) e i
-      nid   = (4.0_dp/3.0_dp) * PI * dvol * gRho    ! Parte del gas ideal en dvol 
+      grnor(1,i) = gDbin * (i + 0.5)                   ! Posición centrada de cada bin
+      dvol  = ( (i+1)**3 - i**3 ) * gDbin**3           ! Diferencia de vol entre los bin (i+1) e i
+      nid   = gNgr*(4.0_dp/3.0_dp) * PI * dvol * dens  ! Parte del gas ideal en dvol 
       do j = 2, 4
-        grnor(j,i) = real(gCorr_par(j,i),kind=dp) / (gNgr*gNpart*nid)      ! Función g(r) normalizada
+        grnor(j,i) = real(gCorr_par(j-1,i),kind=dp) / (nor(j-1)*nid(j-1) )! Función g(r) normalizada
       end do
-        grnor(5,i) = real( sum(gCorr_par(:,i) ),kind=dp)/ (gNgr*gNpart*nid)  ! Función total
+        grnor(5,i) = real( sum(gCorr_par(:,i) ),kind=dp) / (nor(4)*nid(j-1) ) ! Función total
     end do
 
   end subroutine normaliza_gr 
@@ -405,7 +412,7 @@ contains
   ! TERMOSTATO DE LANGEVIN
   !===============================================================================
   ! Agrega la parte estocástica al a fuerza de cada partícula
-  ! TODO No está andando bien
+
   subroutine fuerza_langevin()
 
     real(dp) :: ma    ! Masa de la partícula
