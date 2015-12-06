@@ -139,17 +139,17 @@ contains
 
     inquire(file=nombre, exist=es)
     if (es) then
-       open(unit=20, file=nombre, status='unknown')
-       read(20,'(I12)') N
-       print *, "Cantidad de velocidades a leer ", N, " del archivo ", nombre
-       allocate (v(1:3,1:N))
+      open(unit=20, file=nombre, status='unknown')
+      read(20,'(I12)') N
+      print *, "Cantidad de velocidades a leer ", N, " del archivo ", nombre
+      allocate (v(1:3,1:N))
         do i = 1, N
             read(20,100) (v(j,i),j=1,3)
             100 format (3(E16.9,2X))
         end do 
         write(*,*) '* Archivo de velocidades  leido correctamente'
         exito = .TRUE.
-        close(20)
+      close(20)
     else
       ! No existe el archivo
       write(*,*) '* No existe archivo de estados iniciales'
@@ -220,39 +220,46 @@ contains
     real(dp), dimension(:), intent(in) :: v
     real(dp), dimension(:), intent(inout) :: c
     integer :: n, nc
-    complex (dp), allocatable :: out(:), tmp(:)
+    complex (kind=8), allocatable :: out_forwd(:), in_backw(:)
     integer ( kind = 8 ) plan_forward
     integer ( kind = 8 ) plan_backward
     real(kind = 8), allocatable :: in(:)
+    real(kind = 8), allocatable :: out_backw(:)
 
     n = size(v)
     nc = n / 2 + 1
 
-    allocate (out(1:nc))
-    allocate (tmp(1:nc))
+    allocate (out_forwd(1:nc))
+    allocate (out_backw(1:n))
+    allocate (in_backw(1:nc))
     allocate(in(1:n))
 
     in(1:n) = v(1:n)
 
-    print *, "calcula_autocorr_fft n nc", n, nc, size(in), size(c), size(out)
+    print *, "calcula_autocorr_fft n nc", n, nc, size(in), size(c),&
+        size(out_forwd)
 
     ! out tiene tamaño nc
-    call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out, FFTW_ESTIMATE)
+    call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out_forwd, FFTW_ESTIMATE)
+
     call dfftw_execute_ (plan_forward)
     
 
     ! paso c) página 190 del Allen
-    tmp = REAL(out) ** 2 + AIMAG(out) ** 2
+    !in_backw = REAL(out_forwd) ** 2 + AIMAG(out_forwd) ** 2
+    in_backw = out_forwd * conjg(out_forwd)
+
 
     print *, "luego de fft3w"
     ! paso d) aplicar una fft inversa  a c
-    call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, tmp, c, FFTW_ESTIMATE )
+    call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, in_backw, out_backw, FFTW_ESTIMATE )
     call dfftw_execute_ ( plan_backward )
 
-    print *, c
+    !call escribe_en_columnas(out_backw,'inbac.dat',512*0.1_dp)
 
-    deallocate (out)
-    deallocate (tmp)
+    c = out_backw 
+    deallocate (out_forwd)
+    deallocate (in_backw)
 
   endsubroutine calcula_autocorr
 
