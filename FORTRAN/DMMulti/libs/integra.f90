@@ -37,7 +37,7 @@ contains
     real(dp), dimension(:), allocatable   :: Corr_tr ! array de autocorrelaciones
     real(dp), dimension(:,:), allocatable   :: Modos_vibra ! array de autocorrelaciones
 #ifdef CORR_PAR
-    real(dp), dimension(4,gNhist)         :: cor_par ! Función de correlación de pares    
+    real(dp), dimension(5,gNhist)         :: cor_par ! Función de correlación de pares    
 #endif
 
     character(50), parameter :: nombre='trayectoria.vtf' ! Nombre archivo para guardar trayectorias
@@ -148,7 +148,7 @@ contains
 
 #ifdef CORR_PAR
     ! Calcula y guarda la función de correlación de pares g(r)
-    call calcula_gr(cor_par)
+    call normaliza_gr(cor_par)
     ! Como se escribe también r, el dr no es necesario. Se pasa 0.0 para evitar errores
     call escribe_en_columnas(cor_par,'gr.dat',0.0_dp)
 #endif

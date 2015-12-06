@@ -202,7 +202,8 @@ contains
 #ifdef CORR_PAR
     real(dp)                :: r         ! Distancia entre partículas
     integer                 :: ind_bin   ! Indice de cada bin de la g(r)
-    integer, dimension(2:2) :: igr       ! Matriz para ubicar la columna en g(r)
+    integer, dimension(2,2) :: igr       ! Matriz para ubicar la columna en g(r)
+    integer                 :: ingr      ! Índice de la matriz igr
        
     gNgr = gNgr + 1    ! Cuenta las veces que es llamada 
     ! Creo una matriz para ubicar cada interacción ij en la clumna correcta
@@ -277,11 +278,12 @@ contains
 #ifdef CORR_PAR
           ! Calcula la función g(r) -  Ver pg 86 Frenkel
           ! Se debe a unidades absolutas (antes estaba r2ij dividiendo por el sigma)
+          ingr = igr(ei,ej)                           ! Averigua en cuál g(r) se va a acumular 
           r = sqrt(r2ij) * sigma
           if (r < gLado_caja/2.0_dp) then             ! Sólo particulas a menos de gL/2
             ind_bin            = int(r/gDbin) + 1     ! En dónde cae la partícula
                                                       ! Va +1 porque definí indices 1:Nh
-            gCorr_par(igr, ind_bin) = gCorr_par(igr, ind_bin) + 1  ! Actualizo contador del bin
+            gCorr_par(ingr, ind_bin) = gCorr_par(ingr, ind_bin) + 1  ! Actualizo contador del bin
           end if
 #endif /* Fin CORR_PAR */
         end if   ! Termina if de i /= j
@@ -377,7 +379,7 @@ contains
     real(dp), dimension(:,:),intent(out) :: grnor  ! Función g(r)
     real(dp)                             :: dvol   ! Diferencie de volumen entre bines
     real(dp)                             :: nid    ! Parte de gas ideal en dvol
-    integer                              :: i
+    integer                              :: i,j
     real(dp), parameter                  :: PI = 3.1415926535898_dp  ! pi
              
 
@@ -386,8 +388,9 @@ contains
       dvol  = ( (i+1)**3 - i**3 ) * gDbin**3        ! Diferencia de vol entre los bin (i+1) e i
       nid   = (4.0_dp/3.0_dp) * PI * dvol * gRho    ! Parte del gas ideal en dvol 
       do j = 2, 4
-        grnor(j,i) = real(gCorr_par(i),kind=dp) / (gNgr*gNpart*nid)      ! Función g(r) normalizada
+        grnor(j,i) = real(gCorr_par(j,i),kind=dp) / (gNgr*gNpart*nid)      ! Función g(r) normalizada
       end do
+        grnor(5,i) = real( sum(gCorr_par(:,i) ),kind=dp)/ (gNgr*gNpart*nid)  ! Función total
     end do
 
   end subroutine normaliza_gr 

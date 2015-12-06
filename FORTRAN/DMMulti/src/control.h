@@ -7,7 +7,7 @@
 #define DEBUG 0
 /* Defino variable para indicar si se graban las trayectorias de las partículas */
 #define GRABA_TRAYECTORIA
-#undef CORR_PAR
+#define CORR_PAR
 #define PABLO 1 /* 0=no se consideran agregados hechos por pablo */
 #undef LUIS /*para el bloque de correlaciones porque no me compila*/
 #undef MODOS_VIB
