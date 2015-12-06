@@ -370,7 +370,7 @@ end subroutine inicia_posicion_rn
       allocate(gCorr_par(1:3,1:gNhist))
 
       gNgr      = 0                  ! Contador para saber cuántas veces se acumuló la g(r)
-      gDbin     = gL / (2 * gNhist)  ! Ancho del bin
+      gDbin     = gLado_caja / (2 * gNhist)  ! Ancho del bin
       gCorr_par = 0                  ! Inicializo la g(r) sin normalizar
    
       ! Imprime en pantalla
