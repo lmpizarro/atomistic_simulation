@@ -35,7 +35,7 @@ module modos_vib
 
   public :: modos_equivalentes, lee_velocidades, modos_posicion,&
             calcula_modos_vibracion, calcula_modos_vibracion_vel, &
-            calcula_autocorr_vel_3D
+            calcula_autocorr_vel_3D, calcula_autocorr_vel_3D_1D
 
 
 contains
@@ -219,7 +219,7 @@ contains
   subroutine calcula_autocorr (v, c)
     real(dp), dimension(:), intent(in) :: v
     real(dp), dimension(:), intent(inout) :: c
-    integer :: n, nc
+    integer :: n, nc, i
     complex (kind=8), allocatable :: out_forwd(:), in_backw(:)
     integer ( kind = 8 ) plan_forward
     integer ( kind = 8 ) plan_backward
@@ -257,7 +257,12 @@ contains
 
     !call escribe_en_columnas(out_backw,'inbac.dat',512*0.1_dp)
 
-    c = out_backw 
+    c = out_backw / (DBLE(SIZE(in)))
+
+    DO i=2,nc +1
+      c(i-1)=c(i-1)/DBLE(nc-(i-1))
+    END DO
+
     deallocate (out_forwd)
     deallocate (in_backw)
 
@@ -278,14 +283,40 @@ contains
 
     v2(1:n) = v(1,:)
     call calcula_autocorr (v2, corr(1,:))
+    v2 = 0
     v2(1:n) = v(2,:)
     call calcula_autocorr (v2, corr(2,:))
+    v2 = 0
     v2(1:n) = v(3,:)
     call calcula_autocorr (v2, corr(3,:))
     
  
     deallocate (v2)
   endsubroutine calcula_autocorr_vel_3D 
+
+  ! calcula la correlacion de velocidad de un vector temporal 3D
+  subroutine calcula_autocorr_vel_3D_1D (v, corr)
+    real(dp), dimension(:,:), intent(in) :: v
+    real(dp), allocatable, intent(inout) :: corr(:)
+    real(dp), allocatable :: v2(:)
+    integer :: n
+
+    ! viene el resultado de la operacion
+    n =  size(v(1,:))
+    allocate (v2(1: 2 * n))
+    v2 = 0
+    corr = 0
+
+    !v2(1:n) = sqrt(v(1,1:n) ** 2 + v(2,1:n) ** 2 + v(3,1:n) ** 2)
+    v2(1:n) = v(1,1:n) + v(2,1:n) + v(3,1:n) 
+    call calcula_autocorr (v2, corr(:))
+
+    
+ 
+    deallocate (v2)
+  endsubroutine calcula_autocorr_vel_3D_1D 
+
+
 
 
 #ifdef MODOS_VIB_EQUIVALENTES   
