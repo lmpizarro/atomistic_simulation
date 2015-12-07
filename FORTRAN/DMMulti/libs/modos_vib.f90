@@ -249,15 +249,12 @@ contains
     !in_backw = REAL(out_forwd) ** 2 + AIMAG(out_forwd) ** 2
     in_backw = out_forwd * conjg(out_forwd)
 
-
-    print *, "luego de fft3w"
     ! paso d) aplicar una fft inversa  a c
     call dfftw_plan_dft_c2r_1d_ ( plan_backward, n, in_backw, out_backw, FFTW_ESTIMATE )
     call dfftw_execute_ ( plan_backward )
 
-    !call escribe_en_columnas(out_backw,'inbac.dat',512*0.1_dp)
 
-    c = out_backw / (DBLE(SIZE(in)))
+    c = out_backw(1:n/2) / (DBLE(SIZE(in)))
 
     DO i=2,nc +1
       c(i-1)=c(i-1)/DBLE(nc-(i-1))

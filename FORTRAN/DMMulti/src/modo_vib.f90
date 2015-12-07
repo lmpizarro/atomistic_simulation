@@ -4,6 +4,9 @@ program freq_vib
   use FFTW3
   use io_parametros
 
+  ! http://www.cygres.com/OcnPageE/Glosry/SpecE.html
+  ! http://www.mathworks.com/help/signal/ug/psd-estimate-using-fft.html
+  ! http://www.ece.umd.edu/~tretter/commlab/c6713slides/ch4.pdf pag. 29
   implicit none
 
   logical ::  leido
@@ -21,7 +24,7 @@ program freq_vib
 
   ns = size(v(1,:))
 
-  allocate(corr(1:3, 1:2*ns + 1))
+  allocate(corr(1:3, 1:ns))
   corr = 0
   call calcula_autocorr_vel_3D (v, corr)
   corr(1,:) = corr(1,:) + corr(2,:) + corr(3,:)
