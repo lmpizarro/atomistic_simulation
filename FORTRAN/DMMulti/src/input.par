@@ -34,6 +34,23 @@ Mantiene la estructura FCC
 0.4 0.001 30000 10 0.5
 .5
 
+Se forma estructura mezclada entre especies:
+2 1 
+1.0 1.0 1.0 
+0.8 0.8 0.8 
+5.1 4 2 
+0.4 0.001 30000 10 0.5 
+.5
+
+Parece la forma más estable:
+2 1
+1.0 1.0 1.0
+0.8 0.8 0.8
+5.3 4 2
+0.4 0.001 30000 10 0.5
+.5
+
+
 Comenzando con fcc, se desordena todo
 y la grande cristaliza a ¿hcp? con la 
 chica difundiendo por el medio
