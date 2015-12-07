@@ -11,7 +11,7 @@ if len(sys.argv) < 2:
 else:
     arch = sys.argv[1:]
 
-forma = ['g.', 'b.', 'r.', 'k.']
+forma = ['g.-', 'b.-', 'r.-', 'k.-']
 #forma.append('b.')
 
 # if len(arch)==2:
@@ -39,15 +39,42 @@ r   = datos[:,0]
 d   = datos.shape
 gr  = np.zeros((d[0],d[1]-1))
 
+fig= range(4)
+ax = range(4)
+
+#for j in range(4):
+#    fig[j] = plt.figure(1,figsize=(8,6))
+#    ax[j]  = fig[j].add_subplot(111)    
+    
+
+fig1 = plt.figure(1,figsize=(8,6))
+ax1  = fig1.add_subplot(111)
+ax1.set_xlabel(u'$r^*$')
+ax1.set_ylabel(u'$g(r^*)$')
+ax1.grid(True)
+fig2 = plt.figure(2,figsize=(8,6))
+ax2  = fig2.add_subplot(111)
+ax2.set_xlabel(u'$r^*$')
+ax2.set_ylabel(u'$g(r^*)$')
+ax2.grid(True)
+fig3 = plt.figure(3,figsize=(8,6))
+ax3  = fig3.add_subplot(111)
+ax3.set_xlabel(u'$r^*$')
+ax3.set_ylabel(u'$g(r^*)$')
+ax3.grid(True)
+
 for j in range(4):
     gr[:,j] = datos[:,j+1]
-    plt.figure(1,figsize=(8,6))
-    plt.plot(r, gr[:,j], forma[j], label=leg[j])
+for j in [0,2]:
+    ax1.plot(r, gr[:,j], forma[j], label=leg[j])
      #   plt.xlim(xlim)
-    plt.grid(True)
-    plt.legend(loc='upper right',numpoints=1)
+    ax1.legend(loc='upper right',numpoints=1)
+for j in [1,3]:
+    ax2.plot(r,gr[:,j],forma[j],label=leg[j])
+    ax2.legend(loc='upper right',numpoints=1)
+for j in [0,1,2,3]:
+    ax3.plot(r,gr[:,j],forma[j],label=leg[j])
+    ax3.legend(loc='upper right',numpoints=1)
 
-plt.xlabel(u'$r^*$')
-plt.ylabel(u'$g(r^*)$')
 
 plt.show()
