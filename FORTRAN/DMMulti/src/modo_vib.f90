@@ -4,6 +4,7 @@ program freq_vib
   use FFTW3
   use io_parametros
 
+  !  power spectral density function fft
   ! http://www.cygres.com/OcnPageE/Glosry/SpecE.html
   ! http://www.mathworks.com/help/signal/ug/psd-estimate-using-fft.html
   ! http://www.ece.umd.edu/~tretter/commlab/c6713slides/ch4.pdf pag. 29
