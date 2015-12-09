@@ -36,7 +36,6 @@ module modos_vib
   public :: modos_equivalentes, lee_velocidades, modos_posicion,&
             calcula_modos_vibracion, calcula_modos_vibracion_vel, &
             calcula_autocorr_vel_3D, calcula_autocorr_vel_3D_1D
-
 contains
 
   subroutine modos_equivalentes ()
