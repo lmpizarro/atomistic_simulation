@@ -97,10 +97,6 @@ contains
       ! independientes
       !
 
-#ifdef MODOS_VIB
-      call acumula_velocidades_posicion (gV)
-#endif
-
       ! Se realizan las mediciones
       if (mod(i,gNmed) == 0) then
         ! Energia cinetica
@@ -116,7 +112,11 @@ contains
 #ifdef MODOS_VIB_EQUIVALENTES
         call acumula_velocidades_equivalentes()
 #endif
-       
+
+#ifdef MODOS_VIB
+      call acumula_velocidades_posicion (gV)
+#endif 
+
 #ifdef GRABA_TRAYECTORIA
     call escribe_trayectoria(gR,nombre,.FALSE.)
 #endif
