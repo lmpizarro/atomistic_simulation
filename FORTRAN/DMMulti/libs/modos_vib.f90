@@ -150,10 +150,11 @@ contains
     real(dp), dimension(:), intent(inout) :: c
     integer :: n, nc, i
     complex (kind=8), allocatable :: out_forwd(:), in_backw(:)
+    real(kind = 8), allocatable :: out_backw(:)
+
     integer ( kind = 8 ) plan_forward
     integer ( kind = 8 ) plan_backward
     real(kind = 8), allocatable :: in(:)
-    real(kind = 8), allocatable :: out_backw(:)
 
     n = size(v)
     nc = n / 2 + 1
@@ -184,19 +185,22 @@ contains
 
     c = out_backw(1:n/2) / (DBLE(SIZE(in)))
 
-    DO i=2,nc +1
+    ! ver el paquete autocorrelacion para esta nomalizacion
+    DO i=2,nc
       c(i-1)=c(i-1)/DBLE(nc-(i-1))
     END DO
 
     deallocate (out_forwd)
     deallocate (in_backw)
+    deallocate (out_backw)
+    deallocate(in)
 
   endsubroutine calcula_autocorr
 
   ! calcula la correlacion de velocidad de un vector temporal 3D
   subroutine calcula_autocorr_vel_3D (v, corr)
     real(dp), dimension(:,:), intent(in) :: v
-    real(dp), allocatable, intent(inout) :: corr(:,:)
+    real(dp), dimension(:,:), intent(inout) :: corr
     real(dp), allocatable :: v2(:)
     integer :: n
 
