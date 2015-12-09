@@ -50,6 +50,14 @@ Parece la forma más estable:
 0.4 0.001 30000 10 0.5
 .5
 
+Se ven varios modos de vibraciones lentos
+2 1
+1.0 1.0 1.0
+0.7 0.8 0.5
+4.0 4 2
+3.0 0.001 30000 10 0.5
+.5
+
 
 Comenzando con fcc, se desordena todo
 y la grande cristaliza a ¿hcp? con la 
