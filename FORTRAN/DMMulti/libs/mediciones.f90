@@ -335,11 +335,13 @@ contains
 #ifdef CORR_PAR
           ! Calcula la función g(r) -  Ver pg 86 Frenkel
           ! Se debe a unidades absolutas (antes estaba r2ij dividiendo por el sigma)
+          ingr = igr(ei,ej)                           ! Averigua en cuál g(r) se va a acumular 
           r = sqrt(r2ij) * sigma
           if (r < gLado_caja/2.0_dp) then  ! Sólo particulas a menos de gL/2
-            ind_bin  = int(r/gDbin) + 1    ! En dónde cae la partícula. +1 porque definí indices 1:Nh
-            gCorr_par(igr, ind_bin) = gCorr_par(igr, ind_bin) + 2  ! Actualizo contador del bin
+            ind_bin = int(r/gDbin) + 1     ! En dónde cae la partícula. +1 porque definí indices 1:Nh
+            gCorr_par(ingr, ind_bin) = gCorr_par(ingr, ind_bin) + 2  ! Actualizo contador del bin
           end if
+
 #endif /* Fin CORR_PAR */
       end do
     end do
