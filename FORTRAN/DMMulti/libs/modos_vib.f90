@@ -37,10 +37,6 @@ module modos_vib
             calcula_modos_vibracion, calcula_modos_vibracion_vel, &
             calcula_autocorr_vel_3D, calcula_autocorr_vel_3D_1D
 
-#ifdef MODOS_VIB
-  public :: modos_posicion
-#endif
-
 contains
 
   subroutine modos_equivalentes ()
@@ -110,7 +106,6 @@ contains
   end subroutine modos_equivalentes
 
 
-#ifdef MODOS_VIB
   subroutine modos_posicion(v, nombre)
     real(dp), allocatable ::  freqs(:,:) 
     real(dp), dimension(:,:), intent(in) :: v
@@ -126,8 +121,6 @@ contains
     ! grabar resultados que estan en Corr_tr
     deallocate (freqs)
   end subroutine modos_posicion
-
-#endif 
 
 
   subroutine lee_velocidades(nombre, v,exito)
