@@ -1,72 +1,47 @@
 import numpy as np
-from numba import double, jit
+import lennardjones
 
 # http://combichem.blogspot.com.ar/2013/04/fun-with-numba-numpy-and-f2py.html
 
-Na = 80
-Nb = 128
+Na = 8
+Nb = 12
 Npart = Na + Nb
 
-a=np.zeros(Na+Nb)
-a[Na:Na+Nb] = 1
+ind_mat=np.zeros(Na+Nb)
+ind_mat[Na:Na+Nb] = 1
 
-rc2 = 4
-ecut = -1
+# espilon sigma masa
+el_1 = np.asarray([1, 1, 1])
+el_2 = np.asarray([1.1, 1.3, 2])
 
-for i in range (Npart-1):
-    for j in range(i+1, Npart):
-	#print i, j, a[i],a[j]
-        pass
+#calculo de las matrices sigma epsilon
+sigma12=sigma21= (el_1[1] + el_2[1] ) / 2
+epsilon12=epsilon21= np.sqrt((el_1[0] * el_2[0] )) 
 
-#http://docs.continuum.io/numbapro/quickstart
-@jit((double[:,:], double[:]))
-def lennardjones(U, box):
-    # Can't use (ndim, npart) = numpy.shape(U)
-    # with Numba. No unpacking of tuples.
+sigma = np.array((el_1[1], sigma12, sigma21, el_2[1]))
+sigma = sigma.reshape(2,2) / el_1[1]
+epsilon = np.array((el_1[0], epsilon12, epsilon21, el_2[0]))
+epsilon = epsilon.reshape(2,2) / el_1[0]
 
-    ndim = len(U)
-    npart = len(U[0])
+# calculo de los rc y los ecut
+rc = 2.5 * sigma[0,0]
+rc2 = np.power(rc, 2)
+el_1 = np.hstack((el_1, rc2))
+ecut = 4 * (np.power(rc, -12) - np.power(rc, -6))
+el_1 = np.hstack((el_1, ecut))
+print "ecut", el_1 
 
-    F = np.zeros((ndim, npart))
+rc = 2.5 * sigma[1,1]
+rc2 = np.power(rc, 2)
+el_2 = np.hstack((el_2, rc2))
+ecut = 4 * (np.power(rc, -12) - np.power(rc, -6))
+el_2 = np.hstack((el_2, ecut))
+print "ecut", el_2 
 
-    Epot = 0.0
-    Vir = 0.0
-
-    for i in range(npart - 1):
-        for j in range(i+1, npart):
-                
-        	#print (("%d %d %d %d")%(i, j, a[i],a[j]))
-
-            X  = U[0, j] - U[0, i]
-            Y  = U[1, j] - U[1, i]
-            Z  = U[2, j] - U[2, i]
-
-                # Periodic boundary condition
-            X  -= box[0] * np.rint(X/box[0])
-            Y  -= box[1] * np.rint(Y/box[1])
-            Z  -= box[2] * np.rint(Z/box[2])
-
-            # Distance squared
-            r2 = X*X + Y*Y + Z*Z
-            if(r2 < rc2):
-                r2i = 1.0 / r2
-                r6i = r2i*r2i*r2i
-                Epot = Epot + r6i*(r6i-1.0) - ecut
-
-                ftmp = 48. * r6i*(r6i- 0.5) * r2i
-
-                F[0, i] -= ftmp * X
-                F[1, i] -= ftmp * Y
-                F[2, i] -= ftmp * Z
-                F[0, j] += ftmp * X
-                F[1, j] += ftmp * Y
-                F[2, j] += ftmp * Z
-                Vir += ftmp
-
-    Epot = Epot * 4.0
-
-    return Epot, F, Vir
-    
+rc2 = 4.0
+ecut = -1.0
+gDt = 0.001
+gM = 1.0
 
 
 def initialize_box(n_atoms, rho):
@@ -151,12 +126,22 @@ rho = .05
 temperature = 1.0
 
 L = initialize_box(Npart, rho)
-box = np.ones(3)
+box = np.ones(3) * L
 U = initialize_positions(Npart, L)
 V = InitVelocities(Npart, temperature)
 
 
-Epot, F, Vir = lennardjones(U,box)
+Epot, F, Vir = lennardjones.lennardjones(U,box, sigma, epsilon, ind_mat, rc2, ecut)
 
+print Epot, F, Vir
+
+#U, Epot, F, Vir = lennardjones.integracion_min(U,box, rc2, ecut, 10, gDt)
+
+# minimiza la energia
+for i in range(100):
+    U = U + 0.5 * F * gDt**2 / gM
+    lennardjones.cpc_vec(U, box)
+
+print "despues"
 print Epot, F, Vir
 
