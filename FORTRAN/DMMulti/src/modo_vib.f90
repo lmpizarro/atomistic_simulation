@@ -62,18 +62,13 @@ program freq_vib
   call lee_velocidades(nombre, v, leido)
   nombre = "./modo_ver_1.dat"
   nombre = trim(nombre)
-#ifdef MODOS_VIB
   call modos_posicion(v, nombre)
-<<<<<<< HEAD
 
   corr = 0
   call calcula_autocorr_vel_3D (v, corr)
   corr(1,:) = corr(1,:) + corr(2,:) + corr(3,:)
 
   call escribe_en_columnas (corr(1,1:ns), "autocorr_ver_1.dat", 512.0_dp)
-=======
-#endif
->>>>>>> f5a4a3518ade838a608256447fe4a0d41e1198c4
 
   deallocate(v)
   deallocate(corr)
