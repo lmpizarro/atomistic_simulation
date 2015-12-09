@@ -33,76 +33,10 @@ module modos_vib
 
   private
 
-  public :: modos_equivalentes, lee_velocidades, modos_posicion,&
+  public :: lee_velocidades, modos_posicion,&
             calcula_modos_vibracion, calcula_modos_vibracion_vel, &
             calcula_autocorr_vel_3D, calcula_autocorr_vel_3D_1D
 contains
-
-  subroutine modos_equivalentes ()
-#ifdef MODOS_VIB_EQUIVALENTES   
-  !#############################################################################
-  !               Calculo de los modos de vibracion de velocidad
-  !#############################################################################
-
-  ! calcular autocorrelacion para particula tipo 1 en vertice
-  ! gNCorrVver_2 
-  print *, "gNcorr*", gNCorrVver_1, gNCorrVfac_3, gNCorrVfac_1, gNCorrVfac_2 
-  if (gNCorrVfac_3 .gt. 1) then
-    ! para la autocorrelacion hay que allocar 2 * (gNCorrVver_2-1)
-    ! para los modos de vibracion hay que allocar gNCorrVver_2 - 1
-    allocate (Modos_vibra(1:3, 1:(gNCorrVfac_3)))
-    print *, "Calcula auto corre v particula tipo 2 en vertice"
-    !call calcula_autocorr_vel_3D_b (gCorrVver_2(:,1:(gNCorrVver_2 - 1)), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVfac_3(:,1:(gNCorrVfac_3)),&
-      Modos_vibra)
-    ! grabar resultados que estan en Corr_tr
-    print *, "corr_tr", Corr_tr
-    call escribe_en_columnas(Modos_vibra,'corr_vver_2.dat',gNmed*gDt)
-    deallocate (Modos_vibra)
-  endif 
-
-  if (gNCorrVver_1 .gt. 1) then
-    ! calcular autocorrelacion para particula tipo 2 en vertice
-    ! gNCorrVver_1 
-    allocate (Modos_vibra(1:3, 1:(gNCorrVver_1)))
-    print *, "Calcula auto corre v particula tipo 1 en vertice"
-    !call calcula_autocorr_vel_3D_b (gCorrVver_1(:,1:gNCorrVver_1 - 1), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVver_1(:,1:(gNCorrVver_1)),&
-      Modos_vibra)
-    call escribe_en_columnas(Modos_vibra,'corr_vver_1.dat',gNmed*gDt)
-    ! grabar resultados que estan en Corr_tr
-    deallocate (Modos_vibra)
-  endif
-
-  if (gNCorrVfac_1 .gt. 1) then
-    ! calcular autocorrelacion para particula tipo 1 en cara
-    ! gNCorrVfac_1
-    print *, "Calcula auto corre v particula tipo 1 en cara"
-    allocate (Modos_vibra(1:3, 1:(gNCorrVfac_1)))
-    !call calcula_autocorr_vel_3D_b (gCorrVfac_1(:,1:(gNCorrVfac_1 - 1)), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVfac_1(:,1:(gNCorrVfac_1)),&
-      Modos_vibra)
-    call escribe_en_columnas(Modos_vibra,'corr_vfac_1.dat',gNmed*gDt)
-    ! grabar resultados que estan en Corr_tr
-    deallocate (Modos_vibra)
-  endif
-
-  if (gNCorrVfac_2 .gt. 1) then
-    ! calcular autocorrelacion para particula tipo 1 en cara
-    ! calcular autocorrelacion para particula tipo 2 en cara
-    ! gNCorrVfac_2
-    print *, "Calcula auto corre v particula tipo 2 en cara"
-    allocate (Modos_vibra(1:3, 1:(gNCorrVfac_2)))
-    !call calcula_autocorr_vel_3D_b (gCorrVfac_2(:,1:gNCorrVfac_2 - 1), Corr_tr)
-    call calcula_modos_vibracion_vel(gCorrVfac_2(:,1:(gNCorrVfac_2)),&
-      Modos_vibra)
-    call escribe_en_columnas(Modos_vibra,'corr_vfac_2.dat',gNmed*gDt)
-    ! grabar resultados que estan en Corr_tr
-    deallocate (Modos_vibra)
-  endif  
-#endif
-
-  end subroutine modos_equivalentes
 
 
   subroutine modos_posicion(v, nombre)
@@ -231,8 +165,7 @@ contains
 
     in(1:n) = v(1:n)
 
-    print *, "calcula_autocorr_fft n nc", n, nc, size(in), size(c),&
-        size(out_forwd)
+    print *, "v out_backw salida out_forwd ", n, nc, size(c), size(out_forwd)
 
     ! out tiene tamaño nc
     call dfftw_plan_dft_r2c_1d_ (plan_forward, n, in, out_forwd, FFTW_ESTIMATE)

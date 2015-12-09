@@ -15,10 +15,6 @@ program autocorr
   nombre = "./veloc_fac_1.dat"
   nombre = trim(nombre)
   call lee_velocidades(nombre, v, leido)
-  nombre = "./modo_fac_1.dat"
-  nombre = trim(nombre)
-  call modos_posicion(v, nombre)
-
   ns = size(v(1,:))
 
   allocate(corr(1:3, 1:ns))
@@ -31,9 +27,6 @@ program autocorr
   nombre = "./veloc_fac_2.dat"
   nombre = trim(nombre)
   call lee_velocidades(nombre, v, leido)
-  nombre = "./modo_fac_2.dat"
-  nombre = trim(nombre)
-  call modos_posicion(v, nombre)
 
   corr = 0
   call calcula_autocorr_vel_3D (v, corr)
@@ -43,9 +36,6 @@ program autocorr
   nombre = "./veloc_fac_3.dat"
   nombre = trim(nombre)
   call lee_velocidades(nombre, v, leido)
-  nombre = "./modo_fac_3.dat"
-  nombre = trim(nombre)
-  call modos_posicion(v, nombre)
 
   corr = 0
   call calcula_autocorr_vel_3D (v, corr)
@@ -56,19 +46,13 @@ program autocorr
   nombre = "./veloc_ver_1.dat"
   nombre = trim(nombre)
   call lee_velocidades(nombre, v, leido)
-  nombre = "./modo_ver_1.dat"
-  nombre = trim(nombre)
-  call modos_posicion(v, nombre)
 
   corr = 0
   call calcula_autocorr_vel_3D (v, corr)
   corr(1,:) = corr(1,:) + corr(2,:) + corr(3,:)
-
   call escribe_en_columnas (corr(1,1:ns), "autocorr_ver_1.dat", 512.0_dp)
 
   deallocate(v)
   deallocate(corr)
-
-
 
 end program autocorr 
