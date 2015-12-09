@@ -37,6 +37,9 @@ module modos_vib
             calcula_modos_vibracion, calcula_modos_vibracion_vel, &
             calcula_autocorr_vel_3D, calcula_autocorr_vel_3D_1D
 
+#ifdef MODOS_VIB
+  public :: modos_posicion
+#endif
 
 contains
 
