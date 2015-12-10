@@ -27,7 +27,7 @@ leg = [r'$g_{11}(r)$',
        r'$g_{22}(r)$',
        r'$g(r)$']
 
-#xlim = [0.0 , 4.0]
+xlim = [0.5 , 2.0]
 
 j = 0
 
@@ -67,14 +67,16 @@ for j in range(4):
     gr[:,j] = datos[:,j+1]
 for j in [0,2]:
     ax1.plot(r, gr[:,j], forma[j], label=leg[j])
-     #   plt.xlim(xlim)
     ax1.legend(loc='upper right',numpoints=1)
+    ax1.set_xlim(xlim)
 for j in [1,3]:
     ax2.plot(r,gr[:,j],forma[j],label=leg[j])
     ax2.legend(loc='upper right',numpoints=1)
+    ax2.set_xlim(xlim)
 for j in [0,1,2,3]:
     ax3.plot(r,gr[:,j],forma[j],label=leg[j])
     ax3.legend(loc='upper right',numpoints=1)
+    ax3.set_xlim(xlim)
 
 
 plt.show()
