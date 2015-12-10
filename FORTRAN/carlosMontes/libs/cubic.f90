@@ -1,7 +1,7 @@
-!
-! Para compilar con f2py: f2py -c -m cubic cubic.f90
-!
-subroutine posiciones_fcc(gR, px, py, pz, Dim, Natom )
+  !
+  ! Para compilar con f2py: f2py -c -m cubic cubic.f90
+  !
+  subroutine posiciones_fcc(gR, px, py, pz, Dim, Natom )
     implicit none      
  
     integer, intent(in)    :: px, py, pz     ! Periodicidad de la red, # veces que se
@@ -106,5 +106,3 @@ subroutine posiciones_fcc(gR, px, py, pz, Dim, Natom )
    enddo
 
   end subroutine posiciones_simple
-
-

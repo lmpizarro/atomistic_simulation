@@ -3,7 +3,7 @@
 
 import numpy as np
 # interface a Fortran
-import init
+import json
 
 
 #
@@ -92,10 +92,6 @@ class Interacciones_LJ(object):
                     (-6) -   self.rc2[i][j] ** (-3))
                 self.potCut[j][i] = self.potCut[i][j]
 
-
-
-
-
     # lista las matríces
     def list_matrices(self):
         print "Sigma"
@@ -124,8 +120,15 @@ def main ():
     components.list_components()
     components.calculate_matrices()
     components.list_matrices()
-    init.matrices.iepsilon(components.epsilon, components.Ncomponents)
-    print init.matrices.iepsilon.__doc__
 
 if __name__ == "__main__":
     main()
+    dictionary= {"first_name": "Guido", "last_name":"Rossum"}
+    with open('data.json', 'w') as outfile:
+            json.dump(dictionary, outfile)
+
+
+    with open('data.json') as data_file:    
+        data = json.load(data_file)
+
+    print(data["first_name"])
