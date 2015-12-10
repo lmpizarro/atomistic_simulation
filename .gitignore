@@ -10,3 +10,4 @@ FORTRAN/ising/informe/informe.pdf
 *.dvi
 *build*
 *.so
+*.pyf
