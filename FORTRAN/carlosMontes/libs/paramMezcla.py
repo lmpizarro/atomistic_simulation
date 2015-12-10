@@ -29,11 +29,15 @@ class Interacciones_LJ(object):
         self.epsilon = np.zeros(len(self.Componentes) **
                 2).reshape(len(self.Componentes), len(self.Componentes))
 
+        self.masa = np.zeros(len(self.Componentes))
 
         for i, c in enumerate(self.Componentes):
             self.epsilon[i][i] =  c["parameters"][0]
             self.sigma[i][i] =  c["parameters"][1]
+            self.masa[i] = c["parameters"][2]
 
+
+        self.masa = self.masa / self.masa[0]
 
         for i in range(self.Ncomponents):
             for j in range(i + 1, self.Ncomponents):
@@ -53,6 +57,8 @@ class Interacciones_LJ(object):
         #normalizacion
         self.epsilon = self.epsilon / self.epsilon[0][0]
 
+    # falta calcular el radio de corte y el desplazamiento
+
     def list_matrices(self):
         print "Sigma"
         print ""
@@ -60,6 +66,9 @@ class Interacciones_LJ(object):
         print ""
         print "Epsilon"
         print self.epsilon
+        print ""
+        print "Masa"
+        print self.masa
         print ""
 
 def main ():
