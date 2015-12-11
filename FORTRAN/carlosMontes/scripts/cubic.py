@@ -9,16 +9,16 @@ import cubic
 
 class Cubic(object):
 
-    def __init__(self, lado_celda=4, nx=4, ny=4, nz=4, tipo="fcc"):
+    def __init__(self, parametro_red=4, nx=4, ny=4, nz=4, tipo="fcc"):
         self.Nperx = nx
         self.Npery = ny
         self.Nperz = nz
 
-        self.lado_celda = lado_celda
+        self.parametro_red = parametro_red
 
-        self.lado_cubo_x = self.lado_celda * self.Nperx
-        self.lado_cubo_y = self.lado_celda * self.Npery
-        self.lado_cubo_z = self.lado_celda * self.Nperz
+        self.lado_cubo_x = self.parametro_red * self.Nperx
+        self.lado_cubo_y = self.parametro_red * self.Npery
+        self.lado_cubo_z = self.parametro_red * self.Nperz
 
         if (tipo == "fcc"):
             self.AtomsCell = 4
@@ -54,7 +54,7 @@ class Cubic(object):
             f1 = self.generate_simple() + \
                 np.array([0.5, 0.5, 0.5]).reshape(3, 1)
 
-        self.Positions = self.lado_celda * self.Positions
+        self.Positions = self.parametro_red * self.Positions
 
     def list_positions(self):
         print self.IndiceElementos
@@ -102,7 +102,9 @@ class Cubic(object):
         fo.write("## vtf file\n")
 
         for i in range(self.Natoms):
-            atom = (" atom %d radius 1.0 type 1\n") % (i)
+            atom = (" atom %d radius %f type %d\n") % (i,
+                    self.radios[self.IndiceElementos[i] - 1],\
+                    self.IndiceElementos[i])
             fo.write(atom)
 
         pbc = ("%s %f %f %f \n\n") % (
@@ -115,23 +117,49 @@ class Cubic(object):
             fo.write(tmp)
         fo.close()
 
-    # escribe
+    # escribe la configuracion de posiciones
+    # atómicas
     def write_config(self, name):
-        format = "%14.8f %14.8f %14.8f %10d\n"
+        format1 = "%14.8f %14.8f %14.8f %10d\n"
+        format2 = "%10d %10d %10d %10d %14.8f\n"
         fo = open(name, 'a')
-        fo.write(("%10d\n") % (self.Natoms))
+        fo.write((format2) % (self.Natoms, self.Nperx, self.Npery, self.Nperz,\
+            self.parametro_red))
         for i in range(np.size(self.Positions[0])):
-            tmp = (format) % (self.Positions[0][i],
+            tmp = (format1) % (self.Positions[0][i],
                               self.Positions[1][i], self.Positions[2][i],
                               self.IndiceElementos[i])
             fo.write(tmp)
         fo.close()
 
+    def cpc (self):
+        #tmp = gLado_caja*floor(gR/gLado_caja)
+        #gR = gR - tmp
+        pass
+        tmpx = self.lado_cubo_x * np.floor(self.Positions[0,:] / self.lado_cubo_x)
+        tmpy = self.lado_cubo_x * np.floor(self.Positions[1,:] / self.lado_cubo_y)
+        tmpz = self.lado_cubo_x * np.floor(self.Positions[2,:] / self.lado_cubo_z)
+
+        tmp = np.zeros(3*self.Natoms).reshape(3, self.Natoms)
+        tmp[0,:] = tmpx
+        tmp[1,:] = tmpy
+        tmp[2,:] = tmpz
+
+        self.Positions = self.Positions - tmp
+
+    def noisify(self, amplitude): 
+        tmp = amplitude * np.random.rand(self.Natoms * 3). reshape(3, self.Natoms)
+        self.Positions = self.Positions + tmp
+        self.cpc()
+
     def set_A4(self):
         pass
 
+    # por ahora valido para fcc
     def set_A2B2(self):
-        pass
+        self.radios=np.array([.8, 1.0])
+        for i in range(self.Natoms / 2):
+            self.IndiceElementos[i] = 2
 
     def set_A3B1(self):
         pass
@@ -144,7 +172,11 @@ def main():
     print fcc.Positions
     print fcc.Positions.shape
 
+    fcc.set_A2B2()
+    fcc.noisify(2)
+
     fcc.write_xyz("test.xyz")
+    fcc.write_vtf("test.vtf")
     fcc.write_config("config.par")
 
     fcc.list_positions()
