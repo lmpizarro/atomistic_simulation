@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-# interface a Fortran
-import json
 
 
 #
@@ -110,6 +108,48 @@ class Interacciones_LJ(object):
         print "PotCut"
         print self.potCut
 
+    def toString(self):
+	    
+        sig =""
+	format = "%10.4f"
+	for s in self.sigma:    
+            for n in s:
+		sig = sig + (format)%(n) + "  "
+            sig = sig + "\n"
+
+        eps = ""
+	for s in self.epsilon:    
+            for n in s:
+		eps = eps + (format)%(n) + "  "
+            eps = eps + "\n"
+
+        rc = ""
+	for s in self.rc2:    
+            for n in s:
+		rc = rc + (format)%(n) + "  "
+            rc = rc + "\n"
+
+	pc =""    
+	for s in self.potCut:    
+            for n in s:
+		pc = pc + (format)%(n) + "  "
+            pc = pc + "\n"
+
+        ma = ""
+        for n in self.masa:
+	    ma = ma + (format)%(n) + "  "
+            ma = ma + "\n"
+
+        total = ("%10d\n")%(self.Ncomponents) + eps + sig + rc + pc + ma
+
+	return total
+
+    def write_file(self, nombre):
+	f = open(nombre, 'w')
+        f.write(self.toString())
+	f.close
+
+
 
 # tests
 def main ():
@@ -120,15 +160,9 @@ def main ():
     components.list_components()
     components.calculate_matrices()
     components.list_matrices()
+    print components.toString()
+    components.write_file("config.par")
 
 if __name__ == "__main__":
     main()
-    dictionary= {"first_name": "Guido", "last_name":"Rossum"}
-    with open('data.json', 'w') as outfile:
-            json.dump(dictionary, outfile)
 
-
-    with open('data.json') as data_file:    
-        data = json.load(data_file)
-
-    print(data["first_name"])
