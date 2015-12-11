@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # descomentar y setear adecuadamente, ver abajo SETEO DE COMPILADOR
-export FC=/opt/intel/composer_xe_2013.5.192/bin/intel64/ifort
+#export FC=/opt/intel/composer_xe_2013.5.192/bin/intel64/ifort
 
 mkdir build
 cd build

@@ -143,7 +143,7 @@ class Interacciones_LJ(object):
         return total
 
     def write_file(self, nombre):
-        f = open(nombre, 'w')
+        f = open(nombre, 'a')
         f.write(self.toString())
         f.close
 

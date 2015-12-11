@@ -131,7 +131,8 @@ class Cubic(object):
         pass
 
     def set_A2B2(self):
-        pass
+        for i in range(self.Natoms / 2):
+            self.IndiceElementos[i] = 2
 
     def set_A3B1(self):
         pass
