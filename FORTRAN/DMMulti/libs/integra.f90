@@ -6,7 +6,8 @@ module integra
   use globales
   use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza
 #ifdef MODOS_VIB
-  use mediciones,        only: acumula_velocidades_equivalentes,  acumula_velocidades_posicion
+  use mediciones,        only: acumula_velocidades_equivalentes,  acumula_velocidades_posicion,&
+                               acumula_velocidades_posicion_simple
 #endif
   use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 #ifdef CORR_PAR
@@ -96,6 +97,10 @@ contains
       ! para calcular modos de vibracion sobre posiciones
       ! independientes
       !
+#ifdef MODOS_VIB
+      call acumula_velocidades_posicion_simple (gV, 32)
+#endif 
+
 
       ! Se realizan las mediciones
       if (mod(i,gNmed) == 0) then
@@ -112,10 +117,6 @@ contains
 #ifdef MODOS_VIB_EQUIVALENTES
         call acumula_velocidades_equivalentes()
 #endif
-
-#ifdef MODOS_VIB
-      call acumula_velocidades_posicion (gV)
-#endif 
 
 #ifdef GRABA_TRAYECTORIA
     call escribe_trayectoria(gR,nombre,.FALSE.)
