@@ -8,10 +8,11 @@ import numpy as np
 #  clase usada para el cálculo de las matrices de interacción
 #
 class Interacciones_LJ(object):
-    #inicializa la clase con un componente
+    # inicializa la clase con un componente
+
     def __init__(self, epsilon, sigma, masa, name):
         self.Componentes = [{"name": name, "parameters": [epsilon, sigma,
-            masa]}]
+                                                          masa]}]
 
     # agrega componentes
     def add_component(self, epsilon, sigma, masa, name):
@@ -32,41 +33,39 @@ class Interacciones_LJ(object):
     # calcula las matrices
     def calculate_matrices(self):
         self.sigma = np.zeros(len(self.Componentes) **
-                2).reshape(self.Ncomponents, self.Ncomponents)
+                              2).reshape(self.Ncomponents, self.Ncomponents)
 
-        self.epsilon = np.zeros(len(self.Componentes) **
-                2).reshape(len(self.Componentes), len(self.Componentes))
+        self.epsilon = np.zeros(
+            len(self.Componentes) ** 2).reshape(len(self.Componentes), len(self.Componentes))
 
         self.masa = np.zeros(len(self.Componentes))
-        self.potCut = np.zeros(len(self.Componentes) **
-                2).reshape(len(self.Componentes), len(self.Componentes))
-
-
+        self.potCut = np.zeros(
+            len(self.Componentes) ** 2).reshape(len(self.Componentes), len(self.Componentes))
 
         for i, c in enumerate(self.Componentes):
-            self.epsilon[i][i] =  c["parameters"][0]
-            self.sigma[i][i] =  c["parameters"][1]
+            self.epsilon[i][i] = c["parameters"][0]
+            self.sigma[i][i] = c["parameters"][1]
             self.masa[i] = c["parameters"][2]
-
 
         self.masa = self.masa / self.masa[0]
 
         for i in range(self.Ncomponents):
             for j in range(i + 1, self.Ncomponents):
-                self.sigma[i][j] = (self.Componentes[i]["parameters"][1] + 
-                                self.Componentes[j]["parameters"][1]) /2
+                self.sigma[i][j] = (self.Componentes[i]["parameters"][1] +
+                                    self.Componentes[j]["parameters"][1]) / 2
                 self.sigma[j][i] = self.sigma[i][j]
 
-        #normalizacion
+        # normalizacion
         self.sigma = self.sigma / self.sigma[0][0]
 
         for i in range(self.Ncomponents):
             for j in range(i + 1, self.Ncomponents):
-                self.epsilon[i][j] = np.sqrt((self.Componentes[i]["parameters"][0] * 
-                                self.Componentes[j]["parameters"][0]))
+                self.epsilon[i][j] = np.sqrt(
+                    (self.Componentes[i]["parameters"][0] *
+                     self.Componentes[j]["parameters"][0]))
                 self.epsilon[j][i] = self.epsilon[i][j]
 
-        #normalizacion
+        # normalizacion
         self.epsilon = self.epsilon / self.epsilon[0][0]
 
         self.calc_radio_corte()
@@ -75,19 +74,19 @@ class Interacciones_LJ(object):
     # falta calcular el radio de corte y el desplazamiento
 
     # calcula el radio de corte
-    def calc_radio_corte (self):
+    def calc_radio_corte(self):
         self.rc2 = (2.5 * self.sigma) ** 2
 
     # calcula el potencial de desplazamiento
-    def calc_pote_despla (self):
+    def calc_pote_despla(self):
         for i in range(self.Ncomponents):
-            self.potCut[i][i]= 4.0 * self.epsilon[i][i] * (self.rc2[i][i] **
-                    (-6) -   self.rc2[i][i] ** (-3)) 
+            self.potCut[i][i] = 4.0 * self.epsilon[i][i] * \
+                (self.rc2[i][i] ** (-6) - self.rc2[i][i] ** (-3))
 
         for i in range(self.Ncomponents):
             for j in range(self.Ncomponents):
-                self.potCut[i][j]= 4.0 * self.epsilon[i][j] * (self.rc2[i][j] **
-                    (-6) -   self.rc2[i][j] ** (-3))
+                self.potCut[i][j] = 4.0 * self.epsilon[i][j] * \
+                    (self.rc2[i][j] ** (-6) - self.rc2[i][j] ** (-3))
                 self.potCut[j][i] = self.potCut[i][j]
 
     # lista las matríces
@@ -103,56 +102,54 @@ class Interacciones_LJ(object):
         print self.masa
         print ""
         print "RC2"
-        print self.rc2 
+        print self.rc2
         print ""
         print "PotCut"
         print self.potCut
 
     def toString(self):
-	    
-        sig =""
-	format = "%10.4f"
-	for s in self.sigma:    
+        sig = ""
+        format = "%14.8f"
+        for s in self.sigma:
             for n in s:
-		sig = sig + (format)%(n) + "  "
+                sig = sig + (format) % (n) + "  "
             sig = sig + "\n"
 
         eps = ""
-	for s in self.epsilon:    
+        for s in self.epsilon:
             for n in s:
-		eps = eps + (format)%(n) + "  "
+                eps = eps + (format) % (n) + "  "
             eps = eps + "\n"
 
         rc = ""
-	for s in self.rc2:    
+        for s in self.rc2:
             for n in s:
-		rc = rc + (format)%(n) + "  "
+                rc = rc + (format) % (n) + "  "
             rc = rc + "\n"
 
-	pc =""    
-	for s in self.potCut:    
+        pc = ""
+        for s in self.potCut:
             for n in s:
-		pc = pc + (format)%(n) + "  "
+                pc = pc + (format) % (n) + "  "
             pc = pc + "\n"
 
         ma = ""
         for n in self.masa:
-	    ma = ma + (format)%(n) + "  "
+            ma = ma + (format) % (n) + "  "
             ma = ma + "\n"
 
-        total = ("%10d\n")%(self.Ncomponents) + eps + sig + rc + pc + ma
+        total = ("%10d\n") % (self.Ncomponents) + eps + sig + rc + pc + ma
 
-	return total
+        return total
 
     def write_file(self, nombre):
-	f = open(nombre, 'w')
+        f = open(nombre, 'w')
         f.write(self.toString())
-	f.close
-
+        f.close
 
 
 # tests
-def main ():
+def main():
     components = Interacciones_LJ(1.2, 4.0, 2.3, "componente1")
     components.add_component(1.1, 4.5, 2.1, "componente2")
     components.add_component(1.0, 4.3, 2.0, "componente2")
@@ -165,4 +162,3 @@ def main ():
 
 if __name__ == "__main__":
     main()
-
