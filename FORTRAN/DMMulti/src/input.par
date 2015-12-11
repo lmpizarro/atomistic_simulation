@@ -26,30 +26,21 @@ Para probar el microcanónico
 8 4 2 
 1.2 0.0001 20000 100 0.5
 .5
-Mantiene la estructura FCC
+Mantiene la red FCC
 2 1
 1.0 1.0 1.0
-0.8 0.8 0.9
-4.5 4 2 
-0.4 0.001 30000 10 0.5
-.5
-
-Se forma estructura mezclada entre especies:
-2 1 
-1.0 1.0 1.0 
-0.8 0.8 0.8 
-5.1 4 2 
-0.4 0.001 30000 10 0.5 
-.5
-
-Se ven varios modos de vibraciones lentos
-2 1
-1.0 1.0 1.0
-0.8 0.8 0.6
+0.6 0.9 0.6
 4.0 4 2
-0.4 0.001 30000 10 0.5
+5.5 0.001 20000 10 0.5
 .5
 
+Empieza a moverse de las posiciones FCC
+2 1
+1.0 1.0 1.0
+0.6 0.82 0.6
+4.0 4 2
+5.5 0.001 20000 10 0.5
+.5
 
 Comenzando con fcc, se desordena todo
 y la grande cristaliza a ¿hcp? con la 
