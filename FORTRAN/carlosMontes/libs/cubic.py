@@ -4,7 +4,7 @@
 import numpy as np
 import cubic
 
-
+# http://www.petveturas.com/prog/scripts/create_crystal.py
 class Cubic(object):
     def __init__(self, lado_celda = 4, nx = 4, ny = 4, nz = 4, tipo="fcc"):
        self.Nperx = nx
