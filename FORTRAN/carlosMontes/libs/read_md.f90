@@ -20,6 +20,10 @@ module param_md
     real(dp) :: gGamma         ! Parámetro para el termostato de Langevin  
     integer  :: gNespecies      ! Cantidad de especies en el sistema
     integer  :: gNpart         ! Cantidad de partículas del sistema
+    integer  :: gNperx         ! Cantidad de partículas del sistema
+    integer  :: gNpery         ! Cantidad de partículas del sistema
+    integer  :: gNperz         ! Cantidad de partículas del sistema
+    real(dp) :: gParam_red
   contains
     procedure :: leer => read_parameters
   end type Parametros
@@ -66,7 +70,8 @@ contains
         read (10,*) gMasa (i)
       enddo
 
-      read(10,*) this%gNpart
+      read(10,*) this%gNpart, this%gNperx, this%gNpery, this%gNperz,&
+        this%gParam_red
 
       ! alloca para leer posiciones de partículas
       allocate(gR(1:3, 1:this%gNpart))
@@ -105,7 +110,8 @@ contains
       write (*, 300) (gMasa (i))
     enddo
 
-    write(*,200) this%gNpart
+    write(*,200) this%gNpart, this%gNperx, this%gNpery, this%gNperz,&
+        this%gParam_red
 
     do i = 1, this%gNpart
       write (*,800) (gR (i,j), j = 1,3), gIndice_elemento(i)
@@ -113,7 +119,7 @@ contains
 
 
     100 format (F14.8,F14.8,I10,I10,F14.8)
-    200 format (I10)
+    200 format (I10, I10, I10, I10, F14.8)
     300 format (F14.8)
     700 format (100g15.5)
     800 format (3g15.5, I10)
