@@ -132,9 +132,30 @@ class Cubic(object):
             fo.write(tmp)
         fo.close()
 
+    def cpc (self):
+        #tmp = gLado_caja*floor(gR/gLado_caja)
+        #gR = gR - tmp
+        pass
+        tmpx = self.lado_cubo_x * np.floor(self.Positions[0,:] / self.lado_cubo_x)
+        tmpy = self.lado_cubo_x * np.floor(self.Positions[1,:] / self.lado_cubo_y)
+        tmpz = self.lado_cubo_x * np.floor(self.Positions[2,:] / self.lado_cubo_z)
+
+        tmp = np.zeros(3*self.Natoms).reshape(3, self.Natoms)
+        tmp[0,:] = tmpx
+        tmp[1,:] = tmpy
+        tmp[2,:] = tmpz
+
+        self.Positions = self.Positions - tmp
+
+    def noisify(self, amplitude): 
+        tmp = amplitude * np.random.rand(self.Natoms * 3). reshape(3, self.Natoms)
+        self.Positions = self.Positions + tmp
+        self.cpc()
+
     def set_A4(self):
         pass
 
+    # por ahora valido para fcc
     def set_A2B2(self):
         self.radios=np.array([.8, 1.0])
         for i in range(self.Natoms / 2):
@@ -152,6 +173,7 @@ def main():
     print fcc.Positions.shape
 
     fcc.set_A2B2()
+    fcc.noisify(2)
 
     fcc.write_xyz("test.xyz")
     fcc.write_vtf("test.vtf")
