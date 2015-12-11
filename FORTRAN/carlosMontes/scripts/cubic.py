@@ -102,7 +102,9 @@ class Cubic(object):
         fo.write("## vtf file\n")
 
         for i in range(self.Natoms):
-            atom = (" atom %d radius 1.0 type 1\n") % (i)
+            atom = (" atom %d radius %f type %d\n") % (i,
+                    self.radios[self.IndiceElementos[i] - 1],\
+                    self.IndiceElementos[i])
             fo.write(atom)
 
         pbc = ("%s %f %f %f \n\n") % (
@@ -131,6 +133,7 @@ class Cubic(object):
         pass
 
     def set_A2B2(self):
+        self.radios=np.array([.8, 1.0])
         for i in range(self.Natoms / 2):
             self.IndiceElementos[i] = 2
 
@@ -145,7 +148,10 @@ def main():
     print fcc.Positions
     print fcc.Positions.shape
 
+    fcc.set_A2B2()
+
     fcc.write_xyz("test.xyz")
+    fcc.write_vtf("test.vtf")
     fcc.write_config("config.par")
 
     fcc.list_positions()
