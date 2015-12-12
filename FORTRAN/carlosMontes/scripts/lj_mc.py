@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-
+from numba import jit
 import paramCorrida as PC
 import paramMezcla as PM
 import cubic as CB
@@ -13,6 +13,7 @@ class LJ(object):
 	self.system = system
         pass
 
+    @jit
     def energy(self):
 	for i in range(self.system.Natoms - 1): 
 	    for j  in range(i + 1, self.system.Natoms):
