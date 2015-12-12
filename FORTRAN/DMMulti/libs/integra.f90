@@ -79,6 +79,10 @@ contains
     ! -------------------------------------------------------------------------------------------
     ! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
     ! ------------------------------------------------------------------------------------------
+    write(*,*) '********************************************'
+    write(*,*) '* Comienza la integracion temporal'
+    write(*,*) '********************************************'
+
     j = 2                                              ! Contador para el loop de mediciones
     do i = 1, gNtime 
       do k = 1, gNpart
@@ -180,6 +184,7 @@ contains
       write(*,*)
       write(*,200)  presion, temperatura
       200 format(1X,'Presión = ' ,E14.7,5X,'Temperatura = ',E14.7)
+      write(*,*) '********************************************'
 
     end subroutine print_info
 

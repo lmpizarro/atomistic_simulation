@@ -130,6 +130,8 @@ contains
   !===============================================================================
   ! Se calculan valores medios y desviacions estándares
   ! Se escriben los resultados al archivo <val_medios.dat> 
+  ! Cuando escribe los datos de entrada, está asumiendo que se utiliza una FCC
+  ! TODO: generalizar para el resto de los posibles datos de entrada
 
   subroutine hace_estadistica(x,y,z)
 
@@ -171,11 +173,11 @@ contains
 
     open(unit=10, file='val_medios.dat', status='unknown')
     ! Primera parte con datos de la corrida   
-    write(10,100)   'Temp', '#_part', 'Lado_cubo', 'Dens', 'dt', '#_pasos',  '#_pasos_med.'
+    write(10,100)   'Temp', '#_part', 'Lado_cubo', 'Periodos', 'dt', '#_pasos',  '#_pasos_med.'
     100 format (2X,7(A,8X))
     write(10,200) gTemperatura, gNpart, gLado_caja, float(gPeriodos), &
                    gDt, float(gNtime), float(gNmed)
-    200 format (F6.2,10X,I6,9X,F11.5,5X,F11.5,5X,3(E9.2,5X))
+    200 format (F6.2,6X,I6,6X,F11.5,7X,F11.5,3X,3(E9.2,5X))
     write(10,*)
 
     ! Segunda linea con los valores medios y desviaciones estándars

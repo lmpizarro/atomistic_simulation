@@ -4,6 +4,8 @@
 !
 module read_param
 
+#include "control.h"
+
   use types,           only: dp
   use globales
 
@@ -23,6 +25,10 @@ contains
     ! lee la cantidad de especies
     read(10,*) gNespecies, gLiqSol
 
+    write(*,'(a)') ''
+    write(*,'(a)')      '************ PARAMETROS LEIDOS **************'
+    write(*,'(a,I8)') '************ Número de especies    = ' , gNespecies
+
     ! Alloca memoria de acuerdo a la cantidad de especies
     ! TODO tal vez esto vaya en la inicialización
     allocate(gLj_param(1:gNespecies,1:3))
@@ -33,23 +39,36 @@ contains
       read(10,*) glj_param(i,1), glj_param(i,2), glj_param(i,3)
       gMasa(i) = glj_param(i,3)
     enddo
-
+   
     if (gLiqSol .eq. 0) then
       ! lee el tamaño de la caja, la densidad, temperatura, 
       ! paso de tiempo, cantidad de pasos de tiempo
-      !read(10,*) gLado_caja, gRho, gTemperatura, gDt, gNtime, gNmed, gGamma
       read(10,*) gLado_caja, gRho
+      write(*,'(a)')      '************ Sistema  líquido ***************'
+      write(*,'(a,F8.3)') '************ Lado del cubo         = ' , gLado_caja
+      write(*,'(a,F8.3)') '************ Densidad partículas   = ' , gRho
 
     else if ( gLiqSol .eq. 1) then
-      !read(10,*) gLado_caja, gPeriodos, gCubicStructure, gTemperatura, gDt, gNtime, gNmed, gGamma
       read(10,*) gLado_caja, gPeriodos, gCubicStructure
+      write(*,'(a)')      '************ Sistema  sólido ****************'
+      if (gCubicStructure .eq. 2) then
+        write(*,'(a)')    '************ Estructura cristalina =      FCC'
+      end if
+      write(*,'(a,F8.3)') '************ Lado del cubo         = ' , gLado_caja
+      write(*,'(a,I8)')   '************ Periodos cel. unidad  = ' , gPeriodos
+      
     else
       print *, "no implementado"
       stop 212121212
-    endif
-
+    end if
 
     read(10,*) gTemperatura, gDt, gNtime, gNmed, gGamma
+
+    write(*,'(a,F8.3)') '************ Temperatura           = ' , gTemperatura
+    write(*,'(a,E8.2)') '************ Paso temporal dt      = ' , gDt
+    write(*,'(a,I8)')   '************ Número de pasos dt    = ' , gNtime
+    write(*,'(a,I8)')   '************ Pasos mediciones      = ' , gNmed
+    write(*,'(a)')      '*********************************************'
 
     !TODO No entiendo para qué esto
     ! ¿Por qué no se define directamente con el N de cada una?
@@ -61,6 +80,18 @@ contains
     enddo
 
     close(10)
+
+#if THERM == 0
+    write(*,'(a)') ''
+    write(*,'(a)')      '******** SIMULACION A E CONSTANTE ***********'
+    write(*,'(a)')      '*********************************************'
+#elif THERM == 1
+    write(*,'(a)') ''
+    write(*,'(a)')      '******** SIMULACION A T CONSTANTE ***********'
+    write(*,'(a)')      '********* TERMOSTATO DE LANGEVIN ************'
+    write(*,'(a,F8.3)') '************ Gamma                 = ' , gGamma
+    write(*,'(a)')      '*********************************************'
+#endif
 
   endsubroutine leer_parametros
 
