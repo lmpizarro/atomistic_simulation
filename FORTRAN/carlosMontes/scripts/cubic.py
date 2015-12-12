@@ -28,11 +28,8 @@ class Cubic(object):
             self.AtomsCell = 2
 
         self.Natoms = self.AtomsCell * self.Nperx * self.Npery * self.Nperz
-        self.Positions = np.zeros(
-            3 * self.Natoms,
-            dtype='float64').reshape(
-            3,
-            self.Natoms)
+        self.Positions = np.zeros(3 * self.Natoms, dtype='float64').reshape(
+            3, self.Natoms)
         self.IndiceElementos = np.ones(self.Natoms, dtype='int')
         self.NombreElementos = ["C"] * self.Natoms
 
@@ -64,15 +61,8 @@ class Cubic(object):
                 self.Positions[1][i], self.Positions[2][i]
 
     def generate_simple(self):
-        p = np.zeros(
-            3 *
-            self.Nperx *
-            self.Npery *
-            self.Nperz).reshape(
-            3,
-            self.Nperx *
-            self.Npery *
-            self.Nperz)
+        p = np.zeros(3 * self.Nperx * self.Npery * self.Nperz).reshape(
+            3, self.Nperx * self.Npery * self.Nperz)
         igr = 0
         for i in range(self.Nperx):
             for j in range(self.Npery):
@@ -103,8 +93,9 @@ class Cubic(object):
 
         for i in range(self.Natoms):
             atom = (" atom %d radius %f type %d\n") % (i,
-                    self.radios[self.IndiceElementos[i] - 1],\
-                    self.IndiceElementos[i])
+                                                       self.radios[
+                                                           self.IndiceElementos[i] - 1],
+                                                       self.IndiceElementos[i])
             fo.write(atom)
 
         pbc = ("%s %f %f %f \n\n") % (
@@ -123,32 +114,36 @@ class Cubic(object):
         format1 = "%14.8f %14.8f %14.8f %10d\n"
         format2 = "%10d %10d %10d %10d %14.8f\n"
         fo = open(name, 'a')
-        fo.write((format2) % (self.Natoms, self.Nperx, self.Npery, self.Nperz,\
-            self.parametro_red))
+        fo.write((format2) % (self.Natoms, self.Nperx, self.Npery, self.Nperz,
+                              self.parametro_red))
         for i in range(np.size(self.Positions[0])):
             tmp = (format1) % (self.Positions[0][i],
-                              self.Positions[1][i], self.Positions[2][i],
-                              self.IndiceElementos[i])
+                               self.Positions[1][i], self.Positions[2][i],
+                               self.IndiceElementos[i])
             fo.write(tmp)
         fo.close()
 
-    def cpc (self):
+    def cpc(self):
         #tmp = gLado_caja*floor(gR/gLado_caja)
         #gR = gR - tmp
         pass
-        tmpx = self.lado_cubo_x * np.floor(self.Positions[0,:] / self.lado_cubo_x)
-        tmpy = self.lado_cubo_x * np.floor(self.Positions[1,:] / self.lado_cubo_y)
-        tmpz = self.lado_cubo_x * np.floor(self.Positions[2,:] / self.lado_cubo_z)
+        tmpx = self.lado_cubo_x * \
+            np.floor(self.Positions[0, :] / self.lado_cubo_x)
+        tmpy = self.lado_cubo_x * \
+            np.floor(self.Positions[1, :] / self.lado_cubo_y)
+        tmpz = self.lado_cubo_x * \
+            np.floor(self.Positions[2, :] / self.lado_cubo_z)
 
-        tmp = np.zeros(3*self.Natoms).reshape(3, self.Natoms)
-        tmp[0,:] = tmpx
-        tmp[1,:] = tmpy
-        tmp[2,:] = tmpz
+        tmp = np.zeros(3 * self.Natoms).reshape(3, self.Natoms)
+        tmp[0, :] = tmpx
+        tmp[1, :] = tmpy
+        tmp[2, :] = tmpz
 
         self.Positions = self.Positions - tmp
 
-    def noisify(self, amplitude): 
-        tmp = amplitude * np.random.rand(self.Natoms * 3). reshape(3, self.Natoms)
+    def noisify(self, amplitude):
+        tmp = amplitude * \
+            np.random.rand(self.Natoms * 3). reshape(3, self.Natoms)
         self.Positions = self.Positions + tmp
         self.cpc()
 
@@ -157,9 +152,21 @@ class Cubic(object):
 
     # por ahora valido para fcc
     def set_A2B2(self):
-        self.radios=np.array([.8, 1.0])
+        self.radios = np.array([.8, 1.0])
         for i in range(self.Natoms / 2):
             self.IndiceElementos[i] = 2
+
+    # por ahora valido para fcc
+    def set_A1B1C1D1(self):
+        self.radios = np.array([.8, 1.0, 1.1, 1.2])
+        for i in range(self.Natoms / 4):
+            self.IndiceElementos[i] = 2
+        for i in range(self.Natoms/4,self.Natoms / 2):
+            self.IndiceElementos[i] = 3
+        for i in range(self.Natoms/2,3*self.Natoms / 4):
+            self.IndiceElementos[i] = 4
+        
+
 
     def set_A3B1(self):
         pass
@@ -172,7 +179,7 @@ def main():
     print fcc.Positions
     print fcc.Positions.shape
 
-    fcc.set_A2B2()
+    fcc.set_A1B1C1D1()
     fcc.noisify(2)
 
     fcc.write_xyz("test.xyz")
