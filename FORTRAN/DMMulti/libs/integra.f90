@@ -5,6 +5,7 @@ module integra
   use types,             only: dp
   use globales
   use mediciones,        only: calcula_pres, calcula_temp, calcula_kin, calcula_fuerza
+  use utils,             only: hace_estadistica
 #ifdef MODOS_VIB
   use mediciones,        only: acumula_velocidades_equivalentes,  acumula_velocidades_posicion,&
                                acumula_velocidades_posicion_simple
@@ -79,6 +80,10 @@ contains
     ! -------------------------------------------------------------------------------------------
     ! COMIENZA EL LOOP PRINCIPAL DE INTEGRACION
     ! ------------------------------------------------------------------------------------------
+    write(*,*) '********************************************'
+    write(*,*) '* Comienza la integracion temporal'
+    write(*,*) '********************************************'
+
     j = 2                                              ! Contador para el loop de mediciones
     do i = 1, gNtime 
       do k = 1, gNpart
@@ -127,6 +132,10 @@ contains
   ! ----------------------------------------------------------------------------
   ! FIN DEL LOOP PRINCIPAL DE INTEGRACION
   ! ----------------------------------------------------------------------------
+  write(*,*) '********************************************'
+  write(*,*) '* Fin de la integracion temporal'
+  write(*,*) '********************************************'
+
 #ifdef MODOS_VIB
     call escribe_en_columnas(gCorrVfac_1,'veloc_fac_1.dat',gNmed*gDt)
     call escribe_en_columnas(gCorrVfac_2,'veloc_fac_2.dat',gNmed*gDt)
@@ -134,10 +143,9 @@ contains
     call escribe_en_columnas(gCorrVver_1,'veloc_ver_1.dat',gNmed*gDt)
 #endif
 
-
   ! Escritura de las magnitudes en funci..n del tiempo
   if (gNmed > 0) then
-    ! Guarda las energ..as por part..cula  en un archivo [Potencial, Cin..tica, Total]
+    ! Guarda las energías por partícula  en un archivo [Potencial, Cinética, Total]
     call escribe_en_columnas(Eng_t/gNpart,'energias.dat',gNmed*gDt)
 
     ! Guarda la presion en un archivo
@@ -153,12 +161,15 @@ contains
     ! Como se escribe también r, el dr no es necesario. Se pasa 0.0 para evitar errores
     call escribe_en_columnas(cor_par,'gr.dat',0.0_dp)
 #endif
-
-
+ 
   ! Se imprime en pantalla los resultados finales
   write(*,*) '* Energias por partícula al final de la integración'
   call print_info(Pres,Temp)
-
+  
+  ! Se calculan valores medios de presión y temperatura y se escriben a archivo
+  call hace_estadistica(Pres_t, Temp_t, Eng_t/gNpart)
+  
+  ! Se libera memoria
   deallocate( Eng_t, Pres_t, Temp_t)
 
   contains
@@ -174,6 +185,7 @@ contains
       write(*,*)
       write(*,200)  presion, temperatura
       200 format(1X,'Presión = ' ,E14.7,5X,'Temperatura = ',E14.7)
+      write(*,*) '********************************************'
 
     end subroutine print_info
 

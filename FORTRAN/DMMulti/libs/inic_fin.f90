@@ -129,8 +129,9 @@ contains
 
     call calcula_fuerza()
     
-    print *, "energia potencial inicial: ", gPot
-    write(*,*) '********************************************'
+    !write(*,*) '********************************************'
+    !write(*,*) "* Energia potencial inicial: ", gPot/gNpart
+    !write(*,*) '********************************************'
 
    !call integracion_min()
     ! Calcula energía cinética
@@ -150,14 +151,17 @@ contains
     call inic_gr()
 #endif
     ! Escribe información en pantalla
+    write(*,*) '********************************************'
     write(*,*) '* Valores iniciales por partícula'
     write(*,100) gPot/gNpart, gKin/gNpart, (gPot+gKin)/gNpart
     100 format(1X,'Potencial = ', E14.7, 5X, 'Cinética = ', E14.7, 5X, 'Total = ', E14.7) 
     write(*,*)
     write(*,200)  Pres, Temp 
     200 format(1X,'Presion = ' ,E14.7,5X,'Temperatura = ',E14.7)
+    write(*,*) '********************************************'
 
    
+    write(*,*) '********************************************'
     write(*,*) '* Finaliza subrutina de inicialización'
     write(*,*) '********************************************'
 
