@@ -53,6 +53,18 @@ class Cubic(object):
 
         self.Positions = self.parametro_red * self.Positions
 
+    def set_parametro_red(self, parametro_red):
+        tmp_pr = self.parametro_red
+
+        self.parametro_red = parametro_red
+
+        self.lado_cubo_x = self.parametro_red * self.Nperx
+        self.lado_cubo_y = self.parametro_red * self.Npery
+        self.lado_cubo_z = self.parametro_red * self.Nperz
+
+        self.Positions = self.parametro_red * self.Positions/tmp_pr 
+
+
     def list_positions(self):
         print self.IndiceElementos
         print self.NombreElementos
