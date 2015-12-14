@@ -8,7 +8,7 @@ module mediciones
                         gNCorrVfac_1, gNCorrVfac_2, gNCorrVfac_3, gNCorrVver_1,&
                         gNmodosVibra, gRho, gVir, gVol, gGamma, gDt,&
                         gPot, gTemperatura, gLado_caja, gCombEpsilon, &
-                        gIndice_elemento, gMasa, gPot_cut, gRc2, gCombSigma
+                        gIndice_elemento, gMasa, gPot_cut, gRc2, gCombSigma, gNtime
                          
   !use globales
   use ziggurat
@@ -32,7 +32,8 @@ module mediciones
 
   public   :: calcula_fuerza, calcula_pres, calcula_kin, calcula_temp
 #ifdef MODOS_VIB
-  public   ::   acumula_velocidades_posicion, acumula_velocidades_equivalentes
+  public   ::   acumula_velocidades_posicion, acumula_velocidades_equivalentes,&
+                acumula_velocidades_posicion_simple
 #endif
 #ifdef CORR_PAR
   public   :: normaliza_gr
@@ -487,12 +488,13 @@ contains
     real(dp), dimension(:,:) :: VV
 
     ! si todavia no se llegó al fin
-    if (gNmodosVibra .lt. gKmed * gNpart) then
+    if (gNmodosVibra .lt. gNtime) then
       !inicializo la velocidad de esa posicion a cero      
       gCorrVver_1(:, gNmodosVibra) = 0
       gCorrVfac_1(:, gNmodosVibra) = 0
       gCorrVfac_2(:, gNmodosVibra) = 0
       gCorrVfac_3(:, gNmodosVibra) = 0
+
       do i=1,gNpart / 4
         j = 4 * (i - 1)
 
@@ -502,6 +504,7 @@ contains
         gCorrVfac_3(:, gNmodosVibra) = gCorrVfac_3(:, gNmodosVibra) + VV(:, j + 4)
   
       enddo
+
       gCorrVver_1(:, gNmodosVibra) = 4 * gCorrVver_1(:, gNmodosVibra) / gNpart
       gCorrVfac_1(:, gNmodosVibra) = 4 * gCorrVfac_1(:, gNmodosVibra) / gNpart
       gCorrVfac_2(:, gNmodosVibra) = 4 * gCorrVfac_2(:, gNmodosVibra) / gNpart
@@ -509,7 +512,27 @@ contains
       gNmodosVibra = gNmodosVibra + 1
     endif  
   endsubroutine acumula_velocidades_posicion
-  
+
+  ! pasa un vector de velocidades y la posicion de una celda
+  ! muestrea la velocidad en los componentes de la celda
+  ! válido para una celda fcc
+  subroutine acumula_velocidades_posicion_simple (VV, pos)
+    integer, intent(in) :: pos 
+    real(dp), dimension(:,:) :: VV
+    ! si todavia no se llegó al fin
+    if (gNmodosVibra .lt. gNtime ) then
+      if (pos .lt. gNpart /  4) then
+        gCorrVver_1(:, gNmodosVibra) = VV(:, pos + 1)
+        gCorrVfac_1(:, gNmodosVibra) = VV(:, pos + 2)
+        gCorrVfac_2(:, gNmodosVibra) = VV(:, pos + 3)
+        gCorrVfac_3(:, gNmodosVibra) = VV(:, pos + 4)
+      endif
+      gNmodosVibra = gNmodosVibra + 1
+    endif  
+
+  endsubroutine acumula_velocidades_posicion_simple 
+
+ 
   !############################################################################!
   ! calculo de autocorrelaciones 
   ! valido para sistemas binarios
