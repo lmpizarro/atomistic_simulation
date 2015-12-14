@@ -20,14 +20,8 @@ def main():
     # parámetros de la corrida
     corrida = PC.Corrida(1.0, 0.0001, 10000, 100, 0.5)
 
+    fcc.write_vtf("inicio.vtf") 
     lj = LJ.LJ(components, fcc)
-    #print(lj.energy()/fcc.Natoms)
-    #fcc.IndiceElementos[0] = 1
-    #fcc.IndiceElementos[255] = 2
-
-    #print(lj.energy()/fcc.Natoms)
-
-    # loop de sorteo
 
     KT = 0.5
     Nmc = 1000
@@ -46,9 +40,15 @@ def main():
                 else:
                     if np.exp(-KT*deltaE) > np.random.random():
                        aceptados = aceptados + 1
-                       print ("aceptado por KT", counter)
+                       print ("aceptado por KT", counter, aceptados)
+                    else:
+                       pass
+                       #no aceptado vuelven los índices a sus posiciones
+                       fcc.IndiceElementos[indxs[0]] = a1
+                       fcc.IndiceElementos[indxs[1]] = a2
         counter = counter + 1
     print (counter)        
+    fcc.write_vtf("fin.vtf") 
 
 
 if __name__ == "__main__":
