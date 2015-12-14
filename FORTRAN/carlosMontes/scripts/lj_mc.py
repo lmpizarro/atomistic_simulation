@@ -18,6 +18,9 @@ class LJ(object):
 	for i in range(self.system.Natoms - 1): 
 	    for j  in range(i + 1, self.system.Natoms):
                 Shift = self.componentes.potCut[self.system.IndiceElementos[i], self.system.IndiceElementos[j]]		    
+                Epsilon = self.componentes.epsilon[self.system.IndiceElementos[i], self.system.IndiceElementos[j]]		    
+                Sigma = self.componentes.sigma[self.system.IndiceElementos[i], self.system.IndiceElementos[j]]		    
+                Rc2 = self.componentes.rc2[self.system.IndiceElementos[i], self.system.IndiceElementos[j]]
                 pass
 
 def main():
