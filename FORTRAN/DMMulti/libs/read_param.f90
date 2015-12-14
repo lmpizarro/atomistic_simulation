@@ -59,7 +59,7 @@ contains
       
     else
       print *, "no implementado"
-      stop 212121212
+      stop 3
     end if
 
     read(10,*) gTemperatura, gDt, gNtime, gNmed, gGamma
