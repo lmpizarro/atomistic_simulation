@@ -73,18 +73,18 @@ contains
         if (gCubicStructure .eq. 0) then
           print *, "llama a cubica simple"
           print *, "no implementado"
-          stop 212121212
+          stop 2
         else if (gCubicStructure .eq. 1) then 
           print *, "llama a cubica centrada en el cuerpo"
           print *, "no implementado"
-          stop 212121212
+          stop 2
         else if (gCubicStructure .eq. 2) then 
           print *, "llama a cubica centrada en las caras"
           call inicializar_globales_fcc()
         endif
       else
         print *, "no implementado"
-        stop 212121212
+        stop 2
       endif  
     ! Trata de leer el archivo con la configuración inicial
     call lee_estados(gR,gV,gIndice_elemento,leido)
@@ -105,11 +105,11 @@ contains
         if (gCubicStructure .eq. 0) then
           print *, "llama a cubica simple"
           print *, "no implementado"
-          stop 212121212
+          stop 2
         else if (gCubicStructure .eq. 1) then 
           print *, "llama a cubica centrada en el cuerpo"
           print *, "no implementado"
-          stop 212121212
+          stop 2
         else if (gCubicStructure .eq. 2) then 
           print *, "llama a cubica centrada en las caras"
         !  call inicializar_globales_fcc()
@@ -117,7 +117,7 @@ contains
         endif
       else
         print *, "no implementado"
-        stop 212121212
+        stop 2
       endif        
       ! Inicializa las velocidades 
       call vel_inic()
@@ -258,7 +258,7 @@ end subroutine inicia_posicion_rn
     ! --- Para debug
     print *, "inicia posicion red fcc"
     if (gPercent(1).ne. 0.5 ) then
-      stop 1212121212
+      stop 2
     endif
     ! --- Fin debug
 
@@ -309,7 +309,7 @@ end subroutine inicia_posicion_rn
     print *, "inicia posicion red fcc"
 
     if (gPercent(1).ne. 0.5 ) then
-      stop 1212121212
+      stop 1
     endif
 
     tmp = uni()
