@@ -4,6 +4,7 @@ FORTRAN/ising/src/ising_fun.pyc
 FORTRAN/ising/src/parametros.pyc
 FORTRAN/ising/informe/informe.pdf
 *.pyc
+FORTRAN/DMMulti/docs/presentacion/slides.pdf
 *corrida*
 *iteration*
 *sheldon*
