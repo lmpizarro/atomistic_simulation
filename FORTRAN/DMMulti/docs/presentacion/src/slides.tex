@@ -1,0 +1,372 @@
+%\documentclass[table,handout]{beamer}
+\documentclass[hyperref={pdfpagemode=FullScreen},table]{beamer}
+\usepackage[latin1]{inputenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{colortbl}
+\usepackage{multirow,caption}
+%\usepackage{booktabs}
+\usepackage{tabularx}
+%\usepackage{amssymb}
+\usepackage{appendixnumberbeamer} % corrige las páginas en el apéndice
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,snakes,shadows,arrows,calc,decorations.markings}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.9}
+
+%\usepackage{beamerthemesplit}
+
+%% Distintos temas disponibles
+%\usetheme{Frankfurt} % bien
+%\usetheme{Bergen}
+%\usetheme{Berlin} % bien
+%\usetheme{Copenhagen}
+%\usetheme{Berkeley} % maso
+\usetheme{Darmstadt} % mejor
+%\usetheme{Dresden}
+%\usetheme{Warsaw}
+%\usetheme{AnnArbor} %feo
+%\usetheme{Montpellier}
+%\usetheme{Madrid} %bueno
+
+\useoutertheme[subsection=false,footline=title]{miniframes}
+
+\graphicspath{{Figuras/}}      %Para tener los gráficos en una carpeta
+
+%% Cambia los colores de un tema
+%\usecolortheme[]{crane}
+%\usecolortheme{sidebartab}
+\usecolortheme[RGB={40,100,50}]{structure}
+\beamertemplatesolidbackgroundcolor{green!2}
+
+%% Aparece sombreado los items no vistos
+\beamersetuncovermixins{\opaqueness<1->{20}}{\opaqueness<2->{15}}
+
+%% Uso de la fuente
+%\usefonttheme[onlylarge]{structurebold}
+
+%% Barra lateral
+%\setbeamersize{sidebar width left=1cm}
+
+%\setbeamertemplate{sidebar canvas left}[horizontal shading]
+
+%% Cambia tick box en los iconos de la navegación
+\setbeamertemplate{mini frames}[default] %default - box - tick
+
+%% Quita la barra navegadora por defecto
+\setbeamertemplate{navigation symbols}{}
+
+%% Hace que la bibiolgrafia sea un librito
+%\setbeamertemplate{bibliography item}[book]
+
+%% Cambia el color de alerta, en bloque y en palabras.
+\setbeamercolor{alerted text}{fg=orange!70!black}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Define la barra de arriba
+
+%\setbeamercolor{postit}{bg=blue!70}
+
+\setbeamertemplate{headline}
+{%
+%\begin{beamercolorbox{postit}
+\begin{beamercolorbox}{section in head/foot}
+\vskip2pt\insertnavigation{\paperwidth}\vskip4pt
+%\insertpagenumber
+\end{beamercolorbox}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Define la barra de abajo
+%\setbeamertemplate{footline}
+%{%
+%\begin{beamercolorbox}{section in head/foot}
+%\vskip2pt\hskip4pt\insertshorttitle[width=10cm]\hskip2cm\insertframenumber\vskip2pt
+%%\insertframenumber
+%\end{beamercolorbox}%
+%}
+
+%% Está copiado del outertheme split
+\setbeamertemplate{footline}
+{%
+  \hbox{\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm plus1fill,rightskip=.3cm]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\inserttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+    \usebeamerfont{title in head/foot}
+    \flushright{ \insertframenumber \, de \inserttotalframenumber
+    \hskip0.1cm}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+%\setbeamertemplate{footline}[frame number]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Información de los autores
+\title{Dinámica molecular en un cristal binario}
+
+\author{
+	\\ \vspace{1cm} Luis Pizarro \and	 
+     Pablo Bellino
+   }
+
+    \institute{\texttt{\{lpizarro,pbellino\}@cnea.gov.ar}}
+\date{{}\\ \vspace{2.5cm} Introdución a la Simulación Computacional\\ Universidad de San Martín - Centro Atómico Constituyentes \\ Diciembre de 2015}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+
+%% Para incluir una imagen de fondo
+%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{fase.png}}
+
+%\frame{\tableofcontents}
+
+%% Resalta la sección a la que se pasa
+%\AtBeginSection[] {
+% \begin{frame}
+%    \frametitle{Resumen}
+%    \small
+%    \tableofcontents[currentsection,hideothersubsections]
+%    %\tableofcontents[sectionstyle=show/shaded,subsectionstyle=show/shaded/shaded]
+%    \normalsize
+% \end{frame}
+%}
+
+\section{Introducción}
+
+\begin{frame}{Objetivos}
+        \begin{itemize}[<+-|alert@+>]
+            \item Presentación de los resultados obtenidos durante la puesta en marcha de la CNA U-II (a potencia cero)
+        \end{itemize}
+\end{frame}
+
+\section{Procedimientos}
+
+\begin{frame}{Reactímetro}
+	\begin{block}{Ecuaciones de la cinética puntual}
+	\begin{align*}
+		\frac{dC_i(t)}{dt} &= \frac{b_i}{\Lambda^*} n(t) - \lambda_i C_i(t) \hspace{1cm} i=1,...,15  \\
+		\$(t) &= 1 + \frac{\Lambda^*}{n(t)} \left[\frac{dn(t)}{dt} - \sum_{i=1}^{15} \lambda_i C_i(t)\right] 
+	\end{align*}
+	\end{block}
+    \begin{itemize}
+        \item $n(t)$ proporcional a la tasa de detección
+        \item Seis grupos de neutrones retardados (Tuttle)
+        \item Nueve grupos de fotoneutrones (Keepin)
+        \item Discretización asumiendo evolución lineal de $n(t)$ en un paso temporal. Integración analítica de las ecuaciones de los precursores
+        \item Paso de discretización de $0.1\,s$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+	\begin{center}
+		\begin{tikzpicture}
+		\tikzstyle{vector} = [thick,color=red!80!black,>=stealth,->]
+		\tikzstyle{atom1} = [circle,shading=ball, ball color=black!60!white, minimum size=5pt]
+		\tikzstyle{atom2} = [circle,shading=ball, ball color=orange!50!yellow, minimum size=4pt]
+		\begin{axis}[
+		view = {40}{20},
+		axis lines=none,
+		axis equal=true,
+		xmin=-0.1,
+		xmax=1.1,
+		ymin=-0.1,
+		ymax=1.1,
+		zmin=-0.1,
+		zmax=1.1,
+		xtick=\empty,
+		ytick=\empty,
+		ztick=\empty
+		]
+		\coordinate (A0) at (axis cs:0,0,0);
+		\coordinate (A1) at (axis cs:1,0,0);
+		\coordinate (A2) at (axis cs:0,1,0);
+		\coordinate (A3) at (axis cs:0,0,1);
+		
+		\coordinate (A4) at (axis cs:1,1,0);
+		\coordinate (A5) at (axis cs:1,0,1);
+		\coordinate (A6) at (axis cs:0,1,1);
+		\coordinate (A7) at (axis cs:1,1,1);
+		
+		\coordinate (A8) at (axis cs:0.5,0.5,0);
+		\coordinate (A9) at (axis cs:0.5,0,0.5);
+		\coordinate (A10) at (axis cs:0,0.5,0.5);
+		
+		\coordinate (A11) at (axis cs:0.5,0.5,1);
+		\coordinate (A12) at (axis cs:0.5,1,0.5);
+		\coordinate (A13) at (axis cs:1,0.5,0.5);
+		
+		\draw[black!25] (A0) -- (A8) -- (A4);
+		\draw[black!25] (A4) -- (A12) -- (A6);
+		\draw[black!25] (A0) -- (A10) -- (A6);
+		\draw[black!25] (A1) -- (A8) -- (A2);
+		\draw[black!25] (A2) -- (A10) -- (A3);
+		\draw[black!25] (A7) -- (A12) -- (A2);
+		\draw[black] (A1) -- (A13) -- (A7);
+		\draw[black] (A3) -- (A11) -- (A7);
+		\draw[black] (A5) -- (A13) -- (A4);
+		\draw[black] (A6) -- (A11) -- (A5);
+		\draw[black] (A5) -- (A9) -- (A0);
+		\draw[black] (A0) -- (A1);
+		\draw[black] (A0) -- (A2);
+		\draw[black] (A0) -- (A3);
+		\draw[black] (A0) -- (A3);
+		\draw[black] (A3) -- (A5);
+		\draw[black] (A3) -- (A6);
+		\draw[black] (A6) -- (A2);
+		\draw[black] (A5) -- (A1);
+		\draw[black] (A7) -- (A4);
+		\draw[black] (A5) -- (A7);
+		\draw[black] (A1) -- (A4);
+		\draw[black] (A6) -- (A7);
+		\draw[black] (A2) -- (A4);
+		\fill[atom2] (A12) circle (4pt);
+		\fill[atom1] (A0) circle (5pt);
+		\fill[atom1] (A1) circle (5pt);
+		\fill[atom1] (A2) circle (5pt);
+		\fill[atom1] (A3) circle (5pt);
+		\fill[atom1] (A4) circle (5pt);
+		\fill[atom1] (A5) circle (5pt);
+		\fill[atom1] (A6) circle (5pt);
+		\fill[atom1] (A7) circle (5pt);
+		\fill[atom1] (A8) circle (5pt);
+		\fill[atom2] (A9) circle (4pt);
+		\fill[atom2] (A10) circle (4pt);
+		\fill[atom1] (A11) circle (5pt);
+		\fill[atom2] (A13) circle (4pt);
+		\draw[vector] (A0) -- (A8);
+		\draw[vector] (A0) -- (A10);
+		\draw[vector] (A0) -- (A9);
+		\end{axis}
+%		\node[red,text width=3cm] at (0.0,2) {Vectores de la celda unidad};
+		\draw[atom1] (1,0) circle (5pt);
+		\node[] at (2.0,0) {Átomo $1$};
+		\draw[atom2] (1,-0.5) circle (4pt);
+		\node[] at (2.0,-0.5) {Átomo $2$};
+		\draw[vector,<->,blue] (A0) -- node[below] {a} (A1);
+%		\node[blue] at (4.5,0) {a: parámetro de red};
+		\end{tikzpicture}
+		
+	\end{center}
+ \end{frame}
+
+
+\begin{frame}{Ubicación de los detectores neutrónicos}
+	\begin{columns}[t]
+		\hspace{-1cm}
+		\begin{column}{0.7\linewidth}
+	\begin{center}
+		\vspace{-1em}
+		%\includegraphics[width=0.85\textwidth]{Nucleo_CNA2.pdf}
+	\end{center}
+\end{column}
+	\hspace{-1.5cm}
+	\begin{column}{0.45\linewidth}
+		\vspace{-2em}
+		\begin{itemize}
+			\item Dos detectores de los canales de arranque de la central (BF$_3$)
+			\item Una cámara de ionización (de tres) especialmente instrumentada para estos ensayos
+		\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+
+\section{Resultados}
+
+
+
+\begin{frame}{Calibración del Banco B y del boro}
+	\begin{columns}[t]
+		\begin{column}{0.45\linewidth}
+			\begin{center}
+				\small{Señales de los detectores}
+				%\includegraphics[width=1.0\textwidth]{Debora_03_n.pdf}
+			\end{center}
+		\end{column}
+		\begin{column}{0.45\linewidth}
+			\vspace{-1em}
+			\begin{center}
+				\small{Reactividad estimada (relativa al  valor total del paso)}
+				%\includegraphics[width=1.0\textwidth]{Debora_03_r_aatn.pdf}
+			\end{center}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Insercción del Banco B}
+	\begin{columns}[t]
+		\begin{column}{0.5\linewidth}
+	\begin{center}
+		Reactividad de la porción introducida del Banco B ($\Delta\$$)
+		%\includegraphics[width=1\textwidth]{Debora_03_r_detalle_aatn.pdf}
+	\end{center}
+		\end{column}
+		\begin{column}{0.5\linewidth} 
+			\begin{itemize}
+			\item Se tiene en cuenta el efecto el tiempo de inserción del Banco B mientras se produce el filtrado del moderador
+			\item Se extrapola linealmente a la evolución de la reactividad
+			\item Se calcula el coeficiente de reactividad del Banco B:
+			\begin{block}{}
+		\begin{equation*}
+			\Gamma_s (s) = \frac{\Delta \$}{\Delta s}
+		\end{equation*}
+		\end{block}
+		\end{itemize}
+		\end{column}
+	\end{columns}	
+\end{frame}
+
+
+\begin{frame}{Reactividad de barras individuales (caliente)}
+	\begin{center}
+		Experiencias de caída de barras individuales
+		\begin{block}{}
+\begin{table}[h]
+	\begin{center}
+%		\captionsetup{width=15cm}
+%		\caption{Reactividad de barras individuales en caliente.}
+		\label{tb:bcind}
+%		\begin{tabular}{cccccc}
+%			\toprule
+%			\multirow{2}{*}{Barra} & \multirow{2}{*}{$s_i\,[cm]$} & \multirow{2}{*} {$s_f\,[cm]$} & \multicolumn{3}{c}{$\Delta\$/\langle\Delta\$\rangle$}\\
+%			\cmidrule(lr){4-6}
+%			& & & AI1 & CT1 & CT2\\	\midrule
+%			S22 & $98$  & $200$ & $1.03(2)$ & $1.11(5)$ & $0.86(5)$\\ 
+%			S23 & $N/R$ & $272$ & $0.89(3)$ & $0.93(9)$ & $1.1862)$\\
+%			S11 & $91$  & $251$ & $1.15(2)$ & $1.07(3)$ & $0.78(3)$\\ 	
+%			\bottomrule
+%		\end{tabular}
+	\end{center}
+\end{table}
+\end{block}
+		Las reactividades $\Delta\$$ para cada detector se expresan de forma relativa al promedio $\langle\Delta\$\rangle$ entre los tres detectores.
+	\end{center}
+\end{frame}
+
+
+
+\section{Conclusiones}
+
+\begin{frame}{Conclusiones}
+    \begin{itemize}[<+-|alert@+>]
+        \item Mediciones y determinaciones independientes de parámetros físicos durante la puesta en marcha de la CNA U-II
+        \item Implementación del Multi Reactímetro Digital con tres detectores de forma simultánea (cámara de ionización y canales de arranque) para la estimación de reactividad en los distintos ensayos
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+	\begin{block}{}
+		\centerline {\Huge Muchas gracias.}
+	\end{block}
+\end{frame}
+
+\appendix
+
+\end{document}
