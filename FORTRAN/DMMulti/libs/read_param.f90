@@ -17,10 +17,15 @@ contains
   !===============================================================================
   ! Se lee el archivo 'input.par' que continene todos los datos del problema
   subroutine leer_parametros()
-
+    logical :: es
     integer :: i
 
-    open(unit=10,file='input.par',status='unknown')
+    inquire(file='./input.par',exist=es)
+
+    if(es .eqv. .false.) then
+       stop 1
+    endif
+    open(unit=10,file='./input.par',status='old')
 
     ! lee la cantidad de especies
     read(10,*) gNespecies, gLiqSol
