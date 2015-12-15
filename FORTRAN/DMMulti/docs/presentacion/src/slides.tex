@@ -1,6 +1,7 @@
 %\documentclass[table,handout]{beamer}
 \documentclass[hyperref={pdfpagemode=FullScreen},table]{beamer}
 \usepackage[latin1]{inputenc}
+\usepackage{etex}  % para evitar error al usar el packete animate
 \usepackage[spanish,es-nodecimaldot]{babel}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -16,7 +17,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.9}
 
-\usepackage{multimedia}
+%\usepackage{multimedia}
 %\usepackage{beamerthemesplit}
 \usepackage{animate}
 
@@ -160,11 +161,18 @@
 %        \end{center}
 %\end{frame}
 %
-%\begin{frame}{Animado muchos jpg}
-%        \begin{figure}
-%        \animategraphics[controls,loop,width=0.4\textwidth]{10}{./vid/amo}{001}{200}
-%        \end{figure}
-%\end{frame}
+\begin{frame}{Cristal amorfo}
+        \begin{figure}
+        \animategraphics[controls,loop,width=0.4\textwidth]{10}{./vid/pic_amorfo}{0001}{200}
+        \end{figure}
+\end{frame}
+
+\begin{frame}{Vibraciones FCC}
+        \begin{figure}
+        \animategraphics[controls,loop,width=0.4\textwidth]{10}{./vid/pic_vibr_0.2T}{0001}{200}
+        \end{figure}
+\end{frame}
+
 
 \section{Procedimientos}
 
