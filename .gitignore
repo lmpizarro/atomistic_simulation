@@ -15,3 +15,6 @@ FORTRAN/DMMulti/docs/presentacion/src/src_figs/vid/.*.jpg
 *build*
 *.so
 *.pyf
+*.aux
+*.log
+*.out
