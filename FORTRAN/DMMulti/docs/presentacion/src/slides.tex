@@ -243,11 +243,11 @@
     \end{column}
     \begin{column}{0.5\linewidth}
       \vspace{-1em}
-      \begin{itemize}  
-       \item<+->Interacciones de a pares a través de un potencial de Lenard-Jones
-         \begin{block}<+->{Reglas de combinación}
-		     \vspace{-1em}
-         \begin{align*}
+      \begin{itemize}[<+-|alert@+>] 
+        \item<+->Interacciones de a pares a través de un potencial de Lenard-Jones
+        \begin{block}<+->{Reglas de combinación}
+		      \vspace{-1em}
+          \begin{align*}
 		        \epsilon_{ij} &= \sqrt{\epsilon_i \epsilon_j} \qquad \text{(Berthelot)} \\
             \sigma_{ij}   &= \frac{\sigma_i + \sigma_j}{2} \qquad \text{(Lorentz)}
           \end{align*}
@@ -319,11 +319,11 @@
 %        \end{center}
 %\end{frame}
 %
-\begin{frame}{Cristal amorfo}
-  \begin{figure}
-    \animategraphics[controls,loop,width=0.4\textwidth]{10}{./vid/pic_amorfo}{0001}{200}
-  \end{figure}
-\end{frame}
+%\begin{frame}{Cristal amorfo}
+%  \begin{figure}
+%    \animategraphics[controls,loop,width=0.4\textwidth]{10}{./vid/pic_amorfo}{0001}{200}
+%  \end{figure}
+%\end{frame}
 
 
 \section{Correlación entre pares}
@@ -353,7 +353,7 @@
 
 \begin{frame}{Correlación entre pares con $T^*=0$}
 	\begin{center}
-  	\includegraphics[width=0.9\textwidth]{t0_grs.pdf}
+  	\includegraphics[width=0.95\textwidth]{t0_grs.pdf}
 	\end{center}
 \end{frame}
 
@@ -367,98 +367,64 @@
 \end{frame}
 
 
-\begin{frame}{Ubicación de los detectores neutrónicos}
-	\begin{columns}[t]
-		\hspace{-1cm}
-		\begin{column}{0.7\linewidth}
-	    \begin{center}
-		    \vspace{-1em}
-		      %\includegraphics[width=0.85\textwidth]{Nucleo_CNA2.pdf}
-	    \end{center}
-    \end{column}
-	  \hspace{-1.5cm}
-	  \begin{column}{0.45\linewidth}
-		  \vspace{-2em}
-		    \begin{itemize}
-			    \item Dos detectores de los canales de arranque de la central (BF$_3$)
-			    \item Una cámara de ionización (de tres) especialmente instrumentada para estos ensayos
-		    \end{itemize}
-		\end{column}
-	\end{columns}
-\end{frame}
-
-
-\section{Resultados}
-
-
-
-\begin{frame}{Calibración del Banco B y del boro}
-	\begin{columns}[t]
-		\begin{column}{0.45\linewidth}
-			\begin{center}
-				\small{Señales de los detectores}
-				%\includegraphics[width=1.0\textwidth]{Debora_03_n.pdf}
-			\end{center}
-		\end{column}
-		\begin{column}{0.45\linewidth}
-			\vspace{-1em}
-			\begin{center}
-				\small{Reactividad estimada (relativa al  valor total del paso)}
-				%\includegraphics[width=1.0\textwidth]{Debora_03_r_aatn.pdf}
-			\end{center}
-		\end{column}
-	\end{columns}
-\end{frame}
-
-\begin{frame}{Insercción del Banco B}
-	\begin{columns}[t]
-		\begin{column}{0.5\linewidth}
+\begin{frame}{$g_{22}(r^*)$ en función de $T^*$}
 	\begin{center}
-		Reactividad de la porción introducida del Banco B ($\Delta\$$)
-		%\includegraphics[width=1\textwidth]{Debora_03_r_detalle_aatn.pdf}
-	\end{center}
-		\end{column}
-		\begin{column}{0.5\linewidth} 
-			\begin{itemize}
-			\item Se tiene en cuenta el efecto el tiempo de inserción del Banco B mientras se produce el filtrado del moderador
-			\item Se extrapola linealmente a la evolución de la reactividad
-			\item Se calcula el coeficiente de reactividad del Banco B:
-			\begin{block}{}
-		\begin{equation*}
-			\Gamma_s (s) = \frac{\Delta \$}{\Delta s}
-		\end{equation*}
-		\end{block}
-		\end{itemize}
-		\end{column}
-	\end{columns}	
-\end{frame}
-
-
-\begin{frame}{Reactividad de barras individuales (caliente)}
-	\begin{center}
-		Experiencias de caída de barras individuales
-		\begin{block}{}
-\begin{table}[h]
-	\begin{center}
-%		\captionsetup{width=15cm}
-%		\caption{Reactividad de barras individuales en caliente.}
-		\label{tb:bcind}
-%		\begin{tabular}{cccccc}
-%			\toprule
-%			\multirow{2}{*}{Barra} & \multirow{2}{*}{$s_i\,[cm]$} & \multirow{2}{*} {$s_f\,[cm]$} & \multicolumn{3}{c}{$\Delta\$/\langle\Delta\$\rangle$}\\
-%			\cmidrule(lr){4-6}
-%			& & & AI1 & CT1 & CT2\\	\midrule
-%			S22 & $98$  & $200$ & $1.03(2)$ & $1.11(5)$ & $0.86(5)$\\ 
-%			S23 & $N/R$ & $272$ & $0.89(3)$ & $0.93(9)$ & $1.1862)$\\
-%			S11 & $91$  & $251$ & $1.15(2)$ & $1.07(3)$ & $0.78(3)$\\ 	
-%			\bottomrule
-%		\end{tabular}
-	\end{center}
-\end{table}
-\end{block}
-		Las reactividades $\Delta\$$ para cada detector se expresan de forma relativa al promedio $\langle\Delta\$\rangle$ entre los tres detectores.
+    \includegraphics[width=0.85\textwidth]{g22_vs_T.pdf} \\
+    A $T^*=2.0$ el sistema ya se encuentra en estado líquido
 	\end{center}
 \end{frame}
+
+\begin{frame}{$g_{12}(r^*)$ en función de $T^*$}
+	\begin{center}
+    \includegraphics[width=0.95\textwidth]{g12_vs_T.pdf}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Apartamientos de la estructura FCC}
+  \begin{center}
+    Modificando el valor de $\sigma^*_2 = 1.00 \rightarrow 0.85 $	
+    \begin{figure}
+      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_desplazado}{0001}{200}
+    \end{figure}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Correlación entre pares quasi FCC}
+ \begin{center}
+   Se producen desdoblamientos en algunos picos de las $g(r)$ 
+   \includegraphics[width=0.85\textwidth]{gr_despl_g11_g22.pdf} \\
+ \end{center}
+\end{frame}
+
+\begin{frame}{Correlación entre pares quasi FCC}
+ \begin{center}
+   Se producen desdoblamientos en algunos picos de las $g(r)$ 
+   \includegraphics[width=0.85\textwidth]{gr_despl_g12_gtot.pdf} \\
+ \end{center}
+\end{frame}
+
+\begin{frame}{Sólido amorfo}
+  \begin{center}
+    Modificando el valor de $\sigma^*_2 = 1.00 \rightarrow 0.80 $	
+    \begin{figure}
+      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_amorfo}{0001}{200}
+    \end{figure}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Correlación entre pares del sólido amorfo}
+ \begin{center}
+   \includegraphics[width=0.95\textwidth]{gr_amorfo_g11_g22.pdf} \\
+ \end{center}
+\end{frame}
+
+\begin{frame}{Correlación entre pares del sólido amorfo}
+ \begin{center}
+   \includegraphics[width=0.95\textwidth]{gr_amorfo_g12_gtot.pdf} \\
+ \end{center}
+\end{frame}
+
+\section{Vibraciones}
 
 
 
@@ -473,10 +439,25 @@
 
 \begin{frame}
 	\begin{block}{}
-		\centerline {\Huge Muchas gracias.}
+		\centerline {\Huge Muchas gracias}
 	\end{block}
 \end{frame}
 
 \appendix
+
+\begin{frame}{$g_{11}(r^*)$ en función de $T^*$}
+	\begin{center}
+    \includegraphics[width=\textwidth]{g11_vs_T.pdf}
+	\end{center}
+\end{frame}
+
+\begin{frame}{$g_{tot}(r^*)$ en función de $T^*$}
+	\begin{center}
+    \includegraphics[width=\textwidth]{gtot_vs_T.pdf}
+	\end{center}
+\end{frame}
+
+
+
 
 \end{document}
