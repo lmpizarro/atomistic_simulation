@@ -7,7 +7,7 @@
 \usepackage{amsfonts}
 \usepackage{colortbl}
 \usepackage{multirow,caption}
-%\usepackage{booktabs}
+\usepackage{booktabs}
 \usepackage{tabularx}
 %\usepackage{amssymb}
 \usepackage{appendixnumberbeamer} % corrige las páginas en el apéndice
@@ -116,7 +116,7 @@
    }
 
     \institute{\texttt{\{lpizarro,pbellino\}@cnea.gov.ar}}
-\date{{}\\ \vspace{2.5cm} Introdución a la Simulación Computacional\\ Universidad de San Martín - Centro Atómico Constituyentes \\ Diciembre de 2015}
+\date{{}\\ \vspace{2.5cm} Introdución a la Simulación Computacional\\ Universidad Nacional de San Martín - Centro Atómico Constituyentes \\ Diciembre de 2015}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
@@ -144,9 +144,167 @@
 \section{Introducción}
 
 \begin{frame}{Objetivos}
-        \begin{itemize}[<+-|alert@+>]
-            \item Presentación de los resultados obtenidos durante la puesta en marcha de la CNA U-II (a potencia cero)
-        \end{itemize}
+  \begin{itemize}[<+-|alert@+>]
+    \item Presentación de los resultados obtenidos durante la puesta en marcha de la CNA U-II (a potencia cero)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Descripción del problema}
+  \begin{columns}[t]
+    \begin{column}{0.45\linewidth}
+        \begin{center}
+	   \begin{tikzpicture}
+	     \tikzstyle{vector} = [thick,color=red!80!black,>=stealth,->]
+		\tikzstyle{atom1} = [circle,shading=ball, ball color=black!60!white, minimum size=5pt]
+		\tikzstyle{atom2} = [circle,shading=ball, ball color=orange!50!yellow, minimum size=4pt]
+		\begin{axis}[
+	          view = {40}{20},
+	          axis lines=none,
+	          axis equal=true,
+	          xmin=-0.1,
+	          xmax=1.1,
+	          ymin=-0.1,
+	          ymax=1.1,
+	          zmin=-0.1,
+	          zmax=1.1,
+	          xtick=\empty,
+	          ytick=\empty,
+	          ztick=\empty
+	          ]
+	          \coordinate (A0) at (axis cs:0,0,0);
+	          \coordinate (A1) at (axis cs:1,0,0);
+	          \coordinate (A2) at (axis cs:0,1,0);
+	          \coordinate (A3) at (axis cs:0,0,1);
+	          
+	          \coordinate (A4) at (axis cs:1,1,0);
+	          \coordinate (A5) at (axis cs:1,0,1);
+	          \coordinate (A6) at (axis cs:0,1,1);
+	          \coordinate (A7) at (axis cs:1,1,1);
+	          
+	          \coordinate (A8) at (axis cs:0.5,0.5,0);
+	          \coordinate (A9) at (axis cs:0.5,0,0.5);
+	          \coordinate (A10) at (axis cs:0,0.5,0.5);
+	          
+	          \coordinate (A11) at (axis cs:0.5,0.5,1);
+	          \coordinate (A12) at (axis cs:0.5,1,0.5);
+	          \coordinate (A13) at (axis cs:1,0.5,0.5);
+	          
+	          \draw[black!25] (A0) -- (A8) -- (A4);
+	          \draw[black!25] (A4) -- (A12) -- (A6);
+	          \draw[black!25] (A0) -- (A10) -- (A6);
+	          \draw[black!25] (A1) -- (A8) -- (A2);
+	          \draw[black!25] (A2) -- (A10) -- (A3);
+	          \draw[black!25] (A7) -- (A12) -- (A2);
+	          \draw[black] (A1) -- (A13) -- (A7);
+	          \draw[black] (A3) -- (A11) -- (A7);
+	          \draw[black] (A5) -- (A13) -- (A4);
+	          \draw[black] (A6) -- (A11) -- (A5);
+	          \draw[black] (A5) -- (A9) -- (A0);
+	          \draw[black] (A0) -- (A1);
+	          \draw[black] (A0) -- (A2);
+	          \draw[black] (A0) -- (A3);
+	          \draw[black] (A0) -- (A3);
+	          \draw[black] (A3) -- (A5);
+	          \draw[black] (A3) -- (A6);
+	          \draw[black] (A6) -- (A2);
+	          \draw[black] (A5) -- (A1);
+	          \draw[black] (A7) -- (A4);
+	          \draw[black] (A5) -- (A7);
+	          \draw[black] (A1) -- (A4);
+	          \draw[black] (A6) -- (A7);
+	          \draw[black] (A2) -- (A4);
+	          \fill[atom2] (A12) circle (4pt);
+	          \fill[atom1] (A0) circle (5pt);
+	          \fill[atom1] (A1) circle (5pt);
+	          \fill[atom1] (A2) circle (5pt);
+	          \fill[atom1] (A3) circle (5pt);
+	          \fill[atom1] (A4) circle (5pt);
+	          \fill[atom1] (A5) circle (5pt);
+	          \fill[atom1] (A6) circle (5pt);
+	          \fill[atom1] (A7) circle (5pt);
+	          \fill[atom1] (A8) circle (5pt);
+	          \fill[atom2] (A9) circle (4pt);
+	          \fill[atom2] (A10) circle (4pt);
+	          \fill[atom1] (A11) circle (5pt);
+	          \fill[atom2] (A13) circle (4pt);
+	          \draw[vector] (A0) -- (A8);
+	          \draw[vector] (A0) -- (A10);
+	          \draw[vector] (A0) -- (A9);
+	        \end{axis}
+%	        \node[red,text width=3cm] at (0.0,2) {Vectores de la celda unidad};
+		\draw[atom1] (1,0) circle (5pt);
+		\node[] at (2.0,0) {Átomo $1$};
+		\draw[atom2] (1,-0.5) circle (4pt);
+		\node[] at (2.0,-0.5) {Átomo $2$};
+		\draw[vector,<->,blue] (A0) -- node[below] {a} (A1);
+%		\node[blue] at (4.5,0) {a: parámetro de red};
+	      \end{tikzpicture}
+	    \end{center}
+	 \end{column}
+         \begin{column}{0.5\linewidth}
+           \vspace{-1em}
+           \begin{itemize}  
+		\item<+->Interacciones de a pares a través de un potencial de Lenard-Jones
+                 \begin{block}<+->{Reglas de combinación}
+		   \vspace{-1em}
+                   \begin{align*}
+		      \epsilon_{ij} &= \sqrt{\epsilon_i \epsilon_j} \qquad \text{(Berthelot)} \\
+		      \sigma_{ij}   &= \frac{\sigma_i + \sigma_j}{2} \qquad \text{(Lorentz)}
+		   \end{align*}
+	         \end{block}
+		 \item<+-> Radio de corte:
+		 \begin{equation*}
+		    r^c_{ij} = 2.5 \sigma_{ij}
+		 \end{equation*}
+	         \item<+-> Ensamble ($N$,$V$,$T$)
+		 \item<+-> Se calcula el parámetro de red $a$ adecuado
+	  \end{itemize}
+	\end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Parámetros utilizados}
+	\begin{itemize}
+	\item<+-> La configuración inicial siempre fue un cristal FCC
+	\item<+-> Se buscó que el cristal mantuviera la estructura 
+	\begin{block}<+->{Parámetros de las pariculas}
+	\begin{table}
+	\begin{tabular}{ccccc}
+		\toprule
+		 Partícula & $\epsilon^*$ & $\sigma^*$ & $m^*$ \\ \midrule
+		$1$ & $1.0$  & $1.0$ & $1.0$  \\ 
+		$2$ & $0.8$ & $0.9$ & $0.6$  \\
+		\bottomrule
+	\end{tabular}
+	\end{table}
+	\end{block}
+	\item<+->Las magnitudes reducidas están normalizadas con los parámetros de L-J de la partícula $1$
+	\item<+->Estructura cristalina muy dependiente de los valores de $\sigma$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Determinación del parámetro de red}
+  \begin{columns}
+    \begin{column}{0.45\linewidth}
+      \begin{itemize}
+        \item<+->Se busca encontrar el valor de a que minimice la energía libre de Helmholtz 
+	\begin{equation*}
+	  F = U - T S 
+ 	 \end{equation*}
+	\item<+-> Se simula a $T=0$ variando el parámetro de red hasta encontrar un mínimo en $U$
+	\item<+-> Se asume que el valor encontrado será válido para $T\neq0$.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.6\linewidth}
+	\vspace{-1em}
+	\begin{center}
+		\visible<+->{\includegraphics[width=1.1\textwidth]{param_red.pdf}}
+        \end{center}
+       \visible<+->{\begin{alertblock}{Parámetro de red}
+       \begin{center} $a^* = 1.49$ \end{center}
+	\end{alertblock}}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 %\begin{frame}{Cristal amorfo}
@@ -167,122 +325,36 @@
         \end{figure}
 \end{frame}
 
-\begin{frame}{Vibraciones FCC}
-        \begin{figure}
-        \animategraphics[controls,loop,width=0.4\textwidth]{10}{./vid/pic_vibr_0.2T}{0001}{200}
-        \end{figure}
-\end{frame}
 
+\section{Correlación entre pares}
 
-\section{Procedimientos}
-
-\begin{frame}{Reactímetro}
-	\begin{block}{Ecuaciones de la cinética puntual}
-	\begin{align*}
-		\frac{dC_i(t)}{dt} &= \frac{b_i}{\Lambda^*} n(t) - \lambda_i C_i(t) \hspace{1cm} i=1,...,15  \\
-		\$(t) &= 1 + \frac{\Lambda^*}{n(t)} \left[\frac{dn(t)}{dt} - \sum_{i=1}^{15} \lambda_i C_i(t)\right] 
-	\end{align*}
-	\end{block}
-    \begin{itemize}
-        \item $n(t)$ proporcional a la tasa de detección
-        \item Seis grupos de neutrones retardados (Tuttle)
-        \item Nueve grupos de fotoneutrones (Keepin)
-        \item Discretización asumiendo evolución lineal de $n(t)$ en un paso temporal. Integración analítica de las ecuaciones de los precursores
-        \item Paso de discretización de $0.1\,s$
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
+\begin{frame}{Correlación entre pares con $T^*=0$}
 	\begin{center}
-		\begin{tikzpicture}
-		\tikzstyle{vector} = [thick,color=red!80!black,>=stealth,->]
-		\tikzstyle{atom1} = [circle,shading=ball, ball color=black!60!white, minimum size=5pt]
-		\tikzstyle{atom2} = [circle,shading=ball, ball color=orange!50!yellow, minimum size=4pt]
-		\begin{axis}[
-		view = {40}{20},
-		axis lines=none,
-		axis equal=true,
-		xmin=-0.1,
-		xmax=1.1,
-		ymin=-0.1,
-		ymax=1.1,
-		zmin=-0.1,
-		zmax=1.1,
-		xtick=\empty,
-		ytick=\empty,
-		ztick=\empty
-		]
-		\coordinate (A0) at (axis cs:0,0,0);
-		\coordinate (A1) at (axis cs:1,0,0);
-		\coordinate (A2) at (axis cs:0,1,0);
-		\coordinate (A3) at (axis cs:0,0,1);
-		
-		\coordinate (A4) at (axis cs:1,1,0);
-		\coordinate (A5) at (axis cs:1,0,1);
-		\coordinate (A6) at (axis cs:0,1,1);
-		\coordinate (A7) at (axis cs:1,1,1);
-		
-		\coordinate (A8) at (axis cs:0.5,0.5,0);
-		\coordinate (A9) at (axis cs:0.5,0,0.5);
-		\coordinate (A10) at (axis cs:0,0.5,0.5);
-		
-		\coordinate (A11) at (axis cs:0.5,0.5,1);
-		\coordinate (A12) at (axis cs:0.5,1,0.5);
-		\coordinate (A13) at (axis cs:1,0.5,0.5);
-		
-		\draw[black!25] (A0) -- (A8) -- (A4);
-		\draw[black!25] (A4) -- (A12) -- (A6);
-		\draw[black!25] (A0) -- (A10) -- (A6);
-		\draw[black!25] (A1) -- (A8) -- (A2);
-		\draw[black!25] (A2) -- (A10) -- (A3);
-		\draw[black!25] (A7) -- (A12) -- (A2);
-		\draw[black] (A1) -- (A13) -- (A7);
-		\draw[black] (A3) -- (A11) -- (A7);
-		\draw[black] (A5) -- (A13) -- (A4);
-		\draw[black] (A6) -- (A11) -- (A5);
-		\draw[black] (A5) -- (A9) -- (A0);
-		\draw[black] (A0) -- (A1);
-		\draw[black] (A0) -- (A2);
-		\draw[black] (A0) -- (A3);
-		\draw[black] (A0) -- (A3);
-		\draw[black] (A3) -- (A5);
-		\draw[black] (A3) -- (A6);
-		\draw[black] (A6) -- (A2);
-		\draw[black] (A5) -- (A1);
-		\draw[black] (A7) -- (A4);
-		\draw[black] (A5) -- (A7);
-		\draw[black] (A1) -- (A4);
-		\draw[black] (A6) -- (A7);
-		\draw[black] (A2) -- (A4);
-		\fill[atom2] (A12) circle (4pt);
-		\fill[atom1] (A0) circle (5pt);
-		\fill[atom1] (A1) circle (5pt);
-		\fill[atom1] (A2) circle (5pt);
-		\fill[atom1] (A3) circle (5pt);
-		\fill[atom1] (A4) circle (5pt);
-		\fill[atom1] (A5) circle (5pt);
-		\fill[atom1] (A6) circle (5pt);
-		\fill[atom1] (A7) circle (5pt);
-		\fill[atom1] (A8) circle (5pt);
-		\fill[atom2] (A9) circle (4pt);
-		\fill[atom2] (A10) circle (4pt);
-		\fill[atom1] (A11) circle (5pt);
-		\fill[atom2] (A13) circle (4pt);
-		\draw[vector] (A0) -- (A8);
-		\draw[vector] (A0) -- (A10);
-		\draw[vector] (A0) -- (A9);
-		\end{axis}
-%		\node[red,text width=3cm] at (0.0,2) {Vectores de la celda unidad};
-		\draw[atom1] (1,0) circle (5pt);
-		\node[] at (2.0,0) {Átomo $1$};
-		\draw[atom2] (1,-0.5) circle (4pt);
-		\node[] at (2.0,-0.5) {Átomo $2$};
-		\draw[vector,<->,blue] (A0) -- node[below] {a} (A1);
-%		\node[blue] at (4.5,0) {a: parámetro de red};
-		\end{tikzpicture}
-		
+	\includegraphics[width=0.9\textwidth]{t0_g11_g22.pdf}
 	\end{center}
- \end{frame}
+\end{frame}
+
+\begin{frame}{Correlación entre pares con $T^*=0$}
+	\centerline{Distancias medidas sólo entre las partículas $1$}
+	\begin{center}
+	\includegraphics[width=0.45\textwidth]{vecinos_type1.png}
+	\includegraphics[width=0.6\textwidth]{t0_g11_g22.pdf}
+	\end{center}
+\end{frame}
+\begin{frame}{Correlación entre pares con $T^*=0$}
+	\begin{center}
+	\includegraphics[width=0.9\textwidth]{t0_grs.pdf}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Correlación entre pares con $T^*\neq0$}
+	\begin{center}
+	Trayectorias del cristal FCC a $T^*=0.2$
+        \begin{figure}
+        \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_vibr_0.2T}{0001}{200}
+        \end{figure}
+	\end{center}
+\end{frame}
 
 
 \begin{frame}{Ubicación de los detectores neutrónicos}
