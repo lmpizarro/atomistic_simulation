@@ -6,6 +6,7 @@ FORTRAN/ising/informe/informe.pdf
 *.pyc
 FORTRAN/DMMulti/docs/presentacion/slides.pdf
 FORTRAN/DMMulti/docs/presentacion/src/src_figs/vid/*.avi
+FORTRAN/DMMulti/docs/presentacion/src/src_figs/vid/*.mpg
 FORTRAN/DMMulti/docs/presentacion/src/src_figs/vid/*.jpg
 FORTRAN/DMMulti/docs/presentacion/src/src_figs/vid/.*.jpg
 *corrida*
