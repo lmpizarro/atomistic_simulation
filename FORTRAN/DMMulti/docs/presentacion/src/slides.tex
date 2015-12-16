@@ -152,12 +152,12 @@
 \begin{frame}{Descripción del problema}
   \begin{columns}[t]
     \begin{column}{0.45\linewidth}
-        \begin{center}
-	   \begin{tikzpicture}
-	     \tikzstyle{vector} = [thick,color=red!80!black,>=stealth,->]
-		\tikzstyle{atom1} = [circle,shading=ball, ball color=black!60!white, minimum size=5pt]
-		\tikzstyle{atom2} = [circle,shading=ball, ball color=orange!50!yellow, minimum size=4pt]
-		\begin{axis}[
+      \begin{center}
+        \begin{tikzpicture}
+	        \tikzstyle{vector} = [thick,color=red!80!black,>=stealth,->]
+          \tikzstyle{atom1} = [circle,shading=ball, ball color=black!60!white, minimum size=5pt]
+		      \tikzstyle{atom2} = [circle,shading=ball, ball color=orange!50!yellow, minimum size=4pt]
+		      \begin{axis}[
 	          view = {40}{20},
 	          axis lines=none,
 	          axis equal=true,
@@ -232,35 +232,35 @@
 	          \draw[vector] (A0) -- (A9);
 	        \end{axis}
 %	        \node[red,text width=3cm] at (0.0,2) {Vectores de la celda unidad};
-		\draw[atom1] (1,0) circle (5pt);
-		\node[] at (2.0,0) {Átomo $1$};
-		\draw[atom2] (1,-0.5) circle (4pt);
-		\node[] at (2.0,-0.5) {Átomo $2$};
-		\draw[vector,<->,blue] (A0) -- node[below] {a} (A1);
+		      \draw[atom1] (1,0) circle (5pt);
+		      \node[] at (2.0,0) {Átomo $1$};
+		      \draw[atom2] (1,-0.5) circle (4pt);
+		      \node[] at (2.0,-0.5) {Átomo $2$};
+		      \draw[vector,<->,blue] (A0) -- node[below] {a} (A1);
 %		\node[blue] at (4.5,0) {a: parámetro de red};
 	      \end{tikzpicture}
 	    \end{center}
-	 \end{column}
-         \begin{column}{0.5\linewidth}
-           \vspace{-1em}
-           \begin{itemize}  
-		\item<+->Interacciones de a pares a través de un potencial de Lenard-Jones
-                 \begin{block}<+->{Reglas de combinación}
-		   \vspace{-1em}
-                   \begin{align*}
-		      \epsilon_{ij} &= \sqrt{\epsilon_i \epsilon_j} \qquad \text{(Berthelot)} \\
-		      \sigma_{ij}   &= \frac{\sigma_i + \sigma_j}{2} \qquad \text{(Lorentz)}
-		   \end{align*}
-	         \end{block}
-		 \item<+-> Radio de corte:
-		 \begin{equation*}
-		    r^c_{ij} = 2.5 \sigma_{ij}
-		 \end{equation*}
-	         \item<+-> Ensamble ($N$,$V$,$T$)
-		 \item<+-> Se calcula el parámetro de red $a$ adecuado
-	  \end{itemize}
-	\end{column}
-    \end{columns}
+    \end{column}
+    \begin{column}{0.5\linewidth}
+      \vspace{-1em}
+      \begin{itemize}  
+       \item<+->Interacciones de a pares a través de un potencial de Lenard-Jones
+         \begin{block}<+->{Reglas de combinación}
+		     \vspace{-1em}
+         \begin{align*}
+		        \epsilon_{ij} &= \sqrt{\epsilon_i \epsilon_j} \qquad \text{(Berthelot)} \\
+            \sigma_{ij}   &= \frac{\sigma_i + \sigma_j}{2} \qquad \text{(Lorentz)}
+          \end{align*}
+	      \end{block}
+		    \item<+-> Radio de corte:
+		    \begin{equation*}
+		      r^c_{ij} = 2.5 \sigma_{ij}
+		    \end{equation*}
+	      \item<+-> Ensamble ($N$,$V$,$T$)
+        \item<+-> Se calcula el parámetro de red $a$ adecuado
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Parámetros utilizados}
@@ -337,8 +337,8 @@
 \begin{frame}{Correlación entre pares con $T^*=0$}
 	\centerline{Distancias medidas sólo entre las partículas $1$}
 	\begin{center}
-	\includegraphics[width=0.45\textwidth]{vecinos_type1.png}
-	\includegraphics[width=0.6\textwidth]{t0_g11_g22.pdf}
+	\hspace{-1em}\includegraphics[width=0.45\textwidth]{vecinos_type1.png}
+  \includegraphics[width=0.68\textwidth]{t0_g11_g22.pdf}
 	\end{center}
 \end{frame}
 \begin{frame}{Correlación entre pares con $T^*=0$}
