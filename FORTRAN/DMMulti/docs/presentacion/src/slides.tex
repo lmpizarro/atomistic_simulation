@@ -465,49 +465,94 @@
 
 \section{Vibraciones}
 
-\begin{frame}{Análisis vibracional}
+\begin{frame}{Transformada de Fourier}
 	\begin{itemize}
-	\item<+-> xxx
-	\item<+-> xxx
-  \begin{block}<+->{titulo}
-	\begin{table}
-	\begin{tabular}{ccc}
-		\toprule
-		 Partícula & $12:1$ & $8:1$  \\ \midrule
-		$1$ & $1.0$  & $1.0$  \\ 
-		$2$ & $0.8$ & $0.9$   \\
-    $x$ & $xx$ & $xx$     \\
-		\bottomrule
-	\end{tabular}
-	\end{table}
-	\end{block}
-	\item<+->Las magnitudes reducidas están normalizadas con los parámetros de L-J de la partícula $1$
-	\item<+->Estructura cristalina muy dependiente de los valores de $\sigma^*$
+		\item Representación de una función como suma infinita de funciones senoidales 
+		\item Pasamos al dominio de la frecuencia
+		\item En el campo digital aplicamos Transformada rápida de fourier
+		\item Dos posibilidades fftw3 o numpy
+		\item Trabajamos con las 2, más flexible numpy
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Intensidad promedio de modos de vibración relación de masas $1.2:1$}
+\begin{frame}{Análisis espectral de la velocidad}
+	\begin{itemize}
+            \item  Elegimos 2 configuraciones con relaciones de masa bien distintas
+            \item  Relaciones de masas: $1.2$:$1.0$ y  $8.0$:$1.0$
+	    \item  Acumulamos velocidades para los 4 átomos de una celda fcc	    
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Intensidad media  espectral}
+	\begin{itemize}
+		\item O valor RMS espectral de la señal
+		\item Sumar todos los componentes de la PSD y dividir por las M frecuencias
+		\item Gráficos en función de las N corridas
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Intensidad media  espectral de masas $1.2:1$}
+	\begin{itemize}
+		\item Sistema de partículas con masas $1.0$ y $1.2$
+	\end{itemize}
  \begin{center}
-   \includegraphics[width=0.95\textwidth]{{fft_1-2}.pdf} \\
+   \includegraphics[scale=0.30]{{fft_1-2}.pdf} \\
+   Corridas 
  \end{center}
 \end{frame}
   
+\begin{frame}{Intensidad media  espectral de masas $8.0:1$}
+	\begin{itemize}
+		\item Sistema de partículas con masas $1.0$ y $8.0$
+	\end{itemize}
 
-\begin{frame}{Intensidad promedio de modos de vibración relación de masas $8.0:1$}
  \begin{center}
-   \includegraphics[width=0.95\textwidth]{{fft_8.0}.pdf} \\
+   \includegraphics[scale=0.30]{{fft_8.0}.pdf} \\
+   Corridas 
  \end{center}
 \end{frame}
 
-\begin{frame}{Espectro de modos de vibración: masa $8.0$}
+
+\begin{frame}{Intensidad media: resultados }
+	\begin{itemize}
+		\item La intensidad media espectral de las partículas disminuye
+			con la masa de la partícula.
+		\item La relación de intensidades medias de los 2 sistemas
+			es la relación de masas del sistema.
+		\item La intensidad media de la partícula con mayor intensidad
+			en el sistema pesado es mayor que en la del sistema liviano.
+		\item Hay una disminución de la intensidad espectral con el aumento
+			de las masas que intervienen en el sistema.
+	\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Espectro de modos de vibración}
+	\begin{itemize}
+		\item Sistema de partículas con masas $1.0$ y $8.0$
+		\item Espectro para partícula de masa $8.0$
+	\end{itemize}
+
  \begin{center}
-   \includegraphics[width=0.95\textwidth]{fft_veloc_fac_1.pdf} \\
+   \includegraphics[scale=0.30]{fft_veloc_fac_1.pdf} \\
+   Unidades frecuencia reducida
  \end{center}
 \end{frame}
 
-\begin{frame}{Espectro de modos de vibración: masa $1.0$}
+\begin{frame}{Espectro de modos de vibración}
+
+	\begin{itemize}
+		\item Sistema de partículas con masas $1.0$ y $8.0$
+		\item Espectro para partícula de masa $1.0$
+	\end{itemize}
  \begin{center}
-   \includegraphics[width=0.95\textwidth]{fft_veloc_ver_1.pdf} \\
+   \includegraphics[scale=0.30]{fft_veloc_ver_1.pdf} \\
+   Unidades frecuencia reducida
  \end{center}
 \end{frame}
 
