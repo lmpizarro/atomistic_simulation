@@ -230,7 +230,6 @@ PROGRAM autoCorrelation
             s = nt*2
             Nat = SIZE(r,3)
 
-
             ALLOCATE(fftw3%in_forward(s), SOURCE=0.d0)
             ALLOCATE(fftw3%out_forward(s/2+1)) ! when from real to complex then half the signal is enough
             ALLOCATE(fftw3%out_backward(s))
@@ -243,7 +242,6 @@ PROGRAM autoCorrelation
             DO s=1,Nat ! atoms
                 DO i=1,dmax ! x,y,z ...
                     fftw3%in_forward(LBOUND(r,1):UBOUND(r,1)) =r(:,i,s)
-                    print * , "i,s  ", i,s
                     CALL dfftw_execute ( fftw3%plan_forward )
                     fftw3%in_backward = fftw3%out_forward* CONJG(fftw3%out_forward) ! I AM SURE AN INTRINSIC FUNCTION EXISTS FOR x=z.z*
                     CALL dfftw_execute ( fftw3%plan_backward )
