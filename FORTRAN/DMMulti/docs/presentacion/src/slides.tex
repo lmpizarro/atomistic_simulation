@@ -1,7 +1,8 @@
 %\documentclass[table,handout]{beamer}
 \documentclass[hyperref={pdfpagemode=FullScreen},table]{beamer}
-\usepackage[latin1]{inputenc}
 \usepackage{etex}  % para evitar error al usar el packete animate
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}                   % Use T1 encoding instead of OT1
 \usepackage[spanish,es-nodecimaldot]{babel}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -13,7 +14,7 @@
 \usepackage{appendixnumberbeamer} % corrige las páginas en el apéndice
 
 \usepackage{tikz}
-\usetikzlibrary{shapes,snakes,shadows,arrows,calc,decorations.markings}
+\usetikzlibrary{shapes,shadows,arrows,calc,decorations.markings}
 \usepackage{pgfplots}
 %\pgfplotsset{compat=1.9}
 
@@ -146,7 +147,10 @@
 
 \begin{frame}{Objetivos}
   \begin{itemize}[<+-|alert@+>]
-    \item Presentación de los resultados obtenidos durante la puesta en marcha de la CNA U-II (a potencia cero)
+    \item Aplicación del m\'etodo de dinámica molecular a un sistema sólido binario.
+    \item Se variaron pocos parámetros y se estudió el comportamiento del distema en la distintas configuraciones.
+    \item Análisis de la correlación entre pares. En un sistema binario existen cuatro: $g_{11}(r)$, $g_{12}(r)$, $g_{22}(r)$ y $g_{tot}(r)$.
+    \item Estudio de las vibraciones del cristal mediante mediante el análisis de los especros característicos.
   \end{itemize}
 \end{frame}
 
@@ -310,24 +314,6 @@
   \end{columns}
 \end{frame}
 
-%\begin{frame}{Cristal amorfo}
-%        \begin{center}
-%                \movie{\includegraphics[width=7cm]{amorfo.jpg}}{amorfo.avi}
-%        \end{center}
-%\end{frame}
-%
-%\begin{frame}{Cristal FCC}
-%        \begin{center}
-%                \movie{\includegraphics[width=7cm]{{vibr_t0.2}.jpg}}{vibr_t0.2.avi}
-%        \end{center}
-%\end{frame}
-%
-%\begin{frame}{Cristal amorfo}
-%  \begin{figure}
-%    \animategraphics[controls,loop,width=0.4\textwidth]{10}{./vid/pic_amorfo}{0001}{200}
-%  \end{figure}
-%\end{frame}
-
 
 \section{Correlación entre pares}
 
@@ -364,7 +350,7 @@
 	\begin{center}
   	Trayectorias del cristal FCC a $T^*=0.2$
     \begin{figure}
-      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_vibr_0.2T}{0001}{200}
+      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_vibr_0.2T}{0001}{130}
     \end{figure}
 	\end{center}
 \end{frame}
@@ -377,17 +363,12 @@
 	\end{center}
 \end{frame}
 
-\begin{frame}{$g_{12}(r^*)$ en función de $T^*$}
-	\begin{center}
-    \includegraphics[width=0.95\textwidth]{g12_vs_T.pdf}
-	\end{center}
-\end{frame}
 
 \begin{frame}{Apartamientos de la estructura FCC}
   \begin{center}
-    Modificando el valor de $\sigma^*_2 = 1.00 \rightarrow 0.85 $	 ($T^*=0.2$)
+    Modificando el valor de $\sigma^*_2 = 0.90 \rightarrow 0.85 $	 ($T^*=0.2$)
     \begin{figure}
-      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_desplazado}{0001}{200}
+      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_desplazado}{0001}{100}
     \end{figure}
 	\end{center}
 \end{frame}
@@ -399,33 +380,6 @@
  \end{center}
 \end{frame}
 
-\begin{frame}{Correlación entre pares quasi FCC}
- \begin{center}
-   Se producen desdoblamientos en algunos picos de las $g(r)$ 
-   \includegraphics[width=0.85\textwidth]{gr_despl_g12_gtot.pdf} \\
- \end{center}
-\end{frame}
-
-\begin{frame}{Cristal amorfo}
-  \begin{center}
-    Modificando el valor de $\sigma^*_2 = 1.00 \rightarrow 0.80 $ ($T^*=0.1$)	
-    \begin{figure}
-      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_amorfo}{0001}{500}
-    \end{figure}
-	\end{center}
-\end{frame}
-
-\begin{frame}{Correlación entre pares del cristal amorfo}
- \begin{center}
-   \includegraphics[width=0.95\textwidth]{gr_amorfo_g11_g22.pdf} \\
- \end{center}
-\end{frame}
-
-\begin{frame}{Correlación entre pares del cristal amorfo}
- \begin{center}
-   \includegraphics[width=0.95\textwidth]{gr_amorfo_g12_gtot.pdf} \\
- \end{center}
-\end{frame}
 
 \begin{frame}{Sistema debilmente acoplado}
   \begin{columns}
@@ -444,7 +398,7 @@
     \begin{column}{0.60\linewidth}
       \begin{center}
         \begin{figure}
-          \animategraphics[controls,loop,width=1\textwidth]{10}{./vid/pic_cambio}{0001}{500}
+          \animategraphics[controls,loop,width=1\textwidth]{10}{./vid/pic_cambio}{0001}{200}
         \end{figure}
       \end{center}
     \end{column}
@@ -457,11 +411,6 @@
  \end{center}
 \end{frame}
 
-\begin{frame}{Sistema debilmente acoplado}
- \begin{center}
-   \includegraphics[width=0.95\textwidth]{gr_cambio_g12_gtot.pdf} \\
- \end{center}
-\end{frame}
 
 \section{Vibraciones}
 
@@ -563,8 +512,10 @@
 
 \begin{frame}{Conclusiones}
     \begin{itemize}[<+-|alert@+>]
-        \item Mediciones y determinaciones independientes de parámetros físicos durante la puesta en marcha de la CNA U-II
-        \item Implementación del Multi Reactímetro Digital con tres detectores de forma simultánea (cámara de ionización y canales de arranque) para la estimación de reactividad en los distintos ensayos
+        \item Se pudo simular el sistema de un cristal binario en distintas configuraciones.
+        \item Se analizaron las correlaciones de pares entre las distintas especies.
+        \item Se hizo un estudio de cómo son las vibraciones del sistema.
+        \item Queda para un futuro un análisis más detallado del espectro fonónico.
     \end{itemize}
 \end{frame}
 
@@ -582,20 +533,39 @@
 	\end{center}
 \end{frame}
 
+\begin{frame}{$g_{12}(r^*)$ en función de $T^*$}
+	\begin{center}
+    \includegraphics[width=0.95\textwidth]{g12_vs_T.pdf}
+	\end{center}
+\end{frame}
+
 \begin{frame}{$g_{tot}(r^*)$ en función de $T^*$}
 	\begin{center}
     \includegraphics[width=0.95\textwidth]{gtot_vs_T.pdf}
 	\end{center}
 \end{frame}
 
-\begin{frame}{Cristal amorfo}
-  \begin{center}
-    Modificando el valor de $\sigma^*_2 = 1.00 \rightarrow 0.80 $ ($T^*=0.1$)	
-    \begin{figure}
-      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_amorfo}{0001}{500}
-    \end{figure}
-	\end{center}
+\begin{frame}{Correlación entre pares quasi FCC}
+ \begin{center}
+   Se producen desdoblamientos en algunos picos de las $g(r)$ 
+   \includegraphics[width=0.85\textwidth]{gr_despl_g12_gtot.pdf} \\
+ \end{center}
 \end{frame}
+
+\begin{frame}{Sistema debilmente acoplado}
+ \begin{center}
+   \includegraphics[width=0.95\textwidth]{gr_cambio_g12_gtot.pdf} \\
+ \end{center}
+\end{frame}
+
+%\begin{frame}{Cristal amorfo}
+%  \begin{center}
+%    Modificando el valor de $\sigma^*_2 = 1.00 \rightarrow 0.80 $ ($T^*=0.1$)	
+%    \begin{figure}
+%      \animategraphics[controls,loop,width=0.5\textwidth]{10}{./vid/pic_amorfo}{0001}{500}
+%    \end{figure}
+%	\end{center}
+%\end{frame}
 
 \begin{frame}{Correlación entre pares del cristal amorfo}
  \begin{center}
