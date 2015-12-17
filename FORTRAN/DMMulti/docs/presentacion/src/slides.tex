@@ -282,7 +282,7 @@
 	\end{table}
 	\end{block}
 	\item<+->Las magnitudes reducidas están normalizadas con los parámetros de L-J de la partícula $1$
-	\item<+->Estructura cristalina muy dependiente de los valores de $\sigma$
+	\item<+->Estructura cristalina muy dependiente de los valores de $\sigma^*$
 	\end{itemize}
 \end{frame}
 
@@ -406,7 +406,7 @@
  \end{center}
 \end{frame}
 
-\begin{frame}{Sólido amorfo}
+\begin{frame}{Cristal amorfo}
   \begin{center}
     Modificando el valor de $\sigma^*_2 = 1.00 \rightarrow 0.80 $ ($T^*=0.1$)	
     \begin{figure}
@@ -415,25 +415,61 @@
 	\end{center}
 \end{frame}
 
-\begin{frame}{Correlación entre pares del sólido amorfo}
+\begin{frame}{Correlación entre pares del cristal amorfo}
  \begin{center}
    \includegraphics[width=0.95\textwidth]{gr_amorfo_g11_g22.pdf} \\
  \end{center}
 \end{frame}
 
-\begin{frame}{Correlación entre pares del sólido amorfo}
+\begin{frame}{Correlación entre pares del cristal amorfo}
  \begin{center}
    \includegraphics[width=0.95\textwidth]{gr_amorfo_g12_gtot.pdf} \\
  \end{center}
 \end{frame}
 
+\begin{frame}{Sistema debilmente acoplado}
+  \begin{columns}
+    \begin{column}{0.4\linewidth}
+      \begin{block}{Parámetros utilizados}
+      \begin{align*}
+        \epsilon^*_2 &= 0.001 \\
+        \sigma^*_2   &= 0.3   \\
+        m^*_2        &= 0.6   \\
+        T^*          &= 0.1   \\
+        a^*          &= 1.125 
+      \end{align*}
+    \end{block}
+      Se parte de una FCC
+    \end{column}
+    \begin{column}{0.60\linewidth}
+      \begin{center}
+        \begin{figure}
+          \animategraphics[controls,loop,width=1\textwidth]{10}{./vid/pic_cambio}{0001}{500}
+        \end{figure}
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Sistema debilmente acoplado}
+ \begin{center}
+   \includegraphics[width=0.95\textwidth]{gr_cambio_g11_g22.pdf} \\
+ \end{center}
+\end{frame}
+
+\begin{frame}{Sistema debilmente acoplado}
+ \begin{center}
+   \includegraphics[width=0.95\textwidth]{gr_cambio_g12_gtot.pdf} \\
+ \end{center}
+\end{frame}
+
 \section{Vibraciones}
+
 \begin{frame}{Correlación entre pares del sólido amorfo}
  \begin{center}
    \includegraphics[width=0.95\textwidth]{{fft_1-2}.pdf} \\
  \end{center}
 \end{frame}
-
   
 
 \begin{frame}{Correlación entre pares del sólido amorfo}
@@ -441,8 +477,6 @@
    \includegraphics[width=0.95\textwidth]{{fft_8.0}.pdf} \\
  \end{center}
 \end{frame}
-
-
 
 
 \section{Conclusiones}
