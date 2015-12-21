@@ -73,7 +73,16 @@ A continuación se describen los significados de estos nombres (algunos de los d
 
 '''
 1. _Cantidad de especies_: cantidad de especies distintas presentes en el sistema. _DEBE SER 2_
-2. _Estado del sistema_  : 
+2. _Estado del sistema_ : 
+3. _Epsilon(j)_:
+4. _Sigma(j)_:
+5. _Masa(j)_:
+6. _Lado_caja_:
+7. _Periodo_red_:
+8. _Estructura_cristalina_:
+9. _Temperatura_:
+10. 
+```
 
 ### Ejemplo de programa
 
