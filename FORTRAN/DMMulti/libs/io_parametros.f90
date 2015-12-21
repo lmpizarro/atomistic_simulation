@@ -29,7 +29,7 @@ contains
     real(dp), dimension(3,gNpart), intent(in)    :: r    ! Posición
     character(*), intent(in)                     :: nombre  ! Nombre del archivo
     logical, intent(in)                          :: primera
-    integer                                      :: i,j
+    integer                                      :: i
 
     if ( primera .eqv. .TRUE. ) then
       open(unit=20, file=nombre, status='unknown')

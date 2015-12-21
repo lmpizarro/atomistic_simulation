@@ -37,7 +37,6 @@ contains
 
   subroutine inicializacion()
 
-    integer   :: j 
     real(dp)  :: Pres   ! Presión instantánea
     real(dp)  :: Temp   ! Temperatura instantánea
     logical   :: leido  ! Flag para saber si se leyó el archivo de estados

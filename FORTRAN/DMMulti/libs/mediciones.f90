@@ -387,11 +387,11 @@ contains
     integer                              :: i,j
     real(dp), parameter                  :: PI = 3.1415926535898_dp  ! pi
     integer, dimension(1:4)              :: nor    ! Partículas de cada especie 
-    real, dimension(1:4)                 :: dens   ! Densidad de cada especie
+    real(dp), dimension(1:4)             :: dens   ! Densidad de cada especie
 
-    nor  = (/gNp(1),gNpart,gNp(2),gNpart/)  ! Cantidad de partículas de cada especie
-    dens = nor / gVol                       ! La densidad para calcular gas ideal
-    dens(2) = nor(2) / gVol / 2    ! Quizá esto indique que se calculó mal la g12
+    nor     = (/gNp(1),gNpart,gNp(2),gNpart/)      ! Cantidad de partículas de cada especie
+    dens    = real(nor,kind=dp) / gVol             ! La densidad para calcular gas ideal
+    dens(2) = real(nor(2),kind=dp) / gVol / 2      ! Quizá esto indique que se calculó mal la g12
      
     do i = 1, gNhist
       grnor(1,i) = gDbin * (i + 0.5)                   ! Posición centrada de cada bin

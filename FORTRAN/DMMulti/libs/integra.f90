@@ -35,8 +35,6 @@ contains
     real(dp), dimension(:,:), allocatable :: Eng_t   ! energía en función del tiempo
     real(dp), dimension(:), allocatable   :: Pres_t  ! presión en función del tiempo
     real(dp), dimension(:), allocatable   :: Temp_t  ! temperatura en función del tiempo
-    real(dp), dimension(:), allocatable   :: Corr_tr ! array de autocorrelaciones
-    real(dp), dimension(:,:), allocatable   :: Modos_vibra ! array de autocorrelaciones
 #ifdef CORR_PAR
     real(dp), dimension(5,gNhist)         :: cor_par ! Función de correlación de pares    
 #endif
@@ -231,7 +229,6 @@ contains
   subroutine cpc_vec()
 
     real(dp), dimension(3,gNpart) :: tmp     ! Variable temporal
-    integer :: j
     
     !gR = gR - gLado_caja*floor(gR/gLado_caja)
     
