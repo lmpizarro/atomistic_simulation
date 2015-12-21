@@ -9,9 +9,13 @@ add_executable(dmmulti main.f90)
 add_executable(modo_vib modo_vib.f90)
 add_executable(autocorr autocorrelaciones.f90)
 # Línea modificada para poder linkear la biblioteca fftw3
-target_link_libraries(dmmulti libs -lfftw3)
-target_link_libraries(modo_vib libs -lfftw3)
-target_link_libraries(autocorr libs -lfftw3)
+target_link_libraries(dmmulti libs -L/home/pizarro/local/lib -lfftw3)
+target_link_libraries(modo_vib libs -L/home/pizarro/local/lib -lfftw3)
+target_link_libraries(autocorr libs -L/home/pizarro/local/lib -lfftw3)
+# usar estas lineas si fftw3 no se encuentra en su lugar  
+#target_link_libraries(dmmulti libs -L/home/pizarro/local/lib -lfftw3)
+#target_link_libraries(modo_vib libs -L/home/pizarro/local/lib -lfftw3)
+#target_link_libraries(autocorr libs -L/home/pizarro/local/lib -lfftw3)
 #target_link_libraries(dmmulti libs)
 set_target_properties(dmmulti PROPERTIES
 	COMPILE_FLAGS "${f90flags}"

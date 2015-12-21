@@ -521,11 +521,11 @@ contains
     real(dp), dimension(:,:) :: VV
     ! si todavia no se llegó al fin
     if (gNmodosVibra .lt. gNtime ) then
-      if (pos .lt. gNpart /  4) then
+      if (pos .lt. gNpart /  4 - 3) then
         gCorrVver_1(:, gNmodosVibra) = VV(:, pos + 1)
-        gCorrVfac_1(:, gNmodosVibra) = VV(:, pos + 2)
-        gCorrVfac_2(:, gNmodosVibra) = VV(:, pos + 3)
-        gCorrVfac_3(:, gNmodosVibra) = VV(:, pos + 4)
+        gCorrVfac_1(:, gNmodosVibra) = VV(:, pos + 5)
+        gCorrVfac_2(:, gNmodosVibra) = VV(:, pos + 9)
+        gCorrVfac_3(:, gNmodosVibra) = VV(:, pos + 13)
       endif
       gNmodosVibra = gNmodosVibra + 1
     endif  
