@@ -122,19 +122,19 @@ D) Archivos de salida
 
 **energias.dat**    : Valores de las energías (pot, cin, y total) en función del tiempo
                      La primer linea contiene la cantidad de datos y el dt entre ellos
-                     Las columnas son:    E_POT   E_CIN   E_TOT
+                     > Las columnas son:    E_POT   E_CIN   E_TOT
 
 **energia_pot_min.dat** : Valores de la energía en función del tiempo cuando se trata
                          de minimizarla
                      La primer linea contiene la cantidad de datos y el dt entre ellos
 
 **estados.dat**     : Posiciones, velocidades y tipo de partícula del último estado
-                     Formato:   X Y Z V_X V_Y V_Z Tipo
+                     > Formato:   X Y Z V_X V_Y V_Z Tipo
 
 **gr.dat*          : (OPCIONAL) Sólo si se definió CORR_PAR en control.h del preprocesador
                      Da la función g(r) normalizada junto con la posición r.
                      La primer linea contiene la cantidad de datos y un cero (irrelevante) 
-                     Formato:     r  g_11(r) g_12(r) g_22(r) g_tot(r)                  
+                     > Formato:     r  g_11(r) g_12(r) g_22(r) g_tot(r)                  
   
 **trayectoria.vtf**  : (OPCIONAL) Sólo si se definió GRABA_TRAYECTORIA en control.h del
                       preprocesador. Guarda las trayectorias en el formato para ser 
