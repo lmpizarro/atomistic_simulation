@@ -129,7 +129,7 @@ D) Archivos de salida
                      La primer linea contiene la cantidad de datos y el dt entre ellos
 
 **estados.dat**     : Posiciones, velocidades y tipo de partícula del último estado
-                     > Formato:   X Y Z V_X V_Y V_Z Tipo
+                     >> Formato:   X Y Z V_X V_Y V_Z Tipo
 
 **gr.dat*          : (OPCIONAL) Sólo si se definió CORR_PAR en control.h del preprocesador
                      Da la función g(r) normalizada junto con la posición r.
