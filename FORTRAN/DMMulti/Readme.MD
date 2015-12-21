@@ -132,7 +132,7 @@ D) Archivos de salida
 
 **gr.dat**
   (OPCIONAL) Sólo si se definió CORR_PAR en control.h del preprocesador. Da la función g(r) normalizada junto con la posición r. La primer linea contiene la cantidad de datos y un cero (irrelevante) 
-> Formato:     r  g_11(r) g_12(r) g_22(r) g_tot(r)                  
+> Formato:     r $g_11(r)$ g_12(r) g_22(r) g_tot(r)                  
   
 **trayectoria.vtf**
   (OPCIONAL) Sólo si se definió GRABA_TRAYECTORIA en control.h del preprocesador. Guarda las trayectorias en el formato para ser visualizado con el programa VMD.
