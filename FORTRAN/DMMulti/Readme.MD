@@ -1,3 +1,37 @@
+
+Dinámica Molecular para un sistema binaro
+=========================================
+
+El programa resuelve un sistema de dos partículas que interactúan con un potencial de L-J.
+Está pensado para trabajar con sistemas sólidos, pero puede adaptarse fácilmente para otra
+situación.
+
+Instalación
+-----------
+
+Para compilar el programa se requiere tener instalado el paquete *cmake*. En el archivo CMakeList están todos los comandos que serán pasados al compilador. Se puede elegir el compilador a utilizar (gfortran, ifrot, etc) definiendo la variable de entorno *FC*:
+```bash
+# por ejemplo en sheldon se usa 
+# export FC=/opt/intel/composer_xe_2013.5.192/bin/intel64/ifort
+```
+
+Hay un archivo *instalar.sh* que facilita la compilación con los flags requeridos:
+
+```bash
+mkdir build
+cd build
+#cmake -Doptimize=ON ..
+cmake -Ddebug=OFF -Dopenmp=ON -Dverbose=OFF -Dprofile=OFF -Doptimize=ON ..
+make
+```
+
+Para ver qué hace cada opción se puede mirar el archivo *CMakeList.txt* en la carpeta raíz.
+
+Al ejecutar el script *instalar.sh* se creará una carpeta *build* donde se instalará todo el programa. Dentro de dicha carpeta se creará la carpeta *bin* donde estarán los ejecutables y scripts utilizados para postprocesar los datos.
+
+Archivos de entrada
+--------------------
+
 Formato del archivo input.par
 
 cant_especies liqsol
