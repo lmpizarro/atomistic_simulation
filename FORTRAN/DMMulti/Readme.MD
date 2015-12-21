@@ -55,7 +55,7 @@ Las variables que se pueden setear son:
 
 1. THERM 
   *=0 sin termostato para el ensambe microcanónico (NVE)
-  * =1 termostato de Langevin para el ensamble canónico (NVT)
+  *=1 termostato de Langevin para el ensamble canónico (NVT)
 2. CONTROL_TEMP
   * Graba un archivo con las velocidades para luego hacer estadística y comprobar el buen funcionamiento del termostato de Langevin
 3. GRABA_TRAYECTORIA
@@ -74,11 +74,13 @@ El programa *dinmod* lee todos los datos de entrada del archivo *input.par*. El 
 
 El formato del archivo de entrada es el siguiente:
 
-_<Cantidad de especies>_ _<Estado del sistema>_
-_epsilon(1)_ _sigma(1)_ _masa_1_
-_epsilon(2)_ _sigma(2)_ _masa_2_
-_temperatura_ _dt_ _# pasos_ _N_med_ _gamma_langevin_
-_relación_especies_
+```Fortran
+"Cantidad de especies" "Estado del sistema"
+"epsilon(1)" "sigma(1)" "masa_1"
+"epsilon(2)" "sigma(2)" "masa_2"
+"temperatura" "dt" "#_pasos" "N_med" "gamma_langevin"
+"relación_especies"
+```
 
 ### Ejemplo de programa
 
