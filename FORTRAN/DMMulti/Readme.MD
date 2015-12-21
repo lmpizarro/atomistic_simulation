@@ -81,7 +81,11 @@ A continuación se describen los significados de estos nombres (algunos de los d
 7. _Periodo_red_:
 8. _Estructura_cristalina_:
 9. _Temperatura_:
-10. 
+10. _dt_:
+11. _#_pasos_:
+12. _N_med_:
+13. _gamma_langevin_:
+14. _relacion_especies_: 
 ```
 
 ### Ejemplo de programa
