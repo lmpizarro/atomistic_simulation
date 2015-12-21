@@ -32,34 +32,40 @@ if __name__ == "__main__":
             vzz = vzz + ac.autocorrelacion_w(vz)
 	    figname =("%s%03d")%("vxx",i)
 	    print np.max(vxx)/np.real(i), np.min(vyy)/np.real(i), np.average(vzz)/np.real(i) 
-	    plt.ylim(ymax = 0.000003 , ymin = -0.000003 )
+	    #plt.ylim(ymax = 0.000003 , ymin = -0.000003 )
 	    #0.000203522824707+0j) (-0.000150
-	    plt.plot(vxx[:2000]/np.real(i))
-	    plt.savefig(figname)
-	    plt.close()
+	    #plt.plot(vxx[:2000]/np.real(i))
+	    #plt.savefig(figname)
+	    #plt.close()
 	    i = i + 1
 
     N = 1500
-    h=np.fft.fft(vxx)
+    h=np.fft.fft(vxx / np.real(i))
     h=np.real(h*np.conj(h))
+    print np.sum(h)
     plt.plot(np.real(h[:N]))
     figname = "psd_vxx.pdf"
+    np.savetxt("psd_vxx.txt",h)
     plt.savefig(figname)
     plt.close()
 
 
-    h=np.fft.fft(vyy)
+    h=np.fft.fft(vyy / np.real(i))
     h=np.real(h*np.conj(h))
+    print np.sum(h)
     plt.plot(np.real(h[:N]))
     figname = "psd_vyy.pdf"
+    np.savetxt("psd_vyy.txt",h)
     plt.savefig(figname)
     plt.close()
 
 
-    h=np.fft.fft(vzz)
+    h=np.fft.fft(vzz / np.real(i))
     h=np.real(h*np.conj(h))
+    print np.sum(h)
     plt.plot(np.real(h[:N]))
     figname = "psd_vzz.pdf"
+    np.savetxt("psd_vzz.txt",h)
     plt.savefig(figname)
     plt.close()
 

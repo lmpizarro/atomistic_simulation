@@ -123,5 +123,128 @@ def main():
     plt.plot(x)
     plt.show()
 
+
+import matplotlib.pyplot as plt 
+
+def graficar_autocorr(arch, Nl):
+    datos = np.loadtxt(arch,skiprows=1)
+    averx = np.average(datos[:,0])
+    avery = np.average(datos[:,1])
+    averz = np.average(datos[:,2])
+    print averx, avery, averz
+    px = psd_autocorr(datos[:,0]) 
+    py = psd_autocorr(datos[:,1]) 
+    pz = psd_autocorr(datos[:,2]) 
+    plt.plot(px[:Nl])
+    plt.plot(py[:Nl])
+    plt.plot(pz[:Nl])
+    plt.show()
+
+def grafica_archivos():
+    arch = "veloc_fac_1.dat" 	
+    graficar_autocorr(arch)
+    arch = "veloc_fac_2.dat" 	
+    graficar_autocorr(arch)
+    arch = "veloc_fac_3.dat" 	
+    graficar_autocorr(arch)
+    arch = "veloc_ver_1.dat" 	
+    graficar_autocorr(arch)
+
+
+def grafica_psd_componentes(Nl):
+    archivos = [ "veloc_fac_1.dat",  "veloc_fac_2.dat",  "veloc_fac_3.dat",  "veloc_ver_1.dat"] 
+    
+    vxx = np.empty(0)
+    vyy = np.empty(0)
+    vzz = np.empty(0)
+    for arch in archivos:
+        datos = np.loadtxt(arch,skiprows=1)
+	vx = datos[:,0]
+	vy = datos[:,1]
+	vz = datos[:,2]
+	vxx =np.hstack((vxx,vx))
+	vyy =np.hstack((vyy,vy))
+	vzz =np.hstack((vzz,vz))
+        averx = np.average(vx)
+        avery = np.average(vy)
+        averz = np.average(vz)
+        print averx, avery, averz, averz + averx + avery
+    averx = np.average(vxx)
+
+    px = psd_autocorr(vxx)
+    plt.plot(px[:Nl])
+    px = psd_autocorr(vyy)
+    plt.plot(px[:Nl])
+    px = psd_autocorr(vzz)
+    plt.plot(px[:Nl])
+
+    plt.show()
+
+def grafica_auto_corr_componentes():
+    archivos = [ "veloc_fac_1.dat",  "veloc_fac_2.dat",  "veloc_fac_3.dat",  "veloc_ver_1.dat"] 
+    
+    vxx = np.empty(0)
+    vyy = np.empty(0)
+    vzz = np.empty(0)
+    for arch in archivos:
+        datos = np.loadtxt(arch,skiprows=1)
+	vx = datos[:,0]
+	vy = datos[:,1]
+	vz = datos[:,2]
+	vxx =np.hstack((vxx,vx))
+	vyy =np.hstack((vyy,vy))
+	vzz =np.hstack((vzz,vz))
+        averx = np.average(vx)
+        avery = np.average(vy)
+        averz = np.average(vz)
+        print averx, avery, averz, averz + averx + avery
+    averx = np.average(vxx)
+    
+    Nl = np.size(vxx) / 2
+    px = autocorrelacion_w(vxx)
+    plt.plot(px[:Nl])
+    px = autocorrelacion_w(vyy)
+    plt.plot(px[:Nl])
+    px = autocorrelacion_w(vzz)
+    plt.plot(px[:Nl])
+
+    plt.show()
+
+
+
+
 if __name__ == "__main__":
-    main()
+    archivos = [ "veloc_fac_1.dat",  "veloc_fac_2.dat",  "veloc_fac_3.dat",  "veloc_ver_1.dat"] 
+    datos = np.loadtxt(archivos[0],skiprows=1)
+    N = 2*np.size(datos[:,0])
+   
+    vxx = np.zeros(N)
+    vyy = np.zeros(N)
+    vzz = np.zeros(N)
+    for arch in archivos:
+        datos = np.loadtxt(arch,skiprows=1)
+	vx = datos[:,0]
+	vy = datos[:,1]
+	vz = datos[:,2]
+    
+        vxx = vxx + autocorrelacion_w(vx)
+        vyy = vyy + autocorrelacion_w(vy)
+        vzz = vzz + autocorrelacion_w(vz)
+
+    h=fft.fft(vxx)
+    h=np.real(h*np.conj(h))
+
+    N = 300
+    plt.plot(np.real(h[:N]))
+
+    h=fft.fft(vyy)
+    h=np.real(h*np.conj(h))
+    plt.plot(np.real(h[:N]))
+
+    h=fft.fft(vzz)
+    h=np.real(h*np.conj(h))
+    plt.plot(np.real(h[:N]))
+
+    plt.show()
+
+
