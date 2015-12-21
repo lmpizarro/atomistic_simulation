@@ -138,7 +138,7 @@ contains
   
   subroutine inicializar_globales_random()
     
-    integer  :: i,j
+    integer  :: i
     real(dp) :: v_temp
 
     ! determina el volumen de la caja

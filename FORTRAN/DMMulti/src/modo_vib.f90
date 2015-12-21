@@ -13,7 +13,6 @@ program freq_vib
   logical ::  leido
   character(32) :: nombre
   real(dp), allocatable ::  v(:,:)
-  integer :: ns
 
   nombre = "./veloc_fac_1.dat"
   nombre = trim(nombre)

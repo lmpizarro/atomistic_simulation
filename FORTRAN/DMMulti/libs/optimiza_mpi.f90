@@ -49,8 +49,6 @@ contains
 
     integer, allocatable:: limites_procesador (:)
 
-    integer, allocatable:: cantidadCuentas (:)
-
     size_ = 10
 
     gNpart = 500
