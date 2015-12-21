@@ -40,11 +40,11 @@ Las variables que se pueden setear son:
 ```c
 1. THERM 
   *=0 sin termostato para el ensambe microcanónico (NVE)
-  * =1 termostato de Langevin para el ensamble canónico (NVT)
+  *=1 termostato de Langevin para el ensamble canónico (NVT)
 2. CONTROL_TEMP
   * Graba un archivo con las velocidades para luego hacer estadística y comprobar el buen funcionamiento del termostato de Langevin
 3. GRABA_TRAYECTORIA
-  * Graba las trayectorias de las partículas en formato *vtf* para luego ser visualizadas en el programa *VMD*
+  * Graba las trayectorias de las partículas en formato VTF para luego ser visualizadas en el programa VMD
 4. CORR_PAR
   * Graba un archivo con las funciones g(r) 
 5. MODOS_VIB
@@ -54,8 +54,8 @@ Las variables que se pueden setear son:
 ```
 
 1. THERM 
-  *=0 sin termostato para el ensambe microcanónico (NVE)
-  *=1 termostato de Langevin para el ensamble canónico (NVT)
+  * =0 sin termostato para el ensambe microcanónico (NVE)
+  * =1 termostato de Langevin para el ensamble canónico (NVT)
 2. CONTROL_TEMP
   * Graba un archivo con las velocidades para luego hacer estadística y comprobar el buen funcionamiento del termostato de Langevin
 3. GRABA_TRAYECTORIA
