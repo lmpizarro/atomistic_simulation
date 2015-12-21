@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from types import *
 
 import numpy as np
 import cubic
+import sys
 
 # http://www.petveturas.com/prog/scripts/create_crystal.py
 
@@ -10,6 +12,28 @@ import cubic
 class Cubic(object):
 
     def __init__(self, parametro_red=4, nx=4, ny=4, nz=4, tipo="fcc"):
+
+        try: 
+            assert type(parametro_red) is FloatType, "parametro_red must be float"
+            assert (parametro_red > 0), "Must be greater than zero!!"
+
+            assert type(nx) is IntType, "nx must be integer"
+            assert (nx >= 1), "Must be greater or equal one (1) !!"
+
+            assert type(ny) is IntType, "ny must be integer"
+            assert (ny >= 1), "Must be greater or equal one (1) !!"
+
+            assert type(nz) is IntType, "nz must be integer"
+            assert (nz >= 1), "Must be greater or equal one (1) !!"
+
+            assert type(tipo) is StringType, "tipo must be string"
+            assert (tipo == "fcc" or tipo == "simple" or tipo == "bcc") 
+
+        except AssertionError as e:
+            print ("%s %s ") %("Sistema mal configurado", e)
+            sys.exit(2)
+
+
         self.Nperx = nx
         self.Npery = ny
         self.Nperz = nz
@@ -54,6 +78,14 @@ class Cubic(object):
         self.Positions = self.parametro_red * self.Positions
 
     def set_parametro_red(self, parametro_red):
+
+        try:
+            assert type(parametro_red) is FloatType, "parametro_red must be float"
+            assert (parametro_red > 0), "Must be greater than zero!!"
+        except AssertionError as e:
+            print ("%s %s ") %("Bad net parameter: ", e)
+            sys.exit(2)
+
         tmp_pr = self.parametro_red
 
         self.parametro_red = parametro_red
@@ -89,6 +121,15 @@ class Cubic(object):
 
     # representacion xyz de la celda básica
     def write_xyz(self, name):
+
+        try:
+            assert type(name) is StringType, "name must be string"
+            end_name = name[-4:]
+            assert end_name == ".xyz", "config file must end with .par"
+        except AssertionError as e:
+            print ("%s %s ") %(" Bad file name: ", e)
+            sys.exit(2)
+
         fo = open(name, 'w')
         fo.write(str(self.Natoms) + "\n")
         fo.write("# xyz file\n")
@@ -100,6 +141,15 @@ class Cubic(object):
 
     # representacion vtf de la celda básica
     def write_vtf(self, name):
+        try:
+            assert type(name) is StringType, "name must be string"
+            end_name = name[-4:]
+            assert end_name == ".vtf", "config file must end with .par"
+        except AssertionError as e:
+            print ("%s %s ") %(" Bad file name: ", e)
+            sys.exit(2)
+
+
         fo = open(name, 'w')
         fo.write("## vtf file\n")
 
@@ -123,6 +173,15 @@ class Cubic(object):
     # escribe la configuracion de posiciones
     # atómicas
     def write_config(self, name):
+
+        try:
+            assert type(name) is StringType, "name must be string"
+            end_name = name[-4:]
+            assert end_name == ".par", "config file must end with .par"
+        except AssertionError as e:
+            print ("%s %s ") %(" Bad file name: ", e)
+            sys.exit(2)
+
         format1 = "%14.8f %14.8f %14.8f %10d\n"
         format2 = "%10d %10d %10d %10d %14.8f\n"
         fo = open(name, 'a')
@@ -154,6 +213,14 @@ class Cubic(object):
         self.Positions = self.Positions - tmp
 
     def noisify(self, amplitude):
+
+        try:
+            assert (amplitude > 0), "Amplitude must be greater than 0"
+            assert type(amplitude) is  FloatType, "Amplitude must be float"
+        except AssertionError as e:
+            print ("%s %s ") %("Wrong Amplitude Noise: ", e)
+            sys.exit(2)
+
         tmp = amplitude * \
             np.random.rand(self.Natoms * 3). reshape(3, self.Natoms)
         self.Positions = self.Positions + tmp
@@ -177,22 +244,20 @@ class Cubic(object):
             self.IndiceElementos[i] = 3
         for i in range(self.Natoms/2,3*self.Natoms / 4):
             self.IndiceElementos[i] = 4
-        
-
 
     def set_A3B1(self):
         pass
 
 
 def main():
-    fcc = Cubic(2, nx=4, ny=4, nz=4, tipo="fcc")
+    fcc = Cubic(2.0, nx=4, ny=4, nz=4, tipo="fcc")
     print fcc.Natoms
     print fcc.Nperx, fcc.Npery, fcc.Nperz
     print fcc.Positions
     print fcc.Positions.shape
 
     fcc.set_A1B1C1D1()
-    fcc.noisify(2)
+    fcc.noisify(2.0)
 
     fcc.write_xyz("test.xyz")
     fcc.write_vtf("test.vtf")

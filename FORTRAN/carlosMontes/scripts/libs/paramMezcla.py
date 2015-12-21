@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from types import *
 import numpy as np
 
 
@@ -10,12 +11,27 @@ import numpy as np
 class Interacciones_LJ(object):
     # inicializa la clase con un componente
 
+
     def __init__(self, epsilon, sigma, masa, name):
+        self.assert_inputs_component(epsilon, sigma, masa, name)
         self.Componentes = [{"name": name, "parameters": [epsilon, sigma,
                                                           masa]}]
 
+    def assert_inputs_component(self, epsilon, sigma, masa, name):
+        assert type(epsilon) is FloatType, "epsilon must be float"
+        assert type(sigma) is FloatType, "sigma must be float"
+        assert type(masa) is FloatType, "masa must be float"
+        assert type(name) is StringType, "masa must be float"
+
+        assert (epsilon > 0), "epsilon mut be > 0"
+        assert (sigma > 0), "sigma mut be > 0"
+        assert (masa > 0), "masa mut be > 0"
+
+
     # agrega componentes
     def add_component(self, epsilon, sigma, masa, name):
+        self.assert_inputs_component(epsilon, sigma, masa, name)
+
         c = {"name": name, "parameters": [epsilon, sigma, masa]}
         self.Componentes.append(c)
         self.Ncomponents = len(self.Componentes)
@@ -142,11 +158,15 @@ class Interacciones_LJ(object):
 
         return total
 
-    def write_file(self, nombre):
-        f = open(nombre, 'a')
+    def write_file(self, name):
+
+        assert type(name) is StringType, "name must be string"
+        end_name = name[-4:]
+        assert end_name == ".par", "config file must end with .par"
+
+        f = open(name, 'a')
         f.write(self.toString())
         f.close
-
 
 # tests
 def main():
