@@ -25,7 +25,7 @@ cmake -Ddebug=OFF -Dopenmp=ON -Dverbose=OFF -Dprofile=OFF -Doptimize=ON ..
 make
 ```
 
-Para ver qué hace cada opción se puede mirar el archivo *CMakeList.txt* en la carpeta raíz.
+Para ver qué hace cada opción se puede mirar el archivo **CMakeList.txt** en la carpeta raíz.
 
 Al ejecutar el script *instalar.sh* se creará una carpeta *build* donde se instalará todo el programa. Dentro de dicha carpeta se creará la carpeta *bin* donde estarán los ejecutables y scripts utilizados para postprocesar los datos.
 
@@ -33,7 +33,7 @@ Para ejecutar el programa, una vez dentro de la carpeta *./build/bin/* se debe h
 
 ### Opciones del preprocesador
 
-El programa *dinmod* tiene opciones de preprocesamiento para indicar qué cosa se calcularán durante su ejecución. Estas variables se deben especificar antes de la compilación. El archivo que se debe modificar es el *./src/control.h
+El programa **dinmod** tiene opciones de preprocesamiento para indicar qué cosa se calcularán durante su ejecución. Estas variables se deben especificar antes de la compilación. El archivo que se debe modificar es el *./src/control.h
 
 Las variables que se pueden setear son:
 
@@ -56,7 +56,7 @@ Las variables que se pueden setear son:
 B) Archivos de entrada
 --------------------
 
-El programa *dinmod* lee todos los datos de entrada del archivo *input.par*. El archivo consiste en seis líneas con números ubicados al comienzo del archivo. El resto de las líneas no son leidas por el programa y sirven para guardan configuraciónes de interés o comentarios.
+El programa **dinmod** lee todos los datos de entrada del archivo **input.par**. El archivo consiste en seis líneas con números ubicados al comienzo del archivo. El resto de las líneas no son leidas por el programa y sirven para guardan configuraciónes de interés o comentarios.
 
 El formato del archivo de entrada es el siguiente:
 
@@ -78,7 +78,7 @@ A continuación se describen los significados de estos nombres (algunos de los d
 5. _Masa(j)_: Masa de la especie j
 6. _Lado caja_: Lado de la caja
 7. _Periodo red_: Cantidad de veces que se repite la celda primitiva en cada dimensión
-8. _Estructura cristalina_: Tipo de estrictura. _DEBE SER 2 (para  FCC)
+8. _Estructura cristalina_: Tipo de estrictura. **DEBE SER 2** (para  FCC)
 9. _Temperatura_: Temperatura del sistema
 10. _dt_: Paso de integración 
 11. _# pasos_: Cantidad de pasos temporales
@@ -97,24 +97,26 @@ A continuación se describen los significados de estos nombres (algunos de los d
 .5
 ```
 
-Links
-----------
-
-<!-- fortran program examples -->
-Ejemplos [Fortran](http://www.personal.psu.edu/jhm/f90/progref.html)
-
-fortran power
-Referencia [Fortran](http://www.obliquity.com/computer/fortran/)
-
-programing python jpbs from home
-[Python Jobs](https://www.python.org/jobs/)
-
----------------------------------------------------------------------
-- EJECUTAR CON OPENMP
----------------------------------------------------------------------
+C) Ejecutar con openmp
+------------------------
 
 Si se compiló el programa con la opción 'cmake -Dopenmp=ON' se ejecuta el programa
 especificando primero la cantidad de threads que se quieren utilizar
 
- > export OMP_NUM_THREADS=4 && ./dinmod
+```bash
+export OMP_NUM_THREADS=4 && ./dinmod
+```
+
+Links
+----------
+
+Frtran program examples 
+[Ejemplos de Fortran](http://www.personal.psu.edu/jhm/f90/progref.html)
+
+Fortran power
+[Fortran](http://www.obliquity.com/computer/fortran/)
+
+Programing python jpbs from home
+[Python Jobs](https://www.python.org/jobs/)
+
 
