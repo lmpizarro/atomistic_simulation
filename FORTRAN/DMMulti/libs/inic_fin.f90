@@ -289,12 +289,6 @@ end subroutine inicia_posicion_rn
    !
    gR = gLado_caja * gR / n_pred 
 
-#if DEBUG == 1
-   do i=1, gNpart
-      print *, "punto ", gR(1, i), gR(2, i), gR(3, i), gIndice_elemento(i)
-   enddo
-#endif
-
   end subroutine inicia_posicion_fcc
 
   subroutine inicia_posicion_fcc_random(n_pred)
@@ -347,12 +341,6 @@ end subroutine inicia_posicion_rn
       gIndice_elemento(int(gNpart * uni())) = 1
    enddo
    ! En una futura vesión debería ser una rutina independiente
-
-#if DEBUG == 1
-   do i=1, gNpart
-      print *, "punto ", gR(1, i), gR(2, i), gR(3, i), gIndice_elemento(i)
-   enddo
-#endif
 
   end subroutine inicia_posicion_fcc_random
 
