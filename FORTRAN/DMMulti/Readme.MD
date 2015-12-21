@@ -15,7 +15,7 @@ Para compilar el programa se requiere tener instalado el paquete *cmake*. En el 
 # export FC=/opt/intel/composer_xe_2013.5.192/bin/intel64/ifort
 ```
 
-Hay un archivo *instalar.sh* que facilita la compilación con los flags requeridos:
+Hay un archivo **instalar.sh** que facilita la compilación con los flags requeridos:
 
 ```bash
 mkdir build
@@ -29,18 +29,18 @@ Para ver qué hace cada opción se puede mirar el archivo **CMakeList.txt** en l
 
 Al ejecutar el script *instalar.sh* se creará una carpeta *build* donde se instalará todo el programa. Dentro de dicha carpeta se creará la carpeta *bin* donde estarán los ejecutables y scripts utilizados para postprocesar los datos.
 
-Para ejecutar el programa, una vez dentro de la carpeta *./build/bin/* se debe hacer *./dinmod*
+Para ejecutar el programa, una vez dentro de la carpeta **./build/bin/** se debe hacer **./dinmod**
 
 ### Opciones del preprocesador
 
-El programa **dinmod** tiene opciones de preprocesamiento para indicar qué cosa se calcularán durante su ejecución. Estas variables se deben especificar antes de la compilación. El archivo que se debe modificar es el *./src/control.h
+El programa **dinmod** tiene opciones de preprocesamiento para indicar qué cosa se calcularán durante su ejecución. Estas variables se deben especificar antes de la compilación. El archivo que se debe modificar es el **./src/control.h**
 
 Las variables que se pueden setear son:
 
 ```
 1. THERM 
-  *=0 sin termostato para el ensambe microcanónico (NVE)
-  *=1 termostato de Langevin para el ensamble canónico (NVT)
+  * =0 sin termostato para el ensambe microcanónico (NVE)
+  * =1 termostato de Langevin para el ensamble canónico (NVT)
 2. CONTROL_TEMP
   * Graba un archivo con las velocidades para luego hacer estadística y comprobar el buen funcionamiento del termostato de Langevin. **No fue probada en esta versión del programa**
 3. GRABA_TRAYECTORIA
