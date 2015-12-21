@@ -12,7 +12,7 @@ A) Instalación
 Para compilar el programa se requiere tener instalado el paquete *cmake*. En el archivo CMakeList están todos los comandos que serán pasados al compilador. Se puede elegir el compilador a utilizar (gfortran, ifrot, etc) definiendo la variable de entorno *FC*:
 ```bash
 # por ejemplo en sheldon se usa 
-# export FC=/opt/intel/composer_xe_2013.5.192/bin/intel64/ifort
+export FC=/opt/intel/composer_xe_2013.5.192/bin/intel64/ifort
 ```
 
 Hay un archivo **instalar.sh** que facilita la compilación con los flags requeridos:
