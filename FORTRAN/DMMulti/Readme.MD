@@ -37,26 +37,24 @@ El programa *dinmod* tiene opciones de preprocesamiento para indicar qué cosa s
 
 Las variables que se pueden setear son:
 
-```c
-1. THERM 1 /*0=NVE, no thermostat 1=langevin thermostat */
-..* =0 sin termostato para el ensambe microcanónico (NVE)
-..* =1 termostato de Langevin para el ensamble canónico (NVT)
+1. THERM 
+  *=0 sin termostato para el ensambe microcanónico (NVE)
+  * =1 termostato de Langevin para el ensamble canónico (NVT)
 2. CONTROL_TEMP
-..* Graba un archivo con las velocidades para luego hacer estadística y comprobar el buen funcionamiento del termostato de Langevin
+  * Graba un archivo con las velocidades para luego hacer estadística y comprobar el buen funcionamiento del termostato de Langevin
 3. GRABA_TRAYECTORIA
-..* Graba las trayectorias de las partículas en formato *vtf* para luego ser visualizadas en el programa *VMD*
+  * Graba las trayectorias de las partículas en formato *vtf* para luego ser visualizadas en el programa *VMD*
 4. CORR_PAR
-..* Graba un archivo con las funciones g(r) 
+  * Graba un archivo con las funciones g(r) 
 5. MODOS_VIB
-..* Para análisis de los modos vibracionales
+  * Para análisis de los modos vibracionales
 6. MODOS_VIB_EQUIVALENTES
-..* Para análisis de los modos vibracionales
-```
+  * Para análisis de los modos vibracionales
 
 B) Archivos de entrada
 --------------------
 
-El progra
+### Ejemplo de programa
 
 ```Fortran
 2 1
