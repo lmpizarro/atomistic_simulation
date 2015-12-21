@@ -42,7 +42,7 @@ Las variables que se pueden setear son:
   *=0 sin termostato para el ensambe microcanónico (NVE)
   *=1 termostato de Langevin para el ensamble canónico (NVT)
 2. CONTROL_TEMP
-  * Graba un archivo con las velocidades para luego hacer estadística y comprobar el buen funcionamiento del termostato de Langevin
+  * Graba un archivo con las velocidades para luego hacer estadística y comprobar el buen funcionamiento del termostato de Langevin. **No fue probada en esta versión del programa**
 3. GRABA_TRAYECTORIA
   * Graba las trayectorias de las partículas en formato VTF para luego ser visualizadas en el programa VMD
 4. CORR_PAR
@@ -106,6 +106,46 @@ especificando primero la cantidad de threads que se quieren utilizar
 ```bash
 export OMP_NUM_THREADS=4 && ./dinmod
 ```
+
+D) Archivos de salida
+-----------------------
+
+**val_medios.dat** : Valores medios y desviaciones estándar de presión, temperatura 
+                     y energías (potencial, cinética y total).
+                     Las primeras líneas tienen información de los datos de entrada
+
+**presion.dat**     : Valores de la presión en función del tiempo
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
+
+**temperatura.dat** : Valores de la temperatura en función del tiempo
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
+
+**energias.dat**    : Valores de las energías (pot, cin, y total) en función del tiempo
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
+                     Las columnas son:    E_POT   E_CIN   E_TOT
+
+**energia_pot_min.dat** : Valores de la energía en función del tiempo cuando se trata
+                         de minimizarla
+                     La primer linea contiene la cantidad de datos y el dt entre ellos
+
+**estados.dat**     : Posiciones, velocidades y tipo de partícula del último estado
+                     Formato:   X Y Z V_X V_Y V_Z Tipo
+
+**gr.dat*          : (OPCIONAL) Sólo si se definió CORR_PAR en control.h del preprocesador
+                     Da la función g(r) normalizada junto con la posición r.
+                     La primer linea contiene la cantidad de datos y un cero (irrelevante) 
+                     Formato:     r  g_11(r) g_12(r) g_22(r) g_tot(r)                  
+  
+**trayectoria.vtf**  : (OPCIONAL) Sólo si se definió GRABA_TRAYECTORIA en control.h del
+                      preprocesador. Guarda las trayectorias en el formato para ser 
+                      visualizado con el programa VMD.
+
+**velocidades_control_T.dat** : (OPCIONAL) Sólo si se definió CONTROL_TEMP en control.h del
+                              preprocesador. Guarda las tres componentes de velocidades
+                              de una partícula cualquiera a lo largo del tiempo. Con este
+                              archivo se hace un histograma y calcula su desviación estandar
+                              y se controla que el termostato de Langevin esté funcionando.
+                              **No fue probado en esta versión del programa**
 
 Links
 ----------
