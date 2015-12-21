@@ -72,19 +72,19 @@ El formato del archivo de entrada es el siguiente:
 A continuación se describen los significados de estos nombres (algunos de los datos de entrada no pueden variarse ya que hay muchas cosas aún no implementadas).
 
 1. _Cantidad de especies_: cantidad de especies distintas presentes en el sistema. _DEBE SER 2_
-2. _Estado del sistema_ : indica si se trabajará con un sólido o un líquido. _DEBE_SER 1_ 
+2. _Estado del sistema_ : indica si se trabajará con un sólido o un líquido. _DEBE SER 1_ 
 3. _Epsilon(j)_: Parámetro de Lenard-Jones de la especie j
 4. _Sigma(j)_: Parámetro de Lenard-Jones de la especie j
 5. _Masa(j)_: Masa de la especie j
-6. _Lado_caja_: Lado de la caja
-7. _Periodo_red_: Cantidad de veces que se repite la celda primitiva en cada dimensión
-8. _Estructura_cristalina_: Tipo de estrictura. _DEBE_SER 2 (para  FCC)
+6. _Lado caja_: Lado de la caja
+7. _Periodo red_: Cantidad de veces que se repite la celda primitiva en cada dimensión
+8. _Estructura cristalina_: Tipo de estrictura. _DEBE_SER 2 (para  FCC)
 9. _Temperatura_: Temperatura del sistema
 10. _dt_: Paso de integración 
-11. _#_pasos_: Cantidad de pasos temporales
-12. _N_med_: Cada cuántos puntos se realizan mediciones
-13. _gamma_langevin_: Parámetro para el termostato de Langevin
-14. _relacion_especies_:  Relación entre las distintas especies. _DEBE_SER 0.5_
+11. _# pasos_: Cantidad de pasos temporales
+12. _N med_: Cada cuántos puntos se realizan mediciones
+13. _gamma langevin_: Parámetro para el termostato de Langevin
+14. _relacion especies_:  Relación entre las distintas especies. _DEBE SER 0.5_
 
 ### Ejemplo de programa
 
