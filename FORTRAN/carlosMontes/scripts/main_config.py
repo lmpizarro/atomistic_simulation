@@ -1,7 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
+import sys
 
+pwd = os.getcwd()
+mylibs = pwd + "/libs"
+sys.path.append(mylibs)
 
 import paramCorrida as PC
 import paramMezcla as PM
