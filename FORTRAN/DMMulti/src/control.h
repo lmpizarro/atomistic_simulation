@@ -17,4 +17,3 @@
 /*==========================================*/
 /* Variables para hacer cálculo vibracional */
 #define MODOS_VIB
-#undef MODOS_VIB_EQUIVALENTES

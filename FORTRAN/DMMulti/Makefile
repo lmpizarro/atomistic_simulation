@@ -1,3 +1,4 @@
+# este Makefile queda como ejemplo de referencia
 MAKEFILE = Makefile
 exe = main 
 fcomp = gfortran #ifort # /opt/intel/compiler70/ia32/bin/ifc  

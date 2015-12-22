@@ -8,8 +8,8 @@ module integra
   use utils,             only: hace_estadistica
 #ifdef MODOS_VIB
   use mediciones,        only: acumula_velocidades_equivalentes,  acumula_velocidades_posicion,&
-                               acumula_velocidades_posicion_simple
 #endif
+
   use io_parametros,     only: escribe_trayectoria, escribe_en_columnas
 #ifdef CORR_PAR
   use mediciones,        only: normaliza_gr
@@ -116,9 +116,6 @@ contains
         Eng_t(:,j) = (/gPot, gKin, gPot + gKin/) 
         Pres_t(j)  = pres
         Temp_t(j)  = temp
-#ifdef MODOS_VIB_EQUIVALENTES
-        call acumula_velocidades_equivalentes()
-#endif
 
 #ifdef GRABA_TRAYECTORIA
     call escribe_trayectoria(gR,nombre,.FALSE.)

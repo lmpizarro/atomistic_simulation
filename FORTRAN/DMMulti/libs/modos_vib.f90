@@ -12,12 +12,10 @@ module modos_vib
 
   ! forma de llamar fftw3
   ! ver: http://fftw.org/doc/Calling-FFTW-from-Modern-Fortran.html
-  !type(C_PTR) :: plan
-  !complex(C_DOUBLE_COMPLEX), dimension(1024,1000) :: in, out
-  !plan = fftw_plan_dft_2d(1000,1024, in,out, FFTW_FORWARD,FFTW_ESTIMATE)
-
-  !call fftw_execute_dft(plan, in, out)
-
+  ! type(C_PTR) :: plan
+  ! complex(C_DOUBLE_COMPLEX), dimension(1024,1000) :: in, out
+  ! plan = fftw_plan_dft_2d(1000,1024, in,out, FFTW_FORWARD,FFTW_ESTIMATE)
+  ! call fftw_execute_dft(plan, in, out)
 
   use globales,   only: gKmed, gV, gF, gR, gNpart, gKin, gNespecies,&
                         gCorrVfac_1, gCorrVfac_2, gCorrVfac_3, gCorrVver_1,&
@@ -186,7 +184,7 @@ contains
 
     c = out_backw(1:n/2) / (DBLE(SIZE(in)))
 
-    ! ver el paquete autocorrelacion para esta nomalizacion
+    ! ver el programa autocorrelacion para esta normalizacion
     DO i=2,nc
       c(i-1)=c(i-1)/DBLE(nc-(i-1))
     END DO
@@ -198,6 +196,7 @@ contains
 
   endsubroutine calcula_autocorr
 
+  ! TODO: revisar
   ! calcula la correlacion de velocidad de un vector temporal 3D
   subroutine calcula_autocorr_vel_3D (v, corr)
     real(dp), dimension(:,:), intent(in) :: v
@@ -224,6 +223,7 @@ contains
     deallocate (v2)
   endsubroutine calcula_autocorr_vel_3D 
 
+  ! TODO: revisar
   ! calcula la correlacion de velocidad de un vector temporal 3D
   subroutine calcula_autocorr_vel_3D_1D (v, corr)
     real(dp), dimension(:,:), intent(in) :: v
@@ -246,10 +246,7 @@ contains
     deallocate (v2)
   endsubroutine calcula_autocorr_vel_3D_1D 
 
-
-
-
-#ifdef MODOS_VIB_EQUIVALENTES   
+  ! TODO: revisar
   subroutine calcula_autocorr_vel_3D_b (v, c)
     ! Se puede pensar de otra manera
     ! acumular en un vector 1D cada una de las 3dimensiones
@@ -273,6 +270,5 @@ contains
 
   endsubroutine calcula_autocorr_vel_3D_b 
 
-#endif
 
 endmodule modos_vib

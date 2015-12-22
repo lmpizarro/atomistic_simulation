@@ -1,3 +1,6 @@
+!
+!  determina el espectro de las velocidades
+!
 program freq_vib
   use modos_vib
   use types 

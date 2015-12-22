@@ -1,3 +1,7 @@
+!
+! programa que lee velocidades
+! y calcula sus autocorrelaciones
+!
 program autocorr
   use modos_vib
   use types 

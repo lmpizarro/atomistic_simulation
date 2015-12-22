@@ -49,9 +49,9 @@ Las variables que se pueden setear son:
   * Graba un archivo con las funciones g(r) 
 5. MODOS_VIB
   * Para análisis de los modos vibracionales
-6. MODOS_VIB_EQUIVALENTES
-  * Para análisis de los modos vibracionales
-```
+``` 
+<! -- 6. MODOS_VIB_EQUIVALENTES
+  * Para análisis de los modos vibracionales -->
 
 B) Archivos de entrada
 --------------------
@@ -146,13 +146,13 @@ D) Archivos de salida
 Links
 ----------
 
-Frtran program examples 
+Fortran program examples 
 [Ejemplos de Fortran](http://www.personal.psu.edu/jhm/f90/progref.html)
 
 Fortran power
 [Fortran](http://www.obliquity.com/computer/fortran/)
 
-Programing python jpbs from home
+Programing python jobs from home
 [Python Jobs](https://www.python.org/jobs/)
 
 
