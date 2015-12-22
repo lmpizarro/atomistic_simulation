@@ -51,9 +51,6 @@ Las variables que se pueden setear son:
   * Para análisis de los modos vibracionales
 ``` 
 
-[//]: # ( 6. MODOS_VIB_EQUIVALENTES
-  * Para análisis de los modos vibracionales)
-
 B) Archivos de entrada
 --------------------
 
