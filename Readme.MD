@@ -19,4 +19,9 @@ A.J.H. MC GAUGHEY and M. KAVIANY
 
 Para actualizar github
 
-git push https://github.com/lmpizarro/atomistic_simulation.git master:master
+git push https://lmpizarro@github.com/lmpizarro/atomistic_simulation.git master:master
+
+
+
+Para actualizar bitbucket
+git push https://lmpizarro@bitbucket.org/lmpizarro/atomistic_simulation.git master:master
