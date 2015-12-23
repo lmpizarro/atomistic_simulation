@@ -6,8 +6,13 @@ import numpy as np
 import cubic
 import sys
 
+import ase.data as aseData
+from ase import Atoms
+from ase import Atom
+
 # http://www.petveturas.com/prog/scripts/create_crystal.py
 
+symbol_list = aseData.chemical_symbols
 
 class Cubic(object):
 
@@ -98,8 +103,8 @@ class Cubic(object):
 
 
     def list_positions(self):
-        print self.IndiceElementos
-        print self.NombreElementos
+        # print self.IndiceElementos
+        # print self.NombreElementos
         for i in range(np.size(self.Positions[0])):
             print  self.IndiceElementos[i], self.Positions[0][i], \
                 self.Positions[1][i], self.Positions[2][i]
@@ -117,7 +122,6 @@ class Cubic(object):
                     igr += 1
         return p
 
-        # print p.shape
 
     # representacion xyz de la celda básica
     def write_xyz(self, name):
@@ -155,7 +159,7 @@ class Cubic(object):
 
         for i in range(self.Natoms):
             atom = (" atom %d radius %f type %d\n") % (i,
-                                                       self.radios[
+                                                       self.covalent_radii[
                                                            self.IndiceElementos[i] - 1],
                                                        self.IndiceElementos[i])
             fo.write(atom)
@@ -230,14 +234,59 @@ class Cubic(object):
         pass
 
     # por ahora valido para fcc
-    def set_A2B2(self):
+    def set_A2B2(self, a1, a2):
         self.radios = np.array([.8, 1.0])
         for i in range(self.Natoms / 2):
             self.IndiceElementos[i] = 2
 
+    
+    class AtomNameError(Exception):
+            def __init__(self, value):
+                self.value = value
+            def __str__(self):
+                return repr(self.value)
+
+    def set_ase_atoms_rep(self):
+        self.ase_atoms = Atoms(pbc=True)
+        for i in range(np.size(self.Positions[0])):
+            position = [self.Positions[0,i], self.Positions[1,i], self.Positions[2,i]] 
+            symb = self.symbols[self.IndiceElementos[i] - 1]
+            a = Atom(symb)
+            a.position = position 
+            self.ase_atoms.append(a)
+
+
     # por ahora valido para fcc
-    def set_A1B1C1D1(self):
-        self.radios = np.array([.8, 1.0, 1.1, 1.2])
+    def set_A1B1C1D1(self, a1, a2, a3, a4):
+
+        try:
+            assert type(a1) is  StringType, "atom 1  must be string"
+            assert type(a2) is  StringType, "atom 2  must be string"
+            assert type(a3) is  StringType, "atom 3  must be string"
+            assert type(a4) is  StringType, "atom 4  must be string"
+        except AssertionError as e:
+            print ("%s %s ") %("Wrong atoms symbols", e)
+            raise self.AtomNameError(e)
+
+        try:
+            assert a1 in symbol_list, "atom 1  not in symbol list"
+            assert a2 in symbol_list, "atom 2  not in symbol list"
+            assert a3 in symbol_list, "atom 3  not in symbol list"
+            assert a4 in symbol_list, "atom 4  not in symbol list"
+        except AssertionError as e:
+            print ("%s %s ") %("Wrong atoms symbols", e)
+            raise self.AtomNameError(e)
+
+
+        self.symbols = [a1, a2, a3, a4]
+        self.atomic_numbers = []
+        self.atomic_masses  = []
+        self.covalent_radii = []
+
+        [self.atomic_numbers.append(aseData.atomic_numbers[s]) for s in self.symbols]
+        [self.atomic_masses.append(aseData.atomic_masses[n]) for n in self.atomic_numbers]
+        [self.covalent_radii.append(aseData.covalent_radii[n]) for n in self.atomic_numbers]
+
         for i in range(self.Natoms / 4):
             self.IndiceElementos[i] = 2
         for i in range(self.Natoms/4,self.Natoms / 2):
@@ -245,26 +294,28 @@ class Cubic(object):
         for i in range(self.Natoms/2,3*self.Natoms / 4):
             self.IndiceElementos[i] = 4
 
+        self.set_ase_atoms_rep()    
+
     def set_A3B1(self):
         pass
 
 
 def main():
     fcc = Cubic(2.0, nx=4, ny=4, nz=4, tipo="fcc")
-    print fcc.Natoms
-    print fcc.Nperx, fcc.Npery, fcc.Nperz
-    print fcc.Positions
-    print fcc.Positions.shape
+    #print fcc.Natoms
+    #print fcc.Nperx, fcc.Npery, fcc.Nperz
+    #print fcc.Positions
+    #print fcc.Positions.shape
 
-    fcc.set_A1B1C1D1()
+    fcc.set_A1B1C1D1("Ar","Ne","Kr","Xe")
     fcc.noisify(2.0)
 
     fcc.write_xyz("test.xyz")
     fcc.write_vtf("test.vtf")
     fcc.write_config("config.par")
 
-    fcc.list_positions()
-
+    #fcc.list_positions()
+    print fcc.ase_atoms
 
 if __name__ == "__main__":
     main()
