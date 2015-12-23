@@ -308,14 +308,14 @@ def main():
     #print fcc.Positions.shape
 
     fcc.set_A1B1C1D1("Ar","Ne","Kr","Xe")
-    fcc.noisify(2.0)
+    #fcc.noisify(2.0)
 
     fcc.write_xyz("test.xyz")
     fcc.write_vtf("test.vtf")
     fcc.write_config("config.par")
 
     #fcc.list_positions()
-    print fcc.ase_atoms
+    print fcc.ase_atoms.positions
 
 if __name__ == "__main__":
     main()
