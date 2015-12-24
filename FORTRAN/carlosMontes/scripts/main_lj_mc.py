@@ -11,9 +11,12 @@ sys.path.append(mylibs)
 
 import lj_mc as LJ
 import paramCorrida as PC
-import paramMezcla as PM
+import lj_mix as PM
 import cubic as CB
 import numpy as np
+
+
+import time
 
 
 def main():
@@ -31,32 +34,45 @@ def main():
     fcc.write_vtf("inicio.vtf") 
     lj = LJ.LJ(components, fcc)
 
-    KT = 0.5
-    Nmc = 1000
-    aceptados = 0
+    energy_i = lj.energy()
+
+    start_time = time.time()
+
+    KT = 0.8 
+    Nmc = 10000
+    counter_aceptados = 0
     counter = 0
-    while (aceptados < Nmc):
+    counter_rechazados_no_iguales = 0
+    counter_iguales = 0
+    print counter, energy_i
+    while (counter_aceptados < Nmc):
         indxs = np.random.randint(0, high=fcc.Natoms, size=2)
         a1 = fcc.IndiceElementos[indxs[0]]
         a2 = fcc.IndiceElementos[indxs[1]]
         if a1 != a2:
+	    counter_iguales += 1
             if lj.distance_true(indxs[0], indxs[1]):
                 deltaE = lj.energy_IJ(indxs[0], indxs[1])
                 if(deltaE < 0):
                     #print (indxs, a1, a2, deltaE )
-                    aceptados = aceptados + 1
+                    counter_aceptados = counter_aceptados + 1
+		    energy_i +=deltaE
+		    print counter, energy_i, float(counter_aceptados)/float(counter_iguales)
                 else:
                     if np.exp(-KT*deltaE) > np.random.random():
-                       aceptados = aceptados + 1
-                       print ("aceptado por KT", counter, aceptados)
+                       counter_aceptados = counter_aceptados + 1
+                       #print ("aceptado por KT", counter, aceptados)
+		       energy_i +=deltaE
+		       print counter, energy_i, float(counter_aceptados)/float(counter_iguales)
                     else:
                        pass
                        #no aceptado vuelven los índices a sus posiciones
                        fcc.IndiceElementos[indxs[0]] = a1
                        fcc.IndiceElementos[indxs[1]] = a2
         counter = counter + 1
-    print (counter)        
-    fcc.write_vtf("fin.vtf") 
+    fcc.write_vtf("fin.vtf")
+    end_time = time.time()
+    print energy_i, counter, counter_aceptados, end_time - start_time
 
 
 if __name__ == "__main__":

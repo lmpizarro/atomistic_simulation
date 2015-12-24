@@ -9,7 +9,7 @@ mylibs = pwd + "/libs"
 sys.path.append(mylibs)
 
 import paramCorrida as PC
-import paramMezcla as PM
+import lj_mix as PM
 import cubic as CB
 
 
