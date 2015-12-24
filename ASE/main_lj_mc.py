@@ -1,4 +1,14 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import division 
+
+import os
+import sys
+
+pwd = os.getcwd()
+mylibs = pwd + "/libs"
+sys.path.append(mylibs)
+
 import numpy as np
 
 from ase.lattice.cubic import FaceCenteredCubic
@@ -38,9 +48,3 @@ print atoms.get_potential_energy()/len(atoms)
 
 
 ase.io.write('slab.xyz', atoms)
-
-#print indices, offsets
-
-print
-
-#print nl.get_neighbors(3)
