@@ -20,16 +20,16 @@ import ase.io
 import lj_mc as ljmc
 import lj_mix as ljmix
 
-Nx=Ny=Nz=3
-lc = 3/Nx
+# init lennard jones interactions
 elements = ["Ar", "Ne", "Kr", "Xe"]
-
 interacciones = ljmix.Interacciones_LJ(1.2, 4.0, 2.3, elements[0])
 interacciones.add_component(1.1, 4.5, 2.1, elements[1])
 interacciones.add_component(1.0, 4.3, 2.0, elements[2])
 interacciones.add_component(1.05, 4.4, 2.7, elements[3])
 
-
+# init atoms systems
+Nx=Ny=Nz=3
+lc = 3/Nx
 atoms = FaceCenteredCubic(size=(Nx, Ny, Nz), symbol="Ne", pbc=True, latticeconstant=lc)
 cs = [elements[0], elements[1],  elements[2], elements[3] ] * (Nx ** 3)
 atoms.set_chemical_symbols(cs)		
@@ -42,9 +42,6 @@ print atoms.get_potential_energy()/len(atoms)
 #atoms[0].position = [1,1,1]
 print atoms.get_potential_energy()/len(atoms)
 
-
-#for i,a in enumerate(atoms.positions):
-#  print i, a, cs[i]
 
 
 ase.io.write('slab.xyz', atoms)
