@@ -3,11 +3,10 @@
 from __future__ import division
 
 import numpy as np
-from ase.calculators.neighborlist import NeighborList 
 from ase.calculators.calculator import Calculator, all_changes 
-import types
-#import lj_mix
-import sys
+from numba import jit
+import numpy as np
+
 
 class LJ_MIX_Error(Exception):
     def __init__(self, value):
@@ -26,7 +25,6 @@ class LennardJones_mc(Calculator):
 
     def __init__(self, lj_mix, **kwargs):
         Calculator.__init__(self, **kwargs)
-	energy = 10
 
 
 	a = ("%s")%(type(lj_mix)) 
@@ -38,54 +36,57 @@ class LennardJones_mc(Calculator):
 
         self.lj_mix = lj_mix
         self.lj_mix.calculate_matrices()
-	print self.lj_mix
+	self.init = 0
 
-        self.results['energy'] = energy
+    def initialize (self):
+        self.systemCubic = SystemCubic(self.atoms)
+        self.energy_lj = EnergyLJ(self.lj_mix, self.systemCubic)
+        return (self.energy_lj.energy())
 
     def calculate(self, atoms=None,
                   properties=['energy'],
                   system_changes=['positions']):
-	print "calculando"
         Calculator.calculate(self, atoms, properties, system_changes)
 
+        energy = 0
 
-        natoms = len(self.atoms)
+        if self.init == 0 or "cell" in system_changes:
+	    energy = self.initialize()
+	    self.init = 1
+        elif 'numbers' in system_changes:
+	    self.systemCubic.map_numbers(self.atoms)
+            energy = self.energy_lj.energy_pos(self.atoms.info["pos_changed"])
+	elif "positions" in system_changes:
+	    self.energy_lj.system.Positions = np.transpose(self.atoms.positions) 
+            energy = self.energy_lj.energy_pos(self.atoms.info["pos_changed"])
+        #elif  "cell" in system_changes:
+	#    self.energy_lj.system.Positions = np.transpose(self.atoms.positions) 
 
-        sigma = self.parameters.sigma
-        epsilon = self.parameters.epsilon
-        rc = self.parameters.rc
-        if rc is None:
-            rc = 3 * sigma
-        
-        if 'numbers' in system_changes:
-            self.nl = NeighborList([rc / 2] * natoms, self_interaction=False)
-
-	print system_changes    
-
-        self.nl.update(self.atoms)
-        
-        positions = self.atoms.positions
-        cell = self.atoms.cell
-        
-        e0 = 4 * epsilon * ((sigma / rc)**12 - (sigma / rc)**6)
-        
-        energy = 0.0
-        
-        
         self.results['energy'] = energy
 
-from numba import jit
-import numpy as np
 
+class SystemCubic(object):
+    def __init__(self, atoms):
+	self.Natoms = len(atoms)
+	self.Positions = np.transpose(atoms.positions) 
+        self.lado_cubo_x = atoms.cell[0,0]
+        self.lado_cubo_y = atoms.cell[1,1]
+        self.lado_cubo_z = atoms.cell[2,2]
+	self.map_numbers(atoms)
 
+    def map_numbers(self, atoms):
+	mapp = {}
+	for i,e in enumerate(atoms.info["elements"]):
+            mapp[e] = i
+	self.IndiceElementos = np.array([mapp[c]  for c in atoms.get_chemical_symbols()])
+	    
 class EnergyLJ(object):
 
     def __init__(self, components, system):
         self.componentes = components
         self.system = system
-        pass
 
-    @jit
+    #@jit
     def cpc(self, r):
         tmpx = self.system.lado_cubo_x * \
             np.floor(r[0] / self.system.lado_cubo_x)
@@ -100,7 +101,7 @@ class EnergyLJ(object):
 
         return (r)
 
-    @jit
+    #@jit
     def energy(self):
         PEnergy = 0.0
         for i in range(self.system.Natoms - 1):
@@ -127,7 +128,7 @@ class EnergyLJ(object):
                 pass
         return(PEnergy)
 
-    @jit
+    #@jit
     def kernel_e (self, i, j):
         Posi = self.system.Positions[:, i]
         rij = self.system.Positions[:,j] - Posi
@@ -150,7 +151,7 @@ class EnergyLJ(object):
             return 0
 
 
-    @jit
+    #@jit
     def energy_pos (self, ii):
         e_pos = 0.0
         for j in range(ii):
@@ -162,7 +163,7 @@ class EnergyLJ(object):
         return e_pos
 
 
-    @jit
+    #@jit
     def energy_IJ(self, ii, jj):
         PEnergy = 0.0
 
@@ -186,7 +187,7 @@ class EnergyLJ(object):
 
         return (E2 - E1)
 
-    @jit
+    #@jit
     def distance_true(self, i, j):
         Sigma = self.componentes.sigma[self.system.IndiceElementos[i],
                                                self.system.IndiceElementos[j]]
