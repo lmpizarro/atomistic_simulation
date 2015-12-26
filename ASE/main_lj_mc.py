@@ -34,13 +34,16 @@ atoms = FaceCenteredCubic(size=(Nx, Ny, Nz), symbol="Ne", pbc=True, latticeconst
 cs = [elements[0], elements[1],  elements[2], elements[3] ] * (Nx ** 3)
 atoms.set_chemical_symbols(cs)		
 atoms.info["elements"] = elements
+atoms.info["pos_changed"] = 0
+# fin de la inicializacion
 
 # Associate the EMT potential with the atoms
 atoms.set_calculator(ljmc.LennardJones_mc(interacciones))
-atoms.info["pos_changed"] = 0
 print "energia inicial", atoms.get_potential_energy()/len(atoms)
 cell = atoms.get_cell()
-f = 1.0975 
+# ajuste para el minimo de energía potencial
+f = 1.5 
+atoms.positions *= f
 atoms.set_cell(cell * f)
 print "energia inicial", f, atoms.get_potential_energy()/len(atoms)
 
