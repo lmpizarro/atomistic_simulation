@@ -49,7 +49,8 @@ cell = atoms.get_cell()
 f = 1.41
 atoms.positions *= f
 atoms.set_cell(cell * f)
-print "energia inicial", f, atoms.get_potential_energy()/len(atoms)
+Einic = atoms.get_potential_energy()/len(atoms)
+print "energia inicial", f, Einic
 
 
 
@@ -61,17 +62,32 @@ print "cambio de energia por cambio de elemento", atoms.get_potential_energy()/l
 
 aceptados = 0
 Energy = 0
-kT = 0.000103
+kT = 0.005103
 beta = 1.0 /kT
-for i in range (1000000):
+Energy = Einic
+for i in range (100000):
   indx_change = np.random.randint(0,Nx*Nz*Ny*4)
+ 
   atoms.info["pos_changed"] = indx_change
   atoms.info["pos_changed_value"] = np.copy(atoms[indx_change].position)
+  p = atoms[indx_change].position
+  p_cpc = calculator.energy_lj.cpc(p)
+  atoms[indx_change].position = p_cpc
+ 
+  einic =  atoms.get_potential_energy()/len(atoms)
+
+  
   atoms[indx_change].position += 0.02 * lc * f * (np.random.rand(3) - 0.5)
+
   p = atoms[indx_change].position
   p_cpc = calculator.energy_lj.cpc(p)
   atoms.positions[indx_change] = p_cpc
-  deltaE = atoms.get_potential_energy()/len(atoms)
+  eifin = atoms.get_potential_energy()/len(atoms)
+
+
+  deltaE = eifin - einic
+  	
+
   if deltaE < 0:
      aceptados += 1
      Energy += deltaE 

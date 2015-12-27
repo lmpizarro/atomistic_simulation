@@ -130,6 +130,7 @@ class EnergyLJ(object):
 
     #@jit
     def kernel_e (self, i, j):
+	de = 0.0    
         Posi = self.system.Positions[:, i]
         rij = self.system.Positions[:,j] - Posi
         Shift = self.componentes.potCut[self.system.IndiceElementos[i],
@@ -146,10 +147,8 @@ class EnergyLJ(object):
             id2 = 1. / d2            #inverse squared distance
             id6 = id2 * id2 * id2    #inverse sixth distance
             id12 = id6 * id6         #inverse twelvth distance
-            return ((4. * (id12 - id6))*Epsilon + Shift)
-        else:
-            return 0
-
+            de =  ((4. * (id12 - id6))*Epsilon + Shift)
+        return de
 
     #@jit
     def energy_pos (self, ii, pos_orig):
@@ -161,9 +160,9 @@ class EnergyLJ(object):
 
         self.system.Positions[:,ii] = pos_orig
 
-        for j in range(self.system.Natoms):
-	   if j !=ii:	
-             e_old = e_old + self.kernel_e(ii, j)
+        #for j in range(self.system.Natoms):
+	#   if j !=ii:	
+        #     e_old = e_old + self.kernel_e(ii, j)
 
         return e_new - e_old
 
