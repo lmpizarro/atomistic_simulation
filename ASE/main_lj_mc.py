@@ -21,11 +21,14 @@ import lj_mc as ljmc
 import lj_mix as ljmix
 
 # init lennard jones interactions
+#σ = 3.4 × 10-10 m and ε = 1.65 × 10-21 joule
+# 
 elements = ["Ar", "Ne", "Kr", "Xe"]
-interacciones = ljmix.Interacciones_LJ(1.2, 4.0, 2.3, elements[0])
-interacciones.add_component(1.1, 4.5, 2.1, elements[1])
-interacciones.add_component(1.0, 4.3, 2.0, elements[2])
-interacciones.add_component(1.05, 4.4, 2.7, elements[3])
+interacciones = ljmix.Interacciones_LJ(0.01, 3.4, 2.3, elements[0])
+interacciones.add_component(0.01, 4.5, 2.1, elements[1])
+interacciones.add_component(0.03, 4.3, 2.0, elements[2])
+interacciones.add_component(0.02, 4.4, 2.7, elements[3])
+interacciones.calculate_matrices()
 
 # init atoms systems
 Nx=Ny=Nz=4
@@ -38,11 +41,12 @@ atoms.info["pos_changed"] = 0
 # fin de la inicializacion
 
 # Associate the EMT potential with the atoms
-atoms.set_calculator(ljmc.LennardJones_mc(interacciones))
+calculator = ljmc.LennardJones_mc(interacciones)
+atoms.set_calculator(calculator)
 print "energia inicial", atoms.get_potential_energy()/len(atoms)
 cell = atoms.get_cell()
 # ajuste para el minimo de energía potencial
-f = 1.5 
+f = 1.41
 atoms.positions *= f
 atoms.set_cell(cell * f)
 print "energia inicial", f, atoms.get_potential_energy()/len(atoms)
@@ -51,13 +55,34 @@ print "energia inicial", f, atoms.get_potential_energy()/len(atoms)
 
 #atoms[0].position += 0.00001 
 cs = atoms.get_chemical_symbols()
-cs[0]="Ne"
+cs[0]="Ar"
 atoms.set_chemical_symbols(cs)		
 print "cambio de energia por cambio de elemento", atoms.get_potential_energy()/len(atoms)
-atoms[0].position -= np.random.rand(3) 
-atoms.info["pos_changed"] = 0
-print "cambio de energia por cambio de posicion", atoms.get_potential_energy()/len(atoms)
+
+aceptados = 0
+Energy = 0
+kT = 0.000103
+beta = 1.0 /kT
+for i in range (1000000):
+  indx_change = np.random.randint(0,Nx*Nz*Ny*4)
+  atoms.info["pos_changed"] = indx_change
+  atoms.info["pos_changed_value"] = np.copy(atoms[indx_change].position)
+  atoms[indx_change].position += 0.02 * lc * f * (np.random.rand(3) - 0.5)
+  p = atoms[indx_change].position
+  p_cpc = calculator.energy_lj.cpc(p)
+  atoms.positions[indx_change] = p_cpc
+  deltaE = atoms.get_potential_energy()/len(atoms)
+  if deltaE < 0:
+     aceptados += 1
+     Energy += deltaE 
+     print aceptados, i, deltaE, Energy
+  else:
+     if np.random.rand() < np.exp(-deltaE*beta):
+        aceptados += 1
+        Energy += deltaE 
+        print aceptados, i, deltaE, Energy
 
 
+#print atoms.positions
 
 ase.io.write('slab.xyz', atoms)

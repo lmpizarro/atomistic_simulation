@@ -57,8 +57,8 @@ class LennardJones_mc(Calculator):
 	    self.systemCubic.map_numbers(self.atoms)
             energy = self.energy_lj.energy_pos(self.atoms.info["pos_changed"])
 	elif "positions" in system_changes:
-	    self.energy_lj.system.Positions = np.transpose(self.atoms.positions) 
-            energy = self.energy_lj.energy_pos(self.atoms.info["pos_changed"])
+	    self.energy_lj.system.Positions = np.transpose(self.atoms.positions)
+            energy = self.energy_lj.energy_pos(self.atoms.info["pos_changed"], atoms.info["pos_changed_value"] )
         #elif  "cell" in system_changes:
 	#    self.energy_lj.system.Positions = np.transpose(self.atoms.positions) 
 
@@ -152,15 +152,20 @@ class EnergyLJ(object):
 
 
     #@jit
-    def energy_pos (self, ii):
-        e_pos = 0.0
-        for j in range(ii):
-            e_pos = e_pos + self.kernel_e(ii, j)
+    def energy_pos (self, ii, pos_orig):
+        e_old = e_new = 0.0
 
-        for j in range(ii + 1, self.system.Natoms):
-            e_pos = e_pos + self.kernel_e(ii, j)
+        for j in range(self.system.Natoms):
+	   if j !=ii:	
+             e_new = e_new + self.kernel_e(ii, j)
 
-        return e_pos
+        self.system.Positions[:,ii] = pos_orig
+
+        for j in range(self.system.Natoms):
+	   if j !=ii:	
+             e_old = e_old + self.kernel_e(ii, j)
+
+        return e_new - e_old
 
 
     #@jit
