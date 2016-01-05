@@ -1,0 +1,46 @@
+# Find minimum energy fcc configuration
+# Mark Tschopp, 2010
+# This requires the variable latconst to be input via the command line
+# e.g., lmp_win_no-mpi -var latconst 4 < calc_fcc_ver1.in
+
+# ---------- Initialize Simulation --------------------- 
+clear 
+units metal 
+dimension 3 
+boundary p p p 
+atom_style atomic 
+atom_modify map array
+
+read_data	base.data
+
+# ---------- Define Interatomic Potential --------------------- 
+pair_style	meam
+pair_coeff	* * library.meam U Zr UZr.meam U Zr
+
+neighbor 2.0 bin 
+neigh_modify delay 10 check yes 
+ 
+# ---------- Define Settings --------------------- 
+compute eng all pe/atom 
+compute eatoms all reduce sum c_eng 
+
+# ---------- Run Minimization --------------------- 
+reset_timestep 0 
+fix 1 all box/relax iso 0.0 vmax 0.001
+thermo 10 
+thermo_style custom step pe lx ly lz press pxx pyy pzz c_eatoms 
+min_style cg 
+minimize 1e-25 1e-25 5000 10000 
+
+variable natoms equal "count(all)" 
+variable teng equal "c_eatoms"
+variable length equal "lx"
+variable ecoh equal "v_teng/v_natoms"
+
+print "Total energy (eV) = ${teng};"
+print "Number of atoms = ${natoms};"
+print "Lattice constant (Angstoms) = ${length};"
+print "Cohesive energy (eV) = ${ecoh};"
+
+print "All done!" 
+
