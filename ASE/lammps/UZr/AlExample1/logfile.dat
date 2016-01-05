@@ -1,0 +1,102 @@
+LAMMPS (10 Aug 2015)
+# Find minimum energy fcc configuration
+# Mark Tschopp, 2010
+
+# ---------- Initialize Simulation ---------------------
+clear
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+atom_modify map array
+
+read_data	base.data
+  orthogonal box = (0 0 0) to (36 36 36)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  1024 atoms
+
+# ---------- Define Interatomic Potential ---------------------
+pair_style	meam
+pair_coeff	* * library.meam U Zr UZr.meam U Zr
+Reading potential file library.meam with DATE: 2012-06-29
+
+neighbor 2.0 bin
+neigh_modify delay 10 check yes
+
+# ---------- Define Settings ---------------------
+compute eng all pe/atom
+compute eatoms all reduce sum c_eng
+
+# ---------- Run Minimization ---------------------
+reset_timestep 0
+fix 1 all box/relax iso 0.0 vmax 0.001
+thermo 10
+thermo_style custom step pe lx ly lz press pxx pyy pzz c_eatoms
+min_style cg
+minimize 1e-26 1e-26 10000 20000
+WARNING: Resetting reneighboring criteria during minimization (../min.cpp:168)
+Neighbor list info ...
+  2 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  master list distance cutoff = 7.5
+  ghost atom cutoff = 7.5
+Memory usage per processor = 8.96125 Mbytes
+Step PotEng Lx Ly Lz Press Pxx Pyy Pzz eatoms 
+       0   -1595.0931           36           36           36   -21751.346   -21751.346   -21751.346   -21751.346   -1595.0931 
+      10   -1613.2185        35.64        35.64        35.64   -20097.482   -20097.482   -20097.482   -20097.482   -1613.2185 
+      20   -1629.4239        35.28        35.28        35.28   -18066.531   -18066.531   -18066.531   -18066.531   -1629.4239 
+      30   -1643.4412        34.92        34.92        34.92   -15605.644   -15605.644   -15605.644   -15605.644   -1643.4412 
+      40   -1654.9764        34.56        34.56        34.56   -12655.245   -12655.245   -12655.245   -12655.245   -1654.9764 
+      50   -1663.7067         34.2         34.2         34.2   -9148.2025   -9148.2025   -9148.2025   -9148.2025   -1663.7067 
+      60   -1669.2786        33.84        33.84        33.84    -5008.872    -5008.872    -5008.872    -5008.872   -1669.2786 
+      70   -1671.3046        33.48        33.48        33.48   -152.03251   -152.03251   -152.03251   -152.03251   -1671.3046 
+      76   -1671.3062    33.469592    33.469592    33.469592 2.0286496e-11 2.2051365e-11 2.4698667e-11 1.4109457e-11   -1671.3062 
+Loop time of 2.54508 on 1 procs for 76 steps with 1024 atoms
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+        -1595.09311532     -1671.30623316     -1671.30623316
+  Force two-norm initial, final = 1900.22 1.56237e-12
+  Force max component initial, final = 1900.22 1.53187e-12
+  Final line search alpha, max atom move = 1 1.53187e-12
+  Iterations, force evaluations = 76 82
+
+Pair  time (%) = 2.49545 (98.05)
+Neigh time (%) = 0.0215859 (0.848145)
+Comm  time (%) = 0.00397944 (0.156359)
+Outpt time (%) = 0.000986338 (0.0387547)
+Other time (%) = 0.0230761 (0.906694)
+
+Nlocal:    1024 ave 1024 max 1024 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    2035 ave 2035 max 2035 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    29696 ave 29696 max 29696 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:  59392 ave 59392 max 59392 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 59392
+Ave neighs/atom = 58
+Neighbor list builds = 4
+Dangerous builds = 0
+
+variable natoms equal "count(all)"
+variable teng equal "c_eatoms"
+variable length equal "lx"
+variable ecoh equal "v_teng/v_natoms"
+
+print "Total energy (eV) = ${teng};"
+Total energy (eV) = -1671.30623316044;
+print "Number of atoms = ${natoms};"
+Number of atoms = 1024;
+print "Lattice constant (Angstoms) = ${length};"
+Lattice constant (Angstoms) = 33.4695915409518;
+print "Cohesive energy (eV) = ${ecoh};"
+Cohesive energy (eV) = -1.63213499332074;
+
+print "All done!"
+All done!
+
