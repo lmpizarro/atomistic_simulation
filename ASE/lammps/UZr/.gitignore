@@ -1,0 +1,4 @@
+*.error
+*.hosts
+*.machines
+*.output
