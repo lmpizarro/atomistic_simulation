@@ -2,3 +2,4 @@
 *.hosts
 *.machines
 *.output
+*.lammps
