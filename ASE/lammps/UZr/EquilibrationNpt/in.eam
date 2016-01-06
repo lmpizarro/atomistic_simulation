@@ -1,0 +1,41 @@
+# Input file for uniaxial tensile loading of single crystal aluminum
+# Mark Tschopp, November 2010
+
+# ------------------------ INITIALIZATION ----------------------------
+units 		metal
+dimension	3
+boundary	p	p	p
+atom_style	atomic
+variable latparam equal 4.1837
+
+
+read_data	base.data
+
+# ---------- Define Interatomic Potential --------------------- 
+pair_style	meam
+pair_coeff	* * library.meam U Zr UZr.meam U Zr
+
+
+# ------------------------- SETTINGS ---------------------------------
+compute csym all centro/atom fcc
+compute peratom all pe/atom 
+
+######################################
+# EQUILIBRATION
+reset_timestep	0
+timestep 0.001
+velocity all create 300 12345 mom yes rot no
+fix 1 all npt temp 300 300 1 iso 0 0 1 drag .1 
+
+# Set thermo output
+thermo 100
+#thermo_style custom step lx ly lz press pxx pyy pzz pe temp
+thermo_style custom step press ke  pe etotal lx vol temp density fmax fnorm
+
+# Run for at least 10 picosecond (assuming 1 fs timestep)
+run 1000000
+unfix 1
+
+######################################
+# SIMULATION DONE
+print "All done"

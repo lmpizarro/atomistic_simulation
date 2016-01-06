@@ -15,23 +15,29 @@ variable ao equal 3.615
 #lattice         custom 3.615 a1 0.0 1.0 0.0 a2 1.0 0.0 0.0 a3 0.0 0.0 0.1 &
 #		origin 0. 0. 0. basis 0. 0. 0. basis 0.5 0.5 0.0  basis 0.5 0.0 0.5  basis 0.0 0.5 0.5
 #bcc
-#lattice         custom 3.615 a1 0.0 1.0 0.0 a2 1.0 0.0 0.0 a3 0.0 0.0 0.1 &
-#		origin 0. 0. 0. basis 0.0 0.0 0.0 basis 0.5 0.5 0.5
+lattice         custom 3.5 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 &
+		origin 0. 0. 0. basis 0.0 0.0 0.0 basis 0.5 0.5 0.5
 
-#region          box block 0 4 0 4 0 4
-#create_box      2 box
+region          box block 0 4 0 4 0 4
+create_box      2 box
 
 #create_atoms    1 region box basis 1 1 basis 2 2 basis 3 1 basis 4 2
-#create_atoms    1 region box basis 1 1 basis 2 2
+create_atoms    1 region box basis 1 1 basis 2 2
 
-read_data	bcc.data
+#read_data	bcc.data
 
 # ---------- Define Interatomic Potential --------------------- 
 pair_style	meam
-pair_coeff	* * library.meam U Zr UZr.meam U Zr
+pair_coeff	* * meamf U Zr meafile U Zr
 
-neighbor 2.0 bin 
-neigh_modify delay 10 check yes 
+
+#neighbor 2.0 bin 
+#neigh_modify delay 10 check yes 
+
+neighbor	1.0 bin
+neigh_modify	every 1 delay 5 check yes
+thermo_modify norm yes
+
  
 # ---------- Define Settings --------------------- 
 compute eng all pe/atom 
@@ -43,11 +49,11 @@ fix 1 all box/relax iso 0.0 vmax 0.001
 thermo 10 
 thermo_style custom step pe lx ly lz press pxx pyy pzz c_eatoms 
 min_style cg 
-minimize 1e-26 1e-26 10000 20000 
+minimize 1e-24 1e-24 10000 20000 
 
 variable natoms equal "count(all)" 
 variable teng equal "c_eatoms"
-variable length equal "lx"
+variable length equal "lx/4"
 variable ecoh equal "v_teng/v_natoms"
 
 print "Total energy (eV) = ${teng};"
