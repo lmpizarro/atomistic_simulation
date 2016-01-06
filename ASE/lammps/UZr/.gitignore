@@ -4,3 +4,4 @@
 *.output
 *.lammps
 *.dat*
+Tutorial3/Dump/*
