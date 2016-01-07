@@ -36,8 +36,8 @@ variable r2 equal sqrt(${ao}^2+${ao}^2)/4
 #r2 is the radius of the atom
 #
 #region select is a region defined so that all atoms within this region are removed
-region select sphere 1.74321 1.74321 1.74321 ${r2} units box
-delete_atoms region select compress yes
+region select sphere 1.743 1.743 1.0 ${r2} units box
+create_atoms  1 single  1.743 1.743 0  units box 
 #---------------------------------------------------------------------
 
 reset_timestep	0
@@ -46,10 +46,12 @@ velocity all create 300 12345 mom yes rot no
 fix 1 all npt temp 300 300 1 iso 0 0 1 drag 1 
 
 # Set thermo output
-thermo 10
+thermo 100
 #thermo_style custom step lx ly lz press pxx pyy pzz pe temp
 #El mismo thermo_style q para el cálculo de equilibrio
 thermo_style custom step press ke  pe etotal lx vol temp density fmax fnorm
+
+dump 1 all custom 400 dump.relax.2.* id type xs ys zs  
 
 # Run for at least 10 picosecond (assuming 1 fs timestep)
 

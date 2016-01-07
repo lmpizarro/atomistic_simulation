@@ -6,11 +6,11 @@ units 		metal
 dimension	3
 boundary	p	p	p
 atom_style	atomic
-variable latparam equal 4.1837
+variable latparam equal 3.48625
 
 
 #bcc
-lattice         custom 3.4766 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 &
+lattice         custom 3.48625 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 &
 		origin 0. 0. 0. basis 0.0 0.0 0.0 basis 0.5 0.5 0.5
 
 
