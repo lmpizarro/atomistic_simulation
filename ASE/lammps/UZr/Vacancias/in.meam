@@ -7,7 +7,7 @@ dimension	3
 boundary	p	p    p      
 atom_style	atomic
 # ------------------ ATOM DEFINITION -------------------
-variable ao equal 3.4766
+variable ao equal 3.4862
 
 
 #fcc
@@ -15,7 +15,7 @@ variable ao equal 3.4766
 #		origin 0. 0. 0. basis 0. 0. 0. basis 0.5 0.5 0.0  basis 0.5 0.0 0.5  basis 0.0 0.5 0.5
 
 #bcc
-lattice         custom 3.4766 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 &
+lattice         custom 3.4862 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 &
 		origin 0. 0. 0. basis 0.0 0.0 0.0 basis 0.5 0.5 0.5
 
 
@@ -68,7 +68,7 @@ variable r2 equal sqrt(${ao}^2+${ao}^2)/4
 #r2 is the radius of the copper atom
 #
 #region select is a region defined so that all atoms within this region are removed
-region select sphere 1.783 1.783 1.783 ${r2} units box
+region select sphere 1.7431 1.7431 1.7431 ${r2} units box
 delete_atoms region select compress yes
 #---------------------------------------------------------------------
 

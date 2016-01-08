@@ -6,11 +6,11 @@ units 		metal
 dimension	3
 boundary	p	p	p
 atom_style	atomic
-variable ao equal 3.4766
+variable ao equal 3.4862
 #al final del cálculo se obtiene un ao de 3.486425
 
 #bcc
-lattice         custom 3.4766 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 &
+lattice         custom 3.4862 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 &
 		origin 0. 0. 0. basis 0.0 0.0 0.0 basis 0.5 0.5 0.5
 
 region          box block 0 10 0 10 0 10
@@ -25,7 +25,9 @@ pair_coeff	* * meamf U Zr meafile U Zr
 
 # ------------------------- SETTINGS ---------------------------------
 compute csym all centro/atom fcc
-compute peratom all pe/atom 
+compute eng all pe/atom 
+compute eatoms all reduce sum c_eng
+
 
 ######################################
 # EQUILIBRATION
@@ -35,14 +37,33 @@ velocity all create 300 12345 mom yes rot no
 fix 1 all npt temp 300 300 1 iso 0 0 1 drag .1 
 
 # Set thermo output
-thermo 100
+thermo 10
 #thermo_style custom step lx ly lz press pxx pyy pzz pe temp
-thermo_style custom step press ke  pe etotal lx vol temp density fmax fnorm
+thermo_style custom step press ke  pe etotal lx vol temp density fmax fnorm c_eatoms
 
 # Run for at least 10 picosecond (assuming 1 fs timestep)
 run 100000
 unfix 1
 
+#-------------------- END Minimization  I ------------------------
+
+#variable N equal count(all), counts the total number of atoms in the cell
+#the total number of atoms is stored to the variable N
+
+variable N equal count(all)
+variable No equal $N
+
+#variable Ei equal "c_eatoms" computes the initial energy of the cell system before the vacancy
+#E is needed to store the initial energy of the system to the variable Ei
+
+variable E equal "c_eatoms"
+variable Ei equal $E
+
+
+
 ######################################
 # SIMULATION DONE
 print "All done"
+print "Total number of atoms = ${No}"
+print "Initial energy of atoms = ${Ei}"
+
