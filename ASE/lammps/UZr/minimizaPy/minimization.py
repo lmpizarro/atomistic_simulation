@@ -114,23 +114,28 @@ class Qsub(object):
 
 
 class Minimization(object):
+    s_steps = 100
     etol = 1.0e-24
     ftol = 1.0e-24
-    maxiter =  1000
-    maxeval =  1000
+    maxiter =  50000
+    maxeval =  100000
     #Paramters of interatomic potential
     pair_style = "meam"
     pair_coeff = "* * meamf U Zr meafile U Zr"
     infile = ""
 
-    def __init__(self, a0, np, infile_name):
+    def __init__(self, a0, np, infile_name, s_steps, dump = False):
         self.a0 = a0
         self.np = np
         self.infile_name = infile_name
+        self.s_steps = s_steps
+
         self.gen_header()
         self.gen_lattice()
         self.set_potential()
+
         self.infile += self.header + self.lattice + self.potential
+
         self.infile += "neighbor        2.0 bin\n"
         self.infile += "neigh_modify    delay 10\n"
 
@@ -138,16 +143,22 @@ class Minimization(object):
         self.infile += "compute eng all pe/atom\n" 
         self.infile += "compute eatoms all reduce sum c_eng\n" 
 
-        self.infile += "\n\n\n########## SALIDA ##########\n"
-        self.infile += "dump            1 all custom 1 dump id type x y z\n"
+        self.infile += "\n\n\n########## THERMO ##########\n"
+        
+        if dump:
+            self.infile += "dump            1 all custom 1 dump id type x y z\n"
 
         self.infile += "log             log\n"
-        self.infile += "thermo             10\n"
+        self.infile += "thermo             %d\n" % self.s_steps
         #self.infile += "thermo_style    custom step atoms pe ke etotal press vol lx ly lz c_eatoms\n"
         self.infile += "thermo_style custom step pe lx ly lz press pxx pyy pzz c_eatoms\n" 
         self.infile += "thermo_modify   line one format float %.16g\n"
 
 
+    def set_thermo (self, s_steps):
+        self.s_steps = s_steps
+
+        
     def gen_lattice(self):
         self.lattice = "\n\n\n########## LATTICE ##########\n"
         self.lattice += "lattice "
@@ -181,7 +192,7 @@ class Minimization(object):
         self.tail  = "\n\n\n##########  TAIL  ##########\n"
         self.tail += 'variable natoms equal "count(all)"\n' 
         self.tail +=  'variable teng equal "c_eatoms"\n'
-        self.tail +=  'variable length equal "lx/4"\n'
+        self.tail +=  'variable length equal "lx/%d"\n'%self.np
         self.tail +=  'variable ecoh equal "v_teng/v_natoms"\n'
 
         self.tail += "\n\n\n##########  PRINT  ##########\n"
@@ -227,8 +238,9 @@ if __name__ == "__main__":
     a0=3.4862
    
     # cantidad de períodos de la red cristalina
-    np = 10
-    min = Minimization (a0, np, "infile")
+    np = 5
+    s_steps = 1000 # pasos grabación
+    min = Minimization (a0, np, "infile", s_steps)
     # genera el infile para lammps
     min.gen_infile(1,1)
 
