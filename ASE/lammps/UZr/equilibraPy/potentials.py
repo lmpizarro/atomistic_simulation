@@ -59,22 +59,19 @@ t0         t1              t2           t3            rozero  ibar
                     self.index = i
 
         if self.index != None:
-            self.params = self.potentials[self.index]  
+            self.params = self.potentials[self.index]["params"] 
 
     def gen_files(self):
-        if pot.params != None:
-            print pot.params
+        if self.params != None:
+            names = self.params.keys()
+            for n in names:
+                fout = open(n,'w')
+                fout.write(self.params[n])
+                fout.close()
 
-
-        fout = open('meafile','w')
-        fout.write(self.meafile)
-        fout.close()
-
-        fout = open('meamf','w')
-        fout.write(self.meamf)
-        fout.close()
 
 if __name__ == "__main__":
     # graba los potenciales de acuerdo a como los espera el infile
     pot =  MEAMPOT_UZr("meam", "UZr")
+    pot.gen_files()
 

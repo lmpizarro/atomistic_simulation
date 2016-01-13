@@ -152,4 +152,5 @@ if __name__ == "__main__":
     qs1.gen_file()
 
     # graba los potenciales de acuerdo a como los espera el infile
-    pot =  pots.MEAMPOT_UZr()
+    pot =  pots.MEAMPOT_UZr("meam", "UZr")
+    pot.gen_files()
