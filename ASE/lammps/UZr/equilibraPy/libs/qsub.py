@@ -2,7 +2,7 @@
 
 import os
 
-class Qsub(object):
+class Qsub_sheldon(object):
     run_path = os.path.dirname(os.path.realpath(__file__))
     qsub = '''#PBS -N EquilNPT100
     #PBS -l nodes=8:ppn=2
@@ -55,11 +55,23 @@ class Qsub(object):
             self.file_content += e.strip() + "\n"
              
 
-        fout = open('run.qsub','w')
+        fout = open(self.run_path + '/run.qsub','w')
         fout.write(self.file_content)
 
         fout.close()
 
+class Qsub_isaac(object):
+    run_path = os.path.dirname(os.path.realpath(__file__))
+    qsub =''' ### PONER el run.qsub de referencia### '''
+
+    def __init__(self, name, nodes, infile_name):
+        pass
+
+    def set_run_path(self, p):
+        pass
+ 
+    def gen_file(self):
+        pass
 
 if __name__ == "__main__":
     # genera el run.qsub para sheldon

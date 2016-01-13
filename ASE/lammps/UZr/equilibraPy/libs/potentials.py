@@ -70,11 +70,11 @@ t0         t1              t2           t3            rozero  ibar
             self.lammps_pot = self.potentials[self.index]["lammps_pot"]
             self.components = self.potentials[self.index]["components"]
 
-    def gen_files(self):
+    def gen_files(self, base_path):
         if self.params != None:
             names = self.params.keys()
             for n in names:
-                fout = open(n,'w')
+                fout = open(base_path + "/" + n,'w')
                 fout.write(self.params[n])
                 fout.close()
 

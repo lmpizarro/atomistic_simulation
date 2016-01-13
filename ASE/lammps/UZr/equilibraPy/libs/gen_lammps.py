@@ -7,7 +7,7 @@ import numpy as np
 import qsub as qs
 import potentials as pots
 
-class Equilibra(object):
+class Equil_NPT(object):
 
     #Paramters of interatomic potential
     pair_style = "meam"
@@ -120,12 +120,12 @@ class Equilibra(object):
 
         self.tail += "print 'All done!'\n" 
 
-    def gen_infile(self, relax=0,box_relax=0):# Create input command script for lammps
+    def gen_infile(self, base_path, relax=0,box_relax=0):# Create input command script for lammps
         self.fname = self.infile_name + "_equil"
 
         self.set_fix_npt(); self.infile += self.fix_npt
         self.set_tail();self.infile += self.tail
-        fout = open(self.fname,'w')
+        fout = open(base_path + "/" + self.fname,'w')
         fout.write(self.infile)
 
         fout.close()
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     # cantidad de pasos calculo
     n_steps = 10000
     min = Equilibra (a0, np, "infile", pair, n_steps=n_steps, s_steps=s_steps)
-    min.set_temperature (1200)
+    min.set_temperature (100)
     min.set_seed (23456)
     # genera el infile para lammps
     min.gen_infile(1,1)
