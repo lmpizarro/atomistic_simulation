@@ -17,13 +17,16 @@ class Equilibra(object):
     infile = ""
    
 
-    def __init__(self, a0, np, infile_name, n_steps = 1000, s_steps = 10, dump = False):
+    def __init__(self, a0, np, infile_name, pair, n_steps = 1000, s_steps = 10, dump = False):
         self.a0 = a0
         self.np = np
         self.infile_name = infile_name
         self.s_steps = s_steps
  
         self.n_steps = n_steps
+
+        self.pair_style = pair["pair_style"]
+        self.pair_coeff = pair["pair_coeff"]
 
         self.gen_header()
         self.gen_lattice()
@@ -131,19 +134,6 @@ class Equilibra(object):
 
 if __name__ == "__main__":
 
-    # Default lattice parameter
-    a0=3.4862
-   
-    # cantidad de períodos de la red cristalina
-    np = 8
-    s_steps = 100 # pasos grabación
-    n_steps = 10000
-    min = Equilibra (a0, np, "infile", n_steps=n_steps, s_steps=s_steps)
-    min.set_temperature (1200)
-    min.set_seed (23456)
-    # genera el infile para lammps
-    min.gen_infile(1,1)
-
     # genera el run.qsub para sheldon
     cant_nodos = 8
     qs1 = qs.Qsub("UZrEquilibration", cant_nodos, "infile_equil")
@@ -154,3 +144,20 @@ if __name__ == "__main__":
     # graba los potenciales de acuerdo a como los espera el infile
     pot =  pots.MEAMPOT_UZr("meam", "UZr")
     pot.gen_files()
+    pair = pot.get_lammps_pot()
+
+    # Default lattice parameter
+    a0=3.4862
+    # cantidad de períodos de la red cristalina
+    np = 8
+    # pasos grabación
+    s_steps = 100 
+    # cantidad de pasos calculo
+    n_steps = 10000
+    min = Equilibra (a0, np, "infile", pair, n_steps=n_steps, s_steps=s_steps)
+    min.set_temperature (1200)
+    min.set_seed (23456)
+    # genera el infile para lammps
+    min.gen_infile(1,1)
+
+

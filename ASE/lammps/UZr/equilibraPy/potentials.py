@@ -33,7 +33,6 @@ Cmin(2,2,1) = 0.5
 Cmax(2,2,1) = 2.8
 Cmin(2,2,2) = 0.7 
 Cmax(2,2,2) = 0.99''',
-
     "meamf":'''# meam data from vax files fcc,bcc,dia
 elt        lat     z       ielement     atwt
 alpha      b0      b1      b2           b3    alat    esub    asub
@@ -43,7 +42,13 @@ t0         t1              t2           t3            rozero  ibar
 1           2.50            4         1.0       1       0   
 'Zr'       'bcc'    8.      40        91.224
 4.10        2.80    2.0     7.00      1        3.535   6.20   0.48
-1.0         3.00            2.0      -7       1       0'''}}, 
+1.0         3.00            2.0      -7       1       0''', 
+},   
+
+"lammps_pot":{"pair_style":"meam", 
+"pair_coeff":"* * meamf U Zr meafile U Zr"}, "components":["U","Zr"]
+
+}, 
 {"type":"meam", "name": "UNb", "params":{}}, 
 {"type":"eam", "name": "UO", "params":{}}]
 
@@ -52,6 +57,8 @@ t0         t1              t2           t3            rozero  ibar
         self.name = name
         self.params = None 
         self.index = None
+        self.lammps_pot = None
+        self.components = None
 
         for i, p in enumerate(self.potentials):
             if p["type"] == self.type:
@@ -59,7 +66,9 @@ t0         t1              t2           t3            rozero  ibar
                     self.index = i
 
         if self.index != None:
-            self.params = self.potentials[self.index]["params"] 
+            self.params = self.potentials[self.index]["params"]
+            self.lammps_pot = self.potentials[self.index]["lammps_pot"]
+            self.components = self.potentials[self.index]["components"]
 
     def gen_files(self):
         if self.params != None:
@@ -69,9 +78,14 @@ t0         t1              t2           t3            rozero  ibar
                 fout.write(self.params[n])
                 fout.close()
 
+    def get_lammps_pot (self):
+        self.lammps_pot["components"] = self.components
+        return  self.lammps_pot
 
 if __name__ == "__main__":
     # graba los potenciales de acuerdo a como los espera el infile
     pot =  MEAMPOT_UZr("meam", "UZr")
     pot.gen_files()
+    lammps_str = pot.get_lammps_pot()
+    print lammps_str
 
