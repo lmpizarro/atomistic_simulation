@@ -7,6 +7,44 @@ import numpy as np
 import qsub as qs
 import potentials as pots
 
+class Header(object):
+
+    units = "metal"
+    boundary = ['p','p','p',]
+    dimension = 3
+    atom_style = "atomic"
+
+    def __init__(self):
+        pass
+
+    def gen_header(self):
+        self.commands = "\n\n\n########## HEADER ##########\n"
+        self.commands += "units           %s\n"%self.units
+        self.commands += "boundary        %s %s %s\n"%(self.boundary[0],self.boundary[1],self.boundary[2])
+        self.commands += "dimension        %d\n"%self.dimension
+        self.commands += "atom_style      %s\n"%self.atom_style
+    
+class End_commands(object):
+
+    def __init__(self, np):
+        self.np = np
+
+    def gen_commands(self):
+        self.commands  = "\n\n\n##########  TAIL  ##########\n"
+        self.commands += 'variable natoms equal "count(all)"\n' 
+        self.commands +=  'variable teng equal "c_eatoms"\n'
+        self.commands +=  'variable length equal "lx/%d"\n'%self.np
+        self.commands +=  'variable ecoh equal "v_teng/v_natoms"\n'
+
+        self.commands += "\n\n\n##########  PRINT  ##########\n"
+        self.commands +=  "print 'Total energy (eV) = ${teng};'\n"
+        self.commands +=  "print 'Number of atoms = ${natoms};'\n"
+        self.commands +=  "print 'Lattice constant (Angstoms) = ${length};'\n"
+        self.commands +=  "print 'Cohesive energy (eV) = ${ecoh};'\n"
+
+        self.commands += "print 'All done!'\n" 
+
+
 class Equil_NPT(object):
 
     #Paramters of interatomic potential
@@ -28,11 +66,13 @@ class Equil_NPT(object):
         self.pair_style = pair["pair_style"]
         self.pair_coeff = pair["pair_coeff"]
 
-        self.gen_header()
+        self.header = Header()
+        self.end_commands = End_commands(self.np)
+        self.header.gen_header()
         self.gen_lattice()
         self.set_potential()
 
-        self.infile += self.header + self.lattice + self.potential
+        self.infile += self.header.commands + self.lattice + self.potential
 
         #self.infile += "neighbor        2.0 bin\n"
         #self.infile += "neigh_modify    delay 10\n"
@@ -49,14 +89,7 @@ class Equil_NPT(object):
 
     def set_seed (self, s):
         self.seed = s
-
-    def gen_header(self):
-       self.header = "\n\n\n########## HEADER ##########\n"
-       self.header += "units           metal\n"
-       self.header += "boundary        p p p\n"
-       self.header += "dimension        3\n"
-       self.header += "atom_style      atomic\n"
-       
+      
     def gen_lattice(self):
         self.lattice = "\n\n\n########## LATTICE ##########\n"
         self.lattice += "lattice "
@@ -104,23 +137,13 @@ class Equil_NPT(object):
 
 
     def set_tail(self):
-        self.tail  = "\n\n\n##########  TAIL  ##########\n"
-        self.tail += "run %d\n"%self.n_steps
+        self.tail = "\n\nrun %d\n"%self.n_steps
         self.tail += "unfix 1\n"
-        self.tail += 'variable natoms equal "count(all)"\n' 
-        self.tail +=  'variable teng equal "c_eatoms"\n'
-        self.tail +=  'variable length equal "lx/%d"\n'%self.np
-        self.tail +=  'variable ecoh equal "v_teng/v_natoms"\n'
 
-        self.tail += "\n\n\n##########  PRINT  ##########\n"
-        self.tail +=  "print 'Total energy (eV) = ${teng};'\n"
-        self.tail +=  "print 'Number of atoms = ${natoms};'\n"
-        self.tail +=  "print 'Lattice constant (Angstoms) = ${length};'\n"
-        self.tail +=  "print 'Cohesive energy (eV) = ${ecoh};'\n"
+        self.end_commands.gen_commands()
+        self.tail += self.end_commands.commands 
 
-        self.tail += "print 'All done!'\n" 
-
-    def gen_infile(self, base_path, relax=0,box_relax=0):# Create input command script for lammps
+    def gen_infile(self, base_path):# Create input command script for lammps
         self.fname = self.infile_name + "_equil"
 
         self.set_fix_npt(); self.infile += self.fix_npt
@@ -131,33 +154,111 @@ class Equil_NPT(object):
         fout.close()
         return self.fname
 
+class Minimization(object):
+    s_steps = 100
+    etol = 1.0e-24
+    ftol = 1.0e-24
+    maxiter =  50000
+    maxeval =  100000
+    #Paramters of interatomic potential
+    pair_style = "meam"
+    pair_coeff = "* * meamf U Zr meafile U Zr"
+    infile = ""
+    relax=0
+    box_relax = 0
 
-if __name__ == "__main__":
+    def __init__(self, a0, np, pair, infile_name, s_steps, dump = False):
+        self.a0 = a0
+        self.np = np
+        self.infile_name = infile_name
+        self.s_steps = s_steps
 
-    # genera el run.qsub para sheldon
-    cant_nodos = 8
-    qs1 = qs.Qsub("UZrEquilibration", cant_nodos, "infile_equil")
-    run_path = os.path.dirname(os.path.realpath(__file__))
-    qs1.set_run_path (run_path)
-    qs1.gen_file()
+        self.pair_style = pair["pair_style"]
+        self.pair_coeff = pair["pair_coeff"]
 
-    # graba los potenciales de acuerdo a como los espera el infile
-    pot =  pots.MEAMPOT_UZr("meam", "UZr")
-    pot.gen_files()
-    pair = pot.get_lammps_pot()
+        self.header = Header()
+        self.end_commands = End_commands(self.np)
 
-    # Default lattice parameter
-    a0=3.4862
-    # cantidad de períodos de la red cristalina
-    np = 8
-    # pasos grabación
-    s_steps = 100 
-    # cantidad de pasos calculo
-    n_steps = 10000
-    min = Equilibra (a0, np, "infile", pair, n_steps=n_steps, s_steps=s_steps)
-    min.set_temperature (100)
-    min.set_seed (23456)
-    # genera el infile para lammps
-    min.gen_infile(1,1)
+        self.header.gen_header()
+        self.gen_lattice()
+        self.set_potential()
+
+        self.infile += self.header.commands + self.lattice + self.potential
+
+        self.infile += "neighbor        2.0 bin\n"
+        self.infile += "neigh_modify    delay 10\n"
+
+        self.infile += "# ---------- Define Settings ---------------------\n"
+        self.infile += "compute eng all pe/atom\n" 
+        self.infile += "compute eatoms all reduce sum c_eng\n" 
+
+        self.infile += "\n\n\n########## THERMO ##########\n"
+        
+        if dump:
+            self.infile += "dump            1 all custom 1 dump id type x y z\n"
+
+        self.infile += "log             log\n"
+        self.infile += "thermo             %d\n" % self.s_steps
+        #self.infile += "thermo_style    custom step atoms pe ke etotal press vol lx ly lz c_eatoms\n"
+        self.infile += "thermo_style custom step pe lx ly lz press pxx pyy pzz c_eatoms\n" 
+        self.infile += "thermo_modify   line one format float %.16g\n"
 
 
+    def set_thermo (self, s_steps):
+        self.s_steps = s_steps
+
+    def set_relax (self, relax=0,box_relax=0):
+        self.relax=relax
+        self.box_relax = box_relax
+        
+    def gen_lattice(self):
+        self.lattice = "\n\n\n########## LATTICE ##########\n"
+        self.lattice += "lattice "
+        self.lattice += "        custom %s a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 &\n"%self.a0
+        self.lattice += "               origin  0. 0. 0. basis 0.0 0.0 0.0 basis 0.5 0.5 0.5\n"
+
+        self.lattice += "region "
+        self.lattice += "        box block 0 %s 0 %s 0 %s\n"%(self.np, self.np, self.np)
+        self.lattice += "create_box 2 box\n"
+        self.lattice += "create_atoms    1 region box basis 1 1 basis 2 2\n"
+
+    def set_potential(self):
+        self.potential = "\n\n\n########## POTENTIAL ##########\n"
+        self.potential += "pair_style      %s\n"%self.pair_style
+        self.potential += "pair_coeff      %s\n"%self.pair_coeff
+
+    def set_minimize(self):
+        return "minimize %e  %e  %i  %i \n" % (float(self.etol), self.ftol, self.maxiter, self.maxeval)
+
+    def set_tail(self):
+        self.end_commands.gen_commands()
+        self.tail = self.end_commands.commands 
+
+
+    def gen_infile(self, path):# Create input command script for lammps
+        if self.relax == 1:
+            self.fname = path +  "/" + self.infile_name + "_relax"
+        else:
+            self.fname = path + "/" +  self.infile_name + "_static"
+
+        self.infile  += "\n\n\n##########  CALCULO ##########\n"
+        self.infile  += "reset_timestep 0\n" 
+        if self.relax ==0 and self.box_relax ==0:
+            self.infile += "run             0\n"
+        elif self.relax == 1 and self.box_relax == 0:
+            self.infile += "min_style       cg\n"
+            self.infile += "min_modify      line quadratic\n"
+            self.infile += self.set_minimize()
+        elif self.relax == 1 and self.box_relax ==1:
+            self.infile += "fix             1 all box/relax iso 0.0 vmax 0.001\n"
+            self.infile += "min_style       cg\n"
+            self.infile += "min_modify      line quadratic\n"
+            self.infile +=  self.set_minimize()
+
+        self.set_tail()
+        self.infile += self.tail
+        fout = open(self.fname,'w')
+        fout.write(self.infile)
+
+        fout.close()
+        return self.fname

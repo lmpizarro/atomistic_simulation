@@ -5,6 +5,7 @@ import sys
 import math
 import numpy as np
 
+
 root_path = os.path.dirname(os.path.realpath(__file__))
 root_libs = os.path.join(root_path, "../libs")
 sys.path.append(root_libs)
@@ -22,7 +23,7 @@ if __name__ == "__main__":
 
     # genera el run.qsub para sheldon
     cant_nodos = 8
-    qs1 = qs.Qsub_sheldon("UZrEquilibration", cant_nodos, "infile_equil")
+    qs1 = qs.Qsub_sheldon("UZrRelax", cant_nodos, "infile_relax")
     qs1.set_run_path (path_run_folder)
     qs1.gen_file()
 
@@ -32,15 +33,14 @@ if __name__ == "__main__":
     pair = pot.get_lammps_pot()
 
     # Default lattice parameter
-    a0=3.47
+    a0=3.4862
+   
     # cantidad de períodos de la red cristalina
-    np = 8
-    # pasos grabación
-    s_steps = 100 
-    # cantidad de pasos calculo
-    n_steps = 10000
-    min = gl.Equil_NPT (a0, np, "infile", pair, n_steps=n_steps, s_steps=s_steps)
-    min.set_temperature (100)
-    min.set_seed (23456)
+    np = 5
+    s_steps = 1000 # pasos grabación
+    min = gl.Minimization (a0, np, pair, "infile", s_steps)
+    min.set_relax(1,1)
     # genera el infile para lammps
     min.gen_infile(path_run_folder)
+
+
