@@ -1,0 +1,15 @@
+{% if qstat_out_list  %}
+
+<ul>
+
+   {% for qs in qstat_out_list %}
+
+   <li> qs['out']  </li>  
+
+    {% endfor  %}
+
+</ul>
+
+{% else %}
+
+{% endif %}

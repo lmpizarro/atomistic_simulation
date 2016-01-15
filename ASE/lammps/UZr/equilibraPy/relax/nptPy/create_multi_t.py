@@ -13,7 +13,11 @@ import gen_runs as gr
 import parametros_t as pars
 
 
+folders = []
 if __name__ == "__main__":
-    gr.run_npt(root_path, pars.dict_config)
+    folders = gr.create_folders_calcs([pars.Temp_min, pars.Temp_max, pars.dTemp])
 
-
+    for f in folders:
+        pars.dict_config["run_folder"] = f[0]
+        pars.dict_config["Temperature"] = f[1]
+        gr.run_npt(root_path, pars.dict_config)

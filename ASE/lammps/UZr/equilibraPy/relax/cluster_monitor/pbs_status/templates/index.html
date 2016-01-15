@@ -1,0 +1,18 @@
+{% if qstat_out_list  %}
+
+<ul>
+
+   {% for qs in qstat_out_list %}
+     
+      <p> {{ qs.hr_time }} </p>
+     {% for q in qs.out %}
+     <li> Job Id: {{ q.JobID }}  User:  {{q.User}} Status:  {{q.S}}  </li>  
+
+     {% endfor  %}
+   {% endfor  %}
+
+</ul>
+
+{% else %}
+
+{% endif %}

@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
         print f[0], f[1]
         min.set_temperature (f[1])
-        min.gen_infile(f[0], 1, 1)
+        min.gen_infile(f[0])
 
         # Pasa a carmeta de cada corrida RUN..
         os.chdir(f[0])
