@@ -34,7 +34,7 @@ itsdangerous==0.24
 Jinja2==2.8
 jsonschema==2.4.0
 jupyter-client==4.1.1
-jupyter-core==4.0.6
+jupyter-core>=5.0
 kombu==3.0.33
 llvmlite==0.8.0
 MarkupSafe==0.23
